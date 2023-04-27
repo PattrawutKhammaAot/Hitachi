@@ -7,6 +7,9 @@ class RouterList {
 
   ///LineElement Menu
   static const String LINE_ELEMENT_SCREEN = '/lineElementMenu';
-  static const String WindingJobStart_Screen =
-      '/lineElementMenu/windingjobStart';
+  //WindingJobstart Scan!!!
+  static const String WindingJobStart_Scan_Screen =
+      '/lineElementMenu/Scan/windingjobStart';
+
+  //WindingJobstart Hold!!!
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton2.dart';
+import 'package:hitachi/route/router_list.dart';
 
 class LineElementScreen extends StatefulWidget {
   const LineElementScreen({super.key});
@@ -32,8 +33,8 @@ class _LineElementScreenState extends State<LineElementScreen> {
                           children: [
                             CardButton2(
                               text: "Line Element",
-                              // onPress: () => Navigator.pushNamed(
-                              //     context, RouterList.MAIN_MENU),
+                              onPress: () => Navigator.pushNamed(context,
+                                  RouterList.WindingJobStart_Scan_Screen),
                             ),
                             CardButton2(
                               text: "Plan Winding",
