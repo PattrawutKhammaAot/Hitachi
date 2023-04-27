@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 
 class Label extends StatelessWidget {
-  const Label(
+  Label(
     this.text, {
     super.key,
     this.color = COLOR_BLACK,
@@ -22,13 +22,12 @@ class Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      text ?? "",
       textAlign: textAlign,
       style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          fontStyle: fontStyle),
+        color: color,
+        fontSize: fontSize,
+      ),
     );
   }
 }
