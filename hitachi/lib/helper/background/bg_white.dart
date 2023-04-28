@@ -6,7 +6,7 @@ class BgWhite extends StatelessWidget {
   const BgWhite(
       {this.isHideAppBar = false,
       this.isHideTitle = false,
-      this.body,
+      required this.body,
       this.appbar,
       this.isHidePreviour = false,
       this.textTitle,

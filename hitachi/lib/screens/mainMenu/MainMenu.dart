@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hitachi/blocs/checkpackNo/check_pack_no_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
+import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/route/router_list.dart';
 
 class MainMenu extends StatefulWidget {
@@ -11,6 +14,17 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  int count = 144545;
+  @override
+  void initState() {
+    _getdata();
+    super.initState();
+  }
+
+  _getdata() {
+    BlocProvider.of<CheckPackNoBloc>(context).add(GetCheckPackNoEvent(count));
+  }
+
   @override
   @override
   Widget build(BuildContext context) {
