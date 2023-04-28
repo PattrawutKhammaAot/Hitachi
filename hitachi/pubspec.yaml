@@ -38,6 +38,7 @@ dependencies:
   page_transition: ^2.0.9
   bloc: ^8.1.1
   equatable: ^2.0.5
+  syncfusion_flutter_datagrid: ^21.1.41
 
 dev_dependencies:
   flutter_test:
