@@ -4,6 +4,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/route/router_list.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
   const WindingJobStartScanScreen({super.key});
@@ -121,9 +122,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                                 thickness: 2,
                               ),
                             ),
-                            Label(
-                              "Hold",
-                              color: Colors.grey,
+                            GestureDetector(
+                              onTap: () => Navigator.pushNamed(context,
+                                  RouterList.WindingJobStart_Hold_Screen),
+                              child: Label(
+                                "Hold",
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),

@@ -39,6 +39,7 @@ dependencies:
   equatable: ^2.0.5
   flutter_bloc: ^8.1.2
   dio: ^5.1.1
+  syncfusion_flutter_datagrid: ^21.1.41
 
 dev_dependencies:
   flutter_test:
