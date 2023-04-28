@@ -32,65 +32,69 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )),
             Expanded(
-              flex: 4,
-              child: Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: COLOR_WHITE,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black, blurRadius: 1, spreadRadius: 0),
-                    BoxShadow(
-                        color: Colors.black, blurRadius: 5, spreadRadius: 0),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: const [
-                          BoxInputField(
-                            labelText: "Username",
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          BoxInputField(
-                            labelText: "Password",
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Button(
-                            text: Label(
-                              "Login",
-                              color: COLOR_WHITE,
-                            ),
-                            onPress: () => Navigator.pushNamed(
-                                context, RouterList.MAIN_MENU),
-                          ),
-                          SizedBox(
-                            height: 13,
-                          ),
-                          Button(
-                            text: Label(
-                              "Settings",
-                              color: COLOR_WHITE,
-                            ),
-                            bgColor: COLOR_RED_LIGTHINS,
-                          )
-                        ],
-                      ),
+              flex: 5,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: COLOR_WHITE,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black, blurRadius: 1, spreadRadius: 0),
+                      BoxShadow(
+                          color: Colors.black, blurRadius: 5, spreadRadius: 0),
                     ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: const [
+                            BoxInputField(
+                              labelText: "Username",
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            BoxInputField(
+                              labelText: "Password",
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Button(
+                              text: Label(
+                                "Login",
+                                color: COLOR_WHITE,
+                              ),
+                              onPress: () => Navigator.pushNamed(
+                                  context, RouterList.MAIN_MENU),
+                            ),
+                            SizedBox(
+                              height: 13,
+                            ),
+                            Button(
+                              text: Label(
+                                "Settings",
+                                color: COLOR_WHITE,
+                              ),
+                              bgColor: COLOR_RED_LIGTHINS,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            Expanded(flex: 3, child: SizedBox())
           ],
         ),
       ),
