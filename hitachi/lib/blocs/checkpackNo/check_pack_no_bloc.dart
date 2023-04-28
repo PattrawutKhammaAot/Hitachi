@@ -31,10 +31,7 @@ class CheckPackNoBloc extends Bloc<CheckPackNoEvent, CheckPackNoState> {
       Response responese = await Dio().get(
           ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(headers: ApiConfig.HEADER()));
-
-      print(responese.data);
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
-      print("Model Info ${post}");
       return post;
     } catch (e, s) {
       // throw StateError("Exception occured: $e StackTrace: $s");

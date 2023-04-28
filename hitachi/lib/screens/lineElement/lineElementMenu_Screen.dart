@@ -37,7 +37,7 @@ class _LineElementScreenState extends State<LineElementScreen> {
                                   RouterList.WindingJobStart_Scan_Screen),
                             ),
                             CardButton2(
-                              text: "Plan Winding",
+                              text: "Winding Finish",
                               onPress: () => print("test2"),
                             ),
                           ],

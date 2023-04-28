@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/checkpackNo/check_pack_no_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
@@ -18,6 +19,7 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     _getdata();
+
     super.initState();
   }
 
@@ -25,7 +27,6 @@ class _MainMenuState extends State<MainMenu> {
     BlocProvider.of<CheckPackNoBloc>(context).add(GetCheckPackNoEvent(count));
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return BgWhite(

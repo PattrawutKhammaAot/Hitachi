@@ -4,6 +4,7 @@ import 'package:hitachi/screens/lineElement/Hold/windingjobstart_Hold_Screen.dar
 import 'package:hitachi/screens/lineElement/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/mainMenu/MainMenu.dart';
+
 import 'package:page_transition/page_transition.dart';
 
 class RouteGenerator {
@@ -14,7 +15,7 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MainMenu(),
-            type: PageTransitionType.leftToRight);
+            type: PageTransitionType.fade);
 
       ///LineElementMenu
       case RouterList.LINE_ELEMENT_SCREEN:

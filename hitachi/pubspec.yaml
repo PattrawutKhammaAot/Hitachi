@@ -40,6 +40,7 @@ dependencies:
   flutter_bloc: ^8.1.2
   dio: ^5.1.1
   syncfusion_flutter_datagrid: ^21.1.41
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
