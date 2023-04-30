@@ -6,6 +6,7 @@ import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/route/router_list.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -18,10 +19,32 @@ class _MainMenuState extends State<MainMenu> {
   int count = 144545;
   @override
   void initState() {
-    _getdata();
-
+    // testCreateData();
     super.initState();
   }
+
+  // void testCreateData() async {
+  //   DatabaseHelper databaseHelper = DatabaseHelper();
+
+  //   // สร้างฐานข้อมูล SQLite และตาราง my_table
+  //   //await databaseHelper.initializeDatabase();
+
+  //   // เขียนข้อมูลลงในฐานข้อมูล
+  //   await databaseHelper.writeDataToSQLite("Aotza", 20);
+
+  //   // await databaseHelper.deleteDataFromSQLite(3);
+  //   // await databaseHelper.deleteDataFromSQLite(4);
+  //   // await databaseHelper.deleteDataFromSQLite(5);
+  //   // await databaseHelper.deleteDataFromSQLite(6);
+  //   // await databaseHelper.deleteDataFromSQLite(7);
+  //   // await databaseHelper.deleteDataFromSQLite(8);
+  //   // await databaseHelper.deleteDataFromSQLite(9);
+  //   // await databaseHelper.deleteDataFromSQLite(10);
+  //   // await databaseHelper.deleteDataFromSQLite(11);
+  //   // await databaseHelper.deleteDataFromSQLite(12);
+
+  //   print("object");
+  // }
 
   _getdata() {
     BlocProvider.of<CheckPackNoBloc>(context).add(GetCheckPackNoEvent(count));

@@ -7,6 +7,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/route/route_generator.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/auth/LoginScreen.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,6 +43,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LoginScreen();
