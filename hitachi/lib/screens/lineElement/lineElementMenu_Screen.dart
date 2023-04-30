@@ -18,91 +18,82 @@ class _LineElementScreenState extends State<LineElementScreen> {
       textTitle: "Line Element : Menu",
       body: Padding(
         padding: const EdgeInsets.only(top: 20),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(),
-                child: Column(
+        child: Column(
+          children: [
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CardButton2(
-                              text: "Line Element",
-                              onPress: () => Navigator.pushNamed(context,
-                                  RouterList.WindingJobStart_Scan_Screen),
-                            ),
-                            CardButton2(
-                              text: "Winding Finish",
-                              onPress: () => print("test2"),
-                            ),
-                          ],
-                        ),
-                      ],
+                    CardButton2(
+                      text: "Line Element",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.WindingJobStart_Scan_Screen),
                     ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CardButton2(
-                              text: "Process Start",
-                              // onPress: () => Navigator.pushNamed(
-                              //     context, RouterList.MAIN_MENU),
-                            ),
-                            CardButton2(
-                              text: "Process Finish",
-                              onPress: () => print("test2"),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CardButton2(
-                              text: "Treatment Start",
-                              // onPress: () => Navigator.pushNamed(
-                              //     context, RouterList.MAIN_MENU),
-                            ),
-                            CardButton2(
-                              text: "Treatment Finish",
-                              onPress: () => print("test2"),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CardButton2(
-                              text: "Report Route Sheet",
-                              // onPress: () => Navigator.pushNamed(
-                              //     context, RouterList.MAIN_MENU),
-                            ),
-                            CardButton2(
-                              text: "Material Input",
-                              onPress: () => print("test2"),
-                            ),
-                          ],
-                        ),
-                      ],
+                    CardButton2(
+                      text: "Winding Finish",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.WindingJobFinish_Screen),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CardButton2(
+                      text: "Process Start",
+                      // onPress: () => Navigator.pushNamed(
+                      //     context, RouterList.MAIN_MENU),
+                    ),
+                    CardButton2(
+                      text: "Process Finish",
+                      onPress: () => print("test2"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CardButton2(
+                      text: "Treatment Start",
+                      // onPress: () => Navigator.pushNamed(
+                      //     context, RouterList.MAIN_MENU),
+                    ),
+                    CardButton2(
+                      text: "Treatment Finish",
+                      onPress: () => print("test2"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CardButton2(
+                      text: "Report Route Sheet",
+                      // onPress: () => Navigator.pushNamed(
+                      //     context, RouterList.MAIN_MENU),
+                    ),
+                    CardButton2(
+                      text: "Material Input",
+                      onPress: () => print("test2"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

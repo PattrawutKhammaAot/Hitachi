@@ -10,6 +10,7 @@ class BgWhite extends StatelessWidget {
       this.appbar,
       this.isHidePreviour = false,
       this.textTitle,
+      this.bottomNavigationBar,
       super.key});
   final Widget? body;
   final Widget? appbar;
@@ -17,6 +18,8 @@ class BgWhite extends StatelessWidget {
   final bool isHideTitle;
   final String? textTitle;
   final bool isHidePreviour;
+  final Widget? bottomNavigationBar;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -39,6 +42,7 @@ class BgWhite extends StatelessWidget {
                       ),
               ),
         body: body,
+        bottomNavigationBar: bottomNavigationBar,
       ),
     );
   }

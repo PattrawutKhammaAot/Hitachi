@@ -17,4 +17,7 @@ class RouterList {
   //WindingJobstart Hold!!!
   static const String WindingJobStart_Hold_Screen =
       '/lineElementMenu/Hold/windingjobStart';
+  //WindingJobFinish
+  static const String WindingJobFinish_Screen =
+      '/lineElementMenu/windingFinish';
 }

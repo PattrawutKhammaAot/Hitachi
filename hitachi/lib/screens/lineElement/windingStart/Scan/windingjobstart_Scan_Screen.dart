@@ -82,7 +82,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         return true;
       },
       child: BgWhite(
-        textTitle: "Winding Job Start (Scan)",
+        textTitle: "Winding Job Start",
         body: Form(
           autovalidateMode: AutovalidateMode.always,
           key: _formKey,

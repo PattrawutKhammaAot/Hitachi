@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
+import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/route/router_list.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class WindingJobStartHoldScreen extends StatefulWidget {
@@ -41,15 +43,53 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHidePreviour: true,
       textTitle: "Winding job Start(Hold)",
-      body: SfDataGrid(
-        source: employeeDataSource!,
-        columnWidthMode: ColumnWidthMode.fill,
-        columns: <GridColumn>[
-          GridColumn(columnName: 'id', label: Text('ID')),
-          GridColumn(columnName: 'name', label: Text('Name')),
-          GridColumn(columnName: 'designation', label: Text('Designation')),
-          GridColumn(columnName: 'salary', label: Text('Salary')),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              child: SfDataGrid(
+                source: employeeDataSource!,
+                columnWidthMode: ColumnWidthMode.fill,
+                columns: <GridColumn>[
+                  GridColumn(columnName: 'id', label: Text('ID')),
+                  GridColumn(columnName: 'name', label: Text('Name')),
+                  GridColumn(
+                      columnName: 'designation', label: Text('Designation')),
+                  GridColumn(columnName: 'salary', label: Text('Salary')),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+              child: Container(
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Label(
+                        "Scan",
+                        color: Colors.grey,
+                      )),
+                  SizedBox(
+                    height: 15,
+                    child: VerticalDivider(
+                      color: COLOR_BLACK,
+                      thickness: 2,
+                    ),
+                  ),
+                  Label(
+                    "Hold",
+                    color: COLOR_BLACK,
+                  ),
+                ],
+              ),
+            ),
+          ))
         ],
       ),
     );
