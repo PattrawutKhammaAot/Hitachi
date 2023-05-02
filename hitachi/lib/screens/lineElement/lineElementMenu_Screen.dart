@@ -26,7 +26,7 @@ class _LineElementScreenState extends State<LineElementScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     CardButton2(
-                      text: "Line Element",
+                      text: "Winding Start",
                       onPress: () => Navigator.pushNamed(
                           context, RouterList.WindingJobStart_Scan_Screen),
                     ),
@@ -82,12 +82,13 @@ class _LineElementScreenState extends State<LineElementScreen> {
                   children: [
                     CardButton2(
                       text: "Report Route Sheet",
-                      // onPress: () => Navigator.pushNamed(
-                      //     context, RouterList.MAIN_MENU),
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.ReportRouteSheet_Screen),
                     ),
                     CardButton2(
                       text: "Material Input",
-                      onPress: () => print("test2"),
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.MaterialInput_Screen),
                     ),
                   ],
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
+import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.dart';
+import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/windingjobFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
@@ -37,6 +39,16 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: WindingJobFinishScreen(),
+            type: PageTransitionType.fade);
+      case RouterList.ReportRouteSheet_Screen:
+        return PageTransition(
+            settings: settings,
+            child: ReportRouteSheetScreen(),
+            type: PageTransitionType.fade);
+      case RouterList.MaterialInput_Screen:
+        return PageTransition(
+            settings: settings,
+            child: MaterialInputScreen(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

@@ -20,4 +20,11 @@ class RouterList {
   //WindingJobFinish
   static const String WindingJobFinish_Screen =
       '/lineElementMenu/windingFinish';
+  //ReportRouteSheetScreen
+  static const String ReportRouteSheet_Screen =
+      '/lineElementMenu/reportRouteSheet/reportRouteSheet';
+
+  //ReportRouteSheetScreen
+  static const String MaterialInput_Screen =
+      '/lineElementMenu/materialInput/materialInput';
 }
