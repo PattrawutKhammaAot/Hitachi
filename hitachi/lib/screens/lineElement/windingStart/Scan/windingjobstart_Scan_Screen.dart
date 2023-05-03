@@ -115,7 +115,25 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         weight1.text.trim().isEmpty ||
         weight2.text.trim() == null ||
         weight2.text.trim().isEmpty) {
-      bool isSave = await _SaveWindingStartWithWeight();
+      ///
+
+      num totalWeight =
+          num.parse(weight1.text.trim()) + num.parse(weight2.text.trim());
+      totalWeight = num.parse(totalWeight.toStringAsFixed(2));
+
+      ///
+      bool isSave = await _SaveWindingStartWithWeight(
+        MACHINE_NO: int.tryParse(machineNo.text.trim()),
+        OPERATOR_NAME: operatorName.text.trim(),
+        BATCH_NO: int.tryParse(batchNo.text.trim()),
+        PRODUCT: int.tryParse(product.text.trim()),
+        PACK_NO: int.tryParse(filmPackNo.text.trim()),
+        PAPER_CORE: paperCodeLot.text.trim(),
+        PP_CORE: ppFilmLot.text.trim(),
+        FOIL_CORE: foilLot.text.trim(),
+        BATCH_START_DATE: DateTime.now.toString(),
+        weight: totalWeight,
+      );
       if (isSave) {
         EasyLoading.showSuccess('Save complete');
       } else {
@@ -124,7 +142,18 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     }
   }
 
-  Future<bool> _SaveWindingStartWithWeight() async {
+  Future<bool> _SaveWindingStartWithWeight({
+    int? MACHINE_NO,
+    String? OPERATOR_NAME,
+    int? BATCH_NO,
+    int? PRODUCT,
+    int? PACK_NO,
+    String? PAPER_CORE,
+    String? PP_CORE,
+    String? FOIL_CORE,
+    String? BATCH_START_DATE,
+    num? weight,
+  }) async {
     var sm, s1, s2, bomp;
     try {
       var sql = await databaseHelper.queryDataSelect(
@@ -134,7 +163,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           where: 'BatchNo',
           keyAnd: 'start_end',
           value: 'S',
-          intValue: int.tryParse(batchNo.text.trim()));
+          intValue: BATCH_NO);
 
       var packNo = sql[0];
       //notsure
@@ -143,23 +172,15 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       {
         var sqlInsertWINDING_SHEET =
             await databaseHelper.insertDataSheet('WINDING_SHEET', {
-          'MachineNo': machineNo.text.trim(),
-          'OperatorName': int.tryParse(
-            operatorName.text.trim(),
-          ),
-          'BatchNo': int.tryParse(
-            batchNo.text.trim(),
-          ),
-          'Product': int.tryParse(
-            product.text.trim(),
-          ),
-          'PackNo': int.tryParse(
-            filmPackNo.text.trim(),
-          ),
-          'PaperCore': paperCodeLot.text.trim(),
-          'PPCore': ppFilmLot.text.trim(),
-          'FoilCore': foilLot.text.trim(),
-          'BatchStartDate': startDate.toString(),
+          'MachineNo': MACHINE_NO,
+          'OperatorName': OPERATOR_NAME,
+          'BatchNo': BATCH_NO,
+          'Product': PRODUCT,
+          'PackNo': PACK_NO,
+          'PaperCore': PAPER_CORE,
+          'PPCore': PP_CORE,
+          'FoilCore': FOIL_CORE,
+          'BatchStartDate': BATCH_START_DATE,
           'Status': 'P',
           'start_end': 'S',
           'checkComplete': '0'
@@ -171,7 +192,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
-          intValue: int.tryParse(machineNo.text.trim()));
+          intValue: MACHINE_NO);
       var MachineNo = sqlWeight[0];
       //Not Sure
       if (MachineNo['MachineNo'] == 0 || MachineNo['MachineNo'] == null) {
@@ -182,7 +203,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             select4: 'BomP',
             formTable: 'SPECIFICATION_SHEET',
             where: 'IPE',
-            stringValue: product.text.trim());
+            stringValue: PRODUCT.toString());
         if (sql_specification.length > 0) {
           var spec = sql_specification[0];
 
@@ -205,16 +226,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             bomp = double.parse(spec['BomP'].toString());
             bomp = double.parse(bomp.toStringAsFixed(2));
           }
-          target =
-              double.parse(((weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
+          target = double.parse(
+              ((weight! - sm - s1 - s2) / bomp).toStringAsFixed(2));
         } else {
-          target = weight;
+          target = weight!;
         }
-        await databaseHelper.insertDataSheet('WINDING_WEIGHT_SHEET', {
-          'MachineNo': machineNo.text.trim(),
-          'BatchNo': int.tryParse(batchNo.text.trim()),
-          'Target': target
-        });
+        await databaseHelper.insertDataSheet('WINDING_WEIGHT_SHEET',
+            {'MachineNo': MACHINE_NO, 'BatchNo': BATCH_NO, 'Target': target});
       } else {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
@@ -223,7 +241,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             select4: 'BomP',
             formTable: 'SPECIFICATION_SHEET',
             where: 'IPE',
-            stringValue: product.text.trim());
+            stringValue: PRODUCT.toString());
         if (sql_specification.length > 0) {
           var spec = sql_specification[0];
 
@@ -246,21 +264,19 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             bomp = double.parse(spec['BomP'].toString());
             bomp = double.parse(bomp.toStringAsFixed(2));
           }
-          target =
-              double.parse(((weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
+          target = double.parse(((weight! ?? this.weight - sm - s1 - s2) / bomp)
+              .toStringAsFixed(2));
         } else {
-          target = weight;
+          target = weight! ?? this.weight;
         }
         await databaseHelper.updateWindingWeight(
             table: 'WIND_WEIGHT_SHEET',
             key1: 'BatchNo',
-            yieldKey1: int.tryParse(
-              batchNo.text.trim(),
-            ),
+            yieldKey1: BATCH_NO,
             key2: 'Target',
             yieldKey2: target,
             whereKey: 'MachineNo',
-            value: int.tryParse(machineNo.text.trim()));
+            value: MACHINE_NO);
       }
 
       return true;
