@@ -6,6 +6,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
+import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
+import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
 
 part 'line_element_event.dart';
 part 'line_element_state.dart';
@@ -15,27 +17,58 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     on<LineElementEvent>((event, emit) {
       // TODO: implement event handler
     });
+    //HOLD
     on<PostSendWindingStartEvent>(
       (event, emit) async {
         try {
           emit(PostSendWindingStartLoadingState());
-          final mlist = await fetchSendWinding(event.items);
+          final mlist = await fetchSendWindingHold(event.items);
           emit(PostSendWindingStartLoadedState(mlist));
         } catch (e) {
           emit(PostSendWindingStartErrorState(e.toString()));
         }
       },
     );
+    //SCAN
+    on<PostSendWindingStartReturnWeightEvent>(
+      (event, emit) async {
+        try {
+          emit(PostSendWindingStartReturnWeightLoadingState());
+          final mlist = await fetchSendWindingReturnWeightScan(event.items);
+          emit(PostSendWindingStartReturnWeightLoadedState(mlist));
+        } catch (e) {
+          emit(PostSendWindingStartReturnWeightErrorState(e.toString()));
+        }
+      },
+    );
+  }
+//Scan
+  Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
+      sendWdsReturnWeightOutputModel item) async {
+    try {
+      Response responese = await Dio().post(
+          ApiConfig.LE_SEND_WINDING_START_WEIGHT,
+          options: Options(headers: ApiConfig.HEADER()),
+          data: jsonEncode(item));
+      print(responese.data);
+      sendWdsReturnWeightInputModel post =
+          sendWdsReturnWeightInputModel.fromJson(responese.data);
+      return post;
+    } catch (e, s) {
+      // throw StateError();
+      print("Exception occured: $e StackTrace: $s");
+      return sendWdsReturnWeightInputModel();
+    }
   }
 
-  Future<SendWindingStartModelInput> fetchSendWinding(
+  //Hold
+  Future<SendWindingStartModelInput> fetchSendWindingHold(
       SendWindingStartModelOutput itemOutput) async {
-    print(ApiConfig.LE_SEND_WINDING_START);
     try {
       Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_START,
           options: Options(headers: ApiConfig.HEADER()),
           data: jsonEncode(itemOutput));
-
+      print(responese.data);
       SendWindingStartModelInput post =
           SendWindingStartModelInput.fromJson(responese.data);
 

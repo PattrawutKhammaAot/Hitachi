@@ -27,30 +27,6 @@ class _MainMenuState extends State<MainMenu> {
   void testCreateData() async {
     // สร้างฐานข้อมูล SQLite และตาราง my_table
     await databaseHelper.initializeDatabase();
-
-    // try {
-    //   await databaseHelper.writeWindingSheet_ToSqlite(
-    //       machineNo: 65423,
-    //       operatorName: 'Pattrawut',
-    //       batchNo: 123456,
-    //       product: 55556,
-    //       packNo: 963126,
-    //       paperCore: '1234987',
-    //       ppCore: '1234567',
-    //       foilCore: 'foilcore',
-    //       batchEndDate: DateTime.now().toString(),
-    //       batchStartDate: DateTime.now().toString(),
-    //       element: 57,
-    //       status: 'sttus',
-    //       start_End: DateTime.now().toString(),
-    //       check_Complete: 'true');
-    // } catch (e) {
-    //   print(e);
-    // }
-
-    // await databaseHelpwriteTableDateTimeNow_ToSqliteite(
-    //     dateTimeNow: DateTime.now().toString());
-    // await databaseHelper.writeDataToSQLite('WINDING_SHEET');
   }
 
   _getdata() {

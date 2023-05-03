@@ -15,3 +15,12 @@ class PostSendWindingStartEvent extends LineElementEvent {
   @override
   List<Object> get prop => [items];
 }
+
+class PostSendWindingStartReturnWeightEvent extends LineElementEvent {
+  const PostSendWindingStartReturnWeightEvent(this.items);
+
+  final sendWdsReturnWeightOutputModel items;
+
+  @override
+  List<Object> get prop => [items];
+}

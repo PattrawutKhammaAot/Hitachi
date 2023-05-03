@@ -9,6 +9,7 @@ abstract class LineElementState extends Equatable {
 
 class LineElementInitial extends LineElementState {}
 
+//Hold
 class PostSendWindingStartLoadingState extends LineElementState {
   const PostSendWindingStartLoadingState();
   @override
@@ -25,6 +26,29 @@ class PostSendWindingStartLoadedState extends LineElementState {
 
 class PostSendWindingStartErrorState extends LineElementState {
   const PostSendWindingStartErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
+//ReturnWeight
+class PostSendWindingStartReturnWeightLoadingState extends LineElementState {
+  const PostSendWindingStartReturnWeightLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class PostSendWindingStartReturnWeightLoadedState extends LineElementState {
+  const PostSendWindingStartReturnWeightLoadedState(this.item);
+  final sendWdsReturnWeightInputModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class PostSendWindingStartReturnWeightErrorState extends LineElementState {
+  const PostSendWindingStartReturnWeightErrorState(this.error);
   final String error;
 
   @override

@@ -31,6 +31,7 @@ class DatabaseHelper {
     String databasesPath = await getDatabasesPath();
     String dbPath = join(databasesPath, 'my_database.db');
     var database = await openDatabase(dbPath, version: 1, onCreate: _createDb);
+    print("Create a Tables Data");
     return database;
   }
   //สร้างไฟล์กับ Column
@@ -60,15 +61,53 @@ class DatabaseHelper {
     return await db.query(tableName);
   }
 
+  Future<List<Map<String, dynamic>>> queryDataSelect(
+      {String? select1,
+      String? select2,
+      String? select3,
+      String? select4,
+      String? formTable,
+      String? where,
+      String? stringValue,
+      int? intValue,
+      String? keyAnd,
+      String? value}) async {
+    Database db = await this.database;
+    String sql = "SELECT ${select1}, ${select2}, ${select3}, ${select4} " +
+        "FROM ${formTable} " +
+        "WHERE ${where} = '${stringValue ?? intValue}'" +
+        //if error pls check here
+        "AND(${keyAnd}='${value}')";
+
+    return await db.rawQuery(sql);
+  }
+
+  Future<int> updateWindingWeight(
+      {String? table,
+      String? key1,
+      String? key2,
+      int? yieldKey1,
+      num? yieldKey2,
+      String? whereKey,
+      int? value}) async {
+    final Database db = await database;
+    String sql =
+        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
+    return await db.rawUpdate(sql);
+  }
+
   //เขียนข้อมูลในSQlite
 
   //ลบข้อมูลในSQLITE
-  Future<void> deleteDataFromSQLite(int id,
-      {String? tableName, String? keyName}) async {
+  Future<void> deleteDataFromSQLite({
+    String? tableName,
+    String? where,
+    required int? id,
+  }) async {
     try {
       Database db = await DatabaseHelper().database;
       int count = await db
-          .delete('${tableName!}', where: '${keyName} = ?', whereArgs: [id]);
+          .delete('${tableName!}', where: '${where} = ?', whereArgs: [id]);
       print('Data deleted from SQLite with count: $count');
     } catch (e) {
       print('Error deleting from SQLite: $e');
@@ -126,29 +165,25 @@ class DatabaseHelper {
   //TABLE WINDING ------------------------------------------------------------------------------------------------------------------------------------------------------------
   ///
   Future<void> writeTableWindingSheet_ToSqlite(WindingSheetModel items) async {
-    try {
-      Database db = await DatabaseHelper().database;
-      Map<String, dynamic> row = {
-        'MachineNo': items.MACHINE_NO,
-        'OperatorName': items.OPERATOR_NAME,
-        'BatchNo': items.BATCH_NO,
-        'Product': items.PRODUCT,
-        'PackNo': items.PACK_NO,
-        'PaperCore': items.PAPER_CORE,
-        'PPCore': items.PP_CORE,
-        'FoilCore': items.FOIL_CORE,
-        'BatchStartDate': items.BATCH_START_DATE,
-        'BatchEndDate': items.BATCH_END_DATE,
-        'Element': items.ELEMENT,
-        'Status': items.STATUS,
-        'start_end': items.START_END,
-        'checkComplete': items.CHECK_COMPLETE
-      };
-      int id = await db.insert('WINDING_SHEET', row);
-      print('Data written to SQLite with id: $id');
-    } catch (e) {
-      print('Error writing to SQLite: $e');
-    }
+    Database db = await DatabaseHelper().database;
+    Map<String, dynamic> row = {
+      'MachineNo': items.MACHINE_NO,
+      'OperatorName': items.OPERATOR_NAME,
+      'BatchNo': items.BATCH_NO,
+      'Product': items.PRODUCT,
+      'PackNo': items.PACK_NO,
+      'PaperCore': items.PAPER_CORE,
+      'PPCore': items.PP_CORE,
+      'FoilCore': items.FOIL_CORE,
+      'BatchStartDate': items.BATCH_START_DATE,
+      'BatchEndDate': items.BATCH_END_DATE,
+      'Element': items.ELEMENT,
+      'Status': items.STATUS,
+      'start_end': items.START_END,
+      'checkComplete': items.CHECK_COMPLETE
+    };
+    int id = await db.insert('WINDING_SHEET', row);
+    print('Data written to SQLite with id: $id');
   }
 
   void _createTableWinding(Database db, int newVersion) async {
@@ -582,25 +617,21 @@ class DatabaseHelper {
     int? batchNo,
     num? target,
   }) async {
-    try {
-      Database db = await DatabaseHelper().database;
-      Map<String, dynamic> row = {
-        'MachineNo': machineNo,
-        'BatchNo': batchNo,
-        'Target': target,
-      };
-      int id = await db.insert('WINDING_WEIGHT_SHEET', row);
-      print('Data written to SQLite with id: $id');
-    } catch (e) {
-      print('Error writing to SQLite: $e');
-    }
+    Database db = await DatabaseHelper().database;
+    Map<String, dynamic> row = {
+      'MachineNo': machineNo,
+      'BatchNo': batchNo,
+      'Target': target,
+    };
+    int id = await db.insert('WINDING_WEIGHT_SHEET', row);
+    print('Data written to SQLite with id: $id');
   }
 
   void _createWindingWeightSheet(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_WEIGHT_SHEET ('
         'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT, '
         'BatchNo INTEGER,'
-        'Target REAL,'
+        'Target REAL'
         ')');
   }
 }
