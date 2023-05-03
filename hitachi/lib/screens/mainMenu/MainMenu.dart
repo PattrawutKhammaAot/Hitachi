@@ -16,35 +16,42 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
   int count = 144545;
   @override
   void initState() {
-    // testCreateData();
+    testCreateData();
     super.initState();
   }
 
-  // void testCreateData() async {
-  //   DatabaseHelper databaseHelper = DatabaseHelper();
+  void testCreateData() async {
+    // สร้างฐานข้อมูล SQLite และตาราง my_table
+    await databaseHelper.initializeDatabase();
 
-  //   // สร้างฐานข้อมูล SQLite และตาราง my_table
-  //   //await databaseHelper.initializeDatabase();
+    // try {
+    //   await databaseHelper.writeWindingSheet_ToSqlite(
+    //       machineNo: 65423,
+    //       operatorName: 'Pattrawut',
+    //       batchNo: 123456,
+    //       product: 55556,
+    //       packNo: 963126,
+    //       paperCore: '1234987',
+    //       ppCore: '1234567',
+    //       foilCore: 'foilcore',
+    //       batchEndDate: DateTime.now().toString(),
+    //       batchStartDate: DateTime.now().toString(),
+    //       element: 57,
+    //       status: 'sttus',
+    //       start_End: DateTime.now().toString(),
+    //       check_Complete: 'true');
+    // } catch (e) {
+    //   print(e);
+    // }
 
-  //   // เขียนข้อมูลลงในฐานข้อมูล
-  //   await databaseHelper.writeDataToSQLite("Aotza", 20);
-
-  //   // await databaseHelper.deleteDataFromSQLite(3);
-  //   // await databaseHelper.deleteDataFromSQLite(4);
-  //   // await databaseHelper.deleteDataFromSQLite(5);
-  //   // await databaseHelper.deleteDataFromSQLite(6);
-  //   // await databaseHelper.deleteDataFromSQLite(7);
-  //   // await databaseHelper.deleteDataFromSQLite(8);
-  //   // await databaseHelper.deleteDataFromSQLite(9);
-  //   // await databaseHelper.deleteDataFromSQLite(10);
-  //   // await databaseHelper.deleteDataFromSQLite(11);
-  //   // await databaseHelper.deleteDataFromSQLite(12);
-
-  //   print("object");
-  // }
+    // await databaseHelpwriteTableDateTimeNow_ToSqliteite(
+    //     dateTimeNow: DateTime.now().toString());
+    // await databaseHelper.writeDataToSQLite('WINDING_SHEET');
+  }
 
   _getdata() {
     BlocProvider.of<CheckPackNoBloc>(context).add(GetCheckPackNoEvent(count));

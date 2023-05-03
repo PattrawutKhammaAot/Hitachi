@@ -8,9 +8,11 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/route/router_list.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
   const WindingJobStartScanScreen({super.key});
@@ -32,6 +34,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final _formKey = GlobalKey<FormState>();
 
   SendWindingStartModelInput? items;
+  List<Map<String, dynamic>> tableList = [];
+  List<DataSheetTableModel>? tableModel;
+
+//HelperDatabase
+  DatabaseHelper databaseHelper = DatabaseHelper();
 
   String text = "";
 
@@ -54,6 +61,49 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     });
   }
 
+  void sendDataToSqlLite() async {
+    await databaseHelper.writeTableDataSheet_ToSQLite(DataSheetTableModel(
+        PO_NO: 099,
+        IN_VOICE: '654321',
+        FRIEGHT: 'TRUE',
+        INCOMING_DATE: "123456",
+        STORE_BY: 'AOT',
+        PACK_NO: '987654321',
+        STORE_DATE: "123456",
+        STATUS: 'COMPLETE',
+        W1: 123456789.89,
+        W2: 66.68,
+        WEIGHT: 87.05,
+        MFG_DATE: "123456",
+        THICKNESS: 2.5,
+        WRAP_GRADE: 'A',
+        ROLL_NO: 12345,
+        CHECK_COMPLETE: 'TRUE'));
+    // await databaseHelper.writeTableDataSheet_ToSQLite(
+    //     po_No: 3215,
+    // IN_VOICE: '654321',
+    // FRIEGHT: 'TRUE',
+    // INCOMING_DATE: "123456",
+    // STORE_BY: 'AOT',
+    // PACK_NO: '987654321',
+    // STORE_DATE: "123456",
+    // STATUS: 'COMPLETE',
+    // W1: 123456789.89,
+    // W2: 66.68,
+    // WEIGHT: 87.05,
+    // MFG_DATE: "123456",
+    // THICKNESS: 2.5,
+    // WRAP_GRADE: 'A',
+    // ROLL_NO: 12345,
+    // CHECK_COMPLETE: 'TRUE'
+    // );
+    tableList = await databaseHelper.queryAllRows('DATA_SHEET');
+    tableModel =
+        tableList.map((map) => DataSheetTableModel.fromMap(map)).toList();
+    print(tableModel![1].PO_NO);
+    print(tableModel![0].PO_NO);
+  }
+
   void _checkValueController() {
     if (machineNo.text.isNotEmpty ||
         operatorName.text.isNotEmpty ||
@@ -63,9 +113,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         paperCodeLot.text.isNotEmpty ||
         ppFilmLot.text.isNotEmpty ||
         foilLot.text.isNotEmpty) {
-      sendData();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return _popupWeight();
+          });
+      // sendData();
     } else {
-      EasyLoading.showError("Invaild", duration: Duration(seconds: 5));
+      EasyLoading.showError("กรุณาใส่ค่า", duration: Duration(seconds: 5));
     }
   }
 
@@ -98,13 +153,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                   if (state is PostSendWindingStartLoadedState) {
                     EasyLoading.dismiss();
                     items = state.item;
+
                     if (items?.RESULT == false) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return _popupWeight(items!.RESULT == true);
-                          });
                     } else if (items?.RESULT == true) {
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (BuildContext context) {
+                      //       return _popupWeight();
+                      //     });
                     } else {
                       EasyLoading.showError("Load Data Failed",
                           duration: Duration(seconds: 3));
@@ -133,6 +189,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             BoxInputField(
                               labelText: "Operator Name :",
                               controller: operatorName,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^[a-zA-Z0-9]+$')),
+                                LengthLimitingTextInputFormatter(12),
+                              ],
                             ),
                             SizedBox(
                               height: 5,
@@ -141,6 +202,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               labelText: "Batch No :",
                               controller: batchNo,
                               type: TextInputType.number,
+                              maxLength: 12,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
                             ),
                             SizedBox(
                               height: 5,
@@ -158,6 +224,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               labelText: "Film Pack No :",
                               controller: filmPackNo,
                               type: TextInputType.number,
+                              maxLength: 8,
                             ),
                             SizedBox(
                               height: 5,
@@ -239,8 +306,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     );
   }
 
-  Widget _popupWeight(bool isCheckValue) {
-    return isCheckValue == true
+  Widget _popupWeight() {
+    return items?.RESULT == true
         ? AlertDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
