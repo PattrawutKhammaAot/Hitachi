@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
+import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -85,8 +86,9 @@ class DatabaseHelper {
   //     print('SQLite file not found!');
   //   }
   // }
-
-  //DataSheetTable
+  //
+  //TableDataSheetTable---------------------------------------------------------------------------------------------------------------------------------
+  //
   Future<void> writeTableDataSheet_ToSQLite(DataSheetTableModel model) async {
     try {
       Database db = await DatabaseHelper().database;
@@ -123,25 +125,24 @@ class DatabaseHelper {
   ///
   //TABLE WINDING ------------------------------------------------------------------------------------------------------------------------------------------------------------
   ///
-  Future<void> writeTableWindingSheet_ToSqlite(
-      DataSheetTableModel items) async {
+  Future<void> writeTableWindingSheet_ToSqlite(WindingSheetModel items) async {
     try {
       Database db = await DatabaseHelper().database;
       Map<String, dynamic> row = {
-        // 'MachineNo': items.machineNo,
-        // 'OperatorName': items.operatorName,
-        // 'BatchNo': items.batchNo,
-        // 'Product': items.product,
-        // 'PackNo': items.packNo,
-        // 'PaperCore': items.paperCore,
-        // 'PPCore': items.paperCore,
-        // 'FoilCore': items.foilCore,
-        // 'BatchStartDate': items.batchStartDate,
-        // 'BatchEndDate': items.batchEndDate,
-        // 'Element': items.element,
-        // 'Status': items.status,
-        // 'start_end': items.start_End,
-        // 'checkComplete': items.check_Complete
+        'MachineNo': items.MACHINE_NO,
+        'OperatorName': items.OPERATOR_NAME,
+        'BatchNo': items.BATCH_NO,
+        'Product': items.PRODUCT,
+        'PackNo': items.PACK_NO,
+        'PaperCore': items.PAPER_CORE,
+        'PPCore': items.PP_CORE,
+        'FoilCore': items.FOIL_CORE,
+        'BatchStartDate': items.BATCH_START_DATE,
+        'BatchEndDate': items.BATCH_END_DATE,
+        'Element': items.ELEMENT,
+        'Status': items.STATUS,
+        'start_end': items.START_END,
+        'checkComplete': items.CHECK_COMPLETE
       };
       int id = await db.insert('WINDING_SHEET', row);
       print('Data written to SQLite with id: $id');
