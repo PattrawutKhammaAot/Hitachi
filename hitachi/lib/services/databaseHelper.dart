@@ -53,6 +53,8 @@ class DatabaseHelper {
   Future<int> insertDataSheet(
       String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.insert(tableName, row);
   }
 
@@ -128,26 +130,27 @@ class DatabaseHelper {
   //
   //TableDataSheetTable---------------------------------------------------------------------------------------------------------------------------------
   //
-  Future<void> writeTableDataSheet_ToSQLite(DataSheetTableModel model) async {
+  Future<void> writeTableDataSheet_ToSQLite(
+      {DataSheetTableModel? model}) async {
     try {
       Database db = await DatabaseHelper().database;
       Map<String, dynamic> row = {
-        'PO_NO': model.PO_NO,
-        'INVOICE': model.IN_VOICE,
-        'FRIEGHT': model.FRIEGHT,
-        'INCOMING_DATE': model.INCOMING_DATE,
-        'STORE_BY': model.STORE_BY,
-        'PACK_NO': model.PACK_NO,
-        'STORE_DATE': model.STORE_DATE,
-        'STATUS': model.STATUS,
-        'W1': model.W1,
-        'W2': model.W2,
-        'WEIGHT': model.WEIGHT,
-        'MFG_DATE': model.MFG_DATE,
-        'THICKNESS': model.THICKNESS,
-        'WRAP_GRADE': model.WRAP_GRADE,
-        'ROLL_NO': model.ROLL_NO,
-        'checkComplete': model.CHECK_COMPLETE,
+        'PO_NO': model?.PO_NO,
+        'INVOICE': model?.IN_VOICE,
+        'FRIEGHT': model?.FRIEGHT,
+        'INCOMING_DATE': model?.INCOMING_DATE,
+        'STORE_BY': model?.STORE_BY,
+        'PACK_NO': model?.PACK_NO,
+        'STORE_DATE': model?.STORE_DATE,
+        'STATUS': model?.STATUS,
+        'W1': model?.W1,
+        'W2': model?.W2,
+        'WEIGHT': model?.WEIGHT,
+        'MFG_DATE': model?.MFG_DATE,
+        'THICKNESS': model?.THICKNESS,
+        'WRAP_GRADE': model?.WRAP_GRADE,
+        'ROLL_NO': model?.ROLL_NO,
+        'checkComplete': model?.CHECK_COMPLETE,
       };
       int id = await db.insert('DATA_SHEET', row);
       print('Data written to SQLite with id: $id');

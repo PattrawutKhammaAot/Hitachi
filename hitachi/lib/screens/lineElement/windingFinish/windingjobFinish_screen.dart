@@ -14,6 +14,29 @@ class WindingJobFinishScreen extends StatefulWidget {
 }
 
 class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
+  final TextEditingController operatorNameController = TextEditingController();
+  final TextEditingController batchNoController = TextEditingController();
+  final TextEditingController elementQtyController = TextEditingController();
+
+  bool callWindingFin({int? batchNo, int? element, String? batchEnddate}) {
+    bool checkSave = false;
+    try {
+      checkSave = true;
+      // ใส่โค้ดที่ต้องการให้ทำงานได้ตรงนี้
+    } catch (e) {
+      // กรณีเกิดข้อผิดพลาด ใส่โค้ดที่ต้องการจัดการตรงนี้
+    }
+    if (checkSave == true) {
+      try {
+        // ใส่โค้ดที่ต้องการให้ทำงานได้ตรงนี้
+      } catch (e) {
+        // กรณีเกิดข้อผิดพลาด ใส่โค้ดที่ต้องการจัดการตรงนี้
+      }
+    }
+    // ใส่โค้ดที่ต้องการให้ทำงานต่อไปได้ตรงนี้
+    return checkSave;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BgWhite(
@@ -28,14 +51,17 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   BoxInputField(
                     labelText: "Operator Name :",
                     maxLength: 3,
+                    controller: operatorNameController,
                   ),
                   BoxInputField(
                     labelText: "Batch No :",
                     maxLength: 3,
+                    controller: batchNoController,
                   ),
                   BoxInputField(
                     labelText: "Element QTY :",
                     maxLength: 3,
+                    controller: elementQtyController,
                   ),
                 ],
               ),

@@ -55,7 +55,6 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           sendWdsReturnWeightInputModel.fromJson(responese.data);
       return post;
     } catch (e, s) {
-      // throw StateError();
       print("Exception occured: $e StackTrace: $s");
       return sendWdsReturnWeightInputModel();
     }
