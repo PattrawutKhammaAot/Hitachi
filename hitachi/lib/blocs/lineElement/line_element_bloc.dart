@@ -108,7 +108,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       return post;
     } catch (e, s) {
       // throw StateError();
-      print("Exception occured: $e StackTrace: $s");
+      print("catch Exception occured: $e StackTrace: $s");
       return SendWdsFinishInputModel();
     }
   }

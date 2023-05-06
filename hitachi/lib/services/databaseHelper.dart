@@ -74,15 +74,28 @@ class DatabaseHelper {
       String? stringValue,
       int? intValue,
       String? keyAnd,
-      String? value}) async {
-    Database db = await this.database;
-    String sql = "SELECT ${select1}, ${select2}, ${select3}, ${select4} " +
-        "FROM ${formTable} " +
-        "WHERE ${where} = '${stringValue ?? intValue}'" +
-        //if error pls check here
-        "AND(${keyAnd}='${value}')";
+      String? keyAnd2,
+      String? value,
+      String? value2}) async {
+    try {
+      String sql = "SELECT ${select1}, ${select2}, ${select3}, ${select4} " +
+          "FROM ${formTable} " +
+          "WHERE ${where} = '${stringValue ?? intValue}'" + // แก้ไขตรงนี้
+          " AND (${keyAnd}='${value}') " +
+          "AND (${keyAnd2}='${value2}')";
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
 
-    return await db.rawQuery(sql);
+  Future<void> deleteSave(
+      {String? tableName, String? where, String? keyWhere}) async {
+    final Database db = await database;
+    String sql = "delete from ${tableName} WHERE ${where} = '${keyWhere}'";
+    await db.delete(sql);
   }
 
   Future<int> updateWindingWeight(
@@ -205,6 +218,7 @@ class DatabaseHelper {
         'Element INTEGER, '
         'Status TEXT, '
         'start_end TEXT, '
+        'value TEXT,'
         'checkComplete TEXT '
         ')');
   }

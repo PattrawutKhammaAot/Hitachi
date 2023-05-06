@@ -276,7 +276,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       var packNo = sql[0];
       //notsure
       if (packNo['PackNo'] == null ||
-          packNo['PackNo']) // If ds.Tables("PACK_NO").Rows.Count <= 0 Then
+          packNo['PackNo'] <= 0) // If ds.Tables("PACK_NO").Rows.Count <= 0 Then
       {
         var sqlInsertWINDING_SHEET =
             await databaseHelper.insertDataSheet('WINDING_SHEET', {
