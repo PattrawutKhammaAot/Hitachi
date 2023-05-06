@@ -32,6 +32,7 @@ class DatabaseHelper {
     String dbPath = join(databasesPath, 'my_database.db');
     var database = await openDatabase(dbPath, version: 1, onCreate: _createDb);
     print("Create a Tables Data");
+    print(dbPath);
     return database;
   }
   //สร้างไฟล์กับ Column

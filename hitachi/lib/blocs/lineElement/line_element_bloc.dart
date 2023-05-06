@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
+import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
+import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
@@ -38,6 +40,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(PostSendWindingStartReturnWeightLoadedState(mlist));
         } catch (e) {
           emit(PostSendWindingStartReturnWeightErrorState(e.toString()));
+        }
+      },
+    );
+    on<PostSendWindingFinishEvent>(
+      (event, emit) async {
+        try {
+          emit(PostSendWindingFinishLoadingState());
+          final mlist = await fetchSendWindingFinish(event.items);
+          emit(PostSendWindingFinishLoadedState(mlist));
+        } catch (e) {
+          emit(PostSendWindingFinishErrorState(e.toString()));
         }
       },
     );
@@ -76,6 +89,27 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       // throw StateError();
       print("Exception occured: $e StackTrace: $s");
       return SendWindingStartModelInput();
+    }
+  }
+
+  //Finish
+  //Hold
+  Future<SendWdsFinishInputModel> fetchSendWindingFinish(
+      SendWdsFinishOutputModel itemOutput) async {
+    try {
+      Response responese = await Dio().post(
+          ApiConfig.LE_SEND_WINDING_FINISH + "123",
+          options: Options(headers: ApiConfig.HEADER()),
+          data: jsonEncode(itemOutput));
+      print(responese.data);
+      SendWdsFinishInputModel post =
+          SendWdsFinishInputModel.fromJson(responese.data);
+
+      return post;
+    } catch (e, s) {
+      // throw StateError();
+      print("Exception occured: $e StackTrace: $s");
+      return SendWdsFinishInputModel();
     }
   }
 }

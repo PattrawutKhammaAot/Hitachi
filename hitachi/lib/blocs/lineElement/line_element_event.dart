@@ -24,3 +24,12 @@ class PostSendWindingStartReturnWeightEvent extends LineElementEvent {
   @override
   List<Object> get prop => [items];
 }
+
+class PostSendWindingFinishEvent extends LineElementEvent {
+  const PostSendWindingFinishEvent(this.items);
+
+  final SendWdsFinishOutputModel items;
+
+  @override
+  List<Object> get prop => [items];
+}

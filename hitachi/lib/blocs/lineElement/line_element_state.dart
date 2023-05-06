@@ -54,3 +54,26 @@ class PostSendWindingStartReturnWeightErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+class PostSendWindingFinishLoadingState extends LineElementState {
+  const PostSendWindingFinishLoadingState();
+  @override
+  List<Object> get props => [];
+}
+//Finish
+
+class PostSendWindingFinishLoadedState extends LineElementState {
+  const PostSendWindingFinishLoadedState(this.item);
+  final SendWdsFinishInputModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class PostSendWindingFinishErrorState extends LineElementState {
+  const PostSendWindingFinishErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

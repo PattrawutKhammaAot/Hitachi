@@ -518,7 +518,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             SizedBox(
                               height: 5,
                             ),
-
                             Container(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -542,27 +541,22 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                                   ),
                                 ],
                               ),
-                            )
-                            // Container(
-                            //   child: Button(
-                            //     text: Label("test"),
-                            //   ),
-                            // ),
+                            ),
+                            Container(
+                              child: Button(
+                                bgColor: _formKey.currentState == null
+                                    ? COLOR_BLUE_DARK
+                                    : COLOR_RED,
+                                text: Label(
+                                  "Send",
+                                  color: COLOR_WHITE,
+                                ),
+                                onPress: () => _checkValueController(),
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  Container(
-                    child: Button(
-                      bgColor: _formKey.currentState == null
-                          ? COLOR_BLUE_DARK
-                          : COLOR_RED,
-                      text: Label(
-                        "Send",
-                        color: COLOR_WHITE,
-                      ),
-                      onPress: () => _checkValueController(),
                     ),
                   ),
                 ],

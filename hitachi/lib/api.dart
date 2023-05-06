@@ -26,4 +26,9 @@ class ApiConfig {
   //Post
   static String LE_SEND_WINDING_START_WEIGHT =
       "${BASE_API_URL}LineElement/SendWindingStartReturnWeight";
+
+  ///---------------------WINDING FINISH ----------------------///
+  //Post
+  static String LE_SEND_WINDING_FINISH =
+      "${BASE_API_URL}LineElement/SendWindingFinish";
 }

@@ -14,24 +14,19 @@ class CardButton2 extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(3.0),
         child: Container(
-            height: 150,
-            width: 190,
             child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              color: COLOR_BLUE_DARK,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Label(
-                    text ?? "",
-                    color: COLOR_WHITE,
-                    // fontSize: 16,
-                  ),
-                ],
-              ),
-            )),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          color: COLOR_BLUE_DARK,
+          child: Center(
+            child: Label(
+              text ?? "",
+              color: COLOR_WHITE,
+              textAlign: TextAlign.center,
+              // fontSize: 16,
+            ),
+          ),
+        )),
       ),
     );
   }

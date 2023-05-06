@@ -39,51 +39,54 @@ class _MainMenuState extends State<MainMenu> {
       isHidePreviour: false,
       textTitle: "LineElemnt Menu",
       body: Padding(
-        padding:
-            const EdgeInsets.only(top: 30, bottom: 10, right: 10, left: 10),
-        child: Column(
-          children: <Widget>[
-            CardButton(
-              text: "1.Line Element",
-              onPress: () =>
-                  Navigator.pushNamed(context, RouterList.LINE_ELEMENT_SCREEN),
+        padding: const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),
+        child: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                CardButton(
+                  text: "1.Line Element",
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.LINE_ELEMENT_SCREEN),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  text: "2.Plan Winding",
+                  onPress: () => print("test2"),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  text: "3.Machine Breakdown",
+                  onPress: () => print("test2"),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  text: "4.PM Daily",
+                  onPress: () => print("test2"),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  text: "5.Film Receive",
+                  onPress: () => print("test2"),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  text: "6.Zinc Thickness",
+                  onPress: () => print("test2"),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 15,
-            ),
-            CardButton(
-              text: "2.Plan Winding",
-              onPress: () => print("test2"),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            CardButton(
-              text: "3.Machine Breakdown",
-              onPress: () => print("test2"),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            CardButton(
-              text: "4.PM Daily",
-              onPress: () => print("test2"),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            CardButton(
-              text: "5.Film Receive",
-              onPress: () => print("test2"),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            CardButton(
-              text: "6.Zinc Thickness",
-              onPress: () => print("test2"),
-            ),
-          ],
+          ),
         ),
       ),
     );
