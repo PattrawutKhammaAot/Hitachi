@@ -20,6 +20,18 @@ class RouterList {
   //WindingJobFinish
   static const String WindingJobFinish_Screen =
       '/lineElementMenu/windingFinish';
+  //ProcessStart
+  static const String ProcessStart_Screen =
+      '/lineElementMenu/ProcessStart/processStart_Screen';
+  //ProcessFinish
+  static const String ProcessFinish_Screen =
+      '/lineElementMenu/ProcessFinish/processFinish_Screen';
+  //TreatmentStart
+  static const String TreatMentStartScreen =
+      '/lineElementMenu/TreatmentStart/TreatmentStart_Screen';
+//TreatmentFinish
+  static const String TreatmentFinishScreen =
+      '/lineElementMenu/TreatmentFinish/TreatmentFinish_Screen';
   //ReportRouteSheetScreen
   static const String ReportRouteSheet_Screen =
       '/lineElementMenu/reportRouteSheet/reportRouteSheet';

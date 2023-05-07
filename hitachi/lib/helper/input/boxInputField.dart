@@ -12,7 +12,8 @@ class BoxInputField extends StatelessWidget {
       this.maxLength,
       this.textInputFormatter,
       this.onChanged,
-      this.validator})
+      this.validator,
+      this.maxLines})
       : super(key: key);
 
   final String? labelText;
@@ -23,6 +24,7 @@ class BoxInputField extends StatelessWidget {
   final List<TextInputFormatter>? textInputFormatter;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class BoxInputField extends StatelessWidget {
             controller: controller,
             maxLength: maxLength,
             keyboardType: type,
+            // maxLines: maxLines,
             decoration: InputDecoration(
               counterText: "",
               border:

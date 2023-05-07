@@ -33,3 +33,13 @@ class PostSendWindingFinishEvent extends LineElementEvent {
   @override
   List<Object> get prop => [items];
 }
+
+///////////////////////-----Report Route Sheet Event-----//////////////////////////////
+class ReportRouteSheetEvenet extends LineElementEvent {
+  const ReportRouteSheetEvenet(this.items);
+
+  final String items;
+
+  @override
+  List<Object> get prop => [items];
+}

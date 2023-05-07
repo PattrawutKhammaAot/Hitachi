@@ -31,4 +31,10 @@ class ApiConfig {
   //Post
   static String LE_SEND_WINDING_FINISH =
       "${BASE_API_URL}LineElement/SendWindingFinish";
+
+  ///---------------------REPORT ROUTE SHEET ----------------------///
+
+  //Get
+  static String LE_REPORT_ROUTE_SHEET =
+      "${BASE_API_URL}LineElement/GetReportRouteSheet?batch=";
 }

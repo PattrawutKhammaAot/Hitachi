@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.dart';
+import 'package:hitachi/screens/lineElement/processFinish/processFinish_screen.dart';
+import 'package:hitachi/screens/lineElement/processStart/processStart_screen.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_Screen.dart';
+import 'package:hitachi/screens/lineElement/treatmentFinish/treatmentFinish_screen.dart';
+import 'package:hitachi/screens/lineElement/treatmentStart/treatmentStart_screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/windingjobFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
@@ -25,6 +29,7 @@ class RouteGenerator {
             settings: settings,
             child: LineElementScreen(),
             type: PageTransitionType.leftToRight);
+      //WindgJobStart - LineElement
       case RouterList.WindingJobStart_Scan_Screen:
         return PageTransition(
             settings: settings,
@@ -35,16 +40,42 @@ class RouteGenerator {
             settings: settings,
             child: WindingJobStartHoldScreen(),
             type: PageTransitionType.fade);
+      //WindingJobFinish - LineElement
       case RouterList.WindingJobFinish_Screen:
         return PageTransition(
             settings: settings,
             child: WindingJobFinishScreen(),
             type: PageTransitionType.fade);
+      //ProcessStart - LineElement
+      case RouterList.ProcessStart_Screen:
+        return PageTransition(
+            settings: settings,
+            child: ProcessStartScreen(),
+            type: PageTransitionType.fade);
+      //ProcessStart - LineElement
+      case RouterList.ProcessFinish_Screen:
+        return PageTransition(
+            settings: settings,
+            child: ProcessFinishScreen(),
+            type: PageTransitionType.fade);
+      //TreatmentStart - LineElement
+      case RouterList.TreatMentStartScreen:
+        return PageTransition(
+            settings: settings,
+            child: TreatMentStartScreen(),
+            type: PageTransitionType.fade);
+      case RouterList.TreatmentFinishScreen:
+        return PageTransition(
+            settings: settings,
+            child: TreatmentFinishScreen(),
+            type: PageTransitionType.fade);
+      //ReportRouteSheetScreen - LineElement
       case RouterList.ReportRouteSheet_Screen:
         return PageTransition(
             settings: settings,
             child: ReportRouteSheetScreen(),
             type: PageTransitionType.fade);
+      //MaterialInputScreen - LineElement
       case RouterList.MaterialInput_Screen:
         return PageTransition(
             settings: settings,

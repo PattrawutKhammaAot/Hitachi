@@ -9,6 +9,7 @@ import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
+import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
 import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
@@ -410,63 +411,63 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           autovalidateMode: AutovalidateMode.always,
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: const EdgeInsets.only(top: 5, left: 30, right: 30),
             child: MultiBlocListener(
-              listeners: [
-                BlocListener<LineElementBloc, LineElementState>(
-                    listener: (context, state) {
-                  if (state is PostSendWindingStartReturnWeightLoadingState) {
-                    EasyLoading.show();
-                  } else if (state
-                      is PostSendWindingStartReturnWeightLoadedState) {
-                    bool isOpen = false;
-                    EasyLoading.dismiss();
-                    setState(() {
-                      items = state.item;
-                      if (items!.RESULT == true) {
-                        _saveWindingStartOnlyWeight();
-                        sendComplete();
-                        isOpen = true;
-                      }
-                      if (isOpen) {
-                        _showpopUpWeight();
-                      }
-                    });
-                  }
-                  if (state is PostSendWindingStartReturnWeightErrorState) {
-                    cannotSend();
-                    print("ErrorState");
-                  }
-                })
-              ],
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            BoxInputField(
-                              labelText: "Machine No :",
-                              controller: machineNoController,
-                              maxLength: 3,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxInputField(
-                              labelText: "Operator Name :",
-                              controller: operatorNameController,
-                              textInputFormatter: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^[a-zA-Z0-9]+$')),
-                                LengthLimitingTextInputFormatter(12),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxInputField(
+                listeners: [
+                  BlocListener<LineElementBloc, LineElementState>(
+                      listener: (context, state) {
+                    if (state is PostSendWindingStartReturnWeightLoadingState) {
+                      EasyLoading.show();
+                    } else if (state
+                        is PostSendWindingStartReturnWeightLoadedState) {
+                      bool isOpen = false;
+                      EasyLoading.dismiss();
+                      setState(() {
+                        items = state.item;
+                        if (items!.RESULT == true) {
+                          _saveWindingStartOnlyWeight();
+                          sendComplete();
+                          isOpen = true;
+                        }
+                        if (isOpen) {
+                          _showpopUpWeight();
+                        }
+                      });
+                    }
+                    if (state is PostSendWindingStartReturnWeightErrorState) {
+                      cannotSend();
+                      print("ErrorState");
+                    }
+                  })
+                ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      BoxInputField(
+                        labelText: "Machine No :",
+                        controller: machineNoController,
+                        maxLength: 3,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      BoxInputField(
+                        labelText: "Operator Name :",
+                        controller: operatorNameController,
+                        textInputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[a-zA-Z0-9]+$')),
+                          LengthLimitingTextInputFormatter(12),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: BoxInputField(
                               labelText: "Batch No :",
                               controller: batchNoController,
                               type: TextInputType.number,
@@ -476,92 +477,123 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                                     RegExp(r'[0-9]')),
                               ],
                             ),
-                            SizedBox(
+                          ),
+                          Expanded(
+                            child: SizedBox(
                               height: 5,
                             ),
-                            BoxInputField(
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
                               labelText: "Product",
                               controller: productController,
                               maxLength: 5,
                               type: TextInputType.number,
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxInputField(
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
                               labelText: "Film Pack No :",
                               controller: filmPackNoController,
                               type: TextInputType.number,
                               maxLength: 8,
+                              maxLines: 2,
                             ),
-                            SizedBox(
+                          ),
+                          Expanded(
+                            child: SizedBox(
                               height: 5,
                             ),
-                            BoxInputField(
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
                               labelText: "Paper Code Lot :",
                               controller: paperCodeLotController,
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            BoxInputField(
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
                               labelText: "PP Film Lot :",
                               controller: ppFilmLotController,
                             ),
-                            SizedBox(
+                          ),
+                          Expanded(
+                            child: SizedBox(
                               height: 5,
                             ),
-                            BoxInputField(
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
                               labelText: "Foil Lot:",
                               controller: foilLotController,
                             ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Label("Scan"),
                             SizedBox(
-                              height: 5,
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Label("Scan"),
-                                  SizedBox(
-                                    height: 15,
-                                    child: VerticalDivider(
-                                      color: COLOR_BLACK,
-                                      thickness: 2,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => Navigator.pushNamed(context,
-                                        RouterList.WindingJobStart_Hold_Screen),
-                                    child: Label(
-                                      "Hold",
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
+                              height: 15,
+                              child: VerticalDivider(
+                                color: COLOR_BLACK,
+                                thickness: 2,
                               ),
                             ),
-                            Container(
-                              child: Button(
-                                bgColor: _formKey.currentState == null
-                                    ? COLOR_BLUE_DARK
-                                    : COLOR_RED,
-                                text: Label(
-                                  "Send",
-                                  color: COLOR_WHITE,
-                                ),
-                                onPress: () => _checkValueController(),
+                            GestureDetector(
+                              onTap: () => Navigator.pushNamed(context,
+                                  RouterList.WindingJobStart_Hold_Screen),
+                              child: Label(
+                                "Hold",
+                                color: Colors.grey,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        child: Button(
+                          bgColor: _formKey.currentState == null
+                              ? COLOR_BLUE_DARK
+                              : COLOR_RED,
+                          text: Label(
+                            "Send",
+                            color: COLOR_WHITE,
+                          ),
+                          onPress: () => _checkValueController(),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                )),
           ),
         ),
       ),

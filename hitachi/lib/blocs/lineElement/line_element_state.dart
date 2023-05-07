@@ -9,7 +9,7 @@ abstract class LineElementState extends Equatable {
 
 class LineElementInitial extends LineElementState {}
 
-//Hold
+//WindingHold
 class PostSendWindingStartLoadingState extends LineElementState {
   const PostSendWindingStartLoadingState();
   @override
@@ -32,7 +32,7 @@ class PostSendWindingStartErrorState extends LineElementState {
   List<Object> get props => [error];
 }
 
-//ReturnWeight
+//WindingReturnWeight
 class PostSendWindingStartReturnWeightLoadingState extends LineElementState {
   const PostSendWindingStartReturnWeightLoadingState();
   @override
@@ -55,12 +55,12 @@ class PostSendWindingStartReturnWeightErrorState extends LineElementState {
   List<Object> get props => [error];
 }
 
+///  WindingFinish
 class PostSendWindingFinishLoadingState extends LineElementState {
   const PostSendWindingFinishLoadingState();
   @override
   List<Object> get props => [];
 }
-//Finish
 
 class PostSendWindingFinishLoadedState extends LineElementState {
   const PostSendWindingFinishLoadedState(this.item);
@@ -72,6 +72,29 @@ class PostSendWindingFinishLoadedState extends LineElementState {
 
 class PostSendWindingFinishErrorState extends LineElementState {
   const PostSendWindingFinishErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
+///  Report Route Sheet State
+class GetReportRuteSheetLoadingState extends LineElementState {
+  const GetReportRuteSheetLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class GetReportRuteSheetLoadedState extends LineElementState {
+  const GetReportRuteSheetLoadedState(this.item);
+  final ReportRouteSheetModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class GetReportRuteSheetErrorState extends LineElementState {
+  const GetReportRuteSheetErrorState(this.error);
   final String error;
 
   @override
