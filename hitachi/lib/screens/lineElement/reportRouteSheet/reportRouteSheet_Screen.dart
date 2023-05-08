@@ -41,6 +41,7 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
               });
             }
             if (state is GetReportRuteSheetErrorState) {
+              EasyLoading.dismiss();
               EasyLoading.showError("Can not Call Api");
               print(state.error);
             }
@@ -86,72 +87,92 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
                               width: 120,
                               columnName: 'id',
                               label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
                                     'ID',
                                     color: COLOR_WHITE,
-                                  ))),
+                                  ),
+                                ),
+                              ),
                             ),
                             GridColumn(
-                                columnName: 'qty',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'Qty',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              columnName: 'qty',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Qty',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                             GridColumn(
-                                width: 120,
-                                columnName: 'name',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'Proc',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              width: 120,
+                              columnName: 'name',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Proc',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                             GridColumn(
-                                width: 120,
-                                columnName: 'startDate',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'start Date',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              width: 120,
+                              columnName: 'startDate',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'start Date',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                             GridColumn(
-                                width: 120,
-                                columnName: 'startTime',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'Start Time',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              width: 120,
+                              columnName: 'startTime',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Start Time',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                             GridColumn(
-                                width: 120,
-                                columnName: 'FINISH_DATE',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'End Date',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              width: 120,
+                              columnName: 'FINISH_DATE',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'End Date',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                             GridColumn(
-                                width: 120,
-                                columnName: 'FINISH_TIME',
-                                label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                        child: Label(
-                                      'End Time',
-                                      color: COLOR_WHITE,
-                                    )))),
+                              width: 120,
+                              columnName: 'FINISH_TIME',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'End Time',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -190,7 +211,7 @@ class EmployeeDataSource extends DataGridSource {
         );
       }
     } else {
-      print("null");
+      EasyLoading.showError("Can not Call API");
     }
   }
 
@@ -202,14 +223,17 @@ class EmployeeDataSource extends DataGridSource {
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((dataGridCell) {
-      return Container(
-        alignment: (dataGridCell.columnName == 'id' ||
-                dataGridCell.columnName == 'qty')
-            ? Alignment.center
-            : Alignment.center,
-        child: Text(dataGridCell.value.toString()),
-      );
-    }).toList());
+      cells: row.getCells().map<Widget>(
+        (dataGridCell) {
+          return Container(
+            alignment: (dataGridCell.columnName == 'id' ||
+                    dataGridCell.columnName == 'qty')
+                ? Alignment.center
+                : Alignment.center,
+            child: Text(dataGridCell.value.toString()),
+          );
+        },
+      ).toList(),
+    );
   }
 }

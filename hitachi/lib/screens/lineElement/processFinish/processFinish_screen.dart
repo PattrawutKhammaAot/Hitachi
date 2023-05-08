@@ -4,7 +4,6 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
-import 'package:hitachi/widget/box_inputfield.dart';
 
 class ProcessFinishScreen extends StatefulWidget {
   const ProcessFinishScreen({super.key});
