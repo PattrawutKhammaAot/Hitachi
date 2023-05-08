@@ -67,6 +67,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         }
       },
     );
+    on<ReportRouteSheetEvenet>(
+      (event, emit) async {
+        try {
+          emit(GetReportRuteSheetLoadingState());
+          final mlist = await fetchReportRouteSheetModel(event.items);
+          emit(GetReportRuteSheetLoadedState(mlist));
+        } catch (e) {
+          emit(GetReportRuteSheetErrorState(e.toString()));
+        }
+      },
+    );
   }
 //Scan
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
@@ -143,4 +154,40 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       return CheckPackNoModel();
     }
   }
+
+  //Report Route Sheet
+  Future<ReportRouteSheetModel> fetchReportRouteSheetModel(
+      String number) async {
+    try {
+      Response response = await Dio().get(
+          ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
+          options: Options(headers: ApiConfig.HEADER()));
+
+      ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
+
+      return tmp;
+    } catch (e) {
+      print(e);
+      return ReportRouteSheetModel();
+    }
+  }
+
+  // Future<ReportRouteSheetModel> fetchReportRouteSheetModel(
+  //     String number) async {
+  //   print(ApiConfig.LE_REPORT_ROUTE_SHEET);
+  //   try {
+  //     Response responese = await Dio().get(
+  //         ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
+  //         options: Options(headers: ApiConfig.HEADER()));
+
+  //     ReportRouteSheetModel items =
+  //         ReportRouteSheetModel.fromJson(responese.data);
+
+  //     // }
+  //     print(items.PROBLEM);
+  //     return items;
+  //   } on Exception {
+  //     throw Exception();
+  //   }
+  // }
 }

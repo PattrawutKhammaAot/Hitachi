@@ -11,7 +11,9 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
+import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,24 +32,26 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   String batchEndate = DateTime.now().toString();
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+  SendWdsFinishInputModel? items;
   SendWdsFinishOutputModel? _outputModel;
-  bool checkSave = true;
-  void _btnSend_Click() {
+  int batch = 100136982104;
+  ReportRouteSheetModel? itemsReport;
+  void _btnSend_Click() async {
     if (batchNoController.text.trim().isNotEmpty ||
         operatorNameController.text.trim().isNotEmpty ||
         elementQtyController.text.trim().isNotEmpty) {
-      if (callWindingFin(
-              batchNo: int.tryParse(batchNoController.text.trim()),
-              element: int.tryParse(elementQtyController.text.trim()),
-              batchEnddate: batchEndate) ==
-          true) {
-        databaseHelper.deleteSave(
+      try {
+        _callApi(
+            batchNo: int.tryParse(batchNoController.text.trim()),
+            element: int.tryParse(elementQtyController.text.trim()),
+            batchEnddate: batchEndate);
+        await databaseHelper.deleteSave(
             tableName: 'WINDING_SHEET',
             where: 'BatchNo',
             keyWhere: batchNoController.text.trim());
-      } else {
-        batchEndate = "";
-        EasyLoading.show(status: "CAN NOT SEND");
+        EasyLoading.showSuccess("sendComplete");
+      } catch (e) {
+        EasyLoading.showError("Can not send");
       }
     } else {
       EasyLoading.show(
@@ -55,37 +59,38 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
-  Future<bool> callWindingFin(
+  Future<void> _callApi(
       {int? batchNo, int? element, String? batchEnddate}) async {
-    try {
-      if (checkSave == true) {
-        print("carch");
-        var sql = await databaseHelper.queryDataSelect(
-            select1: 'BatchNo',
-            select2: 'MachineNo',
-            formTable: 'WINDING_SHEET',
-            where: 'BatchNo',
-            intValue: batchNo,
-            keyAnd: 'MachineNo',
-            value: 'WD',
-            keyAnd2: 'start_end',
-            value2: 'E');
-        var packNo = sql[0];
-        if (packNo['PackNo'] == null || packNo['PackNo'] <= 0) {
-          var sqlInsertWINDING_SHEET =
-              await databaseHelper.insertDataSheet('WINDING_SHEET', {
-            'BatchNo': batchNo,
-            'Element': element,
-            'BatchEndDate': batchEnddate,
-            'start_end': 'E',
-            'checkComplete': '0',
-            'value': 'WD'
-          });
-        }
-      }
-      return true;
-    } on Exception {
-      throw Exception();
+    BlocProvider.of<LineElementBloc>(context).add(
+      PostSendWindingFinishEvent(
+        SendWdsFinishOutputModel(
+            BATCH_NO: batchNo, ELEMNT_QTY: element, FINISH_DATE: batchEnddate),
+      ),
+    );
+  }
+
+  Future<void> _insertSqlite() async {
+    var sql = await databaseHelper.queryDataSelect(
+        select1: 'BatchNo',
+        select2: 'MachineNo',
+        formTable: 'WINDING_SHEET',
+        where: 'BatchNo',
+        intValue: int.tryParse(batchNoController.text.trim()),
+        keyAnd: 'MachineNo',
+        value: 'WD',
+        keyAnd2: 'start_end',
+        value2: 'E');
+
+    if (sql.length <= 0) {
+      var sqlInsertWINDING_SHEET =
+          await databaseHelper.insertDataSheet('WINDING_SHEET', {
+        'BatchNo': int.tryParse(batchNoController.text.trim()),
+        'Element': int.tryParse(elementQtyController.text.trim()),
+        'BatchEndDate': batchNoController.text.trim(),
+        'start_end': 'E',
+        'checkComplete': '0',
+        'value': 'WD'
+      });
     }
   }
 
@@ -156,6 +161,14 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   }
 
   @override
+  void initState() {
+    BlocProvider.of<LineElementBloc>(context).add(
+      ReportRouteSheetEvenet(100136982104.toString()),
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BgWhite(
       textTitle: "Winding job finish",
@@ -167,13 +180,13 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 EasyLoading.show();
               }
               if (state is PostSendWindingFinishLoadedState) {
-                checkSave = false;
+                setState(() {
+                  items = state.item;
+                });
               }
-
               if (state is PostSendWindingFinishErrorState) {
-                EasyLoading.dismiss();
-                if (checkSave == true) {}
-                print(state.error);
+                _insertSqlite();
+                EasyLoading.showError("Can not send");
               }
             },
           )

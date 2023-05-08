@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
+import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
@@ -17,6 +19,8 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   DatabaseHelper databaseHelper = DatabaseHelper();
+  int batch = 100136982104;
+  ReportRouteSheetModel? items;
 
   @override
   void initState() {
