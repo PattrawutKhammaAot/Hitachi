@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hitachi/blocs/checkpackNo/check_pack_no_bloc.dart';
+
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
@@ -17,7 +17,7 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  int count = 144545;
+
   @override
   void initState() {
     testCreateData();
@@ -27,10 +27,6 @@ class _MainMenuState extends State<MainMenu> {
   void testCreateData() async {
     // สร้างฐานข้อมูล SQLite และตาราง my_table
     await databaseHelper.initializeDatabase();
-  }
-
-  _getdata() {
-    BlocProvider.of<CheckPackNoBloc>(context).add(GetCheckPackNoEvent(count));
   }
 
   @override

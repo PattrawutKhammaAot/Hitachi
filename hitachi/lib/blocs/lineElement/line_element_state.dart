@@ -78,6 +78,29 @@ class PostSendWindingFinishErrorState extends LineElementState {
   List<Object> get props => [error];
 }
 
+// Check PACK NO
+class GetCheckPackLoadingState extends LineElementState {
+  const GetCheckPackLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class GetCheckPackLoadedState extends LineElementState {
+  const GetCheckPackLoadedState(this.item);
+  final CheckPackNoModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class GetCheckPackErrorState extends LineElementState {
+  const GetCheckPackErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
 ///  Report Route Sheet State
 class GetReportRuteSheetLoadingState extends LineElementState {
   const GetReportRuteSheetLoadingState();

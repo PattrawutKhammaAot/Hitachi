@@ -8,6 +8,7 @@ import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
+import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
@@ -52,6 +53,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(PostSendWindingFinishLoadedState(mlist));
         } catch (e) {
           emit(PostSendWindingFinishErrorState(e.toString()));
+        }
+      },
+    );
+    on<GetCheckPackNoEvent>(
+      (event, emit) async {
+        try {
+          emit(GetCheckPackLoadingState());
+          final mlist = await fetchCheckPackNo(event.number);
+          emit(GetCheckPackLoadedState(mlist));
+        } catch (e) {
+          emit(GetCheckPackErrorState(e.toString()));
         }
       },
     );
@@ -111,6 +123,24 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       // throw StateError();
       print("catch Exception occured: $e StackTrace: $s");
       return SendWdsFinishInputModel();
+    }
+  }
+
+  //Check packNO
+  Future<CheckPackNoModel> fetchCheckPackNo(int number) async {
+    print(ApiConfig.LE_CHECKPACK_NO);
+    try {
+      Response responese = await Dio().get(
+          ApiConfig.LE_CHECKPACK_NO + "$number",
+          options: Options(headers: ApiConfig.HEADER()));
+
+      CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
+
+      return post;
+    } catch (e, s) {
+      // throw StateError("Exception occured: $e StackTrace: $s");
+      print("$e" + "$s");
+      return CheckPackNoModel();
     }
   }
 }

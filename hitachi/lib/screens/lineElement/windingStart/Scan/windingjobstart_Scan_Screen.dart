@@ -15,6 +15,7 @@ import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
 import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
+import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
 import 'package:hitachi/route/router_list.dart';
@@ -43,6 +44,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final _formKey = GlobalKey<FormState>();
 
   sendWdsReturnWeightInputModel? items;
+  CheckPackNoModel? packNoModel;
 
   //ModelSqltie
 
@@ -54,7 +56,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final bool isSave = false;
   String text = "";
 
-  void _checkValueController() async {
+  bool isDisableOnClick = false;
+
+//
+  void _btnSendClick() async {
     if (machineNoController.text.isNotEmpty ||
         operatorNameController.text.isNotEmpty ||
         batchNoController.text.isNotEmpty ||
@@ -63,13 +68,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         paperCodeLotController.text.isNotEmpty ||
         ppFilmLotController.text.isNotEmpty ||
         foilLotController.text.isNotEmpty) {
-      callApi();
+      callWindingStartReturnWeight();
     } else {
-      EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));
+      EasyLoading.showError("Data incomplete", duration: Duration(seconds: 5));
     }
   }
 
-  bool callApi() {
+  bool callWindingStartReturnWeight() {
     try {
       BlocProvider.of<LineElementBloc>(context).add(
         PostSendWindingStartReturnWeightEvent(
@@ -94,18 +99,23 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
               START_DATE: startDate.toString()),
         ),
       );
+
       return true;
     } catch (e) {
       print("Error ${e}");
+
       return false;
     }
   }
 
   Future<bool> _saveWindingStartOnlyWeight() async {
     var sm, s1, s2, bomp;
+    setState(() {
+      target = 0.0;
+    });
     try {
       //Query
-      var sql = await databaseHelper.queryDataSelect(
+      var sql_windingSheet = await databaseHelper.queryDataSelect(
           select1: 'BatchNo',
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
@@ -113,7 +123,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           intValue: int.tryParse(machineNoController.text.trim()));
 
       //CheckValueRow
-      if (sql.length <= 0) {
+      // var sql_machine = sql_windingSheet[0];
+      if (sql_windingSheet.length == 0) {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
             select2: 'S1',
@@ -124,6 +135,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             stringValue: productController.text.trim());
 
         ///Spec
+        // var checkValueSpec = sql_specification[0];
 
         if (sql_specification.length > 0) {
           var spec = sql_specification[0];
@@ -197,7 +209,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           target = weight;
         }
         await databaseHelper.updateWindingWeight(
-            table: 'WIND_WEIGHT_SHEET',
+            table: 'WINDING_WEIGHT_SHEET',
             key1: 'BatchNo',
             yieldKey1: int.tryParse(
               batchNoController.text.trim(),
@@ -214,7 +226,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       return true;
     } catch (e) {
-      print("Error SaveData ${e}");
+      EasyLoading.showInfo("can not save");
       return false;
     }
   }
@@ -265,7 +277,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   }) async {
     var sm, s1, s2, bomp;
     try {
-      var sql = await databaseHelper.queryDataSelect(
+      var sql_packNo = await databaseHelper.queryDataSelect(
           select1: 'BatchNo',
           select2: 'MachineNo',
           formTable: 'WINDING_SHEET',
@@ -274,10 +286,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           value: 'S',
           intValue: BATCH_NO);
 
-      var packNo = sql[0];
       //notsure
-      if (packNo['PackNo'] == null ||
-          packNo['PackNo'] <= 0) // If ds.Tables("PACK_NO").Rows.Count <= 0 Then
+      if (sql_packNo.length <=
+          0) // If ds.Tables("PACK_NO").Rows.Count <= 0 Then
       {
         var sqlInsertWINDING_SHEET =
             await databaseHelper.insertDataSheet('WINDING_SHEET', {
@@ -296,15 +307,15 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         });
       }
       //Weight
-      var sqlWeight = await databaseHelper.queryDataSelect(
+      var sql_machine = await databaseHelper.queryDataSelect(
           select1: 'BatchNo',
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
           intValue: MACHINE_NO);
-      var MachineNo = sqlWeight[0];
+
       //Not Sure
-      if (MachineNo['MachineNo'] == 0 || MachineNo['MachineNo'] == null) {
+      if (sql_machine.length <= 0) {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
             select2: 'S1',
@@ -373,13 +384,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             bomp = double.parse(spec['BomP'].toString());
             bomp = double.parse(bomp.toStringAsFixed(2));
           }
-          target = double.parse(((weight! ?? this.weight - sm - s1 - s2) / bomp)
-              .toStringAsFixed(2));
+          target = double.parse(
+              ((weight! - sm - s1 - s2) / bomp).toStringAsFixed(2));
         } else {
-          target = weight! ?? this.weight;
+          target = weight!;
         }
         await databaseHelper.updateWindingWeight(
-            table: 'WIND_WEIGHT_SHEET',
+            table: 'WINDING_WEIGHT_SHEET',
             key1: 'BatchNo',
             yieldKey1: BATCH_NO,
             key2: 'Target',
@@ -390,13 +401,21 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       return true;
     } catch (e) {
-      EasyLoading.showError("error[04]", duration: Duration(seconds: 5));
+      EasyLoading.showError("Can not save", duration: Duration(seconds: 5));
       return false;
     }
   }
 
-  initState() {
-    super.initState();
+  void checkFilmPackNo() {
+    int? result = int.tryParse(filmPackNoController.text.trim());
+    final text = filmPackNoController.text.trim();
+    if (text.length >= 8) {
+      if (result != null) {
+        BlocProvider.of<LineElementBloc>(context).add(
+          GetCheckPackNoEvent(result),
+        );
+      }
+    }
   }
 
   @override
@@ -420,23 +439,44 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       EasyLoading.show();
                     } else if (state
                         is PostSendWindingStartReturnWeightLoadedState) {
-                      bool isOpen = false;
                       EasyLoading.dismiss();
                       setState(() {
                         items = state.item;
-                        if (items!.RESULT == true) {
-                          _saveWindingStartOnlyWeight();
-                          sendComplete();
-                          isOpen = true;
-                        }
-                        if (isOpen) {
-                          _showpopUpWeight();
-                        }
                       });
+                      if (items!.RESULT == true) {
+                        _saveWindingStartOnlyWeight();
+                      } else {
+                        EasyLoading.show(
+                            status:
+                                "Send complete \n Can not save weight , Element",
+                            dismissOnTap: true);
+                        _showpopUpWeight();
+                      }
                     }
                     if (state is PostSendWindingStartReturnWeightErrorState) {
                       cannotSend();
                       print("ErrorState");
+                      _showpopUpWeight();
+                    }
+                    if (state is GetCheckPackLoadingState) {
+                      EasyLoading.show();
+                    } else if (state is GetCheckPackLoadedState) {
+                      EasyLoading.dismiss();
+                      setState(() {
+                        packNoModel = state.item;
+                      });
+                      if (packNoModel!.RESULT == true) {
+                        setState(() {
+                          isDisableOnClick = true;
+                        });
+                      } else {
+                        setState(() {
+                          isDisableOnClick = false;
+                        });
+                      }
+                    }
+                    if (state is GetCheckPackErrorState) {
+                      EasyLoading.showError("Can't Call API");
                     }
                   })
                 ],
@@ -507,6 +547,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               type: TextInputType.number,
                               maxLength: 8,
                               maxLines: 2,
+                              onChanged: (_) => checkFilmPackNo(),
                             ),
                           ),
                           Expanded(
@@ -581,14 +622,22 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       ),
                       Container(
                         child: Button(
-                          bgColor: _formKey.currentState == null
+                          bgColor: isDisableOnClick
                               ? COLOR_BLUE_DARK
-                              : COLOR_RED,
+                              : isDisableOnClick == false
+                                  ? Colors.grey
+                                  : COLOR_TRANSPARENT,
                           text: Label(
                             "Send",
                             color: COLOR_WHITE,
                           ),
-                          onPress: () => _checkValueController(),
+                          onPress: () {
+                            if (isDisableOnClick == true) {
+                              _btnSendClick();
+                            } else {
+                              print("Can't Click it");
+                            }
+                          },
                         ),
                       ),
                     ],

@@ -34,6 +34,16 @@ class PostSendWindingFinishEvent extends LineElementEvent {
   List<Object> get prop => [items];
 }
 
+//// Check Pack No /////////
+class GetCheckPackNoEvent extends LineElementEvent {
+  const GetCheckPackNoEvent(this.number);
+
+  final int number;
+
+  @override
+  List<Object> get prop => [number];
+}
+
 ///////////////////////-----Report Route Sheet Event-----//////////////////////////////
 class ReportRouteSheetEvenet extends LineElementEvent {
   const ReportRouteSheetEvenet(this.items);

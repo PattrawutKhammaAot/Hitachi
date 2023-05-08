@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hitachi/blocs/checkpackNo/check_pack_no_bloc.dart';
+
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/route/route_generator.dart';
@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CheckPackNoBloc>(create: (_) => CheckPackNoBloc()),
         BlocProvider<LineElementBloc>(create: (_) => LineElementBloc())
       ],
       child: MaterialApp(
