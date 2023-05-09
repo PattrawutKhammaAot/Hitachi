@@ -74,7 +74,7 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
               ),
               employeeDataSource != null
                   ? Expanded(
-                      flex: 3,
+                      flex: 5,
                       child: Container(
                         child: SfDataGrid(
                           footerHeight: 10,

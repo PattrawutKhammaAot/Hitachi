@@ -160,8 +160,11 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       String number) async {
     try {
       Response response = await Dio().get(
-          ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
-          options: Options(headers: ApiConfig.HEADER()));
+        ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
+        options: Options(
+          headers: ApiConfig.HEADER(),
+        ),
+      );
 
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
 
