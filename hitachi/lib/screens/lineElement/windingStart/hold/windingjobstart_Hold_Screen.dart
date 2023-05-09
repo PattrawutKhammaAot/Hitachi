@@ -50,32 +50,32 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
     // getshow();
     // _getWindingSheet();
     // print(_windingSheetList);
-    // windingSheetModel = _getWindingSheet();
+    windingSheetModel = _getWindingSheet();
   }
 
-  // Future<List<WindingSheetModel>> _getWindingSheet() async {
-  //   try {
-  //     Windings item;
-  //     List<Map<String, dynamic>> rows =
-  //     await databaseHelper.queryAllRows('WINDING_SHEET');
-  //     _windingSheetList = rows;
-  //     List<WindingSheetModel> result = whModel.convertToList(rows);
-  //     setState(() {
-  //       print("+++++++++++++++++++++++++++++++++++++++++");
-  //       // print(result[1].MACHINE_NO);
-  //       result.forEach((results) {
-  //         // item.machineno = results.MACHINE_NO;
-  //         print(results.MACHINE_NO);
-  //         print(results.PACK_NO);
-  //         print("--------------------------------------------");
-  //       });
-  //     });
-  //     return result;
-  //   } catch (e) {
-  //     print(e);
-  //     rethrow;
-  //   }
-  // }
+  Future<List<WindingSheetModel>> _getWindingSheet() async {
+    try {
+      Windings item;
+      List<Map<String, dynamic>> rows =
+          await databaseHelper.queryAllRows('WINDING_SHEET');
+      _windingSheetList = rows;
+      List<WindingSheetModel> result = whModel.convertToList(rows);
+      setState(() {
+        print("+++++++++++++++++++++++++++++++++++++++++");
+        // print(result[1].MACHINE_NO);
+        result.forEach((results) {
+          // item.machineno = results.MACHINE_NO;
+          print(results.MACHINE_NO);
+          print(results.PACK_NO);
+          print("--------------------------------------------");
+        });
+      });
+      return result;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 
   List<Windings> getWindings() {
     return [
