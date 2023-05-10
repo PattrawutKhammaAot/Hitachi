@@ -8,6 +8,7 @@ import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
+import 'package:hitachi/screens/lineElement/windingStart/DataGridSource.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
@@ -162,13 +163,39 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                             label: Center(child: Text('STATUS'))),
                       ],
                       onCellDoubleTap: (DataGridCellDoubleTapDetails details) {
+                        if (details.rowColumnIndex.rowIndex != 0) {
+                          setState(() {
+                            var rowindex = details.rowColumnIndex.rowIndex - 1;
+                            var dataGirdRow = employeeDataSource!.effectiveRows
+                                .elementAt(rowindex);
+                            // whModel = dataGirdRow!
+                            //     .getCells()
+                            //     .map((e) => WindingSheetModel(
+                            //   'MachineNo': e.value.,
+                            //   'OperatorName': 111,
+                            //   'BatchNo': 111,
+                            //   'Product': 111,
+                            //   'PackNo': 111,
+                            //   'PaperCore': 111,
+                            //   'PPCore': 222,
+                            //   'FoilCore': 222,
+                            //   'BatchStartDate': 222,
+                            //   'BatchEndDate': 222,
+                            //   'Element': 222,
+                            //   'Status': 222,
+                            //   'start_end': 222,
+                            //   'checkComplete ': 222,))
+                            //     .toList();
+                          });
+                        }
+                        ;
+
                         showModalBottomSheet<void>(
                           context: context,
                           builder: (BuildContext context) {
                             print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-                            print(details.column.toString());
+                            print(details.rowColumnIndex.rowIndex != 0);
                             print(details.rowColumnIndex);
-                            print(details.rowColumnIndex.rowIndex.toString());
                             print(employeeDataSource);
                             print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
                             print(context.toString());
