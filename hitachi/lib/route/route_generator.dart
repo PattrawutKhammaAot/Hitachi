@@ -5,7 +5,7 @@ import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.d
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/processFinish/processFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/processStart/processStart_screen.dart';
-import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_Screen.dart';
+import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_main.dart';
 import 'package:hitachi/screens/lineElement/treatmentFinish/treatmentFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/treatmentStart_screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/hold/windingJobFinish_hold_screen.dart';

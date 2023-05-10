@@ -27,10 +27,13 @@ class _ProblemPageState extends State<ProblemPage> {
 
   @override
   void initState() {
-    BlocProvider.of<LineElementBloc>(context).add(
-      ReportRouteSheetEvenet(widget.valueString.toString()),
-    );
-    print("value = ${widget.valueString}");
+    if (widget.valueString!.isNotEmpty) {
+      BlocProvider.of<LineElementBloc>(context).add(
+        ReportRouteSheetEvenet(widget.valueString.toString()),
+      );
+    } else {
+      EasyLoading.showError("Please Input Batch No In Process");
+    }
   }
 
   @override
@@ -105,9 +108,7 @@ class _ProblemPageState extends State<ProblemPage> {
                         ),
                       ),
                     )
-                  : Container(
-                      child: Label(" กรุณากรอกข้อมูล"),
-                    ),
+                  : Container(),
             ],
           ),
         ),
