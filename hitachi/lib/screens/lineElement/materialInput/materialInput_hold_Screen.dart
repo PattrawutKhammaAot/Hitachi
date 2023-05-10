@@ -21,12 +21,12 @@ class MaterialInputHoldScreen extends StatefulWidget {
 }
 
 class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
-  List<MaterialTraceModel>? material;
+  List<MaterialTraceModel>? materialList;
   DatabaseHelper databaseHelper = DatabaseHelper();
   MaterialTraceDataSource? matTracDs;
   int? selectedRowIndex;
   DataGridRow? datagridRow;
-  List<MaterialTraceModel>? mtModel;
+  List<MaterialTraceModel>? mtModelSqlite;
   final TextEditingController _passwordController = TextEditingController();
 
   ////
@@ -47,8 +47,8 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   void initState() {
     _getWindingSheet().then((result) {
       setState(() {
-        material = result;
-        matTracDs = MaterialTraceDataSource(process: material);
+        materialList = result;
+        matTracDs = MaterialTraceDataSource(process: materialList);
       });
     });
     super.initState();
@@ -58,7 +58,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
     await databaseHelper.deletedRowSqlite(
         tableName: 'MATERIAL_TRACE_SHEET',
         columnName: 'ID',
-        columnValue: material![selectedRowIndex!].ID);
+        columnValue: materialList![selectedRowIndex!].ID);
   }
 
   @override
@@ -102,7 +102,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                       details.rowColumnIndex.rowIndex - 1;
                                   datagridRow = matTracDs!.effectiveRows
                                       .elementAt(selectedRowIndex!);
-                                  mtModel = datagridRow!
+                                  mtModelSqlite = datagridRow!
                                       .getCells()
                                       .map(
                                         (e) => MaterialTraceModel(
@@ -121,8 +121,8 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                       )
                                       .toList();
                                 });
-                                print(
-                                    material![selectedRowIndex!].MATERIAL_TYPE);
+                                print(materialList![selectedRowIndex!]
+                                    .MATERIAL_TYPE);
                               }
                             },
                             columns: <GridColumn>[
@@ -230,7 +230,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                mtModel != null
+                mtModelSqlite != null
                     ? Expanded(
                         child: Container(
                             child: ListView(
@@ -260,45 +260,45 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                     DataCell(
                                         Center(child: Label("MaterialType"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL_TYPE}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL_TYPE}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Material"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].OPERATOR_NAME}"))
+                                        "${materialList![selectedRowIndex!].OPERATOR_NAME}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Batch/Serial No."))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].BATCH_NO}"))
+                                        "${materialList![selectedRowIndex!].BATCH_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Machine/Process"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MACHINE_NO}"))
+                                        "${materialList![selectedRowIndex!].MACHINE_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Material"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL_1}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL_1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Lot No."))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].LOTNO_1}"))
+                                        "${materialList![selectedRowIndex!].LOTNO_1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Date"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].DATE_1}"))
+                                        "${materialList![selectedRowIndex!].DATE_1}"))
                                   ])
                                 ])
                           ],
@@ -325,7 +325,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (mtModel != null) {
+                        if (mtModelSqlite != null) {
                           _AlertDialog();
                         }
                       },
@@ -341,9 +341,12 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Label(
-                            "Scan",
-                            color: Colors.grey,
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Label(
+                              "Scan",
+                              color: Colors.grey,
+                            ),
                           ),
                           SizedBox(
                             height: 15,
@@ -372,18 +375,21 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                         BlocProvider.of<LineElementBloc>(context).add(
                           MaterialInputEvent(
                             MaterialOutputModel(
-                              MATERIAL: material![selectedRowIndex!].MATERIAL,
+                              MATERIAL:
+                                  materialList![selectedRowIndex!].MATERIAL,
                               MACHINENO:
-                                  material![selectedRowIndex!].MACHINE_NO,
+                                  materialList![selectedRowIndex!].MACHINE_NO,
                               OPERATORNAME: int.tryParse(
-                                  material![selectedRowIndex!]
+                                  materialList![selectedRowIndex!]
                                       .OPERATOR_NAME
                                       .toString()),
-                              BATCHNO: int.tryParse(material![selectedRowIndex!]
-                                  .BATCH_NO
-                                  .toString()),
-                              LOT: material![selectedRowIndex!].LOTNO_1,
-                              STARTDATE: material![selectedRowIndex!].DATE_1,
+                              BATCHNO: int.tryParse(
+                                  materialList![selectedRowIndex!]
+                                      .BATCH_NO
+                                      .toString()),
+                              LOT: materialList![selectedRowIndex!].LOTNO_1,
+                              STARTDATE:
+                                  materialList![selectedRowIndex!].DATE_1,
                             ),
                           ),
                         );

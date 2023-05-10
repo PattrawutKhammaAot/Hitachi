@@ -130,7 +130,7 @@ class DatabaseHelper {
       int? yieldKey1,
       num? yieldKey2,
       String? whereKey,
-      int? value}) async {
+      String? value}) async {
     final Database db = await database;
     String sql =
         "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
@@ -230,7 +230,8 @@ class DatabaseHelper {
 
   void _createTableWinding(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_SHEET ('
-        'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'MachineNo TEXT, '
         'OperatorName TEXT, '
         'BatchNo INTEGER, '
         'Product INTEGER, '
@@ -656,7 +657,7 @@ class DatabaseHelper {
   //TABLE WINDING_WEIGHT_SHEET------------------------------------------------------------------------------------------------------------------------------------------------------------
   ///
   Future<void> writeTableWindingWeightSheet_ToSqlite({
-    int? machineNo,
+    String? machineNo,
     int? batchNo,
     num? target,
   }) async {
@@ -672,7 +673,7 @@ class DatabaseHelper {
 
   void _createWindingWeightSheet(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_WEIGHT_SHEET ('
-        'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'MachineNo TEXT, '
         'BatchNo INTEGER,'
         'Target REAL'
         ')');

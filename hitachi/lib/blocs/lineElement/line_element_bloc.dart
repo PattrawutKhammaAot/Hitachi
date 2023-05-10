@@ -120,7 +120,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       print(responese.data);
       SendWindingStartModelInput post =
           SendWindingStartModelInput.fromJson(responese.data);
-
+      print(post.PACK_NO);
       return post;
     } catch (e, s) {
       print("Exception occured: $e StackTrace: $s");

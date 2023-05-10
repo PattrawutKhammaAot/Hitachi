@@ -35,7 +35,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
 
   @override
   void initState() {
-    _insertSqlite();
+    // _insertSqlite();
     // TODO: implement initState
     super.initState();
   }

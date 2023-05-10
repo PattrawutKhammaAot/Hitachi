@@ -57,6 +57,19 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   String text = "";
 
   bool isDisableOnClick = false;
+  @override
+  void initState() {
+    // _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
+    //     OPERATOR_NAME: operatorNameController.text.trim(),
+    //     BATCH_NO: int.tryParse(batchNoController.text.trim()),
+    //     PRODUCT: int.tryParse(productController.text.trim()),
+    //     PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+    //     PAPER_CORE: paperCodeLotController.text.trim(),
+    //     PP_CORE: ppFilmLotController.text.trim(),
+    //     FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
+    // TODO: implement initState
+    super.initState();
+  }
 
 //
   void _btnSendClick() async {
@@ -109,7 +122,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     }
   }
 
-  Future<bool> _saveWindingStartOnlyWeight() async {
+  Future<bool> _saveWindingStartOnlyWeight({num? weightValue}) async {
     var sm, s1, s2, bomp;
     setState(() {
       target = 0.0;
@@ -121,7 +134,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
-          intValue: int.tryParse(machineNoController.text.trim()));
+          stringValue: machineNoController.text.trim());
 
       //CheckValueRow
       // var sql_machine = sql_windingSheet[0];
@@ -163,14 +176,12 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           target =
               double.parse(((weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
         } else {
-          target = weight;
+          target = weightValue!;
         }
 
         ///WriteDataTolocalTable WindingWeightSheet
         await databaseHelper.writeTableWindingWeightSheet_ToSqlite(
-            machineNo: int.parse(
-              machineNoController.text.trim(),
-            ),
+            machineNo: machineNoController.text.trim(),
             batchNo: int.tryParse(batchNoController.text.trim()),
             target: target);
       } else {
@@ -218,7 +229,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             key2: 'Target',
             yieldKey2: target,
             whereKey: 'MachineNo',
-            value: int.tryParse(machineNoController.text.trim()));
+            value: machineNoController.text.trim());
       }
       await databaseHelper.deleteDataFromSQLite(
           tableName: 'WINDING_SHEET',
@@ -227,7 +238,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       return true;
     } catch (e) {
-      EasyLoading.showInfo("can not save");
+      print("Catch${e}");
+      EasyLoading.showInfo("can not save and weight pass");
       return false;
     }
   }
@@ -244,18 +256,26 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       totalWeight = num.parse(totalWeight.toStringAsFixed(2));
 
       ///
-      bool isSave = await _SaveWindingStartWithWeight(
-        MACHINE_NO: int.tryParse(machineNoController.text.trim()),
-        OPERATOR_NAME: operatorNameController.text.trim(),
-        BATCH_NO: int.tryParse(batchNoController.text.trim()),
-        PRODUCT: int.tryParse(productController.text.trim()),
-        PACK_NO: int.tryParse(filmPackNoController.text.trim()),
-        PAPER_CORE: paperCodeLotController.text.trim(),
-        PP_CORE: ppFilmLotController.text.trim(),
-        FOIL_CORE: foilLotController.text.trim(),
-        BATCH_START_DATE: DateTime.now.toString(),
-        weight: totalWeight,
-      );
+      bool isSave = await _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
+          OPERATOR_NAME: operatorNameController.text.trim(),
+          BATCH_NO: int.tryParse(batchNoController.text.trim()),
+          PRODUCT: int.tryParse(productController.text.trim()),
+          PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+          PAPER_CORE: paperCodeLotController.text.trim(),
+          PP_CORE: ppFilmLotController.text.trim(),
+          FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
+      // bool isSave = await _SaveWindingStartWithWeight(
+      //   MACHINE_NO: machineNoController.text.trim(),
+      //   OPERATOR_NAME: operatorNameController.text.trim(),
+      //   BATCH_NO: int.tryParse(batchNoController.text.trim()),
+      //   PRODUCT: int.tryParse(productController.text.trim()),
+      //   PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+      //   PAPER_CORE: paperCodeLotController.text.trim(),
+      //   PP_CORE: ppFilmLotController.text.trim(),
+      //   FOIL_CORE: foilLotController.text.trim(),
+      //   BATCH_START_DATE: DateTime.now.toString(),
+      //   weight: totalWeight,
+      // );
       if (isSave) {
         EasyLoading.showSuccess('Save complete');
       } else {
@@ -265,7 +285,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   }
 
   Future<bool> _SaveWindingStartWithWeight({
-    int? MACHINE_NO,
+    String? MACHINE_NO,
     String? OPERATOR_NAME,
     int? BATCH_NO,
     int? PRODUCT,
@@ -313,7 +333,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
-          intValue: MACHINE_NO);
+          stringValue: MACHINE_NO);
 
       //Not Sure
       if (sql_machine.length <= 0) {
@@ -399,7 +419,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             whereKey: 'MachineNo',
             value: MACHINE_NO);
       }
-
+///ASDASD
       return true;
     } catch (e) {
       EasyLoading.showError("Can not save", duration: Duration(seconds: 5));
@@ -415,6 +435,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           GetCheckPackNoEvent(result),
         );
+
       }
     } else {
       setState(() {
@@ -444,17 +465,19 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       EasyLoading.show();
                     } else if (state
                         is PostSendWindingStartReturnWeightLoadedState) {
+
                       EasyLoading.dismiss();
                       setState(() {
                         items = state.item;
+                        print(items!.WEIGHT);
                       });
                       if (items!.RESULT == true) {
-                        _saveWindingStartOnlyWeight();
+                        _saveWindingStartOnlyWeight(weightValue: items!.WEIGHT);
                       } else {
                         EasyLoading.showInfo(
                             "Send complete \n Can not save weight , Element",
                             duration: Duration(seconds: 1));
-                        _showpopUpWeight();
+                        // _showpopUpWeight();
                       }
                     }
                     if (state is PostSendWindingStartReturnWeightErrorState) {
@@ -480,6 +503,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       }
                     }
                     if (state is GetCheckPackErrorState) {
+                      EasyLoading.dismiss();
                       EasyLoading.showError("Can't Call API");
                     }
                   })
@@ -641,6 +665,27 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             } else {
                               print("Can't Click it");
                             }
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 5,),
+                      Container(
+                        child: Button(
+                          bgColor: COLOR_BLUE_DARK,
+                          text: Label(
+                            "TestSendSqlite",
+                            color: COLOR_WHITE,
+                          ),
+                          onPress: () {
+                            _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
+                                OPERATOR_NAME: operatorNameController.text.trim(),
+                                BATCH_NO: int.tryParse(batchNoController.text.trim()),
+                                PRODUCT: int.tryParse(productController.text.trim()),
+                                PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+                                PAPER_CORE: paperCodeLotController.text.trim(),
+                                PP_CORE: ppFilmLotController.text.trim(),
+                                FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
+
                           },
                         ),
                       ),

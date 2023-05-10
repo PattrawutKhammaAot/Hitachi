@@ -1,21 +1,22 @@
 class WindingSheetModel {
-  const WindingSheetModel({
-    this.MACHINE_NO,
-    this.OPERATOR_NAME,
-    this.BATCH_NO,
-    this.PRODUCT,
-    this.PACK_NO,
-    this.PAPER_CORE,
-    this.PP_CORE,
-    this.FOIL_CORE,
-    this.BATCH_START_DATE,
-    this.BATCH_END_DATE,
-    this.ELEMENT,
-    this.STATUS,
-    this.START_END,
-    this.CHECK_COMPLETE,
-  });
-  final int? MACHINE_NO;
+  const WindingSheetModel(
+      {this.MACHINE_NO,
+      this.OPERATOR_NAME,
+      this.BATCH_NO,
+      this.PRODUCT,
+      this.PACK_NO,
+      this.PAPER_CORE,
+      this.PP_CORE,
+      this.FOIL_CORE,
+      this.BATCH_START_DATE,
+      this.BATCH_END_DATE,
+      this.ELEMENT,
+      this.STATUS,
+      this.START_END,
+      this.CHECK_COMPLETE,
+      this.ID});
+  final int? ID;
+  final String? MACHINE_NO;
   final String? OPERATOR_NAME;
   final int? BATCH_NO;
   final int? PRODUCT;
@@ -47,7 +48,8 @@ class WindingSheetModel {
         CHECK_COMPLETE!,
       ];
   WindingSheetModel.fromMap(Map<String, dynamic> map)
-      : MACHINE_NO = map['MachineNo'],
+      : ID = map['ID'],
+        MACHINE_NO = map['MachineNo'],
         OPERATOR_NAME = map['OperatorName'],
         BATCH_NO = map['BatchNo'],
         PRODUCT = map['Product'],
