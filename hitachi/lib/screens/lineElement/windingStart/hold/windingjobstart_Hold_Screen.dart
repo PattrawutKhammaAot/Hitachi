@@ -8,7 +8,7 @@ import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
-import 'package:hitachi/screens/lineElement/windingStart/DataGridSource.dart';
+// import 'package:hitachi/screens/lineElement/windingStart/DataGridSource.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
@@ -81,25 +81,25 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
     }
   }
 
-  getshow() async {
-    await databaseHelper.insertDataSheet('WINDING_SHEET', {
-      'MachineNo': 14,
-      'OperatorName': 111,
-      'BatchNo': 111,
-      'Product': 111,
-      'PackNo': 111,
-      'PaperCore': 111,
-      'PPCore': 222,
-      'FoilCore': 222,
-      'BatchStartDate': 222,
-      'BatchEndDate': 222,
-      'Element': 222,
-      'Status': 222,
-      'start_end': 222,
-      'checkComplete ': 222,
-    });
-    print("---getshow---");
-  }
+  // getshow() async {
+  //   await databaseHelper.insertDataSheet('WINDING_SHEET', {
+  //     'MachineNo': 14,
+  //     'OperatorName': 111,
+  //     'BatchNo': 111,
+  //     'Product': 111,
+  //     'PackNo': 111,
+  //     'PaperCore': 111,
+  //     'PPCore': 222,
+  //     'FoilCore': 222,
+  //     'BatchStartDate': 222,
+  //     'BatchEndDate': 222,
+  //     'Element': 222,
+  //     'Status': 222,
+  //     'start_end': 222,
+  //     'checkComplete ': 222,
+  //   });
+  //   print("---getshow---");
+  // }
 
   @override
   Widget build(BuildContext context) {

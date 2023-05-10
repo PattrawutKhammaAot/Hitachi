@@ -7,3 +7,4 @@ const Color COLOR_TRANSPARENT = Colors.transparent;
 const Color COLOR_RED_LIGTHINS = Color(0xFFF96262);
 const Color COLOR_RED = Color(0xFFB23C3C);
 const Color COLOR_WHITE = Color.fromARGB(255, 255, 255, 255);
+const Color COLOR_SUCESS = Color(0xFF4BB543);

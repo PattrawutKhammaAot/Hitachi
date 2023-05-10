@@ -60,14 +60,15 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
 //
   void _btnSendClick() async {
-    if (machineNoController.text.isNotEmpty ||
-        operatorNameController.text.isNotEmpty ||
-        batchNoController.text.isNotEmpty ||
-        productController.text.isNotEmpty ||
-        filmPackNoController.text.isNotEmpty ||
-        paperCodeLotController.text.isNotEmpty ||
-        ppFilmLotController.text.isNotEmpty ||
+    if (machineNoController.text.isNotEmpty &&
+        operatorNameController.text.isNotEmpty &&
+        batchNoController.text.isNotEmpty &&
+        productController.text.isNotEmpty &&
+        filmPackNoController.text.isNotEmpty &&
+        paperCodeLotController.text.isNotEmpty &&
+        ppFilmLotController.text.isNotEmpty &&
         foilLotController.text.isNotEmpty) {
+      print("isNotEmpty");
       callWindingStartReturnWeight();
     } else {
       EasyLoading.showError("Data incomplete", duration: Duration(seconds: 5));
@@ -232,10 +233,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   }
 
   void okBtnWeight() async {
-    if (weight1Controller.text.trim() == null ||
-        weight1Controller.text.trim().isEmpty ||
-        weight2Controller.text.trim() == null ||
-        weight2Controller.text.trim().isEmpty) {
+    if (weight1Controller.text.trim() != null ||
+        weight1Controller.text.trim().isNotEmpty ||
+        weight2Controller.text.trim() != null ||
+        weight2Controller.text.trim().isNotEmpty) {
       ///
 
       num totalWeight = num.parse(weight1Controller.text.trim()) +
@@ -291,7 +292,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           0) // If ds.Tables("PACK_NO").Rows.Count <= 0 Then
       {
         var sqlInsertWINDING_SHEET =
-            await databaseHelper.insertDataSheet('WINDING_SHEET', {
+            await databaseHelper.insertSqlite('WINDING_SHEET', {
           'MachineNo': MACHINE_NO,
           'OperatorName': OPERATOR_NAME,
           'BatchNo': BATCH_NO,
@@ -351,7 +352,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         } else {
           target = weight!;
         }
-        await databaseHelper.insertDataSheet('WINDING_WEIGHT_SHEET',
+        await databaseHelper.insertSqlite('WINDING_WEIGHT_SHEET',
             {'MachineNo': MACHINE_NO, 'BatchNo': BATCH_NO, 'Target': target});
       } else {
         var sql_specification = await databaseHelper.queryDataSelect(
@@ -415,6 +416,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           GetCheckPackNoEvent(result),
         );
       }
+    } else {
+      setState(() {
+        isDisableOnClick = false;
+      });
     }
   }
 
@@ -446,10 +451,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       if (items!.RESULT == true) {
                         _saveWindingStartOnlyWeight();
                       } else {
-                        EasyLoading.show(
-                            status:
-                                "Send complete \n Can not save weight , Element",
-                            dismissOnTap: true);
+                        EasyLoading.showInfo(
+                            "Send complete \n Can not save weight , Element",
+                            duration: Duration(seconds: 1));
                         _showpopUpWeight();
                       }
                     }
