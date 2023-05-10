@@ -39,4 +39,7 @@ class RouterList {
   //ReportRouteSheetScreen
   static const String MaterialInput_Screen =
       '/lineElementMenu/materialInput/materialInput';
+
+  //PMPlanScreen
+  static const String PMPlan_Screen = '/PMDaily/PMDaily_Screen';
 }

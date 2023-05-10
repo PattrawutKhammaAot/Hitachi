@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
+import 'package:hitachi/screens/PMDaily/PMDaily_Sereen.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.dart';
 import 'package:hitachi/screens/lineElement/processFinish/processFinish_screen.dart';
@@ -80,6 +81,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MaterialInputScreen(),
+            type: PageTransitionType.fade);
+      //PMDaily - PMDaily
+      case RouterList.PMPlan_Screen:
+        return PageTransition(
+            settings: settings,
+            child: PMDaily_Screen(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');
