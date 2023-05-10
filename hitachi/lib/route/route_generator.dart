@@ -8,6 +8,7 @@ import 'package:hitachi/screens/lineElement/processStart/processStart_screen.dar
 import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_Screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentFinish/treatmentFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/treatmentStart_screen.dart';
+import 'package:hitachi/screens/lineElement/windingFinish/hold/windingJobFinish_hold_screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/windingjobFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
@@ -46,6 +47,11 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: WindingJobFinishScreen(),
+            type: PageTransitionType.fade);
+      case RouterList.WindingJobFinish_hold_Screen:
+        return PageTransition(
+            settings: settings,
+            child: WindingJobFinishHoldScreen(),
             type: PageTransitionType.fade);
       //ProcessStart - LineElement
       case RouterList.ProcessStart_Screen:

@@ -226,7 +226,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pushNamed(
-                          context, RouterList.WindingJobStart_Hold_Screen),
+                          context, RouterList.WindingJobFinish_hold_Screen),
                       child: Label(
                         "Hold",
                         color: Colors.grey,

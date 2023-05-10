@@ -20,6 +20,9 @@ class RouterList {
   //WindingJobFinish
   static const String WindingJobFinish_Screen =
       '/lineElementMenu/windingFinish';
+  //WindingJobFinish
+  static const String WindingJobFinish_hold_Screen =
+      '/lineElementMenu/windingFinishHold';
   //ProcessStart
   static const String ProcessStart_Screen =
       '/lineElementMenu/ProcessStart/processStart_Screen';

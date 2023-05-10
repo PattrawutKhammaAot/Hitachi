@@ -14,15 +14,16 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
 
-class WindingJobStartHoldScreen extends StatefulWidget {
-  const WindingJobStartHoldScreen({Key? key}) : super(key: key);
+class WindingJobFinishHoldScreen extends StatefulWidget {
+  const WindingJobFinishHoldScreen({Key? key}) : super(key: key);
 
   @override
-  State<WindingJobStartHoldScreen> createState() =>
-      _WindingJobStartHoldScreenState();
+  State<WindingJobFinishHoldScreen> createState() =>
+      _WindingJobFinishHoldScreenState();
 }
 
-class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
+class _WindingJobFinishHoldScreenState
+    extends State<WindingJobFinishHoldScreen> {
   final _formKey = GlobalKey<FormState>();
   // final TextEditingController machineNo = TextEditingController();
   // final TextEditingController operatorName = TextEditingController();
