@@ -53,3 +53,13 @@ class ReportRouteSheetEvenet extends LineElementEvent {
   @override
   List<Object> get prop => [items];
 }
+
+//////////////////------------MaterialEvent-----------///////////////
+class MaterialInputEvent extends LineElementEvent {
+  const MaterialInputEvent(this.items);
+
+  final MaterialOutputModel items;
+
+  @override
+  List<Object> get prop => [items];
+}

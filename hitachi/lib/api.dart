@@ -38,4 +38,10 @@ class ApiConfig {
   //Get
   static String LE_REPORT_ROUTE_SHEET =
       "${BASE_API_URL}LineElement/GetReportRouteSheet?batch=";
+
+  ///---------------------MaterialInput ----------------------///
+
+  //Get
+  static String LE_MATERIALINPUT =
+      "${BASE_API_URL}LineElement/SendMaterialInput";
 }

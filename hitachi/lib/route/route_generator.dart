@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.dart';
+import 'package:hitachi/screens/lineElement/materialInput/materialInput_hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/processFinish/processFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/processStart/processStart_screen.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_Screen.dart';
@@ -80,6 +81,11 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MaterialInputScreen(),
+            type: PageTransitionType.fade);
+      case RouterList.MaterialInput_Hold_Screen:
+        return PageTransition(
+            settings: settings,
+            child: MaterialInputHoldScreen(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

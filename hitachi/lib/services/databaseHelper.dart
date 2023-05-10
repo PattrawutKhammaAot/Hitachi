@@ -30,11 +30,20 @@ class DatabaseHelper {
   Future<Database> initializeDatabase() async {
     String databasesPath = await getDatabasesPath();
     String dbPath = join(databasesPath, 'my_database.db');
-    var database = await openDatabase(dbPath, version: 1, onCreate: _createDb);
-    print("Create a Tables Data");
-    print(dbPath);
-    return database;
+    bool isDatabaseExists = await databaseExists(dbPath);
+    if (isDatabaseExists) {
+      print("Database already exists");
+    } else {
+      var database =
+          await openDatabase(dbPath, version: 1, onCreate: _createDb);
+      print("Create a Tables Data");
+      return database;
+    }
+    return await openDatabase(dbPath, version: 1);
   }
+
+  @override
+  void _onUpgrade(Database db, int oldVersion, int newVer) {}
   //สร้างไฟล์กับ Column
 
   void _createDb(Database db, int newVersion) async {
@@ -49,14 +58,30 @@ class DatabaseHelper {
     _createTableProblem(db, newVersion);
     _createSpecification(db, newVersion);
     _createWindingWeightSheet(db, newVersion);
+    _createMaterialLoad(db, newVersion);
+    _createMaterialTrace(db, newVersion);
+    _createPMload(db, newVersion);
+    _craetePM(db, newVersion);
+    _createDateWindingPlan(db, newVersion);
+    _createBarcodePrinting(db, newVersion);
+    _createZincThickness(db, newVersion);
   }
 
-  Future<int> insertDataSheet(
-      String tableName, Map<String, dynamic> row) async {
+  Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
 
     print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.insert(tableName, row);
+  }
+
+  Future<int> deletedRowSqlite(
+      {String? tableName, String? columnName, dynamic? columnValue}) async {
+    Database db = await this.database;
+
+    print("DeleteRow Sucess ${tableName}");
+    //ColumnName คือ Key whereArgs คือค่า ID
+    return await db
+        .delete(tableName!, where: '$columnName = ?', whereArgs: [columnValue]);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
@@ -399,13 +424,13 @@ class DatabaseHelper {
     await db.execute('CREATE TABLE TREATMENT_SHEET ('
         'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT,'
         'OperatorName TEXT,'
-        'Batch1 INTEGER,'
-        'Batch2 INTEGER,'
-        'Batch3 INTEGER,'
-        'Batch4 INTEGER,'
-        'Batch5 INTEGER, '
-        'Batch6 INTEGER,'
-        'Batch7 INTEGER,'
+        'Batch1 TEXT,'
+        'Batch2 TEXT,'
+        'Batch3 TEXT,'
+        'Batch4 TEXT,'
+        'Batch5 TEXT, '
+        'Batch6 TEXT,'
+        'Batch7 TEXT,'
         'StartDate TEXT,'
         'FinDate TEXT,'
         'StartEnd TEXT,'
@@ -447,7 +472,7 @@ class DatabaseHelper {
     await db.execute('CREATE TABLE PROBLEM_SHEET ('
         'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT,'
         'OperatorName TEXT,'
-        'BatchNo INTEGER,'
+        'BatchNo TEXT,'
         'PDate TEXT,'
         'ProblemAlway TEXT,'
         'ProblemETC TEXT,'
@@ -651,5 +676,142 @@ class DatabaseHelper {
         'BatchNo INTEGER,'
         'Target REAL'
         ')');
+  }
+
+  void _createMaterialLoad(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE MATERIALLOAD_SHEET ('
+        'Itemcode TEXT, '
+        'Type TEXT)');
+  }
+
+  void _createMaterialTrace(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE MATERIAL_TRACE_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'Material TEXT, '
+        'Type TEXT, '
+        'OperatorName TEXT, '
+        'BatchNo TEXT, '
+        'MachineNo TEXT, '
+        'Material1 TEXT, '
+        'LotNo1 TEXT, '
+        'Date1 TEXT, '
+        'Material2 TEXT, '
+        'LotNo2 TEXT, '
+        'Date2 TEXT)');
+  }
+
+  void _createPMload(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE PMLOAD_SHEET ('
+        'CP_Type TEXT, '
+        'Status TEXT, '
+        'Description TEXT)');
+  }
+
+  void _craetePM(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE PM_SHEET ('
+        'OperatorName TEXT, '
+        'CheckPointPM TEXT, '
+        'Status TEXT, '
+        'DatePM TEXT)');
+  }
+
+  void _createDateWindingPlan(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE DATE_WINDING_PLAN_SHEET ('
+        'LoadDate TEXT, '
+        'LoadTime TEXT)');
+  }
+
+  void _createWindingPlan(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE WINDING_PLAN_SHEET ('
+        'IDPlanDate INTEGER, '
+        'PlanDate TEXT, '
+        'OrderPlan INTEGER, '
+        'OrderNo TEXT, '
+        'Batch TEXT, '
+        'IPE TEXT, '
+        'Qty INTEGER, '
+        'Note TEXT)');
+  }
+
+  void _createBarcodePrinting(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE BARCODE_PRINTING_SHEET ('
+        'CheckUser TEXT, '
+        'Batch TEXT, '
+        'Product TEXT, '
+        'Barcode TEXT, '
+        'Result INTEGER, '
+        'DateBarcode TEXT)');
+  }
+
+  void _createZincThickness(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE ZINCTHICKNESS_SHEET ('
+        'CheckUser TEXT, '
+        'Batch TEXT, '
+        'Thickness1 TEXT, '
+        'Thickness2 TEXT, '
+        'Thickness3 TEXT, '
+        'Thickness4 TEXT, '
+        'Thickness6 TEXT, '
+        'Thickness7 TEXT, '
+        'Thickness8 TEXT, '
+        'Thickness9 TEXT, '
+        'DateData TEXT)');
+  }
+
+/////////Select Database ////
+  Future<List<Map<String, dynamic>>> queryTypeMaterial(
+      {String? material,
+      String? value,
+      String? value2,
+      String? value3,
+      String? value4,
+      String? value5}) async {
+    try {
+      String sql = "SELECT Material " +
+          "FROM MATERIAL_TRACE_SHEET " +
+          "WHERE Material = '$material' " +
+          "AND (Type='$value') " +
+          "AND (OperatorName='$value2') " +
+          "AND (BatchNo='$value3') " +
+          "AND (LotNo1='$value4') " +
+          "AND (Date1='$value5')";
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> queryTypeMaterialAll(
+      {String? material,
+      String? value,
+      String? value2,
+      String? value3,
+      String? value4,
+      String? value5,
+      String? value6,
+      String? value7,
+      String? value8,
+      String? valueMaterial1}) async {
+    try {
+      String sql = "SELECT Material " +
+          "FROM MATERIAL_TRACE_SHEET " +
+          "WHERE Material = '$material' " +
+          "AND (Type='$value') " +
+          "AND (OperatorName='$value2') " +
+          "AND (BatchNo='$value3') " +
+          "AND (Material1='$valueMaterial1') " +
+          "AND (LotNo1='$value4') " +
+          "AND (Date1='$value5') " +
+          "AND (Material2='$value6') " +
+          "AND (LotNo2='$value7') " +
+          "AND (Date2='$value8')";
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }

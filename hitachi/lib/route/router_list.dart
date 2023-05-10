@@ -39,4 +39,6 @@ class RouterList {
   //ReportRouteSheetScreen
   static const String MaterialInput_Screen =
       '/lineElementMenu/materialInput/materialInput';
+  static const String MaterialInput_Hold_Screen =
+      '/lineElementMenu/materialInput/materialInput_hold';
 }

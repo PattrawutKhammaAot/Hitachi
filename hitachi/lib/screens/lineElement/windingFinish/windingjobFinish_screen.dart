@@ -37,8 +37,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   int batch = 100136982104;
   ReportRouteSheetModel? itemsReport;
   void _btnSend_Click() async {
-    if (batchNoController.text.trim().isNotEmpty ||
-        operatorNameController.text.trim().isNotEmpty ||
+    if (batchNoController.text.trim().isNotEmpty &&
+        operatorNameController.text.trim().isNotEmpty &&
         elementQtyController.text.trim().isNotEmpty) {
       try {
         _callApi(
@@ -83,7 +83,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
 
     if (sql.length <= 0) {
       var sqlInsertWINDING_SHEET =
-          await databaseHelper.insertDataSheet('WINDING_SHEET', {
+          await databaseHelper.insertSqlite('WINDING_SHEET', {
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Element': int.tryParse(elementQtyController.text.trim()),
         'BatchEndDate': batchNoController.text.trim(),
@@ -162,9 +162,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<LineElementBloc>(context).add(
-      ReportRouteSheetEvenet(100136982104.toString()),
-    );
     super.initState();
   }
 

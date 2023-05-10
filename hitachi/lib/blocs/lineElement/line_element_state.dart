@@ -123,3 +123,26 @@ class GetReportRuteSheetErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  Post MaterialInput//////
+class MaterialInputLoadingState extends LineElementState {
+  const MaterialInputLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class MaterialInputLoadedState extends LineElementState {
+  const MaterialInputLoadedState(this.item);
+  final MaterialInputModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class MaterialInputErrorState extends LineElementState {
+  const MaterialInputErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
