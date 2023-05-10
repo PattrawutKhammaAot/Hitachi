@@ -247,11 +247,35 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                     onPress: () => {_btnSend_Click()},
                   ),
                 ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  child: Button(
+                    bgColor: COLOR_BLUE,
+                    text: Label(
+                      "TestSend",
+                      color: COLOR_WHITE,
+                    ),
+                    onPress: () => {_testSendSqlite()},
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _testSendSqlite() async {
+    await databaseHelper.insertSqlite('WINDING_SHEET', {
+      'BatchNo': int.tryParse(batchNoController.text.trim()),
+      'Element': int.tryParse(elementQtyController.text.trim()),
+      'BatchEndDate': batchNoController.text.trim(),
+      'start_end': 'E',
+      'checkComplete': '0',
+      'value': 'WD'
+    });
   }
 }
