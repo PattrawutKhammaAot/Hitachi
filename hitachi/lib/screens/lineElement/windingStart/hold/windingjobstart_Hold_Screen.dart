@@ -73,6 +73,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHideAppBar: true,
       textTitle: "Winding job Start(Hold)",
       body: MultiBlocListener(
         listeners: [

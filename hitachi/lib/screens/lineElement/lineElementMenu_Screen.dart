@@ -27,42 +27,42 @@ class _LineElementScreenState extends State<LineElementScreen> {
           CardButton2(
             text: "Winding Start",
             onPress: () => Navigator.pushNamed(
-                context, RouterList.WindingJobStart_Scan_Screen),
+                context, RouterList.WindingJobStart_Control_Screen),
           ),
           CardButton2(
             text: "Winding Finish",
             onPress: () => Navigator.pushNamed(
-                context, RouterList.WindingJobFinish_Screen),
+                context, RouterList.WindingJobFinish_Control_Screen),
           ),
           CardButton2(
             text: "Process Start",
-            onPress: () =>
-                Navigator.pushNamed(context, RouterList.ProcessStart_Screen),
+            onPress: () => Navigator.pushNamed(
+                context, RouterList.ProcessStart_Control_Screen),
           ),
           CardButton2(
             text: "Process Finish",
-            onPress: () =>
-                Navigator.pushNamed(context, RouterList.ProcessFinish_Screen),
+            onPress: () => Navigator.pushNamed(
+                context, RouterList.ProcessFinish_control_Screen),
           ),
           CardButton2(
             text: "Treatment Start",
-            onPress: () =>
-                Navigator.pushNamed(context, RouterList.TreatMentStartScreen),
+            onPress: () => Navigator.pushNamed(
+                context, RouterList.TreatMentStart_controlScreen),
           ),
           CardButton2(
             text: "Treatment Finish",
-            onPress: () =>
-                Navigator.pushNamed(context, RouterList.TreatmentFinishScreen),
+            onPress: () => Navigator.pushNamed(
+                context, RouterList.TreatmentFinish_control_Screen),
           ),
           CardButton2(
             text: "Report Route Sheet",
             onPress: () => Navigator.pushNamed(
-                context, RouterList.ReportRouteSheet_Screen),
+                context, RouterList.ReportRouteSheet_control_Screen),
           ),
           CardButton2(
             text: "Material Input",
-            onPress: () =>
-                Navigator.pushNamed(context, RouterList.MaterialInput_Screen),
+            onPress: () => Navigator.pushNamed(
+                context, RouterList.MaterialInput_control_Screen),
           ),
         ],
       ),

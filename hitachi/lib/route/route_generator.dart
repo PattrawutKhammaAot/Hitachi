@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_Screen.dart';
+import 'package:hitachi/screens/lineElement/materialInput/materialInput_control_page.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/processFinish/processFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/processStart/processStart_screen.dart';
@@ -9,9 +10,11 @@ import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_ma
 import 'package:hitachi/screens/lineElement/treatmentFinish/treatmentFinish_screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/treatmentStart_screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/hold/windingJobFinish_hold_screen.dart';
-import 'package:hitachi/screens/lineElement/windingFinish/windingjobFinish_screen.dart';
+import 'package:hitachi/screens/lineElement/windingFinish/scan/windingjobFinish_screen.dart';
+import 'package:hitachi/screens/lineElement/windingFinish/windingFinishControlPage.dart';
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
+import 'package:hitachi/screens/lineElement/windingStart/windingControllerPage.dart';
 import 'package:hitachi/screens/mainMenu/MainMenu.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -32,66 +35,55 @@ class RouteGenerator {
             child: LineElementScreen(),
             type: PageTransitionType.leftToRight);
       //WindgJobStart - LineElement
-      case RouterList.WindingJobStart_Scan_Screen:
+      case RouterList.WindingJobStart_Control_Screen:
         return PageTransition(
             settings: settings,
-            child: WindingJobStartScanScreen(),
+            child: WindingJobStartControlPage(),
             type: PageTransitionType.leftToRight);
-      case RouterList.WindingJobStart_Hold_Screen:
-        return PageTransition(
-            settings: settings,
-            child: WindingJobStartHoldScreen(),
-            type: PageTransitionType.fade);
+
       //WindingJobFinish - LineElement
-      case RouterList.WindingJobFinish_Screen:
+      case RouterList.WindingJobFinish_Control_Screen:
         return PageTransition(
             settings: settings,
-            child: WindingJobFinishScreen(),
+            child: WindingFinishControlPage(),
             type: PageTransitionType.fade);
-      case RouterList.WindingJobFinish_hold_Screen:
-        return PageTransition(
-            settings: settings,
-            child: WindingJobFinishHoldScreen(),
-            type: PageTransitionType.fade);
+
       //ProcessStart - LineElement
-      case RouterList.ProcessStart_Screen:
+      case RouterList.ProcessStart_Control_Screen:
         return PageTransition(
             settings: settings,
             child: ProcessStartScreen(),
             type: PageTransitionType.fade);
-      //ProcessStart - LineElement
-      case RouterList.ProcessFinish_Screen:
+      //ProcessFinish - LineElement
+      case RouterList.ProcessStart_Control_Screen:
         return PageTransition(
             settings: settings,
-            child: ProcessFinishScreen(),
+            child: ProcessStartScreen(),
             type: PageTransitionType.fade);
+
       //TreatmentStart - LineElement
-      case RouterList.TreatMentStartScreen:
+      case RouterList.TreatMentStart_controlScreen:
         return PageTransition(
             settings: settings,
             child: TreatMentStartScreen(),
             type: PageTransitionType.fade);
-      case RouterList.TreatmentFinishScreen:
+      //TreatmentFinish - LineElement
+      case RouterList.TreatmentFinish_control_Screen:
         return PageTransition(
             settings: settings,
             child: TreatmentFinishScreen(),
             type: PageTransitionType.fade);
       //ReportRouteSheetScreen - LineElement
-      case RouterList.ReportRouteSheet_Screen:
+      case RouterList.ReportRouteSheet_control_Screen:
         return PageTransition(
             settings: settings,
             child: ReportRouteSheetScreen(),
             type: PageTransitionType.fade);
       //MaterialInputScreen - LineElement
-      case RouterList.MaterialInput_Screen:
+      case RouterList.MaterialInput_control_Screen:
         return PageTransition(
             settings: settings,
-            child: MaterialInputScreen(),
-            type: PageTransitionType.fade);
-      case RouterList.MaterialInput_Hold_Screen:
-        return PageTransition(
-            settings: settings,
-            child: MaterialInputHoldScreen(),
+            child: MaterialInputControlPage(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

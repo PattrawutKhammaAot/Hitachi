@@ -77,6 +77,7 @@ class _WindingJobFinishHoldScreenState
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHideAppBar: true,
       textTitle: "Winding job Finish(Hold)",
       body: MultiBlocListener(
         listeners: [

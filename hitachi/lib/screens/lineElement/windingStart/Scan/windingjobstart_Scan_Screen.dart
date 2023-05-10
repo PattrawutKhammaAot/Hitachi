@@ -256,14 +256,16 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       totalWeight = num.parse(totalWeight.toStringAsFixed(2));
 
       ///
-      bool isSave = await _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
+      bool isSave = await _SaveWindingStartWithWeight(
+          MACHINE_NO: machineNoController.text.trim(),
           OPERATOR_NAME: operatorNameController.text.trim(),
           BATCH_NO: int.tryParse(batchNoController.text.trim()),
           PRODUCT: int.tryParse(productController.text.trim()),
           PACK_NO: int.tryParse(filmPackNoController.text.trim()),
           PAPER_CORE: paperCodeLotController.text.trim(),
           PP_CORE: ppFilmLotController.text.trim(),
-          FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
+          FOIL_CORE: foilLotController.text.trim(),
+          BATCH_START_DATE: DateTime.now().toString());
       // bool isSave = await _SaveWindingStartWithWeight(
       //   MACHINE_NO: machineNoController.text.trim(),
       //   OPERATOR_NAME: operatorNameController.text.trim(),
@@ -419,7 +421,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             whereKey: 'MachineNo',
             value: MACHINE_NO);
       }
-///ASDASD
+
+      ///ASDASD
       return true;
     } catch (e) {
       EasyLoading.showError("Can not save", duration: Duration(seconds: 5));
@@ -435,7 +438,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           GetCheckPackNoEvent(result),
         );
-
       }
     } else {
       setState(() {
@@ -451,6 +453,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         return true;
       },
       child: BgWhite(
+        isHideAppBar: true,
         textTitle: "Winding Job Start",
         body: Form(
           autovalidateMode: AutovalidateMode.always,
@@ -465,7 +468,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       EasyLoading.show();
                     } else if (state
                         is PostSendWindingStartReturnWeightLoadedState) {
-
                       EasyLoading.dismiss();
                       setState(() {
                         items = state.item;
@@ -622,33 +624,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         height: 5,
                       ),
                       Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Label("Scan"),
-                            SizedBox(
-                              height: 15,
-                              child: VerticalDivider(
-                                color: COLOR_BLACK,
-                                thickness: 2,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.pushNamed(context,
-                                  RouterList.WindingJobStart_Hold_Screen),
-                              child: Label(
-                                "Hold",
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
                         child: Button(
                           bgColor: isDisableOnClick
                               ? COLOR_BLUE_DARK
@@ -668,7 +643,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 5,),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Container(
                         child: Button(
                           bgColor: COLOR_BLUE_DARK,
@@ -677,15 +654,20 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             color: COLOR_WHITE,
                           ),
                           onPress: () {
-                            _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
-                                OPERATOR_NAME: operatorNameController.text.trim(),
-                                BATCH_NO: int.tryParse(batchNoController.text.trim()),
-                                PRODUCT: int.tryParse(productController.text.trim()),
-                                PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+                            _SaveWindingStartWithWeight(
+                                MACHINE_NO: machineNoController.text.trim(),
+                                OPERATOR_NAME:
+                                    operatorNameController.text.trim(),
+                                BATCH_NO:
+                                    int.tryParse(batchNoController.text.trim()),
+                                PRODUCT:
+                                    int.tryParse(productController.text.trim()),
+                                PACK_NO: int.tryParse(
+                                    filmPackNoController.text.trim()),
                                 PAPER_CORE: paperCodeLotController.text.trim(),
                                 PP_CORE: ppFilmLotController.text.trim(),
-                                FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
-
+                                FOIL_CORE: foilLotController.text.trim(),
+                                BATCH_START_DATE: DateTime.now().toString());
                           },
                         ),
                       ),

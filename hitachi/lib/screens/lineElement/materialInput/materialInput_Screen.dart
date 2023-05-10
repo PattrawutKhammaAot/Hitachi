@@ -79,6 +79,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHideAppBar: true,
       textTitle: "MaterialInput",
       body: MultiBlocListener(
         listeners: [
@@ -137,31 +138,6 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 BoxInputField(
                   labelText: "Lot No. :",
                   controller: _lotNoController,
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Label("Scan"),
-                    SizedBox(
-                      height: 15,
-                      child: VerticalDivider(
-                        color: COLOR_BLACK,
-                        thickness: 2,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamed(
-                          context, RouterList.MaterialInput_Hold_Screen),
-                      child: Label(
-                        "Hold",
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(
                   height: 5,

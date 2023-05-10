@@ -8,7 +8,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
-import 'package:hitachi/screens/lineElement/materialInput/cardTable.dart';
+
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 

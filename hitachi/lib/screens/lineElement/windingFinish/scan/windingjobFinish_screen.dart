@@ -168,6 +168,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHideAppBar: true,
       textTitle: "Winding job finish",
       body: MultiBlocListener(
         listeners: [
@@ -208,31 +209,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   labelText: "Element QTY :",
                   maxLength: 3,
                   controller: elementQtyController,
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Label("Scan"),
-                    SizedBox(
-                      height: 15,
-                      child: VerticalDivider(
-                        color: COLOR_BLACK,
-                        thickness: 2,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamed(
-                          context, RouterList.WindingJobFinish_hold_Screen),
-                      child: Label(
-                        "Hold",
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
                 ),
                 SizedBox(
                   height: 15,
