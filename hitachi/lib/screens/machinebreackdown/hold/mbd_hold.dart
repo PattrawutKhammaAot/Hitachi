@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -62,326 +63,351 @@ class _MachineBreakDownHoldScreenState
 
   @override
   Widget build(BuildContext context) {
-    return BgWhite(
-      isHideAppBar: true,
-      textTitle: "Winding job Start(Hold)",
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            BreakdownDataSource != null
-                ? Expanded(
-                    child: Container(
-                      child: SfDataGrid(
-                        source: BreakdownDataSource!,
-                        // columnWidthMode: ColumnWidthMode.fill,
-                        showCheckboxColumn: true,
-                        selectionMode: SelectionMode.single,
-                        headerGridLinesVisibility: GridLinesVisibility.both,
-                        gridLinesVisibility: GridLinesVisibility.both,
-                        onCellTap: (details) async {
-                          if (details.rowColumnIndex.rowIndex != 0) {
-                            setState(() {
-                              selectedRowIndex =
-                                  details.rowColumnIndex.rowIndex - 1;
-                              datagridRow = BreakdownDataSource!.effectiveRows
-                                  .elementAt(selectedRowIndex!);
-                              bdsSqliteModel = datagridRow!
-                                  .getCells()
-                                  .map(
-                                    (e) => BreakDownSheetModel(),
-                                  )
-                                  .toList();
-                              _colorSend = COLOR_SUCESS;
-                              _colorDelete = COLOR_RED;
-                            });
-                          }
-                        },
-                        columns: <GridColumn>[
-                          GridColumn(
-                              columnName: 'machineno',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'Machine No.',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MachineBreakDownBloc, MachineBreakDownState>(
+          listener: (context, state) {
+            if (state is PostMachineBreakdownLoadingState) {
+              EasyLoading.show();
+            }
+            if (state is PostMachineBreakdownLoadedState) {
+              if (state.item.RESULT == true) {
+                deletedInfo();
+                Navigator.pop(context);
+                EasyLoading.showSuccess("Send complete",
+                    duration: Duration(seconds: 3));
+              } else {
+                EasyLoading.showError("Please Check Data");
+              }
+            }
+            if (state is PostMachineBreakdownErrorState) {
+              EasyLoading.showError("Can not send");
+            }
+          },
+        )
+      ],
+      child: BgWhite(
+        isHideAppBar: true,
+        textTitle: "Winding job Start(Hold)",
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              BreakdownDataSource != null
+                  ? Expanded(
+                      child: Container(
+                        child: SfDataGrid(
+                          source: BreakdownDataSource!,
+                          // columnWidthMode: ColumnWidthMode.fill,
+                          showCheckboxColumn: true,
+                          selectionMode: SelectionMode.single,
+                          headerGridLinesVisibility: GridLinesVisibility.both,
+                          gridLinesVisibility: GridLinesVisibility.both,
+                          onCellTap: (details) async {
+                            if (details.rowColumnIndex.rowIndex != 0) {
+                              setState(() {
+                                selectedRowIndex =
+                                    details.rowColumnIndex.rowIndex - 1;
+                                datagridRow = BreakdownDataSource!.effectiveRows
+                                    .elementAt(selectedRowIndex!);
+                                bdsSqliteModel = datagridRow!
+                                    .getCells()
+                                    .map(
+                                      (e) => BreakDownSheetModel(),
+                                    )
+                                    .toList();
+                                _colorSend = COLOR_SUCESS;
+                                _colorDelete = COLOR_RED;
+                              });
+                            }
+                          },
+                          columns: <GridColumn>[
+                            GridColumn(
+                                columnName: 'machineno',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Machine No.',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                  // color: COLOR_BLUE_DARK,
                                 )),
-                                // color: COLOR_BLUE_DARK,
-                              )),
-                          GridColumn(
-                            columnName: 'operatorName',
-                            label: Container(
-                              color: COLOR_BLUE_DARK,
-                              child: Center(
-                                  child: Label(
-                                'Operator Name',
-                                textAlign: TextAlign.center,
-                                fontSize: 14,
-                                color: COLOR_WHITE,
-                              )),
-                            ),
-                          ),
-                          GridColumn(
-                              columnName: 'service',
+                            GridColumn(
+                              columnName: 'operatorName',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                     child: Label(
-                                  'Service',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              ),
-                              width: 100),
-                          GridColumn(
-                              columnName: 'breakstart',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'BreakStart',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              ),
-                              width: 100),
-                          GridColumn(
-                              columnName: 'tech1',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'Tech1',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'starttech1',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'StartTech1',
+                                  'Operator Name',
                                   textAlign: TextAlign.center,
                                   fontSize: 14,
                                   color: COLOR_WHITE,
                                 )),
-                              )),
-                          GridColumn(
-                              columnName: 'tech2',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'Tech2',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'starttech2',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'StartTech2',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'stoptech1',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'StopTech1',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'stoptech2',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'StopTech2',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'accept',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'Accept',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                          GridColumn(
-                              columnName: 'breakstop',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'BreakStop',
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              )),
-                        ],
-                      ),
-                    ),
-                  )
-                : CircularProgressIndicator(),
-            bdsSqliteModel != null && bdsList != null
-                ? Expanded(
-                    child: Container(
-                        child: ListView(
-                      children: [
-                        DataTable(
-                            horizontalMargin: 20,
-                            headingRowHeight: 30,
-                            dataRowHeight: 30,
-                            headingRowColor: MaterialStateColor.resolveWith(
-                                (states) => COLOR_BLUE_DARK),
-                            border: TableBorder.all(
-                              width: 1.0,
-                              color: COLOR_BLACK,
-                            ),
-                            columns: [
-                              DataColumn(
-                                numeric: true,
-                                label: Label(
-                                  "",
-                                  color: COLOR_BLUE_DARK,
-                                ),
                               ),
-                              DataColumn(label: Label(""))
-                            ],
-                            rows: [
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("Machine No."))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].MACHINE_NO}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("OperatorName"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].OPERATOR_NAME}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("SERVICE"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].SERVICE_NO}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(
-                                    Center(child: Label("BreakStartDate"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].BREAK_START_DATE}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("Tech1"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].TECH_1}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("StartTech1"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].START_TECH_DATE_1}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("Tech2"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].TECH_2}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("StartTech2"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].START_TECH_DATE_2}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("StopTech1"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].STOP_DATE_TECH_1}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("StopTech2"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].STOP_DATE_TECH_2}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("Accept"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].OPERATOR_ACCEPT}"))
-                              ]),
-                              DataRow(cells: [
-                                DataCell(Center(child: Label("BreakStop"))),
-                                DataCell(Label(
-                                    "${bdsList[selectedRowIndex!].BREAK_STOP_DATE}"))
-                              ]),
-                            ])
-                      ],
-                    )),
-                  )
-                : Expanded(
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                            ),
+                            GridColumn(
+                                columnName: 'service',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Service',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                ),
+                                width: 100),
+                            GridColumn(
+                                columnName: 'breakstart',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'BreakStart',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                ),
+                                width: 100),
+                            GridColumn(
+                                columnName: 'tech1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Tech1',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'starttech1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'StartTech1',
+                                    textAlign: TextAlign.center,
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'tech2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Tech2',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'starttech2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'StartTech2',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'stoptech1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'StopTech1',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'stoptech2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'StopTech2',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'accept',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Accept',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'breakstop',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'BreakStop',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                          ],
+                        ),
+                      ),
+                    )
+                  : CircularProgressIndicator(),
+              bdsSqliteModel != null && bdsList != null
+                  ? Expanded(
+                      child: Container(
+                          child: ListView(
                         children: [
-                          Label(
-                            "No data",
-                            color: COLOR_RED,
-                            fontSize: 30,
-                          ),
-                          CircularProgressIndicator()
+                          DataTable(
+                              horizontalMargin: 20,
+                              headingRowHeight: 30,
+                              dataRowHeight: 30,
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => COLOR_BLUE_DARK),
+                              border: TableBorder.all(
+                                width: 1.0,
+                                color: COLOR_BLACK,
+                              ),
+                              columns: [
+                                DataColumn(
+                                  numeric: true,
+                                  label: Label(
+                                    "",
+                                    color: COLOR_BLUE_DARK,
+                                  ),
+                                ),
+                                DataColumn(label: Label(""))
+                              ],
+                              rows: [
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Machine No."))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].MACHINE_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("OperatorName"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("SERVICE"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].SERVICE_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("BreakStartDate"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].BREAK_START_DATE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Tech1"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].TECH_1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("StartTech1"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Tech2"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].TECH_2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("StartTech2"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("StopTech1"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("StopTech2"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Accept"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].OPERATOR_ACCEPT}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("BreakStop"))),
+                                  DataCell(Label(
+                                      "${bdsList[selectedRowIndex!].BREAK_STOP_DATE}"))
+                                ]),
+                              ])
                         ],
+                      )),
+                    )
+                  : Expanded(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Label(
+                              "No data",
+                              color: COLOR_RED,
+                              fontSize: 30,
+                            ),
+                            CircularProgressIndicator()
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                    child: Button(
-                  onPress: () {
-                    if (bdsSqliteModel != null) {
-                      _AlertDialog();
-                    } else {
-                      _LoadingData();
-                    }
-                  },
-                  text: Label(
-                    "Delete",
-                    color: COLOR_WHITE,
-                  ),
-                  bgColor: _colorDelete,
-                )),
-                Expanded(child: Container()),
-                Expanded(
-                    child: Button(
-                  text: Label("Send", color: COLOR_WHITE),
-                  bgColor: _colorSend,
-                  onPress: () {
-                    if (bdsSqliteModel != null) {
-                      _sendDataServer();
-                    } else {
-                      EasyLoading.showInfo("Please Select Data");
-                    }
-                  },
-                )),
-              ],
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                      child: Button(
+                    onPress: () {
+                      if (bdsSqliteModel != null) {
+                        _AlertDialog();
+                      } else {
+                        _selectData();
+                      }
+                    },
+                    text: Label(
+                      "Delete",
+                      color: COLOR_WHITE,
+                    ),
+                    bgColor: _colorDelete,
+                  )),
+                  Expanded(child: Container()),
+                  Expanded(
+                      child: Button(
+                    text: Label("Send", color: COLOR_WHITE),
+                    bgColor: _colorSend,
+                    onPress: () {
+                      if (bdsSqliteModel != null) {
+                        _sendDataServer();
+                      } else {
+                        EasyLoading.showInfo("Please Select Data");
+                      }
+                    },
+                  )),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -458,7 +484,7 @@ class _MachineBreakDownHoldScreenState
     // );
   }
 
-  void _LoadingData() {
+  void _selectData() {
     EasyLoading.showInfo("Please Select Data", duration: Duration(seconds: 2));
   }
 }

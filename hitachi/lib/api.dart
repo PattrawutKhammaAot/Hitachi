@@ -44,4 +44,7 @@ class ApiConfig {
   //Get
   static String LE_MATERIALINPUT =
       "${BASE_API_URL}LineElement/SendMaterialInput";
+
+  //POST MACHINE BREAKDOWN
+  static String MACHINE_BREAKDOWN = "${BASE_API_URL}LineElement/SendMachine";
 }
