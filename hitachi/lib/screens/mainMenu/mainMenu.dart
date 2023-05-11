@@ -69,8 +69,7 @@ class _MainMenuState extends State<MainMenu> {
                 ),
                 CardButton(
                   text: "4.PM Daily",
-                  onPress: () =>
-                      Navigator.pushNamed(context, RouterList.PMPlan_Screen),
+                  onPress: () => print("test2"),
                 ),
                 SizedBox(
                   height: 15,

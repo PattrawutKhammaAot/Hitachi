@@ -54,8 +54,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         EasyLoading.showError("Can not send");
       }
     } else {
-      EasyLoading.show(
-          status: "data incomplete ${elementQtyController.text.toString()}");
+      EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
   }
 
@@ -168,6 +167,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+      isHideAppBar: true,
       textTitle: "Winding job finish",
       body: MultiBlocListener(
         listeners: [
@@ -183,7 +183,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               }
               if (state is PostSendWindingFinishErrorState) {
                 _insertSqlite();
-                EasyLoading.showError("Can not send");
+                EasyLoading.showError("Can not send",
+                    duration: Duration(seconds: 3));
               }
             },
           )
@@ -212,31 +213,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 SizedBox(
                   height: 15,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Label("Scan"),
-                    SizedBox(
-                      height: 15,
-                      child: VerticalDivider(
-                        color: COLOR_BLACK,
-                        thickness: 2,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamed(
-                          context, RouterList.WindingJobStart_Hold_Screen),
-                      child: Label(
-                        "Hold",
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
                 Container(
                   child: Button(
                     bgColor: COLOR_RED,
@@ -247,11 +223,39 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                     onPress: () => {_btnSend_Click()},
                   ),
                 ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  child: Button(
+                    bgColor: COLOR_BLUE,
+                    text: Label(
+                      "TestSend",
+                      color: COLOR_WHITE,
+                    ),
+                    onPress: () => {_testSendSqlite()},
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _testSendSqlite() async {
+    try {
+      await databaseHelper.insertSqlite('WINDING_SHEET', {
+        'BatchNo': batchNoController.text.trim(),
+        'Element': elementQtyController.text.trim(),
+        'BatchEndDate': batchNoController.text.trim(),
+        'start_end': 'E',
+        'checkComplete': '0',
+        'value': 'WD'
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

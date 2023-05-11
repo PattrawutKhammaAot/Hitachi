@@ -8,7 +8,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
-import 'package:hitachi/screens/lineElement/materialInput/cardTable.dart';
+
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -21,13 +21,15 @@ class MaterialInputHoldScreen extends StatefulWidget {
 }
 
 class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
-  List<MaterialTraceModel>? material;
+  List<MaterialTraceModel>? materialList;
   DatabaseHelper databaseHelper = DatabaseHelper();
   MaterialTraceDataSource? matTracDs;
   int? selectedRowIndex;
   DataGridRow? datagridRow;
-  List<MaterialTraceModel>? mtModel;
+  List<MaterialTraceModel>? mtModelSqlite;
   final TextEditingController _passwordController = TextEditingController();
+  Color _colorSend = COLOR_GREY;
+  Color _colorDelete = COLOR_GREY;
 
   ////
   Future<List<MaterialTraceModel>> _getWindingSheet() async {
@@ -47,8 +49,8 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   void initState() {
     _getWindingSheet().then((result) {
       setState(() {
-        material = result;
-        matTracDs = MaterialTraceDataSource(process: material);
+        materialList = result;
+        matTracDs = MaterialTraceDataSource(process: materialList);
       });
     });
     super.initState();
@@ -58,13 +60,13 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
     await databaseHelper.deletedRowSqlite(
         tableName: 'MATERIAL_TRACE_SHEET',
         columnName: 'ID',
-        columnValue: material![selectedRowIndex!].ID);
+        columnValue: materialList![selectedRowIndex!].ID);
   }
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-        isHidePreviour: true,
+        isHideAppBar: true,
         textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
@@ -73,9 +75,15 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                 if (state is MaterialInputLoadingState) {
                   EasyLoading.show();
                 } else if (state is MaterialInputLoadedState) {
-                  EasyLoading.dismiss();
-                  EasyLoading.showSuccess("Send complete",
-                      duration: Duration(seconds: 3));
+                  if (state.item.RESULT == true) {
+                    deletedInfo();
+                    Navigator.canPop(context);
+                    EasyLoading.dismiss();
+                    EasyLoading.showSuccess("Send complete",
+                        duration: Duration(seconds: 3));
+                  } else {
+                    EasyLoading.showError("Please Check Data");
+                  }
                 } else {
                   EasyLoading.dismiss();
                   EasyLoading.showError("Please Check Connection Internet");
@@ -91,6 +99,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                     ? Expanded(
                         child: Container(
                           child: SfDataGrid(
+                            showCheckboxColumn: true,
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
@@ -102,7 +111,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                       details.rowColumnIndex.rowIndex - 1;
                                   datagridRow = matTracDs!.effectiveRows
                                       .elementAt(selectedRowIndex!);
-                                  mtModel = datagridRow!
+                                  mtModelSqlite = datagridRow!
                                       .getCells()
                                       .map(
                                         (e) => MaterialTraceModel(
@@ -121,8 +130,8 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                       )
                                       .toList();
                                 });
-                                print(
-                                    material![selectedRowIndex!].MATERIAL_TYPE);
+                                _colorDelete = COLOR_RED;
+                                _colorSend = COLOR_SUCESS;
                               }
                             },
                             columns: <GridColumn>[
@@ -230,7 +239,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                mtModel != null
+                mtModelSqlite != null
                     ? Expanded(
                         child: Container(
                             child: ListView(
@@ -260,45 +269,45 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                     DataCell(
                                         Center(child: Label("MaterialType"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL_TYPE}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL_TYPE}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Material"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].OPERATOR_NAME}"))
+                                        "${materialList![selectedRowIndex!].OPERATOR_NAME}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Batch/Serial No."))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].BATCH_NO}"))
+                                        "${materialList![selectedRowIndex!].BATCH_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Machine/Process"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MACHINE_NO}"))
+                                        "${materialList![selectedRowIndex!].MACHINE_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Material"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].MATERIAL_1}"))
+                                        "${materialList![selectedRowIndex!].MATERIAL_1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Lot No."))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].LOTNO_1}"))
+                                        "${materialList![selectedRowIndex!].LOTNO_1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Date"))),
                                     DataCell(Label(
-                                        "${material![selectedRowIndex!].DATE_1}"))
+                                        "${materialList![selectedRowIndex!].DATE_1}"))
                                   ])
                                 ])
                           ],
@@ -325,68 +334,49 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (mtModel != null) {
+                        if (mtModelSqlite != null) {
                           _AlertDialog();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
                         }
                       },
                       text: Label(
                         "Delete",
                         color: COLOR_WHITE,
                       ),
-                      bgColor: COLOR_RED,
+                      bgColor: _colorDelete,
                     )),
-                    Expanded(
-                        child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Label(
-                            "Scan",
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            height: 15,
-                            child: VerticalDivider(
-                              color: COLOR_BLACK,
-                              thickness: 2,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => print("object"),
-                            // Navigator.pushNamed(context,
-                            // RouterList.WindingJobStart_Hold_Screen),
-                            child: Label(
-                              "Hold",
-                              color: COLOR_BLACK,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                    Expanded(child: Container()),
                     Expanded(
                         child: Button(
                       text: Label("Send", color: COLOR_WHITE),
-                      bgColor: COLOR_SUCESS,
+                      bgColor: _colorSend,
                       onPress: () {
-                        BlocProvider.of<LineElementBloc>(context).add(
-                          MaterialInputEvent(
-                            MaterialOutputModel(
-                              MATERIAL: material![selectedRowIndex!].MATERIAL,
-                              MACHINENO:
-                                  material![selectedRowIndex!].MACHINE_NO,
-                              OPERATORNAME: int.tryParse(
-                                  material![selectedRowIndex!]
-                                      .OPERATOR_NAME
-                                      .toString()),
-                              BATCHNO: int.tryParse(material![selectedRowIndex!]
-                                  .BATCH_NO
-                                  .toString()),
-                              LOT: material![selectedRowIndex!].LOTNO_1,
-                              STARTDATE: material![selectedRowIndex!].DATE_1,
+                        if (mtModelSqlite != null) {
+                          BlocProvider.of<LineElementBloc>(context).add(
+                            MaterialInputEvent(
+                              MaterialOutputModel(
+                                MATERIAL:
+                                    materialList![selectedRowIndex!].MATERIAL,
+                                MACHINENO:
+                                    materialList![selectedRowIndex!].MACHINE_NO,
+                                OPERATORNAME: int.tryParse(
+                                    materialList![selectedRowIndex!]
+                                        .OPERATOR_NAME
+                                        .toString()),
+                                BATCHNO: int.tryParse(
+                                    materialList![selectedRowIndex!]
+                                        .BATCH_NO
+                                        .toString()),
+                                LOT: materialList![selectedRowIndex!].LOTNO_1,
+                                STARTDATE:
+                                    materialList![selectedRowIndex!].DATE_1,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
                       },
                     )),
                   ],
@@ -413,13 +403,17 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
 
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               if (_passwordController.text.trim().length > 6) {
                 deletedInfo();
+
+                Navigator.pop(context);
+                Navigator.pop(context);
+                EasyLoading.showSuccess("Delete Success");
               } else {
                 EasyLoading.showError("Please Input Password");
               }

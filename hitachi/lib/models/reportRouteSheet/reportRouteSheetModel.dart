@@ -66,11 +66,14 @@ class ReportRouteSheetModelProcess {
 }
 
 class ReportRouteSheetModelProblem {
-  const ReportRouteSheetModelProblem();
-  List<Object> get props => [];
+  const ReportRouteSheetModelProblem({this.DESCRIPTION, this.PROCESS});
+  final String? PROCESS;
+  final String? DESCRIPTION;
+  List<Object> get props => [PROCESS!, DESCRIPTION!];
 
   static ReportRouteSheetModelProblem fromJson(dynamic json) {
-    return ReportRouteSheetModelProblem();
+    return ReportRouteSheetModelProblem(
+        PROCESS: json['Process'], DESCRIPTION: json['Description']);
   }
 }
 

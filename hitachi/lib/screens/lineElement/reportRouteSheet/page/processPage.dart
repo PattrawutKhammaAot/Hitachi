@@ -7,21 +7,22 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
+import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class ReportRouteSheetScreen extends StatefulWidget {
-  const ReportRouteSheetScreen({super.key});
+class ProcessPage extends StatefulWidget {
+  const ProcessPage({super.key, this.onChange});
+  final ValueChanged<String>? onChange;
 
   @override
-  State<ReportRouteSheetScreen> createState() => _ReportRouteSheetScreenState();
+  State<ProcessPage> createState() => _ProcessPageState();
 }
 
-class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
+class _ProcessPageState extends State<ProcessPage> {
+  final TextEditingController batchNoController = TextEditingController();
   List<ReportRouteSheetModelProcess>? reportRouteSheetModel;
-
   EmployeeDataSource? employeeDataSource;
-  final TextEditingController _batchNoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,7 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
         )
       ],
       child: BgWhite(
+        isHideAppBar: true,
         textTitle: "Report Route Sheet",
         body: Container(
           padding: EdgeInsets.all(15),
@@ -59,12 +61,13 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
                   labelText: "Batch No",
                   type: TextInputType.number,
                   maxLength: 12,
-                  controller: _batchNoController,
+                  controller: batchNoController,
                   onChanged: (value) {
                     if (value.length >= 12) {
                       BlocProvider.of<LineElementBloc>(context).add(
-                        ReportRouteSheetEvenet(_batchNoController.text.trim()),
+                        ReportRouteSheetEvenet(batchNoController.text.trim()),
                       );
+                      widget.onChange!(batchNoController.text.trim());
                     }
                   },
                 ),

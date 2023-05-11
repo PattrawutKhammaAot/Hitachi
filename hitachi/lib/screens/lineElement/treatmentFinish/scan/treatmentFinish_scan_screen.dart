@@ -5,17 +5,19 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 
-class TreatmentFinishScreen extends StatefulWidget {
-  const TreatmentFinishScreen({super.key});
+class TreatmentFinishScanScreen extends StatefulWidget {
+  const TreatmentFinishScanScreen({super.key});
 
   @override
-  State<TreatmentFinishScreen> createState() => _TreatmentFinishScreenState();
+  State<TreatmentFinishScanScreen> createState() =>
+      _TreatmentFinishScanScreenState();
 }
 
-class _TreatmentFinishScreenState extends State<TreatmentFinishScreen> {
+class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
+        isHideAppBar: true,
         textTitle: "Treatment Finish",
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -86,31 +88,6 @@ class _TreatmentFinishScreenState extends State<TreatmentFinishScreen> {
                       child: RowBoxInputField(
                         labelText: "Batch 7 : ",
                         height: 35,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Label("Scan"),
-                    SizedBox(
-                      height: 15,
-                      child: VerticalDivider(
-                        color: COLOR_BLACK,
-                        thickness: 2,
-                      ),
-                    ),
-                    GestureDetector(
-                      // onTap: () => Navigator.pushNamed(
-                      //     context, RouterList.WindingJobStart_Hold_Screen),
-                      child: Label(
-                        "Hold",
-                        color: Colors.grey,
                       ),
                     ),
                   ],

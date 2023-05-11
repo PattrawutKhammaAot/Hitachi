@@ -8,22 +8,23 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
+import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/route/router_list.dart';
-import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
 
-class WindingJobStartHoldScreen extends StatefulWidget {
-  const WindingJobStartHoldScreen({Key? key}) : super(key: key);
+class WindingJobFinishHoldScreen extends StatefulWidget {
+  const WindingJobFinishHoldScreen({Key? key}) : super(key: key);
 
   @override
-  State<WindingJobStartHoldScreen> createState() =>
-      _WindingJobStartHoldScreenState();
+  State<WindingJobFinishHoldScreen> createState() =>
+      _WindingJobFinishHoldScreenState();
 }
 
-class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
+class _WindingJobFinishHoldScreenState
+    extends State<WindingJobFinishHoldScreen> {
   final _formKey = GlobalKey<FormState>();
   // final TextEditingController machineNo = TextEditingController();
   // final TextEditingController operatorName = TextEditingController();
@@ -46,7 +47,6 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   bool isClick = false;
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
-  bool isHidewidget = false;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
@@ -65,11 +65,12 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_SHEET');
+
       List<WindingSheetModel> result = rows
+          .where((row) => row['start_end'] == 'E')
           .map((row) => WindingSheetModel.fromMap(
               row.map((key, value) => MapEntry(key, value.toString()))))
           .toList();
-
       return result;
     } catch (e) {
       print(e);
@@ -81,15 +82,15 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
       isHideAppBar: true,
-      textTitle: "Winding job Start(Hold)",
+      textTitle: "Winding job Finish(Hold)",
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
             listener: (context, state) {
-              if (state is PostSendWindingStartLoadingState) {
+              if (state is PostSendWindingFinishLoadingState) {
                 EasyLoading.show();
-              } else if (state is PostSendWindingStartLoadedState) {
-                EasyLoading.dismiss();
+              }
+              if (state is PostSendWindingFinishLoadedState) {
                 if (state.item.RESULT == true) {
                   Navigator.pop(context);
                   deletedInfo();
@@ -99,9 +100,9 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                 } else {
                   EasyLoading.showError("Please Check Data");
                 }
-              } else {
-                EasyLoading.dismiss();
-                EasyLoading.showError("Please Check Connection Internet");
+              }
+              if (state is PostSendWindingFinishErrorState) {
+                EasyLoading.showError("Can not send");
               }
             },
           )
@@ -148,31 +149,31 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                       ),
                                     )
                                     .toList();
-                                _colorSend = COLOR_SUCESS;
                                 _colorDelete = COLOR_RED;
+                                _colorSend = COLOR_SUCESS;
                               });
                             }
                           },
                           columns: <GridColumn>[
                             GridColumn(
-                                columnName: 'machineno',
+                                columnName: 'operatorName',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Machine No.',
+                                    'Operator Name.',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
-                              columnName: 'operatorName',
+                              columnName: 'batch',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                     child: Label(
-                                  'Operator Name',
+                                  'Batch No.',
                                   textAlign: TextAlign.center,
                                   fontSize: 14,
                                   color: COLOR_WHITE,
@@ -180,102 +181,42 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                               ),
                             ),
                             GridColumn(
-                                columnName: 'batchno',
+                                columnName: 'startEnd',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Batch No.',
+                                    'Date End',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 ),
                                 width: 100),
                             GridColumn(
-                                columnName: 'product',
+                                columnName: 'element',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Product',
+                                    'Element Qty',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 ),
                                 width: 100),
-                            GridColumn(
-                                columnName: 'filmpackno',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Film pack No.',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'papercodelot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Paper code lot',
-                                    textAlign: TextAlign.center,
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'PPfilmlot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'PP film lot',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'foillot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Foil Lot',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'batchstart',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'StartDate',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'status',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Status',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
                           ],
                         ),
                       ),
                     )
-                  : CircularProgressIndicator(),
-              wdsSqliteModel != null && wdsList != null
+                  : Container(
+                      child: Center(
+                        child: Label(
+                          "NO DATA",
+                          fontSize: 30,
+                        ),
+                      ),
+                    ),
+              wdsSqliteModel != null
                   ? Expanded(
                       child: Container(
                           child: ListView(
@@ -302,57 +243,28 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                               ],
                               rows: [
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Machine No."))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].MACHINE_NO}"))
-                                ]),
-                                DataRow(cells: [
                                   DataCell(
-                                      Center(child: Label("OperatorName"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                      Center(child: Label("Operator Name"))),
+                                  DataCell(Label(wdsList[selectedRowIndex!]
+                                          .OPERATOR_NAME ??
+                                      ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Batch No."))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].BATCH_NO}"))
+                                      wdsList[selectedRowIndex!].BATCH_NO ??
+                                          ""))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Product"))),
+                                  DataCell(Center(child: Label("Finish Date"))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PRODUCT}"))
+                                      wdsList[selectedRowIndex!].START_END ??
+                                          ""))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Film pack No"))),
+                                  DataCell(Center(child: Label("Element"))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PACK_NO}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Paper Code Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PAPER_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("PP film Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PP_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Foil Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].FOIL_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("StartDate"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].BATCH_START_DATE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Status"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].STATUS}"))
+                                      wdsList[selectedRowIndex!].ELEMENT ?? ""))
                                 ]),
                               ])
                         ],
@@ -381,6 +293,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                     onPress: () {
                       if (wdsSqliteModel != null) {
                         _AlertDialog();
+                        setState(() {});
                       } else {
                         _LoadingData();
                       }
@@ -434,7 +347,10 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _checkValueController(),
+            onPressed: () {
+              _checkValueController();
+              Navigator.pop(context);
+            },
             child: const Text('OK'),
           ),
         ],
@@ -454,7 +370,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
           });
         });
       });
-      Navigator.pop(context);
+
       Navigator.pop(context);
       EasyLoading.showSuccess("Delete Success");
     }
@@ -469,20 +385,16 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
 
   void _sendDataServer() async {
     BlocProvider.of<LineElementBloc>(context).add(
-      PostSendWindingStartEvent(
-        SendWindingStartModelOutput(
-            MACHINE_NO: wdsList[selectedRowIndex!].MACHINE_NO,
-            OPERATOR_NAME: int.tryParse(
-                wdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
-            PRODUCT: int.tryParse(
-              wdsList[selectedRowIndex!].PRODUCT.toString(),
-            ),
-            FILM_PACK_NO: int.tryParse(
-              wdsList[selectedRowIndex!].PACK_NO.toString(),
-            ),
-            PAPER_CODE_LOT: wdsList[selectedRowIndex!].PAPER_CORE,
-            PP_FILM_LOT: wdsList[selectedRowIndex!].PP_CORE,
-            FOIL_LOT: wdsList[selectedRowIndex!].FOIL_CORE),
+      PostSendWindingFinishEvent(
+        SendWdsFinishOutputModel(
+          OPERATOR_NAME:
+              int.tryParse(wdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
+          BATCH_NO:
+              int.tryParse(wdsList[selectedRowIndex!].BATCH_NO.toString()),
+          ELEMNT_QTY:
+              int.tryParse(wdsList[selectedRowIndex!].ELEMENT.toString()),
+          FINISH_DATE: DateTime.now().toString(),
+        ),
       ),
     );
   }
@@ -494,35 +406,32 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
 
 class WindingsDataSource extends DataGridSource {
   WindingsDataSource({List<WindingSheetModel>? process}) {
-    if (process != null) {
-      for (var _item in process) {
-        _employees.add(
-          DataGridRow(
-            cells: [
-              DataGridCell<String>(
-                  columnName: 'machineno', value: _item.MACHINE_NO),
-              DataGridCell<String>(
-                  columnName: 'operatorName', value: _item.OPERATOR_NAME),
-              DataGridCell<String>(
-                  columnName: 'batchno', value: _item.BATCH_NO),
-              DataGridCell<String>(columnName: 'product', value: _item.PRODUCT),
-              DataGridCell<String>(
-                  columnName: 'filmpackno', value: _item.FOIL_CORE),
-              DataGridCell<String>(
-                  columnName: 'papercodelot', value: _item.PAPER_CORE),
-              DataGridCell<String>(
-                  columnName: 'PPfilmlot', value: _item.PP_CORE),
-              DataGridCell<String>(
-                  columnName: 'foillot', value: _item.FOIL_CORE),
-              DataGridCell<String>(
-                  columnName: 'batchstart', value: _item.BATCH_START_DATE),
-              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
-            ],
-          ),
-        );
-        print(_item.PACK_NO);
+    try {
+      if (process != null) {
+        for (var _item in process) {
+          if (_item.START_END == 'E') {
+            _employees.add(
+              DataGridRow(
+                cells: [
+                  DataGridCell<int>(
+                      columnName: 'operatorName',
+                      value: int.tryParse(_item.OPERATOR_NAME.toString())),
+                  DataGridCell<int>(
+                      columnName: 'batch',
+                      value: int.tryParse(_item.BATCH_NO.toString())),
+                  DataGridCell<String>(
+                      columnName: 'startEnd', value: _item.START_END),
+                  DataGridCell<int>(
+                      columnName: 'element',
+                      value: int.tryParse(_item.ELEMENT.toString())),
+                ],
+              ),
+            );
+          }
+        }
       }
-    } else {
+    } catch (e) {
+      print(e);
       EasyLoading.showError("Can not Call API");
     }
   }

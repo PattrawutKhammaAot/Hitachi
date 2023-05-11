@@ -5,73 +5,95 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 
-class ProcessFinishScreen extends StatefulWidget {
-  const ProcessFinishScreen({super.key});
+class TreatMentStartScanScreen extends StatefulWidget {
+  const TreatMentStartScanScreen({super.key});
 
   @override
-  State<ProcessFinishScreen> createState() => _ProcessFinishScreenState();
+  State<TreatMentStartScanScreen> createState() =>
+      _TreatMentStartScanScreenState();
 }
 
-class _ProcessFinishScreenState extends State<ProcessFinishScreen> {
+class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-        textTitle: "ProcessFinish",
+        isHideAppBar: true,
+        textTitle: "Treatment Start",
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 RowBoxInputField(
-                  labelText: "Machine No : ",
-                  maxLength: 3,
+                  labelText: "Machine No. : ",
+                  height: 35,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
                   labelText: "Operator Name : ",
+                  height: 35,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
-                  labelText: "Batch No : ",
+                  labelText: "Batch 1 : ",
+                  height: 35,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
-                  labelText: "Reject Qty : ",
-                  type: TextInputType.number,
+                  labelText: "Batch 2 : ",
+                  height: 35,
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 5,
+                ),
+                RowBoxInputField(
+                  labelText: "Batch 3 : ",
+                  height: 35,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                RowBoxInputField(
+                  labelText: "Batch 4 : ",
+                  height: 35,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                RowBoxInputField(
+                  labelText: "Batch 5 : ",
+                  height: 35,
+                ),
+                SizedBox(
+                  height: 5,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Label("Scan"),
-                    SizedBox(
-                      height: 15,
-                      child: VerticalDivider(
-                        color: COLOR_BLACK,
-                        thickness: 2,
+                    Expanded(
+                      child: RowBoxInputField(
+                        labelText: "Batch 6 : ",
+                        height: 35,
                       ),
                     ),
-                    GestureDetector(
-                      // onTap: () => Navigator.pushNamed(
-                      //     context, RouterList.WindingJobStart_Hold_Screen),
-                      child: Label(
-                        "Hold",
-                        color: Colors.grey,
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                      child: RowBoxInputField(
+                        labelText: "Batch 7 : ",
+                        height: 35,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 5,
                 ),
                 Button(
                   height: 40,

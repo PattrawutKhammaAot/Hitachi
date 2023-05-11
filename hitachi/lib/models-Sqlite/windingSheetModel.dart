@@ -1,31 +1,32 @@
 class WindingSheetModel {
-  const WindingSheetModel({
-    this.MACHINE_NO,
-    this.OPERATOR_NAME,
-    this.BATCH_NO,
-    this.PRODUCT,
-    this.PACK_NO,
-    this.PAPER_CORE,
-    this.PP_CORE,
-    this.FOIL_CORE,
-    this.BATCH_START_DATE,
-    this.BATCH_END_DATE,
-    this.ELEMENT,
-    this.STATUS,
-    this.START_END,
-    this.CHECK_COMPLETE,
-  });
-  final int? MACHINE_NO;
+  const WindingSheetModel(
+      {this.MACHINE_NO,
+      this.OPERATOR_NAME,
+      this.BATCH_NO,
+      this.PRODUCT,
+      this.PACK_NO,
+      this.PAPER_CORE,
+      this.PP_CORE,
+      this.FOIL_CORE,
+      this.BATCH_START_DATE,
+      this.BATCH_END_DATE,
+      this.ELEMENT,
+      this.STATUS,
+      this.START_END,
+      this.CHECK_COMPLETE,
+      this.ID});
+  final String? ID;
+  final String? MACHINE_NO;
   final String? OPERATOR_NAME;
-  final int? BATCH_NO;
-  final int? PRODUCT;
-  final int? PACK_NO;
+  final String? BATCH_NO;
+  final String? PRODUCT;
+  final String? PACK_NO;
   final String? PAPER_CORE;
   final String? PP_CORE;
   final String? FOIL_CORE;
   final String? BATCH_START_DATE;
   final String? BATCH_END_DATE;
-  final int? ELEMENT;
+  final String? ELEMENT;
   final String? STATUS;
   final String? START_END;
   final String? CHECK_COMPLETE;
@@ -47,7 +48,8 @@ class WindingSheetModel {
         CHECK_COMPLETE!,
       ];
   WindingSheetModel.fromMap(Map<String, dynamic> map)
-      : MACHINE_NO = map['MachineNo'],
+      : ID = map['ID'],
+        MACHINE_NO = map['MachineNo'],
         OPERATOR_NAME = map['OperatorName'],
         BATCH_NO = map['BatchNo'],
         PRODUCT = map['Product'],
