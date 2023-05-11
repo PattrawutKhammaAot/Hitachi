@@ -6,6 +6,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/route/router_list.dart';
 
 class ProcessStartScreen extends StatefulWidget {
   const ProcessStartScreen({super.key});
@@ -104,8 +105,8 @@ class _ProcessStartScreenState extends State<ProcessStartScreen> {
                       ),
                     ),
                     GestureDetector(
-                      // onTap: () => Navigator.pushNamed(
-                      //     context, RouterList.WindingJobStart_Hold_Screen),
+                      onTap: () => Navigator.pushNamed(
+                          context, RouterList.ProcessStart_Hold_Screen),
                       child: Label(
                         "Hold",
                         color: Colors.grey,

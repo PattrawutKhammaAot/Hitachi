@@ -39,14 +39,15 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   final TextEditingController password = TextEditingController();
   WindingsDataSource? employeeDataSource;
   List<WindingSheetModel>? windingSheetModel;
-  WindingSheetModel whModel = WindingSheetModel();
+  List<WindingSheetModel>? whModel;
+  // WindingSheetModel whModel = WindingSheetModel();
   List<Map<String, dynamic>> _windingSheetList = [];
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
     super.initState();
-    // getshow();
+    getshow();
 
     _getWindingSheet().then((result) {
       setState(() {
@@ -81,25 +82,25 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
     }
   }
 
-  // getshow() async {
-  //   await databaseHelper.insertDataSheet('WINDING_SHEET', {
-  //     'MachineNo': 14,
-  //     'OperatorName': 111,
-  //     'BatchNo': 111,
-  //     'Product': 111,
-  //     'PackNo': 111,
-  //     'PaperCore': 111,
-  //     'PPCore': 222,
-  //     'FoilCore': 222,
-  //     'BatchStartDate': 222,
-  //     'BatchEndDate': 222,
-  //     'Element': 222,
-  //     'Status': 222,
-  //     'start_end': 222,
-  //     'checkComplete ': 222,
-  //   });
-  //   print("---getshow---");
-  // }
+  getshow() async {
+    await databaseHelper.insertSqlite('WINDING_SHEET', {
+      'MachineNo': 14,
+      'OperatorName': 111,
+      'BatchNo': 111,
+      'Product': 111,
+      'PackNo': 111,
+      'PaperCore': 111,
+      'PPCore': 222,
+      'FoilCore': 222,
+      'BatchStartDate': 222,
+      'BatchEndDate': 222,
+      'Element': 222,
+      'Status': 222,
+      'start_end': 222,
+      'checkComplete ': 222,
+    });
+    print("---getshow---");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,32 +164,33 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                             label: Center(child: Text('STATUS'))),
                       ],
                       onCellDoubleTap: (DataGridCellDoubleTapDetails details) {
-                        if (details.rowColumnIndex.rowIndex != 0) {
-                          setState(() {
-                            var rowindex = details.rowColumnIndex.rowIndex - 1;
-                            var dataGirdRow = employeeDataSource!.effectiveRows
-                                .elementAt(rowindex);
-                            // whModel = dataGirdRow!
-                            //     .getCells()
-                            //     .map((e) => WindingSheetModel(
-                            //   'MachineNo': e.value.,
-                            //   'OperatorName': 111,
-                            //   'BatchNo': 111,
-                            //   'Product': 111,
-                            //   'PackNo': 111,
-                            //   'PaperCore': 111,
-                            //   'PPCore': 222,
-                            //   'FoilCore': 222,
-                            //   'BatchStartDate': 222,
-                            //   'BatchEndDate': 222,
-                            //   'Element': 222,
-                            //   'Status': 222,
-                            //   'start_end': 222,
-                            //   'checkComplete ': 222,))
-                            //     .toList();
-                          });
-                        }
-                        ;
+                        // if (details.rowColumnIndex.rowIndex != 0) {
+                        //   setState(() {
+                        //     var rowindex = details.rowColumnIndex.rowIndex - 1;
+                        //     var dataGirdRow = employeeDataSource!.effectiveRows
+                        //         .elementAt(rowindex);
+                        //     whModel = dataGirdRow!
+                        //         .getCells()
+                        //         .map((e) => WindingSheetModel(
+                        //               MACHINE_NO: e.value,
+                        //               OPERATOR_NAME: e.value.toString(),
+                        //               BATCH_NO: e.value,
+                        //               PRODUCT: e.value,
+                        //               PACK_NO: e.value,
+                        //               PAPER_CORE: e.value.toString(),
+                        //               PP_CORE: e.value.toString(),
+                        //               FOIL_CORE: e.value.toString(),
+                        //               BATCH_START_DATE: e.value.toString(),
+                        //               BATCH_END_DATE: e.value.toString(),
+                        //               ELEMENT: e.value,
+                        //               STATUS: e.value.toString(),
+                        //               START_END: e.value.toString(),
+                        //               CHECK_COMPLETE: e.value.toString(),
+                        //             ))
+                        //         .toList();
+                        //   });
+                        // }
+                        // ;
 
                         showModalBottomSheet<void>(
                           context: context,
