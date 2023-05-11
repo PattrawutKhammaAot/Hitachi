@@ -19,6 +19,7 @@ import 'package:hitachi/screens/lineElement/windingFinish/windingFinishControlPa
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.dart';
+import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
 import 'package:hitachi/screens/mainMenu/MainMenu.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -66,7 +67,7 @@ class RouteGenerator {
             type: PageTransitionType.fade);
 
       //TreatmentStart - LineElement
-      case RouterList.TreatMentStart_controlScreen:
+      case RouterList.TreatMentStart_control_Screen:
         return PageTransition(
             settings: settings,
             child: TreatmentStartControlPage(),
@@ -88,6 +89,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MaterialInputControlPage(),
+            type: PageTransitionType.fade);
+      //MachineBreakDown
+      case RouterList.MachineBreakDown_control_Screen:
+        return PageTransition(
+            settings: settings,
+            child: MachineBreackDownControl(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');
