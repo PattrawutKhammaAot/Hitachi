@@ -57,19 +57,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   String text = "";
 
   bool isDisableOnClick = false;
-  @override
-  void initState() {
-    // _SaveWindingStartWithWeight(MACHINE_NO:machineNoController.text.trim(),
-    //     OPERATOR_NAME: operatorNameController.text.trim(),
-    //     BATCH_NO: int.tryParse(batchNoController.text.trim()),
-    //     PRODUCT: int.tryParse(productController.text.trim()),
-    //     PACK_NO: int.tryParse(filmPackNoController.text.trim()),
-    //     PAPER_CORE: paperCodeLotController.text.trim(),
-    //     PP_CORE: ppFilmLotController.text.trim(),
-    //     FOIL_CORE: foilLotController.text.trim(),BATCH_START_DATE: DateTime.now().toString());
-    // TODO: implement initState
-    super.initState();
-  }
 
 //
   void _btnSendClick() async {
@@ -265,19 +252,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           PAPER_CORE: paperCodeLotController.text.trim(),
           PP_CORE: ppFilmLotController.text.trim(),
           FOIL_CORE: foilLotController.text.trim(),
-          BATCH_START_DATE: DateTime.now().toString());
-      // bool isSave = await _SaveWindingStartWithWeight(
-      //   MACHINE_NO: machineNoController.text.trim(),
-      //   OPERATOR_NAME: operatorNameController.text.trim(),
-      //   BATCH_NO: int.tryParse(batchNoController.text.trim()),
-      //   PRODUCT: int.tryParse(productController.text.trim()),
-      //   PACK_NO: int.tryParse(filmPackNoController.text.trim()),
-      //   PAPER_CORE: paperCodeLotController.text.trim(),
-      //   PP_CORE: ppFilmLotController.text.trim(),
-      //   FOIL_CORE: foilLotController.text.trim(),
-      //   BATCH_START_DATE: DateTime.now.toString(),
-      //   weight: totalWeight,
-      // );
+          BATCH_START_DATE: DateTime.now().toString(),
+          weight: totalWeight);
+
       if (isSave) {
         EasyLoading.showSuccess('Save complete');
       } else {
@@ -424,8 +401,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       ///ASDASD
       return true;
-    } catch (e) {
+    } catch (e, s) {
       EasyLoading.showError("Can not save", duration: Duration(seconds: 5));
+      print("Error ${e} Stack ${s}");
       return false;
     }
   }
@@ -654,6 +632,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           ),
                           onPress: () {
                             _SaveWindingStartWithWeight(
+                                weight: 0,
                                 MACHINE_NO: machineNoController.text.trim(),
                                 OPERATOR_NAME:
                                     operatorNameController.text.trim(),
