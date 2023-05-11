@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
@@ -98,7 +99,10 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     try {
       Response responese = await Dio().post(
           ApiConfig.LE_SEND_WINDING_START_WEIGHT,
-          options: Options(headers: ApiConfig.HEADER()),
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(item));
       print(responese.data);
       sendWdsReturnWeightInputModel post =
@@ -115,7 +119,10 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       SendWindingStartModelOutput itemOutput) async {
     try {
       Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_START,
-          options: Options(headers: ApiConfig.HEADER()),
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(itemOutput));
       print(responese.data);
       SendWindingStartModelInput post =
@@ -134,7 +141,10 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       SendWdsFinishOutputModel itemOutput) async {
     try {
       Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_FINISH,
-          options: Options(headers: ApiConfig.HEADER()),
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(itemOutput));
       print(responese.data);
       SendWdsFinishInputModel post =
@@ -153,12 +163,16 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     try {
       Response responese = await Dio().get(
           ApiConfig.LE_CHECKPACK_NO + "$number",
-          options: Options(headers: ApiConfig.HEADER()));
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)));
 
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
       return post;
     } catch (e, s) {
+      EasyLoading.showError("Check connection Internet");
       print("$e" + "$s");
       return CheckPackNoModel();
     }
@@ -171,8 +185,9 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response response = await Dio().get(
         ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
         options: Options(
-          headers: ApiConfig.HEADER(),
-        ),
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
       );
 
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
@@ -189,8 +204,9 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     try {
       Response response = await Dio().post(ApiConfig.LE_MATERIALINPUT + "12345",
           options: Options(
-            headers: ApiConfig.HEADER(),
-          ),
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(items));
 
       MaterialInputModel tmp = MaterialInputModel.fromJson(response.data);

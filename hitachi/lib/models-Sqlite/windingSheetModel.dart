@@ -15,18 +15,18 @@ class WindingSheetModel {
       this.START_END,
       this.CHECK_COMPLETE,
       this.ID});
-  final int? ID;
+  final String? ID;
   final String? MACHINE_NO;
   final String? OPERATOR_NAME;
-  final int? BATCH_NO;
-  final int? PRODUCT;
-  final int? PACK_NO;
+  final String? BATCH_NO;
+  final String? PRODUCT;
+  final String? PACK_NO;
   final String? PAPER_CORE;
   final String? PP_CORE;
   final String? FOIL_CORE;
   final String? BATCH_START_DATE;
   final String? BATCH_END_DATE;
-  final int? ELEMENT;
+  final String? ELEMENT;
   final String? STATUS;
   final String? START_END;
   final String? CHECK_COMPLETE;

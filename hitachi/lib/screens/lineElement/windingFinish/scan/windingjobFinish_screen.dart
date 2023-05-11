@@ -54,8 +54,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         EasyLoading.showError("Can not send");
       }
     } else {
-      EasyLoading.show(
-          status: "data incomplete ${elementQtyController.text.toString()}");
+      EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
   }
 
@@ -184,7 +183,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               }
               if (state is PostSendWindingFinishErrorState) {
                 _insertSqlite();
-                EasyLoading.showError("Can not send");
+                EasyLoading.showError("Can not send",
+                    duration: Duration(seconds: 3));
               }
             },
           )
@@ -245,13 +245,17 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   }
 
   void _testSendSqlite() async {
-    await databaseHelper.insertSqlite('WINDING_SHEET', {
-      'BatchNo': int.tryParse(batchNoController.text.trim()),
-      'Element': int.tryParse(elementQtyController.text.trim()),
-      'BatchEndDate': batchNoController.text.trim(),
-      'start_end': 'E',
-      'checkComplete': '0',
-      'value': 'WD'
-    });
+    try {
+      await databaseHelper.insertSqlite('WINDING_SHEET', {
+        'BatchNo': batchNoController.text.trim(),
+        'Element': elementQtyController.text.trim(),
+        'BatchEndDate': batchNoController.text.trim(),
+        'start_end': 'E',
+        'checkComplete': '0',
+        'value': 'WD'
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

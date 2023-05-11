@@ -45,6 +45,8 @@ class _WindingJobFinishHoldScreenState
   int? selectedRowIndex;
   DataGridRow? datagridRow;
   bool isClick = false;
+  Color _colorSend = COLOR_GREY;
+  Color _colorDelete = COLOR_GREY;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
@@ -63,9 +65,11 @@ class _WindingJobFinishHoldScreenState
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_SHEET');
+
       List<WindingSheetModel> result = rows
           .where((row) => row['start_end'] == 'E')
-          .map((row) => WindingSheetModel.fromMap(row))
+          .map((row) => WindingSheetModel.fromMap(
+              row.map((key, value) => MapEntry(key, value.toString()))))
           .toList();
       return result;
     } catch (e) {
@@ -87,9 +91,15 @@ class _WindingJobFinishHoldScreenState
                 EasyLoading.show();
               }
               if (state is PostSendWindingFinishLoadedState) {
-                EasyLoading.dismiss();
-                EasyLoading.showSuccess("Send Complete");
-                setState(() {});
+                if (state.item.RESULT == true) {
+                  Navigator.pop(context);
+                  deletedInfo();
+
+                  EasyLoading.showSuccess("Send complete",
+                      duration: Duration(seconds: 3));
+                } else {
+                  EasyLoading.showError("Please Check Data");
+                }
               }
               if (state is PostSendWindingFinishErrorState) {
                 EasyLoading.showError("Can not send");
@@ -124,26 +134,23 @@ class _WindingJobFinishHoldScreenState
                                       (e) => WindingSheetModel(
                                         MACHINE_NO: e.value.toString(),
                                         OPERATOR_NAME: e.value.toString(),
-                                        BATCH_NO:
-                                            int.tryParse(e.value.toString()),
-                                        PRODUCT:
-                                            int.tryParse(e.value.toString()),
-                                        PACK_NO:
-                                            int.tryParse(e.value.toString()),
+                                        BATCH_NO: e.value.toString(),
+                                        PRODUCT: e.value.toString(),
+                                        PACK_NO: e.value.toString(),
                                         PAPER_CORE: e.value.toString(),
                                         PP_CORE: e.value.toString(),
                                         FOIL_CORE: e.value.toString(),
                                         BATCH_START_DATE: e.value.toString(),
                                         BATCH_END_DATE: e.value.toString(),
-                                        ELEMENT:
-                                            int.tryParse(e.value.toString()),
+                                        ELEMENT: e.value.toString(),
                                         STATUS: e.value.toString(),
                                         START_END: e.value.toString(),
                                         CHECK_COMPLETE: e.value.toString(),
                                       ),
                                     )
                                     .toList();
-                                print(wdsList[selectedRowIndex!].ID);
+                                _colorDelete = COLOR_RED;
+                                _colorSend = COLOR_SUCESS;
                               });
                             }
                           },
@@ -238,23 +245,26 @@ class _WindingJobFinishHoldScreenState
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("Operator Name"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                  DataCell(Label(wdsList[selectedRowIndex!]
+                                          .OPERATOR_NAME ??
+                                      ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Batch No."))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].BATCH_NO}"))
+                                      wdsList[selectedRowIndex!].BATCH_NO ??
+                                          ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Finish Date"))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].START_END}"))
+                                      wdsList[selectedRowIndex!].START_END ??
+                                          ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Element"))),
                                   DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].ELEMENT}"))
+                                      wdsList[selectedRowIndex!].ELEMENT ?? ""))
                                 ]),
                               ])
                         ],
@@ -283,6 +293,7 @@ class _WindingJobFinishHoldScreenState
                     onPress: () {
                       if (wdsSqliteModel != null) {
                         _AlertDialog();
+                        setState(() {});
                       } else {
                         _LoadingData();
                       }
@@ -291,46 +302,19 @@ class _WindingJobFinishHoldScreenState
                       "Delete",
                       color: COLOR_WHITE,
                     ),
-                    bgColor: COLOR_RED,
+                    bgColor: _colorDelete,
                   )),
-                  Expanded(
-                      child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Label(
-                            "Scan",
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15,
-                          child: VerticalDivider(
-                            color: COLOR_BLACK,
-                            thickness: 2,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => print("object"),
-                          // Navigator.pushNamed(context,
-                          // RouterList.WindingJobStart_Hold_Screen),
-                          child: Label(
-                            "Hold",
-                            color: COLOR_BLACK,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+                  Expanded(child: Container()),
                   Expanded(
                       child: Button(
                     text: Label("Send", color: COLOR_WHITE),
-                    bgColor: COLOR_SUCESS,
+                    bgColor: _colorSend,
                     onPress: () {
-                      _sendDataServer();
+                      if (wdsSqliteModel != null) {
+                        _sendDataServer();
+                      } else {
+                        EasyLoading.showInfo("Please Select Data");
+                      }
                     },
                   )),
                 ],
@@ -363,7 +347,10 @@ class _WindingJobFinishHoldScreenState
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _checkValueController(),
+            onPressed: () {
+              _checkValueController();
+              Navigator.pop(context);
+            },
             child: const Text('OK'),
           ),
         ],
@@ -374,6 +361,18 @@ class _WindingJobFinishHoldScreenState
   void _checkValueController() async {
     if (password.text.isNotEmpty) {
       deletedInfo();
+
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _getWindingSheet().then((result) {
+            wdsList = result;
+            WindingDataSource = WindingsDataSource(process: wdsList);
+          });
+        });
+      });
+
+      Navigator.pop(context);
+      EasyLoading.showSuccess("Delete Success");
     }
   }
 
@@ -390,8 +389,10 @@ class _WindingJobFinishHoldScreenState
         SendWdsFinishOutputModel(
           OPERATOR_NAME:
               int.tryParse(wdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
-          BATCH_NO: wdsList[selectedRowIndex!].BATCH_NO,
-          ELEMNT_QTY: wdsList[selectedRowIndex!].ELEMENT,
+          BATCH_NO:
+              int.tryParse(wdsList[selectedRowIndex!].BATCH_NO.toString()),
+          ELEMNT_QTY:
+              int.tryParse(wdsList[selectedRowIndex!].ELEMENT.toString()),
           FINISH_DATE: DateTime.now().toString(),
         ),
       ),
@@ -405,26 +406,32 @@ class _WindingJobFinishHoldScreenState
 
 class WindingsDataSource extends DataGridSource {
   WindingsDataSource({List<WindingSheetModel>? process}) {
-    if (process != null) {
-      for (var _item in process) {
-        if (_item.START_END == 'E') {
-          _employees.add(
-            DataGridRow(
-              cells: [
-                DataGridCell<String>(
-                    columnName: 'operatorName', value: _item.MACHINE_NO),
-                DataGridCell<String>(
-                    columnName: 'batch', value: _item.BATCH_NO.toString()),
-                DataGridCell<String>(
-                    columnName: 'startEnd', value: _item.START_END),
-                DataGridCell<String>(
-                    columnName: 'element', value: _item.ELEMENT.toString()),
-              ],
-            ),
-          );
+    try {
+      if (process != null) {
+        for (var _item in process) {
+          if (_item.START_END == 'E') {
+            _employees.add(
+              DataGridRow(
+                cells: [
+                  DataGridCell<int>(
+                      columnName: 'operatorName',
+                      value: int.tryParse(_item.OPERATOR_NAME.toString())),
+                  DataGridCell<int>(
+                      columnName: 'batch',
+                      value: int.tryParse(_item.BATCH_NO.toString())),
+                  DataGridCell<String>(
+                      columnName: 'startEnd', value: _item.START_END),
+                  DataGridCell<int>(
+                      columnName: 'element',
+                      value: int.tryParse(_item.ELEMENT.toString())),
+                ],
+              ),
+            );
+          }
         }
       }
-    } else {
+    } catch (e) {
+      print(e);
       EasyLoading.showError("Can not Call API");
     }
   }

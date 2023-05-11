@@ -484,17 +484,17 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                     }
                     if (state is PostSendWindingStartReturnWeightErrorState) {
                       cannotSend();
-                      print("ErrorState");
+
                       _showpopUpWeight();
                     }
                     if (state is GetCheckPackLoadingState) {
                       EasyLoading.show();
                     } else if (state is GetCheckPackLoadedState) {
-                      EasyLoading.dismiss();
                       setState(() {
                         packNoModel = state.item;
                       });
                       if (packNoModel!.RESULT == true) {
+                        EasyLoading.dismiss();
                         setState(() {
                           isDisableOnClick = true;
                         });
@@ -505,7 +505,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       }
                     }
                     if (state is GetCheckPackErrorState) {
-                      EasyLoading.dismiss();
                       EasyLoading.showError("Can't Call API");
                     }
                   })
