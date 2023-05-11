@@ -45,10 +45,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
             batchNo: int.tryParse(batchNoController.text.trim()),
             element: int.tryParse(elementQtyController.text.trim()),
             batchEnddate: batchEndate);
-        await databaseHelper.deleteSave(
-            tableName: 'WINDING_SHEET',
-            where: 'BatchNo',
-            keyWhere: batchNoController.text.trim());
+
         EasyLoading.showSuccess("sendComplete");
       } catch (e) {
         EasyLoading.showError("Can not send");
@@ -56,6 +53,13 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     } else {
       EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
+  }
+
+  void _deleteSave() async {
+    await databaseHelper.deleteSave(
+        tableName: 'WINDING_SHEET',
+        where: 'BatchNo',
+        keyWhere: batchNoController.text.trim());
   }
 
   Future<void> _callApi(
@@ -74,7 +78,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         select2: 'MachineNo',
         formTable: 'WINDING_SHEET',
         where: 'BatchNo',
-        intValue: int.tryParse(batchNoController.text.trim()),
+        intValue:
+            int.tryParse(batchNoController.text.trim()), // If error check here
         keyAnd: 'MachineNo',
         value: 'WD',
         keyAnd2: 'start_end',
@@ -83,12 +88,12 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     if (sql.length <= 0) {
       var sqlInsertWINDING_SHEET =
           await databaseHelper.insertSqlite('WINDING_SHEET', {
+        'MachineNo': 'WD',
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Element': int.tryParse(elementQtyController.text.trim()),
         'BatchEndDate': batchNoController.text.trim(),
         'start_end': 'E',
         'checkComplete': '0',
-        'value': 'WD'
       });
     }
   }
@@ -180,11 +185,16 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 setState(() {
                   items = state.item;
                 });
+                if (items!.RESULT == true) {
+                  _deleteSave();
+                } else if (items!.RESULT == false) {
+                  _insertSqlite();
+                }
               }
               if (state is PostSendWindingFinishErrorState) {
-                _insertSqlite();
                 EasyLoading.showError("Can not send",
                     duration: Duration(seconds: 3));
+                _insertSqlite();
               }
             },
           )

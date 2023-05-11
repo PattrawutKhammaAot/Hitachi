@@ -38,7 +38,7 @@ class _MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     return BgWhite(
       isHidePreviour: false,
-      textTitle: "LineElemnt Menu",
+      textTitle: "Element : Main Menu",
       body: Padding(
         padding: const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),
         child: SingleChildScrollView(
@@ -62,7 +62,8 @@ class _MainMenuState extends State<MainMenu> {
                 ),
                 CardButton(
                   text: "3.Machine Breakdown",
-                  onPress: () => print("test2"),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.MachineBreakDown_control_Screen),
                 ),
                 SizedBox(
                   height: 15,

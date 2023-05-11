@@ -47,7 +47,7 @@ class _LineElementScreenState extends State<LineElementScreen> {
           CardButton2(
             text: "Treatment Start",
             onPress: () => Navigator.pushNamed(
-                context, RouterList.TreatMentStart_controlScreen),
+                context, RouterList.TreatMentStart_control_Screen),
           ),
           CardButton2(
             text: "Treatment Finish",
