@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
-import 'package:hitachi/screens/lineElement/materialInput/scan/materialInput_Screen.dart';
-import 'package:hitachi/screens/lineElement/materialInput/hold/materialInput_hold_Screen.dart';
+import 'package:hitachi/screens/lineElement/processFinish/hold/processFinish_hold_screen.dart';
+import 'package:hitachi/screens/lineElement/processFinish/scan/processFinish_scan_screen.dart';
 
-class MaterialInputControlPage extends StatefulWidget {
-  const MaterialInputControlPage({super.key});
+class ProcessFinishControlPage extends StatefulWidget {
+  const ProcessFinishControlPage({super.key});
 
   @override
-  State<MaterialInputControlPage> createState() =>
-      _MaterialInputControlPageState();
+  State<ProcessFinishControlPage> createState() =>
+      _ProcessFinishControlPageState();
 }
 
-class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
+class _ProcessFinishControlPageState extends State<ProcessFinishControlPage> {
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -22,14 +22,14 @@ class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
   }
 
   List<Widget> widgetOptions = [
-    MaterialInputScreen(),
-    MaterialInputHoldScreen()
+    ProcessFinishScanScreen(),
+    ProcessFinishHoldScreen()
   ];
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "MaterialInput",
+      textTitle: "ProcessFinish",
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

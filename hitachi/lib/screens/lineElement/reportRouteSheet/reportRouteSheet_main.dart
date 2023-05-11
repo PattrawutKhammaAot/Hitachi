@@ -52,12 +52,12 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.work),
+            icon: Icon(Icons.aod),
             label: 'Process',
             backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.sync_problem),
+            icon: Icon(Icons.work),
             label: 'Problem',
             backgroundColor: Colors.green,
           ),

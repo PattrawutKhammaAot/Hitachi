@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
-import 'package:hitachi/screens/lineElement/materialInput/scan/materialInput_Screen.dart';
-import 'package:hitachi/screens/lineElement/materialInput/hold/materialInput_hold_Screen.dart';
+import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
+import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
 
-class MaterialInputControlPage extends StatefulWidget {
-  const MaterialInputControlPage({super.key});
+class WindingJobStartControlPage extends StatefulWidget {
+  const WindingJobStartControlPage({super.key});
 
   @override
-  State<MaterialInputControlPage> createState() =>
-      _MaterialInputControlPageState();
+  State<WindingJobStartControlPage> createState() =>
+      _WindingJobStartControlPageState();
 }
 
-class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
-  @override
+class _WindingJobStartControlPageState
+    extends State<WindingJobStartControlPage> {
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
@@ -22,14 +22,14 @@ class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
   }
 
   List<Widget> widgetOptions = [
-    MaterialInputScreen(),
-    MaterialInputHoldScreen()
+    WindingJobStartScanScreen(),
+    WindingJobStartHoldScreen()
   ];
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "MaterialInput",
+      textTitle: "WindingStart",
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

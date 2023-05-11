@@ -36,7 +36,7 @@ class _WindingFinishControlPageState extends State<WindingFinishControlPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.adf_scanner),
+            icon: Icon(Icons.aod),
             label: 'Scan',
             backgroundColor: Colors.red,
           ),

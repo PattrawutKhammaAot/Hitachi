@@ -64,7 +64,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-        isHidePreviour: true,
+        isHideAppBar: true,
         textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
