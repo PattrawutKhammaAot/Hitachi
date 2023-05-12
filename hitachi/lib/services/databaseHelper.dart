@@ -74,6 +74,15 @@ class DatabaseHelper {
     return await db.insert(tableName, row);
   }
 
+  Future<int> updateSqlite(String tableName, Map<String, dynamic> row,
+      String whereClause, List<dynamic> whereArgs) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionUpdateDataSheet ${tableName}");
+    return await db.update(tableName, row,
+        where: whereClause, whereArgs: whereArgs);
+  }
+
   Future<int> deletedRowSqlite(
       {String? tableName, String? columnName, dynamic? columnValue}) async {
     Database db = await this.database;
@@ -526,7 +535,8 @@ class DatabaseHelper {
 
   void _createTableBreakDown(Database db, int newVersion) async {
     await db.execute('CREATE TABLE BREAKDOWN_SHEET ('
-        'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'MachineNo TEXT,'
         'CallUser TEXT,'
         'RepairNo TEXT,'
         'BreakStartDate TEXT,'

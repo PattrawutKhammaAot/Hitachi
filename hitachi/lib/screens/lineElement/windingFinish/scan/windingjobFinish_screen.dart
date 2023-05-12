@@ -187,8 +187,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 });
                 if (items!.RESULT == true) {
                   _deleteSave();
-                } else if (items!.RESULT == false) {
-                  _insertSqlite();
+                } else {
+                  EasyLoading.showError("Please Check Data");
                 }
               }
               if (state is PostSendWindingFinishErrorState) {

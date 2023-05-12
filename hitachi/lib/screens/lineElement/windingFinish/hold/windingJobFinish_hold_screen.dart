@@ -362,12 +362,10 @@ class _WindingJobFinishHoldScreenState
     if (password.text.isNotEmpty) {
       deletedInfo();
 
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _getWindingSheet().then((result) {
-            wdsList = result;
-            WindingDataSource = WindingsDataSource(process: wdsList);
-          });
+      setState(() {
+        _getWindingSheet().then((result) {
+          wdsList = result;
+          WindingDataSource = WindingsDataSource(process: wdsList);
         });
       });
 
