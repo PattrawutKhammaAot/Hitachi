@@ -13,7 +13,8 @@ class BreakDownSheetModel {
       this.TECH_1,
       this.TECH_2,
       this.STOP_DATE_TECH_1,
-      this.STOP_DATE_TECH_2});
+      this.STOP_DATE_TECH_2,
+      this.NEW});
   final String? ID;
   final String? MACHINE_NO;
   final String? OPERATOR_NAME;
@@ -28,6 +29,7 @@ class BreakDownSheetModel {
   final String? OPERATOR_ACCEPT;
   final String? BREAK_STOP_DATE;
   final String? CHECK_COMPLETE;
+  final String? NEW;
 
   List<Object> get props => [
         ID!,
@@ -44,6 +46,7 @@ class BreakDownSheetModel {
         OPERATOR_ACCEPT!,
         BREAK_STOP_DATE!,
         CHECK_COMPLETE!,
+        NEW!,
       ];
   BreakDownSheetModel.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
@@ -59,5 +62,6 @@ class BreakDownSheetModel {
         STOP_DATE_TECH_2 = map['MT2StopDate'],
         OPERATOR_ACCEPT = map['CheckUser'],
         BREAK_STOP_DATE = map['BreakStopDate'],
-        CHECK_COMPLETE = map['CheckComplete'];
+        CHECK_COMPLETE = map['CheckComplete'],
+        NEW = map[''];
 }

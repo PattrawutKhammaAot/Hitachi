@@ -9,6 +9,8 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
+import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/machineBreakdown/machinebreakdownOutputMode.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
@@ -39,11 +41,12 @@ class _MachineBreakDownScanScreenState
   final TextEditingController _operator_accept_Controller =
       TextEditingController();
   DatabaseHelper databaseHelper = DatabaseHelper();
-
+  ResponeDefault? _respone;
   final List<String> genderItems = [
     'Male',
     'Female',
   ];
+  List<BreakDownSheetModel> bdsList = [];
 
   String? selectedValue;
 
@@ -59,9 +62,36 @@ class _MachineBreakDownScanScreenState
         _stop_Technical_2_Controller.text.isNotEmpty &&
         _operator_accept_Controller.text.isNotEmpty) {
       _sendData();
+      Future.delayed(Duration(seconds: 5), () {
+        _callBreakDownMachine();
+      });
     } else {
       EasyLoading.showError("Please Input Data");
     }
+  }
+
+  void _callBreakDownMachine() async {
+    var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
+    if (sql.length > 0) {
+      setState(() {
+        bdsList = sql
+            .map((row) => BreakDownSheetModel.fromMap(
+                row.map((key, value) => MapEntry(key, value.toString()))))
+            .toList();
+      });
+    } else {
+      print(bdsList.length);
+    }
+
+    setState(() {
+      bdsList.insert(0, BreakDownSheetModel(MACHINE_NO: "NEW"));
+    });
+  }
+
+  @override
+  void initState() {
+    _callBreakDownMachine();
+    super.initState();
   }
 
   void _saveMachine() async {
@@ -128,7 +158,7 @@ class _MachineBreakDownScanScreenState
               [_machineNo_Controller.text.trim()]);
         }
       }
-      EasyLoading.showSuccess("Save complete");
+      EasyLoading.showError("Save complete & Can not Call Api");
     } catch (e, s) {
       print("${e}${s}");
       EasyLoading.showError("Can not Save");
@@ -163,16 +193,20 @@ class _MachineBreakDownScanScreenState
           listener: (context, state) {
             if (state is PostMachineBreakdownLoadingState) {
               EasyLoading.show();
-            }
-            if (state is PostMachineBreakdownLoadedState) {
-              if (state.item.RESULT == true) {
+            } else if (state is PostMachineBreakdownLoadedState) {
+              EasyLoading.dismiss();
+              setState(() {
+                _respone = state.item;
+              });
+              if (_respone!.RESULT == true) {
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
-                EasyLoading.showError("Please Check Data");
+                _saveMachine();
               }
             }
             if (state is PostMachineBreakdownErrorState) {
+              EasyLoading.dismiss();
               _saveMachine();
               EasyLoading.showError("Can not send");
             }
@@ -197,7 +231,6 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         child: DropdownButtonFormField2(
                           decoration: InputDecoration(
-                            isDense: true,
                             contentPadding: EdgeInsets.zero,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
@@ -210,11 +243,11 @@ class _MachineBreakDownScanScreenState
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          items: genderItems
+                          items: bdsList
                               .map((item) => DropdownMenuItem<String>(
-                                    value: item,
+                                    value: item.MACHINE_NO,
                                     child: Text(
-                                      item,
+                                      "${item.MACHINE_NO}",
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
@@ -228,12 +261,31 @@ class _MachineBreakDownScanScreenState
                           //   return null;
                           // },
                           onChanged: (value) {
-                            print(value);
-                            //Do something when changing the item if you want.
+                            for (var item in bdsList) {
+                              if (value == item.MACHINE_NO && value != 'NEW') {
+                                setState(() {
+                                  _machineNo_Controller.text =
+                                      item.MACHINE_NO.toString();
+                                });
+                                print(value);
+                                break;
+                              } else if (value == 'NEW') {
+                                setState(() {
+                                  _machineNo_Controller.text = '';
+                                  _operatorname_Controller.text = '';
+                                  _serviceNo_Controller.text = '';
+                                  _start_Technical_1_Controller.text = '';
+                                  _start_Technical_2_Controller.text = '';
+                                  _stop_Technical_1_Controller.text = '';
+                                  _stop_Technical_2_Controller.text = '';
+                                  _operator_accept_Controller.text = '';
+                                });
+                              }
+                            }
                           },
-                          // onSaved: (value) {
-                          //   selectedValue = value.toString();
-                          // },
+                          onSaved: (value) {
+                            selectedValue = value.toString();
+                          },
                           buttonStyleData: const ButtonStyleData(
                             height: 50,
                             padding: EdgeInsets.only(left: 20, right: 10),
