@@ -7,6 +7,7 @@ import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
@@ -216,7 +217,7 @@ class _MachineBreakDownScanScreenState
       child: BgWhite(
           isHideAppBar: true,
           body: Container(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
             width: MediaQuery.of(context).size.width,
             child: SingleChildScrollView(
               child: Column(
@@ -229,77 +230,81 @@ class _MachineBreakDownScanScreenState
                     children: [
                       Label("Machine No. : "),
                       Expanded(
-                        child: DropdownButtonFormField2(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                        child: SizedBox(
+                          height: 40,
+                          child: DropdownButtonFormField2(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
-                          ),
-                          isExpanded: true,
-                          hint: Center(
-                            child: Text(
-                              'New',
-                              style: TextStyle(fontSize: 14),
+                            isExpanded: true,
+                            hint: Center(
+                              child: Text(
+                                'New',
+                                style: TextStyle(fontSize: 14),
+                              ),
                             ),
-                          ),
-                          items: bdsList
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item.MACHINE_NO,
-                                    child: Text(
-                                      "${item.MACHINE_NO}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                            items: bdsList
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.MACHINE_NO,
+                                      child: Text(
+                                        "${item.MACHINE_NO}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ))
-                              .toList(),
-                          // validator: (value) {
-                          //   if (value == null) {
-                          //     return 'Please select gender.';
-                          //   }
-                          //   return null;
-                          // },
-                          onChanged: (value) {
-                            for (var item in bdsList) {
-                              if (value == item.MACHINE_NO && value != 'NEW') {
-                                setState(() {
-                                  _machineNo_Controller.text =
-                                      item.MACHINE_NO.toString();
-                                });
-                                print(value);
-                                break;
-                              } else if (value == 'NEW') {
-                                setState(() {
-                                  _machineNo_Controller.text = '';
-                                  _operatorname_Controller.text = '';
-                                  _serviceNo_Controller.text = '';
-                                  _start_Technical_1_Controller.text = '';
-                                  _start_Technical_2_Controller.text = '';
-                                  _stop_Technical_1_Controller.text = '';
-                                  _stop_Technical_2_Controller.text = '';
-                                  _operator_accept_Controller.text = '';
-                                });
+                                    ))
+                                .toList(),
+                            // validator: (value) {
+                            //   if (value == null) {
+                            //     return 'Please select gender.';
+                            //   }
+                            //   return null;
+                            // },
+                            onChanged: (value) {
+                              for (var item in bdsList) {
+                                if (value == item.MACHINE_NO &&
+                                    value != 'NEW') {
+                                  setState(() {
+                                    _machineNo_Controller.text =
+                                        item.MACHINE_NO.toString();
+                                  });
+                                  print(value);
+                                  break;
+                                } else if (value == 'NEW') {
+                                  setState(() {
+                                    _machineNo_Controller.text = '';
+                                    _operatorname_Controller.text = '';
+                                    _serviceNo_Controller.text = '';
+                                    _start_Technical_1_Controller.text = '';
+                                    _start_Technical_2_Controller.text = '';
+                                    _stop_Technical_1_Controller.text = '';
+                                    _stop_Technical_2_Controller.text = '';
+                                    _operator_accept_Controller.text = '';
+                                  });
+                                }
                               }
-                            }
-                          },
-                          onSaved: (value) {
-                            selectedValue = value.toString();
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            height: 50,
-                            padding: EdgeInsets.only(left: 20, right: 10),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.black45,
+                            },
+                            onSaved: (value) {
+                              selectedValue = value.toString();
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
                             ),
-                            iconSize: 30,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
                           ),
                         ),
@@ -315,7 +320,7 @@ class _MachineBreakDownScanScreenState
                   ),
                   RowBoxInputField(
                     labelText: "Machine No. : ",
-                    height: 50,
+                    height: 30,
                     controller: _machineNo_Controller,
                   ),
                   const SizedBox(
@@ -323,7 +328,7 @@ class _MachineBreakDownScanScreenState
                   ),
                   RowBoxInputField(
                     labelText: "Operator Name : ",
-                    height: 50,
+                    height: 30,
                     controller: _operatorname_Controller,
                   ),
                   const SizedBox(
@@ -332,34 +337,55 @@ class _MachineBreakDownScanScreenState
                   RowBoxInputField(
                     labelText: "Service No. : ",
                     controller: _serviceNo_Controller,
+                    height: 30,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
-                  RowBoxInputField(
-                    labelText: "Start Technical 1 : ",
-                    controller: _start_Technical_1_Controller,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Start Technical 1 : ",
+                          controller: _start_Technical_1_Controller,
+                          height: 30,
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Start Technical 2 : ",
+                          controller: _start_Technical_2_Controller,
+                          height: 30,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
                   ),
-                  RowBoxInputField(
-                    labelText: "Start Technical 2 : ",
-                    controller: _start_Technical_2_Controller,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Stop Technical 1 : ",
-                    controller: _stop_Technical_1_Controller,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Stop Technical 2 : ",
-                    controller: _stop_Technical_2_Controller,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Stop Technical 1 : ",
+                          controller: _stop_Technical_1_Controller,
+                          height: 30,
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Stop Technical 2 : ",
+                          controller: _stop_Technical_2_Controller,
+                          height: 30,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
@@ -367,6 +393,7 @@ class _MachineBreakDownScanScreenState
                   RowBoxInputField(
                     labelText: "Operator Accept : ",
                     controller: _operator_accept_Controller,
+                    height: 30,
                   ),
                   const SizedBox(
                     height: 5,

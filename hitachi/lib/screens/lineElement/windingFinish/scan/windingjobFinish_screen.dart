@@ -187,14 +187,15 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 });
                 if (items!.RESULT == true) {
                   _deleteSave();
-                } else {
+                } else if (items!.RESULT == false) {
+                  _insertSqlite();
                   EasyLoading.showError("Please Check Data");
                 }
               }
               if (state is PostSendWindingFinishErrorState) {
                 EasyLoading.showError("Can not send",
                     duration: Duration(seconds: 3));
-                _insertSqlite();
+                // _insertSqlite();
               }
             },
           )

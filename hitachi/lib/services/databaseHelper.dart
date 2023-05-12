@@ -208,8 +208,26 @@ class DatabaseHelper {
   }
 
   void _createTableDataSheet(Database db, int newVersion) async {
-    await db.execute(
-        'CREATE TABLE DATA_SHEET (PO_NO INTEGER PRIMARY KEY AUTOINCREMENT, INVOICE TEXT,FRIEGHT TEXT,INCOMING_DATE TEXT,STORE_BY TEXT,PACK_NO TEXT,STORE_DATE TEXT,  STATUS TEXT, W1 REAL,W2 REAL,WEIGHT REAL,MFG_DATE TEXT,THICKNESS REAL,WRAP_GRADE TEXT,ROLL_NO REAL,checkComplete TEXT)');
+    await db.execute('CREATE TABLE DATA_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'PO_NO TEXT,'
+        'INVOICE TEXT,'
+        'FRIEGHT TEXT,'
+        'INCOMING_DATE TEXT,'
+        'STORE_BY TEXT,'
+        'PACK_NO TEXT,'
+        'STORE_DATE TEXT,'
+        'STATUS TEXT,'
+        'W1 TEXT,'
+        'W2 TEXT,'
+        'WEIGHT TEXT,'
+        'MFG_DATE TEXT,'
+        'THICKNESS1 TEXT,'
+        'THICKNESS2 TEXT,'
+        'WRAP_GRADE TEXT,'
+        'ROLL_NO TEXT,'
+        'checkComplete TEXT'
+        ')');
   }
 
   ///

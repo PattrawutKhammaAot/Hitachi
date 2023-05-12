@@ -1,5 +1,6 @@
 class DataSheetTableModel {
   const DataSheetTableModel({
+    this.ID,
     this.PO_NO,
     this.IN_VOICE,
     this.FRIEGHT,
@@ -17,7 +18,8 @@ class DataSheetTableModel {
     this.ROLL_NO,
     this.CHECK_COMPLETE,
   });
-  final int? PO_NO;
+  final String? ID;
+  final String? PO_NO;
   final String? IN_VOICE;
   final String? FRIEGHT;
   final String? INCOMING_DATE;
@@ -25,16 +27,17 @@ class DataSheetTableModel {
   final String? PACK_NO;
   final String? STORE_DATE;
   final String? STATUS;
-  final num? W1;
-  final num? W2;
-  final num? WEIGHT;
+  final String? W1;
+  final String? W2;
+  final String? WEIGHT;
   final String? MFG_DATE;
-  final num? THICKNESS;
+  final String? THICKNESS;
   final String? WRAP_GRADE;
-  final num? ROLL_NO;
+  final String? ROLL_NO;
   final String? CHECK_COMPLETE;
 
   List<Object> get props => [
+        ID!,
         PO_NO!,
         IN_VOICE!,
         FRIEGHT!,
@@ -53,7 +56,8 @@ class DataSheetTableModel {
         CHECK_COMPLETE!,
       ];
   DataSheetTableModel.fromMap(Map<String, dynamic> map)
-      : PO_NO = map['PO_NO'],
+      : ID = map['ID'],
+        PO_NO = map['PO_NO'],
         IN_VOICE = map['INVOICE'],
         FRIEGHT = map['FRIEGHT'],
         INCOMING_DATE = map['INCOMING_DATE'],

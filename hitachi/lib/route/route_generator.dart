@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/route/router_list.dart';
+import 'package:hitachi/screens/filmreceive/filmreceive_control.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/scan/materialInput_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_control_page.dart';
@@ -95,6 +96,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MachineBreackDownControl(),
+            type: PageTransitionType.fade);
+      //FilmReceive
+      case RouterList.FilmReceive_control_Screen:
+        return PageTransition(
+            settings: settings,
+            child: FilmReceiveControlPage(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

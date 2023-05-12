@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
 
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<MachineBreakDownBloc>(
           create: (_) => MachineBreakDownBloc(),
+        ),
+        BlocProvider<FilmReceiveBloc>(
+          create: (_) => FilmReceiveBloc(),
         )
       ],
       child: MaterialApp(

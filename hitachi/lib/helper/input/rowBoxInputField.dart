@@ -43,6 +43,7 @@ class RowBoxInputField extends StatelessWidget {
                 counterText: "",
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
               ),
               inputFormatters: textInputFormatter,
             ),

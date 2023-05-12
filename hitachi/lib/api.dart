@@ -47,4 +47,7 @@ class ApiConfig {
 
   //POST MACHINE BREAKDOWN
   static String MACHINE_BREAKDOWN = "${BASE_API_URL}LineElement/SendMachine";
+
+  //POST SEND FILM IN
+  static String FILM_RECEIVE = "${BASE_API_URL}LineElement/SendFilmIn";
 }
