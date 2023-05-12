@@ -50,7 +50,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       setState(() {
         Process = result;
         matTracDs = ProcessStartDataSource(process: Process);
-        getshow();
       });
     });
     super.initState();
@@ -59,32 +58,14 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   void deletedInfo() async {
     await databaseHelper.deletedRowSqlite(
         tableName: 'PROCESS_SHEET',
-        columnName: 'Machine',
+        columnName: 'Material',
         columnValue: Process![selectedRowIndex!].MATERIAL);
-  }
-
-  getshow() async {
-    await databaseHelper.insertSqlite('PROCESS_SHEET', {
-      'Machine': 1,
-      'OperatorName': '2',
-      'OperatorName1': '3',
-      'OperatorName2': '3',
-      'OperatorName3': '3',
-      'BatchNo': 3,
-      'StartDate': '4',
-      'Garbage': '4',
-      'FinDate': '5',
-      'StartEnd': '5',
-      'CheckComplete': '6',
-    });
-    print("---getshow---");
   }
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-        isHidePreviour: true,
-        textTitle: "Material Input",
+        isHideAppBar: true,
         body: MultiBlocListener(
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
@@ -113,8 +94,10 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.single,
+                            selectionMode: SelectionMode.multiple,
+                            showCheckboxColumn: true,
                             onCellTap: (details) async {
+                              // try{
                               if (details.rowColumnIndex.rowIndex != 0) {
                                 setState(() {
                                   selectedRowIndex =
@@ -139,17 +122,47 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                       )
                                       .toList();
                                 });
-                                print(Process![selectedRowIndex!].MATERIAL);
                               }
+                              // } catch(x){
+                              // print(x);
                             },
+                            // onCellDoubleTap: (details) async {
+                            //   if (details.rowColumnIndex.rowIndex != 0) {
+                            //     setState(() {
+                            //       selectedRowIndex =
+                            //           details.rowColumnIndex.rowIndex - 1;
+                            //       datagridRow = matTracDs!.effectiveRows
+                            //           .elementAt(selectedRowIndex!);
+                            //       mtModel = datagridRow!
+                            //           .getCells()
+                            //           .map(
+                            //             (e) => ProcessModel(
+                            //               MATERIAL: e.value,
+                            //               OPERATOR_NAME: e.value.toString(),
+                            //               OPERATOR_NAME1: e.value.toString(),
+                            //               OPERATOR_NAME2: e.value.toString(),
+                            //               OPERATOR_NAME3: e.value.toString(),
+                            //               BATCH_NO: e.value,
+                            //               STARTDATE: e.value.toString(),
+                            //               GARBAGE: e.value.toString(),
+                            //               FINDATE: e.value.toString(),
+                            //               STARTEND: e.value.toString(),
+                            //             ),
+                            //           )
+                            //           .toList();
+                            //     });
+                            //     print(Process![selectedRowIndex!].MATERIAL);
+                            //   }
+                            // },
+
                             columns: <GridColumn>[
                               GridColumn(
-                                columnName: 'Material=',
+                                columnName: 'Material',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label(
-                                      'Material',
+                                      'Material=',
                                       color: COLOR_WHITE,
                                     ),
                                   ),
@@ -458,22 +471,11 @@ class ProcessStartDataSource extends DataGridSource {
     if (process != null) {
       for (var _item in process) {
         _employees.add(
-          // 'Machine': '1',
-          // 'OperatorName': '2',
-          // 'OperatorName1': '3',
-          // 'OperatorName2': '3',
-          // 'OperatorName3': '3',
-          // 'BatchNo': '3',
-          // 'StartDate': '4',
-          // 'Garbage': '4',
-          // 'FinDate': '5',
-          // 'StartEnd': '5',
-          // 'CheckComplete': '6',
-          //
-
           DataGridRow(
             cells: [
-              DataGridCell<int>(columnName: 'Machine', value: _item.MATERIAL),
+              DataGridCell<int>(columnName: 'ID', value: _item.ID),
+              DataGridCell<String>(
+                  columnName: 'Material', value: _item.MATERIAL),
               DataGridCell<String>(
                   columnName: 'OperatorName', value: _item.OPERATOR_NAME),
               DataGridCell<String>(

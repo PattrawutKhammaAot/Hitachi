@@ -4,6 +4,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 class ProcessFinishScanScreen extends StatefulWidget {
   const ProcessFinishScanScreen({super.key});
@@ -14,6 +15,13 @@ class ProcessFinishScanScreen extends StatefulWidget {
 }
 
 class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+
+  final TextEditingController MachineNoController = TextEditingController();
+  final TextEditingController operatorNameController = TextEditingController();
+  final TextEditingController batchNoController = TextEditingController();
+  final TextEditingController rejectQtyController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BgWhite(
@@ -27,25 +35,31 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                 RowBoxInputField(
                   labelText: "Machine No : ",
                   maxLength: 3,
+                  controller: MachineNoController,
+                  type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
                   labelText: "Operator Name : ",
+                  controller: operatorNameController,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
                   labelText: "Batch No : ",
+                  controller: batchNoController,
+                  type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 RowBoxInputField(
                   labelText: "Reject Qty : ",
-                  type: TextInputType.number,
+                  controller: rejectQtyController,
+                  // type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 15,
@@ -63,5 +77,19 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
             ),
           ),
         ));
+  }
+
+  void _testSendSqlite() async {
+    try {
+      await databaseHelper.insertSqlite('PROCESS_SHEET', {
+        'Machine': int.tryParse(MachineNoController.text.trim()),
+        'OperatorName': operatorNameController.text.trim(),
+        'BatchNo': int.tryParse(batchNoController.text.trim()),
+        'OperatorName1': rejectQtyController.text.trim(),
+      });
+      print("ok");
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -6,6 +6,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 class ProcessStartScanScreen extends StatefulWidget {
   const ProcessStartScanScreen({super.key});
@@ -15,6 +16,14 @@ class ProcessStartScanScreen extends StatefulWidget {
 }
 
 class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
+  final TextEditingController MachineNoController = TextEditingController();
+  final TextEditingController operatorNameController = TextEditingController();
+  final TextEditingController operatorName1Controller = TextEditingController();
+  final TextEditingController operatorName2Controller = TextEditingController();
+  final TextEditingController operatorName3Controller = TextEditingController();
+  final TextEditingController batchNoController = TextEditingController();
+
+  DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   Widget build(BuildContext context) {
     return BgWhite(
@@ -28,7 +37,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Machine No :",
                   maxLength: 3,
+                  controller: MachineNoController,
                   height: 35,
+                  type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 5,
@@ -36,6 +47,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Operator Name :",
                   height: 35,
+                  controller: operatorNameController,
                 ),
                 SizedBox(
                   height: 5,
@@ -47,6 +59,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Operator Name :",
                   height: 35,
+                  controller: operatorName1Controller,
                 ),
                 SizedBox(
                   height: 5,
@@ -54,6 +67,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Operator Name :",
                   height: 35,
+                  controller: operatorName2Controller,
                 ),
                 SizedBox(
                   height: 5,
@@ -61,6 +75,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Operator Name :",
                   height: 35,
+                  controller: operatorName3Controller,
                 ),
                 SizedBox(
                   height: 5,
@@ -70,9 +85,11 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   height: 5,
                 ),
                 RowBoxInputField(
-                  labelText: "Machine No :",
+                  labelText: "Batch No :",
                   maxLength: 3,
                   height: 35,
+                  controller: batchNoController,
+                  type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 10,
@@ -101,9 +118,35 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   ),
                   onPress: () => print("send"),
                 ),
+                Container(
+                  child: Button(
+                    bgColor: COLOR_BLUE,
+                    text: Label(
+                      "TestSend",
+                      color: COLOR_WHITE,
+                    ),
+                    onPress: () => {_testSendSqlite()},
+                  ),
+                ),
               ],
             ),
           ),
         ));
+  }
+
+  void _testSendSqlite() async {
+    try {
+      await databaseHelper.insertSqlite('PROCESS_SHEET', {
+        'Machine': int.tryParse(MachineNoController.text.trim()),
+        'OperatorName': operatorNameController.text.trim(),
+        'OperatorName1': operatorName1Controller.text.trim(),
+        'OperatorName2': operatorName2Controller.text.trim(),
+        'OperatorName3': operatorName3Controller.text.trim(),
+        'BatchNo': int.tryParse(batchNoController.text.trim()),
+      });
+      print("ok");
+    } catch (e) {
+      print(e);
+    }
   }
 }

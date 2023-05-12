@@ -1,5 +1,6 @@
 class ProcessModel {
   const ProcessModel({
+    this.ID,
     this.MATERIAL,
     this.OPERATOR_NAME,
     this.OPERATOR_NAME1,
@@ -12,7 +13,8 @@ class ProcessModel {
     this.STARTEND,
     this.CHECKCOMPLETE,
   });
-  final int? MATERIAL;
+  final int? ID;
+  final String? MATERIAL;
   final String? OPERATOR_NAME;
   final String? OPERATOR_NAME1;
   final String? OPERATOR_NAME2;
@@ -25,6 +27,7 @@ class ProcessModel {
   final String? CHECKCOMPLETE;
 
   List<Object> get props => [
+        ID!,
         MATERIAL!,
         OPERATOR_NAME!,
         OPERATOR_NAME1!,
@@ -38,7 +41,8 @@ class ProcessModel {
         CHECKCOMPLETE!,
       ];
   ProcessModel.fromMap(Map<String, dynamic> map)
-      : MATERIAL = map['Machine'],
+      : ID = map['ID'],
+        MATERIAL = map['Machine'],
         OPERATOR_NAME = map['OperatorName'],
         OPERATOR_NAME1 = map['OperatorName1'],
         OPERATOR_NAME2 = map['OperatorName2'],

@@ -14,6 +14,16 @@ class TreatMentStartScanScreen extends StatefulWidget {
 }
 
 class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
+  final TextEditingController MachineNoController = TextEditingController();
+  final TextEditingController OperatorNameController = TextEditingController();
+  final TextEditingController Batch1Controller = TextEditingController();
+  final TextEditingController Batch2Controller = TextEditingController();
+  final TextEditingController Batch3Controller = TextEditingController();
+  final TextEditingController Batch4Controller = TextEditingController();
+  final TextEditingController Batch5Controller = TextEditingController();
+  final TextEditingController Batch6Controller = TextEditingController();
+  final TextEditingController Batch7Controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BgWhite(

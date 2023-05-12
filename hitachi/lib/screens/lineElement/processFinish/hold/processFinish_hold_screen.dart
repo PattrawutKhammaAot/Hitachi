@@ -84,7 +84,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-        isHidePreviour: true,
+        isHideAppBar: true,
         textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
@@ -114,7 +114,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.single,
+                            selectionMode: SelectionMode.multiple,
+                            showCheckboxColumn: true,
                             onCellTap: (details) async {
                               if (details.rowColumnIndex.rowIndex != 0) {
                                 setState(() {
@@ -474,7 +475,9 @@ class ProcessStartDataSource extends DataGridSource {
 
           DataGridRow(
             cells: [
-              DataGridCell<int>(columnName: 'Machine', value: _item.MATERIAL),
+              DataGridCell<int>(columnName: 'ID', value: _item.ID),
+              DataGridCell<String>(
+                  columnName: 'Machine', value: _item.MATERIAL),
               DataGridCell<String>(
                   columnName: 'OperatorName', value: _item.OPERATOR_NAME),
               DataGridCell<String>(

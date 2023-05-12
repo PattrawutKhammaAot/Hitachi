@@ -365,7 +365,8 @@ class DatabaseHelper {
 
   void _createTableProcess(Database db, int newVersion) async {
     await db.execute('CREATE TABLE PROCESS_SHEET ('
-        'Machine INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT'
+        'Machine TEXT,'
         'OperatorName TEXT,'
         'OperatorName1 TEXT,'
         'OperatorName2 TEXT,'
