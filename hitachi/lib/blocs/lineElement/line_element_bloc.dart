@@ -12,6 +12,8 @@ import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processStart/processInputModel.dart';
+import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
@@ -89,6 +91,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(MaterialInputLoadedState(mlist));
         } catch (e) {
           emit(MaterialInputErrorState(e.toString()));
+        }
+      },
+    );
+    on<ProcessInputEvent>(
+      (event, emit) async {
+        try {
+          emit(ProcessInputLoadingState());
+          final mlist = await fetchProcess(event.items);
+          emit(ProcessInputLoadedState(mlist));
+        } catch (e) {
+          emit(ProcessInputErrorState(e.toString()));
         }
       },
     );
@@ -215,6 +228,25 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     } catch (e) {
       print(e);
       return MaterialInputModel();
+    }
+  }
+
+  //ProcessStart
+  Future<ProcessInputModel> fetchProcess(ProcessOutputModel items) async {
+    try {
+      Response response = await Dio().post(ApiConfig.LE_PROCESSINPUT,
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
+          data: jsonEncode(items));
+
+      ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
+
+      return tmp;
+    } catch (e) {
+      print(e);
+      return ProcessInputModel();
     }
   }
 }

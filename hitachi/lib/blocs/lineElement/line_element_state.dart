@@ -146,3 +146,26 @@ class MaterialInputErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  Post processInput//////
+class ProcessInputLoadingState extends LineElementState {
+  const ProcessInputLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class ProcessInputLoadedState extends LineElementState {
+  const ProcessInputLoadedState(this.item);
+  final ProcessInputModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class ProcessInputErrorState extends LineElementState {
+  const ProcessInputErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

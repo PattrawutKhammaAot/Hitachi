@@ -338,6 +338,7 @@ class DatabaseHelper {
   //TABLE PROCESS------------------------------------------------------------------------------------------------------------------------------------------------------------
   ///
   Future<void> writeTableProcess_ToSqlite({
+    int? ID,
     String? machine_No,
     String? operator_Name,
     String? operator_Name1,
@@ -353,6 +354,7 @@ class DatabaseHelper {
     try {
       Database db = await DatabaseHelper().database;
       Map<String, dynamic> row = {
+        'ID': ID,
         'Machine': machine_No,
         'OperatorName': operator_Name,
         'OperatorName1': operator_Name1,
@@ -374,7 +376,7 @@ class DatabaseHelper {
 
   void _createTableProcess(Database db, int newVersion) async {
     await db.execute('CREATE TABLE PROCESS_SHEET ('
-        'ID INTEGER PRIMARY KEY AUTOINCREMENT'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'Machine TEXT,'
         'OperatorName TEXT,'
         'OperatorName1 TEXT,'
@@ -433,7 +435,8 @@ class DatabaseHelper {
 
   void _createTableTreatment(Database db, int newVersion) async {
     await db.execute('CREATE TABLE TREATMENT_SHEET ('
-        'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'MachineNo TEXT,'
         'OperatorName TEXT,'
         'Batch1 TEXT,'
         'Batch2 TEXT,'

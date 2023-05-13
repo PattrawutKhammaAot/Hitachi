@@ -47,4 +47,9 @@ class ApiConfig {
 
   //POST MACHINE BREAKDOWN
   static String MACHINE_BREAKDOWN = "${BASE_API_URL}LineElement/SendMachine";
+
+  ///---------------------ProcessInput ----------------------///
+
+  //Get
+  static String LE_PROCESSINPUT = "${BASE_API_URL}LineElement/SendProcessStart";
 }

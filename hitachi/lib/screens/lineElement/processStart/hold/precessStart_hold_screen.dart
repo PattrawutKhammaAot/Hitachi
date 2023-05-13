@@ -11,6 +11,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -58,8 +59,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   void deletedInfo() async {
     await databaseHelper.deletedRowSqlite(
         tableName: 'PROCESS_SHEET',
-        columnName: 'Material',
-        columnValue: Process![selectedRowIndex!].MATERIAL);
+        columnName: 'ID',
+        columnValue: Process![selectedRowIndex!].ID);
   }
 
   @override
@@ -108,7 +109,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                       .getCells()
                                       .map(
                                         (e) => ProcessModel(
-                                          MATERIAL: e.value,
+                                          MATERIAL: e.value.toString(),
                                           OPERATOR_NAME: e.value.toString(),
                                           OPERATOR_NAME1: e.value.toString(),
                                           OPERATOR_NAME2: e.value.toString(),
@@ -162,7 +163,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label(
-                                      'Material=',
+                                      'Material',
                                       color: COLOR_WHITE,
                                     ),
                                   ),
@@ -403,16 +404,9 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       bgColor: COLOR_SUCESS,
                       onPress: () {
                         BlocProvider.of<LineElementBloc>(context).add(
-                          MaterialInputEvent(
-                            MaterialOutputModel(
-                              MATERIAL:
-                                  Process![selectedRowIndex!].OPERATOR_NAME,
-                              // MACHINENO:
-                              // Process![selectedRowIndex!].MACHINE_NO,
-                              OPERATORNAME: int.tryParse(
-                                  Process![selectedRowIndex!]
-                                      .OPERATOR_NAME
-                                      .toString()),
+                          ProcessInputEvent(
+                            ProcessOutputModel(
+                              MATERIAL: Process![selectedRowIndex!].MATERIAL,
                               BATCHNO: int.tryParse(Process![selectedRowIndex!]
                                   .BATCH_NO
                                   .toString()),
@@ -473,7 +467,6 @@ class ProcessStartDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<int>(columnName: 'ID', value: _item.ID),
               DataGridCell<String>(
                   columnName: 'Material', value: _item.MATERIAL),
               DataGridCell<String>(

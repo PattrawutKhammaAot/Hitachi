@@ -63,3 +63,12 @@ class MaterialInputEvent extends LineElementEvent {
   @override
   List<Object> get prop => [items];
 }
+
+//////////////////------------ProcessEvent-----------///////////////
+class ProcessInputEvent extends LineElementEvent {
+  const ProcessInputEvent(this.items);
+
+  final ProcessOutputModel items;
+  @override
+  List<Object> get prop => [items];
+}
