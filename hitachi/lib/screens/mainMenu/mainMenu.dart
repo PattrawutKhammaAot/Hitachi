@@ -25,11 +25,11 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   void initState() {
-    testCreateData();
+    CreateDatabase();
     super.initState();
   }
 
-  void testCreateData() async {
+  void CreateDatabase() async {
     // สร้างฐานข้อมูล SQLite และตาราง my_table
     await databaseHelper.initializeDatabase();
   }

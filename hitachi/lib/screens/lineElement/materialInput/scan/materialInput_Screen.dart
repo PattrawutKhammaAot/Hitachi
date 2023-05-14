@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
@@ -88,10 +89,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
               if (state is MaterialInputLoadingState) {
                 EasyLoading.show();
               } else if (state is MaterialInputLoadedState) {
-                EasyLoading.dismiss();
-                setState(() {
-                  _inputMtModel = state.item;
-                });
+                if (state.item.RESULT == true) {
+                  EasyLoading.showSuccess("SendComplete");
+                } else if (state.item.RESULT == false) {
+                  EasyLoading.showError("Please Check Data");
+                  _insertSqlite();
+                }
               } else {
                 EasyLoading.dismiss();
                 _insertSqlite();
@@ -123,6 +126,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   labelText: "Batch/Serial",
                   controller: _batchOrSerialController,
                   maxLength: 12,
+                  type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 5,
@@ -138,6 +147,22 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 BoxInputField(
                   labelText: "Lot No. :",
                   controller: _lotNoController,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^(?!.*\d{3})[a-zA-Z0-9]+$'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == _batchOrSerialController.text &&
+                          value == _machineOrProcessController.text &&
+                          value == _operatorNameController.text &&
+                          value == _materialController.text) {
+                        _lotNoController.text = "";
+                        EasyLoading.showError("Input Again");
+                      }
+                    });
+                  },
                 ),
                 const SizedBox(
                   height: 5,

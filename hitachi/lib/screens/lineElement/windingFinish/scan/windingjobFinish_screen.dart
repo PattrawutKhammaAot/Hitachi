@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
@@ -36,6 +37,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   SendWdsFinishOutputModel? _outputModel;
   int batch = 100136982104;
   ReportRouteSheetModel? itemsReport;
+  String? target = "invaild";
   void _btnSend_Click() async {
     if (batchNoController.text.trim().isNotEmpty &&
         operatorNameController.text.trim().isNotEmpty &&
@@ -109,51 +111,32 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
-  void checkformtxtBatchNo({DateTime? batchEndDate}) {
-    var tempTarget;
-    String tempCheckRow = "";
-    if (batchNoController.text.trim().isEmpty &&
-        batchNoController.text.trim().length >= 8) {
-      batchEndDate = DateTime.now();
-      tempTarget = 0.0;
-      if (queryTarget(
-              batchNo: int.tryParse(
-                batchNoController.text.trim(),
-              ),
-              target: tempTarget,
-              checkRow: tempCheckRow) ==
-          true) {
-        if (tempCheckRow == tempCheckRow.isEmpty) {
-          ///ให้ทำการ showTargetของ(tempTarget)
-        } else {
-          //ให้ทำการโชว์ Target ของ tempCheckRow
-        }
-      } else {
-        //ให้ทำการโชว์ showTarget ของ tempTarget
-      }
-    } else {
-      //Show Batch No. INVALID
-    }
+  void checkformtxtBatchNo() {
+    queryTarget();
   }
 
-  Future<bool> queryTarget(
-      {int? batchNo, num? target, String? checkRow}) async {
+  Future<bool> queryTarget({String? checkRow}) async {
     try {
       var sql = await databaseHelper.queryDataSelect(
           select1: 'Target',
           formTable: 'WINDING_WEIGHT_SHEET',
-          where: 'Batch',
-          value: batchNo.toString());
+          where: 'BatchNo',
+          value: batchNoController.text.trim());
 
       if (sql.length > 0) {
         var ds = sql[0];
-        final targetTable = ds['Target'];
-        final targetValue = targetTable.rows[0]['Target'] as double;
-        final roundedTarget = targetValue.round();
-        target = roundedTarget;
+
+        setState(() {
+          final targetTable = ds['Target'];
+          final targetValue = targetTable.rows[0]['Target'] as double;
+          final roundedTarget = targetValue.round();
+          target = roundedTarget.toString();
+        });
+        print(target);
+
         return true;
       } else {
-        target = 0.0;
+        target = "0";
         checkRow = "N/A";
         return true;
       }
@@ -208,21 +191,48 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               children: [
                 BoxInputField(
                   labelText: "Operator Name :",
-                  maxLength: 3,
                   controller: operatorNameController,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                    ),
+                  ],
                 ),
                 BoxInputField(
                   labelText: "Batch No :",
-                  maxLength: 3,
+                  maxLength: 12,
                   controller: batchNoController,
+                  onChanged: (value) {
+                    setState(() {
+                      checkformtxtBatchNo();
+                      batchNoController.text.trim();
+                    });
+                  },
                 ),
                 BoxInputField(
                   labelText: "Element QTY :",
-                  maxLength: 3,
                   controller: elementQtyController,
                 ),
                 SizedBox(
                   height: 15,
+                ),
+                Row(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Label(
+                          "Batch No. : ${batchNoController.text.trim()}",
+                          color: COLOR_RED,
+                        ),
+                        Label(
+                          "Target : ${target}",
+                          color: COLOR_RED,
+                        )
+                      ],
+                    ),
+                  ],
                 ),
                 Container(
                   child: Button(
@@ -236,16 +246,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 ),
                 SizedBox(
                   height: 15,
-                ),
-                Container(
-                  child: Button(
-                    bgColor: COLOR_BLUE,
-                    text: Label(
-                      "TestSend",
-                      color: COLOR_WHITE,
-                    ),
-                    onPress: () => {_testSendSqlite()},
-                  ),
                 ),
               ],
             ),

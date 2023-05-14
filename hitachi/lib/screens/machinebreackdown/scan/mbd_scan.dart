@@ -1,6 +1,7 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
@@ -58,16 +59,20 @@ class _MachineBreakDownScanScreenState
         _operatorname_Controller.text.isNotEmpty &&
         _serviceNo_Controller.text.isNotEmpty &&
         _start_Technical_1_Controller.text.isNotEmpty &&
-        _start_Technical_2_Controller.text.isNotEmpty &&
         _stop_Technical_1_Controller.text.isNotEmpty &&
-        _stop_Technical_2_Controller.text.isNotEmpty &&
-        _operator_accept_Controller.text.isNotEmpty) {
+        _operator_accept_Controller.text.isNotEmpty &&
+        _start_Technical_1_Controller.text ==
+            _stop_Technical_1_Controller.text) {
       _sendData();
       Future.delayed(Duration(seconds: 5), () {
         _callBreakDownMachine();
       });
     } else {
       EasyLoading.showError("Please Input Data");
+    }
+    if (_start_Technical_1_Controller.text !=
+        _stop_Technical_1_Controller.text) {
+      EasyLoading.showError("Start technical 1 don't match Stop technical 2");
     }
   }
 
@@ -175,9 +180,11 @@ class _MachineBreakDownScanScreenState
             SERVICE: _serviceNo_Controller.text.trim(),
             BREAK_START_DATE: DateTime.now().toString(),
             TECH1: _start_Technical_1_Controller.text.trim(),
-            START_DATE_TECH_1: "",
+            START_DATE_TECH_1: DateTime.now().toString(),
             TECH2: _start_Technical_2_Controller.text.trim(),
-            START_DATE_TECH_2: "",
+            START_DATE_TECH_2: _start_Technical_2_Controller.text.isEmpty
+                ? ""
+                : _start_Technical_2_Controller.text.trim(),
             STOP_TECH_DATE_1: _stop_Technical_1_Controller.text.trim(),
             STOP_TECH_DATE_2: _stop_Technical_2_Controller.text.trim(),
             ACCEPT: _operator_accept_Controller.text.trim(),
@@ -322,6 +329,7 @@ class _MachineBreakDownScanScreenState
                     labelText: "Machine No. : ",
                     height: 30,
                     controller: _machineNo_Controller,
+                    maxLength: 3,
                   ),
                   const SizedBox(
                     height: 5,
@@ -330,6 +338,11 @@ class _MachineBreakDownScanScreenState
                     labelText: "Operator Name : ",
                     height: 30,
                     controller: _operatorname_Controller,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^[a-zA-Z0-9]+$')),
+                      LengthLimitingTextInputFormatter(12),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
@@ -350,6 +363,13 @@ class _MachineBreakDownScanScreenState
                           labelText: "Start Technical 1 : ",
                           controller: _start_Technical_1_Controller,
                           height: 30,
+                          onChanged: (p0) {
+                            setState(() {
+                              if (p0.length > 1) {
+                                _start_Technical_1_Controller.text.isNotEmpty;
+                              }
+                            });
+                          },
                         ),
                       ),
                       Expanded(child: Container()),
@@ -359,6 +379,8 @@ class _MachineBreakDownScanScreenState
                           labelText: "Start Technical 2 : ",
                           controller: _start_Technical_2_Controller,
                           height: 30,
+                          enabled:
+                              _start_Technical_1_Controller.text.isNotEmpty,
                         ),
                       ),
                     ],

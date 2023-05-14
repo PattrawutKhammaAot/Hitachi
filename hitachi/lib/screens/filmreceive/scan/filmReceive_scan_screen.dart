@@ -1,4 +1,6 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
@@ -37,6 +39,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   DateTime? _selectedDate;
   DateTime? _selectedDateMfg;
   String? dataFromBarcode1;
+
+  List<String> itemList = ['sea', 'air'];
 
   void _checkValueController() {
     if (_poNoController.text.isNotEmpty &&
@@ -135,7 +139,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
           'STORE_DATE': DateTime.now().toString(),
-          'STATUS': "",
+          'STATUS': "S",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
@@ -170,7 +174,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           DATERECEIVE: _IncomingDateController.text.trim(),
           OPERATORNAME: int.tryParse(_storeByController.text.trim()),
           PACKNO: _packNoController.text.trim(),
-          STATUS: _rollNoController.text.trim(),
+          STATUS: 'S',
           WEIGHT1: num.tryParse(_weight1Controller.text.trim()),
           WEIGHT2: num.tryParse(_weight2Controller.text.trim()),
           MFGDATE: _mfgDateController.text.trim(),
@@ -199,7 +203,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               DateFormat("dd/MM/yy").parse(_mfgDateController.text);
           Duration difference = incomingDate.difference(mfgDate);
           int differenceInDays = difference.inDays.abs();
-          // print(differenceInDays);
+
           if (differenceInDays > 120) {
             showDialog<String>(
                 context: context,
@@ -304,10 +308,48 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(child: Container()),
                       Expanded(
                         flex: 4,
-                        child: BoxInputField(
-                          labelText: "Freight",
-                          height: 30,
-                          controller: _freightController,
+                        child: SizedBox(
+                          height: 40,
+                          child: DropdownButtonFormField2(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            hint: Center(
+                              child: Text(
+                                'Please Select',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            items: itemList
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Label(item),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _freightController.text = value!;
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -338,6 +380,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               controller: _IncomingDateController,
                               type: TextInputType.datetime,
                               height: 30,
+                              maxLength: 6,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
                             ),
                           ),
                         ),
@@ -361,6 +408,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Pack No.",
                           height: 30,
                           controller: _packNoController,
+                          maxLength: 8,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                       Expanded(child: Container()),
@@ -370,6 +421,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Roll No.",
                           height: 30,
                           controller: _rollNoController,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^(?!.*\d{8})[a-zA-Z0-9]+$'),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -473,7 +529,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     onPress: () {
                       _checkValueController();
                       // callFilmIn();
-                      // print(_packNoController.text.substring(0, 1));
                     },
                     text: Label(
                       "Send",
