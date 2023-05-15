@@ -1,12 +1,16 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/processModel.dart';
+import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
 class ProcessStartScanScreen extends StatefulWidget {
@@ -17,7 +21,7 @@ class ProcessStartScanScreen extends StatefulWidget {
 }
 
 class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
-  final TextEditingController MachineNoController = TextEditingController();
+  final TextEditingController MachineController = TextEditingController();
   final TextEditingController operatorNameController = TextEditingController();
   final TextEditingController operatorName1Controller = TextEditingController();
   final TextEditingController operatorName2Controller = TextEditingController();
@@ -38,7 +42,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 RowBoxInputField(
                   labelText: "Machine No :",
                   maxLength: 3,
-                  controller: MachineNoController,
+                  controller: MachineController,
                   height: 35,
                 ),
                 SizedBox(
@@ -140,11 +144,25 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         ));
   }
 
+  void _cellAPI() {
+    BlocProvider.of<LineElementBloc>(context).add(
+      ProcessInputEvent(ProcessOutputModel(
+        MACHINE: MachineController.text.trim(),
+        OPERATORNAME: operatorNameController.text.trim(),
+        OPERATORNAME1: operatorName1Controller.text.trim(),
+        OPERATORNAME2: operatorName2Controller.text.trim(),
+        OPERATORNAME3: operatorName3Controller.text.trim(),
+        BATCHNO: int.tryParse(batchNoController.text.trim()),
+        STARTDATE: DateTime.now().toString(),
+      )),
+    );
+  }
+
   void _testSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
         await databaseHelper.insertSqlite('PROCESS_SHEET', {
-          'Machine': MachineNoController.text.trim(),
+          'Machine': MachineController.text.trim(),
           'OperatorName': operatorNameController.text.trim(),
           'OperatorName1': operatorName1Controller.text.trim(),
           'OperatorName2': operatorName2Controller.text.trim(),

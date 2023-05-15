@@ -14,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _userController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BgWhite(
@@ -39,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: COLOR_WHITE,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                           color: Colors.black, blurRadius: 1, spreadRadius: 0),
                       BoxShadow(
@@ -52,17 +53,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
-                          children: const [
+                          children: [
                             BoxInputField(
                               labelText: "Username",
+                              controller: _userController,
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            BoxInputField(
-                              labelText: "Password",
-                            ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
@@ -77,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPress: () => Navigator.pushNamed(
                                   context, RouterList.MAIN_MENU),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 13,
                             ),
                             Button(

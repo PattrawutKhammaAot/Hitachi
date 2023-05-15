@@ -313,7 +313,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                           BlocProvider.of<LineElementBloc>(context).add(
                             ProcessInputEvent(
                               ProcessOutputModel(
-                                MATERIAL:
+                                MACHINE:
                                     processList![selectedRowIndex!].MACHINE,
                                 OPERATORNAME: processList![selectedRowIndex!]
                                     .OPERATOR_NAME,

@@ -1,6 +1,6 @@
 class ProcessOutputModel {
   const ProcessOutputModel({
-    this.MATERIAL,
+    this.MACHINE,
     this.OPERATORNAME,
     this.OPERATORNAME1,
     this.OPERATORNAME2,
@@ -9,7 +9,7 @@ class ProcessOutputModel {
     this.STARTDATE,
   });
 
-  final String? MATERIAL;
+  final String? MACHINE;
   final String? OPERATORNAME;
   final String? OPERATORNAME1;
   final String? OPERATORNAME2;
@@ -18,7 +18,7 @@ class ProcessOutputModel {
   final String? STARTDATE;
 
   ProcessOutputModel copyWith({
-    String? MATERIAL,
+    String? MACHINE,
     String? OPERATORNAME,
     String? OPERATORNAME1,
     String? OPERATORNAME2,
@@ -27,7 +27,7 @@ class ProcessOutputModel {
     String? STARTDATE,
   }) {
     return ProcessOutputModel(
-      MATERIAL: MATERIAL ?? this.MATERIAL,
+      MACHINE: MACHINE ?? this.MACHINE,
       OPERATORNAME: OPERATORNAME ?? this.OPERATORNAME,
       OPERATORNAME1: OPERATORNAME1 ?? this.OPERATORNAME1,
       OPERATORNAME2: OPERATORNAME2 ?? this.OPERATORNAME2,
@@ -39,7 +39,7 @@ class ProcessOutputModel {
 
   @override
   Map toJson() => {
-        'Material': MATERIAL,
+        'Machine': MACHINE,
         'OperatorName': OPERATORNAME,
         'OperatorName1': OPERATORNAME1,
         'OperatorName2': OPERATORNAME2,

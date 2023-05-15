@@ -13,7 +13,9 @@ class BoxInputField extends StatelessWidget {
       this.textInputFormatter,
       this.onChanged,
       this.validator,
-      this.maxLines})
+      this.maxLines,
+      this.textStyle,
+      this.enabled})
       : super(key: key);
 
   final String? labelText;
@@ -25,6 +27,8 @@ class BoxInputField extends StatelessWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final int? maxLines;
+  final TextStyle? textStyle;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +45,19 @@ class BoxInputField extends StatelessWidget {
             controller: controller,
             maxLength: maxLength,
             keyboardType: type,
+            enabled: enabled,
             // maxLines: maxLines,
             decoration: InputDecoration(
               counterText: "",
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              // set overflow behavior of the input decoration
+              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+
+              // set hint text overflow behavior
             ),
+
             inputFormatters: textInputFormatter,
           ),
         ),

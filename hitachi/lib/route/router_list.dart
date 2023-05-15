@@ -38,4 +38,7 @@ class RouterList {
   //MachineBreakDown
   static const String MachineBreakDown_control_Screen =
       '/lineElementMenu/MachineBreakDown/machinebreakDown_control_page';
+  //FilmReceive
+  static const String FilmReceive_control_Screen =
+      '/lineElementMenu/FilmReceive/FilmReceive_control_page';
 }

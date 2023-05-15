@@ -312,7 +312,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                           BlocProvider.of<LineElementBloc>(context).add(
                             ProcessInputEvent(
                               ProcessOutputModel(
-                                MATERIAL:
+                                MACHINE:
                                     processList![selectedRowIndex!].MACHINE,
                                 OPERATORNAME: processList![selectedRowIndex!]
                                     .OPERATOR_NAME,

@@ -43,7 +43,14 @@ class DatabaseHelper {
   }
 
   @override
-  void _onUpgrade(Database db, int oldVersion, int newVer) {}
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (newVersion > oldVersion) {
+      await db.execute('DROP TABLE IF EXISTS table1');
+      await db.execute('DROP TABLE IF EXISTS table2');
+      await db.execute('DROP TABLE IF EXISTS table3');
+      _createDb(db, newVersion);
+    }
+  }
   //สร้างไฟล์กับ Column
 
   void _createDb(Database db, int newVersion) async {
@@ -53,6 +60,7 @@ class DatabaseHelper {
     _createTableJob(db, newVersion);
     _createTableProcess(db, newVersion);
     _createTableTreatment(db, newVersion);
+
     _createComboProblem(db, newVersion);
     _createTableBreakDown(db, newVersion);
     _createTableProblem(db, newVersion);
@@ -208,8 +216,26 @@ class DatabaseHelper {
   }
 
   void _createTableDataSheet(Database db, int newVersion) async {
-    await db.execute(
-        'CREATE TABLE DATA_SHEET (PO_NO INTEGER PRIMARY KEY AUTOINCREMENT, INVOICE TEXT,FRIEGHT TEXT,INCOMING_DATE TEXT,STORE_BY TEXT,PACK_NO TEXT,STORE_DATE TEXT,  STATUS TEXT, W1 REAL,W2 REAL,WEIGHT REAL,MFG_DATE TEXT,THICKNESS REAL,WRAP_GRADE TEXT,ROLL_NO REAL,checkComplete TEXT)');
+    await db.execute('CREATE TABLE DATA_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'PO_NO TEXT,'
+        'INVOICE TEXT,'
+        'FRIEGHT TEXT,'
+        'INCOMING_DATE TEXT,'
+        'STORE_BY TEXT,'
+        'PACK_NO TEXT,'
+        'STORE_DATE TEXT,'
+        'STATUS TEXT,'
+        'W1 TEXT,'
+        'W2 TEXT,'
+        'WEIGHT TEXT,'
+        'MFG_DATE TEXT,'
+        'THICKNESS1 TEXT,'
+        'THICKNESS2 TEXT,'
+        'WRAP_GRADE TEXT,'
+        'ROLL_NO TEXT,'
+        'checkComplete TEXT'
+        ')');
   }
 
   ///
@@ -435,7 +461,7 @@ class DatabaseHelper {
 
   void _createTableTreatment(Database db, int newVersion) async {
     await db.execute('CREATE TABLE TREATMENT_SHEET ('
-        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT ,'
         'MachineNo TEXT,'
         'OperatorName TEXT,'
         'Batch1 TEXT,'

@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
-import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
+import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
-import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
-import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
+import 'package:hitachi/models/filmReceiveModel/filmreceiveOutputModel.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class MachineBreakDownHoldScreen extends StatefulWidget {
-  const MachineBreakDownHoldScreen({super.key});
+import '../../../services/databaseHelper.dart';
+
+class FilmReceiveHoldScreen extends StatefulWidget {
+  const FilmReceiveHoldScreen({super.key});
 
   @override
-  State<MachineBreakDownHoldScreen> createState() =>
-      _MachineBreakDownHoldScreenState();
+  State<FilmReceiveHoldScreen> createState() => _FilmReceiveHoldScreenState();
 }
 
-class _MachineBreakDownHoldScreenState
-    extends State<MachineBreakDownHoldScreen> {
+class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   final TextEditingController password = TextEditingController();
-  BreakDownDataSource? BreakdownDataSource;
-  List<BreakDownSheetModel>? bdsSqliteModel;
-  List<BreakDownSheetModel> bdsList = [];
+  FilmReceiveDataSource? filmDataSource;
+  List<DataSheetTableModel>? dstSqliteModel;
+  List<DataSheetTableModel> dstList = [];
   int? selectedRowIndex;
   DataGridRow? datagridRow;
   bool isClick = false;
@@ -37,26 +36,28 @@ class _MachineBreakDownHoldScreenState
   void initState() {
     super.initState();
 
-    _getWindingSheet().then((result) {
+    _getFilmReceive().then((result) {
       setState(() {
-        bdsList = result;
-        BreakdownDataSource = BreakDownDataSource(process: bdsList);
+        dstList = result;
+        filmDataSource = FilmReceiveDataSource(process: dstList);
+        print(dstList);
       });
     });
   }
 
-  Future<List<BreakDownSheetModel>> _getWindingSheet() async {
+  Future<List<DataSheetTableModel>> _getFilmReceive() async {
     try {
       List<Map<String, dynamic>> rows =
-          await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
-      List<BreakDownSheetModel> result = rows
-          .map((row) => BreakDownSheetModel.fromMap(
+          await databaseHelper.queryAllRows('DATA_SHEET');
+      List<DataSheetTableModel> result = rows
+          .map((row) => DataSheetTableModel.fromMap(
               row.map((key, value) => MapEntry(key, value.toString()))))
           .toList();
 
       return result;
-    } catch (e) {
+    } catch (e, s) {
       print(e);
+      print(s);
       return [];
     }
   }
@@ -65,12 +66,12 @@ class _MachineBreakDownHoldScreenState
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<MachineBreakDownBloc, MachineBreakDownState>(
+        BlocListener<FilmReceiveBloc, FilmReceiveState>(
           listener: (context, state) {
-            if (state is PostMachineBreakdownLoadingState) {
+            if (state is FilmReceiveLoadingState) {
               EasyLoading.show();
             }
-            if (state is PostMachineBreakdownLoadedState) {
+            if (state is FilmReceiveLoadedState) {
               if (state.item.RESULT == true) {
                 deletedInfo();
                 Navigator.pop(context);
@@ -80,7 +81,7 @@ class _MachineBreakDownHoldScreenState
                 EasyLoading.showError("Please Check Data");
               }
             }
-            if (state is PostMachineBreakdownErrorState) {
+            if (state is FilmReceiveErrorState) {
               EasyLoading.showError("Can not send");
             }
           },
@@ -93,11 +94,11 @@ class _MachineBreakDownHoldScreenState
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              BreakdownDataSource != null
+              filmDataSource != null
                   ? Expanded(
                       child: Container(
                         child: SfDataGrid(
-                          source: BreakdownDataSource!,
+                          source: filmDataSource!,
                           // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
                           selectionMode: SelectionMode.single,
@@ -108,12 +109,13 @@ class _MachineBreakDownHoldScreenState
                               setState(() {
                                 selectedRowIndex =
                                     details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = BreakdownDataSource!.effectiveRows
+                                datagridRow = filmDataSource!.effectiveRows
                                     .elementAt(selectedRowIndex!);
-                                bdsSqliteModel = datagridRow!
+                                dstSqliteModel = datagridRow!
                                     .getCells()
                                     .map(
-                                      (e) => BreakDownSheetModel(),
+                                      (e) => DataSheetTableModel(
+                                          PO_NO: e.value.toString()),
                                     )
                                     .toList();
                                 _colorSend = COLOR_SUCESS;
@@ -123,24 +125,24 @@ class _MachineBreakDownHoldScreenState
                           },
                           columns: <GridColumn>[
                             GridColumn(
-                                columnName: 'machineno',
+                                columnName: 'pono',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Machine No.',
+                                    'PO No.',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
-                              columnName: 'operatorName',
+                              columnName: 'ivno',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                     child: Label(
-                                  'Operator Name',
+                                  'Invoice No.',
                                   textAlign: TextAlign.center,
                                   fontSize: 14,
                                   color: COLOR_WHITE,
@@ -148,114 +150,147 @@ class _MachineBreakDownHoldScreenState
                               ),
                             ),
                             GridColumn(
-                                columnName: 'service',
+                                columnName: 'fi',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Service',
+                                    'Freight',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 ),
                                 width: 100),
                             GridColumn(
-                                columnName: 'breakstart',
+                                columnName: 'ic',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'BreakStart',
+                                    'Incoing',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 ),
                                 width: 100),
                             GridColumn(
-                                columnName: 'tech1',
+                                columnName: 'sb',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Tech1',
+                                    'StoreBy',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'starttech1',
+                                columnName: 'packno',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StartTech1',
+                                    'PackNo.',
                                     textAlign: TextAlign.center,
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'tech2',
+                                columnName: 'sd',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Tech2',
+                                    'Store Date',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'starttech2',
+                                columnName: 'status',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StartTech2',
+                                    'Status',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'stoptech1',
+                                columnName: 'w1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StopTech1',
+                                    'w1',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'stoptech2',
+                                columnName: 'w2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StopTech2',
+                                    'w2',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'accept',
+                                columnName: 'Weight',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Accept',
+                                    'Weight',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
                                 )),
                             GridColumn(
-                                columnName: 'breakstop',
+                                columnName: 'md',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'BreakStop',
+                                    'Mfg.Date',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'tn',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Thickness',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'wg',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Wrap Grade',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'rn',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Roll No.',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
@@ -265,7 +300,7 @@ class _MachineBreakDownHoldScreenState
                       ),
                     )
                   : CircularProgressIndicator(),
-              bdsSqliteModel != null && bdsList != null
+              dstSqliteModel != null && dstList != null
                   ? Expanded(
                       child: Container(
                           child: ListView(
@@ -292,66 +327,75 @@ class _MachineBreakDownHoldScreenState
                               ],
                               rows: [
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Machine No."))),
+                                  DataCell(Center(child: Label("PO no."))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].MACHINE_NO}"))
+                                      "${dstList[selectedRowIndex!].PO_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Invoice No."))),
+                                  DataCell(Label(
+                                      "${dstList[selectedRowIndex!].IN_VOICE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
-                                      Center(child: Label("OperatorName"))),
+                                      Center(child: Label("Incoming Date"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                      "${dstList[selectedRowIndex!].INCOMING_DATE}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("SERVICE"))),
+                                  DataCell(Center(child: Label("Store By"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].SERVICE_NO}"))
+                                      "${dstList[selectedRowIndex!].STORE_BY}"))
                                 ]),
                                 DataRow(cells: [
+                                  DataCell(Center(child: Label("Pack No"))),
+                                  DataCell(Label(
+                                      "${dstList[selectedRowIndex!].PACK_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Store Date"))),
+                                  DataCell(Label(
+                                      "${dstList[selectedRowIndex!].STORE_DATE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Status"))),
+                                  DataCell(Label(
+                                      "${dstList[selectedRowIndex!].STATUS}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Weight1"))),
                                   DataCell(
-                                      Center(child: Label("BreakStartDate"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].BREAK_START_DATE}"))
+                                      Label("${dstList[selectedRowIndex!].W1}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Tech1"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].TECH_1}"))
+                                  DataCell(Center(child: Label("Weight2"))),
+                                  DataCell(
+                                      Label("${dstList[selectedRowIndex!].W2}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("StartTech1"))),
+                                  DataCell(Center(child: Label("Weight"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_1}"))
+                                      "${dstList[selectedRowIndex!].WEIGHT}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Tech2"))),
+                                  DataCell(Center(child: Label("Mfg.date"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].TECH_2}"))
+                                      "${dstList[selectedRowIndex!].MFG_DATE}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("StartTech2"))),
+                                  DataCell(Center(child: Label("Thickness"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_2}"))
+                                      "${dstList[selectedRowIndex!].THICKNESS}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("StopTech1"))),
+                                  DataCell(Center(child: Label("Wrap Grade"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_1}"))
+                                      "${dstList[selectedRowIndex!].WRAP_GRADE}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("StopTech2"))),
+                                  DataCell(Center(child: Label("Roll No."))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_2}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Accept"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].OPERATOR_ACCEPT}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("BreakStop"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].BREAK_STOP_DATE}"))
+                                      "${dstList[selectedRowIndex!].ROLL_NO}"))
                                 ]),
                               ])
                         ],
@@ -378,7 +422,7 @@ class _MachineBreakDownHoldScreenState
                   Expanded(
                       child: Button(
                     onPress: () {
-                      if (bdsSqliteModel != null) {
+                      if (dstSqliteModel != null) {
                         _AlertDialog();
                       } else {
                         _selectData();
@@ -396,7 +440,7 @@ class _MachineBreakDownHoldScreenState
                     text: Label("Send", color: COLOR_WHITE),
                     bgColor: _colorSend,
                     onPress: () {
-                      if (bdsSqliteModel != null) {
+                      if (dstSqliteModel != null) {
                         _sendDataServer();
                       } else {
                         EasyLoading.showInfo("Please Select Data");
@@ -411,6 +455,21 @@ class _MachineBreakDownHoldScreenState
         ),
       ),
     );
+  }
+
+  void _checkValueController() async {
+    if (password.text.isNotEmpty) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      EasyLoading.showSuccess("Delete Success");
+    }
+  }
+
+  void deletedInfo() async {
+    await databaseHelper.deletedRowSqlite(
+        tableName: 'DATA_SHEET',
+        columnName: 'ID',
+        columnValue: dstList[selectedRowIndex!].ID);
   }
 
   void _AlertDialog() async {
@@ -441,39 +500,27 @@ class _MachineBreakDownHoldScreenState
     );
   }
 
-  void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
-  }
-
-  void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'BREAKDOWN_SHEET',
-        columnName: 'ID',
-        columnValue: bdsList[selectedRowIndex!].ID);
-  }
-
   void _sendDataServer() async {
-    // BlocProvider.of<LineElementBloc>(context).add(
-    //   PostSendWindingStartEvent(
-    //     SendWindingStartModelOutput(
-    //         MACHINE_NO: bdsList[selectedRowIndex!].MACHINE_NO,
-    //         OPERATOR_NAME: int.tryParse(
-    //             bdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
-    //         PRODUCT: int.tryParse(
-    //           bdsList[selectedRowIndex!].PRODUCT.toString(),
-    //         ),
-    //         FILM_PACK_NO: int.tryParse(
-    //           bdsList[selectedRowIndex!].PACK_NO.toString(),
-    //         ),
-    //         PAPER_CODE_LOT: bdsList[selectedRowIndex!].PAPER_CORE,
-    //         PP_FILM_LOT: bdsList[selectedRowIndex!].PP_CORE,
-    //         FOIL_LOT: bdsList[selectedRowIndex!].FOIL_CORE),
-    //   ),
-    // );
+    BlocProvider.of<FilmReceiveBloc>(context).add(
+      FilmReceiveSendEvent(
+        FilmReceiveOutputModel(
+          PONO: dstList[selectedRowIndex!].PO_NO,
+          INVOICE: dstList[selectedRowIndex!].IN_VOICE,
+          FRIEGHT: dstList[selectedRowIndex!].FRIEGHT,
+          DATERECEIVE: dstList[selectedRowIndex!].INCOMING_DATE,
+          OPERATORNAME:
+              int.tryParse(dstList[selectedRowIndex!].STORE_BY.toString()),
+          PACKNO: dstList[selectedRowIndex!].PACK_NO,
+          STATUS: dstList[selectedRowIndex!].STATUS,
+          WEIGHT1: num.tryParse(dstList[selectedRowIndex!].W1.toString()),
+          WEIGHT2: num.tryParse(dstList[selectedRowIndex!].W2.toString()),
+          MFGDATE: dstList[selectedRowIndex!].MFG_DATE,
+          THICKNESS: dstList[selectedRowIndex!].THICKNESS,
+          WRAPGRADE: dstList[selectedRowIndex!].WRAP_GRADE,
+          ROLL_NO: dstList[selectedRowIndex!].ROLL_NO,
+        ),
+      ),
+    );
   }
 
   void _selectData() {
@@ -481,35 +528,30 @@ class _MachineBreakDownHoldScreenState
   }
 }
 
-class BreakDownDataSource extends DataGridSource {
-  BreakDownDataSource({List<BreakDownSheetModel>? process}) {
+class FilmReceiveDataSource extends DataGridSource {
+  FilmReceiveDataSource({List<DataSheetTableModel>? process}) {
     if (process != null) {
       for (var _item in process) {
         _employees.add(
           DataGridRow(
             cells: [
+              DataGridCell<String>(columnName: 'pono', value: _item.PO_NO),
+              DataGridCell<String>(columnName: 'ivno', value: _item.IN_VOICE),
+              DataGridCell<String>(columnName: 'fi', value: _item.FRIEGHT),
               DataGridCell<String>(
-                  columnName: 'machineno', value: _item.MACHINE_NO),
+                  columnName: 'ic', value: _item.INCOMING_DATE),
+              DataGridCell<String>(columnName: 'sb', value: _item.STORE_BY),
+              DataGridCell<String>(columnName: 'packno', value: _item.PACK_NO),
+              DataGridCell<String>(columnName: 'sd', value: _item.STORE_DATE),
+              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
+              DataGridCell<String>(columnName: 'w1', value: _item.W1),
+              DataGridCell<String>(columnName: 'w2', value: _item.W2),
+              DataGridCell<String>(columnName: 'Weight', value: _item.WEIGHT),
+              DataGridCell<String>(columnName: 'md', value: _item.MFG_DATE),
               DataGridCell<String>(
-                  columnName: 'operatorName', value: _item.OPERATOR_NAME),
-              DataGridCell<String>(
-                  columnName: 'service', value: _item.SERVICE_NO),
-              DataGridCell<String>(
-                  columnName: 'breakstart', value: _item.BREAK_START_DATE),
-              DataGridCell<String>(columnName: 'tech1', value: _item.TECH_1),
-              DataGridCell<String>(
-                  columnName: 'starttech1', value: _item.START_TECH_DATE_1),
-              DataGridCell<String>(columnName: 'tech2', value: _item.TECH_2),
-              DataGridCell<String>(
-                  columnName: 'starttech2', value: _item.START_TECH_DATE_2),
-              DataGridCell<String>(
-                  columnName: 'stoptech1', value: _item.STOP_DATE_TECH_1),
-              DataGridCell<String>(
-                  columnName: 'stoptech2', value: _item.STOP_DATE_TECH_2),
-              DataGridCell<String>(
-                  columnName: 'accept', value: _item.OPERATOR_ACCEPT),
-              DataGridCell<String>(
-                  columnName: 'breakstop', value: _item.BREAK_STOP_DATE),
+                  columnName: 'tn', value: _item.PACK_NO?.substring(0, 1)),
+              DataGridCell<String>(columnName: 'wg', value: _item.WRAP_GRADE),
+              DataGridCell<String>(columnName: 'rn', value: _item.ROLL_NO),
             ],
           ),
         );

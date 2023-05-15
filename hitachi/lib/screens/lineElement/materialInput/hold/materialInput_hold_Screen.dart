@@ -32,7 +32,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   Color _colorDelete = COLOR_GREY;
 
   ////
-  Future<List<MaterialTraceModel>> _getWindingSheet() async {
+  Future<List<MaterialTraceModel>> _getMaterialSheet() async {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('MATERIAL_TRACE_SHEET');
@@ -47,7 +47,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
 
   @override
   void initState() {
-    _getWindingSheet().then((result) {
+    _getMaterialSheet().then((result) {
       setState(() {
         materialList = result;
         matTracDs = MaterialTraceDataSource(process: materialList);
@@ -409,8 +409,6 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
           TextButton(
             onPressed: () {
               if (_passwordController.text.trim().length > 6) {
-                deletedInfo();
-
                 Navigator.pop(context);
                 Navigator.pop(context);
                 EasyLoading.showSuccess("Delete Success");

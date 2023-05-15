@@ -25,11 +25,11 @@ class _MainMenuState extends State<MainMenu> {
 
   @override
   void initState() {
-    testCreateData();
+    CreateDatabase();
     super.initState();
   }
 
-  void testCreateData() async {
+  void CreateDatabase() async {
     // สร้างฐานข้อมูล SQLite และตาราง my_table
     await databaseHelper.initializeDatabase();
   }
@@ -77,7 +77,8 @@ class _MainMenuState extends State<MainMenu> {
                 ),
                 CardButton(
                   text: "5.Film Receive",
-                  onPress: () => print("test2"),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.FilmReceive_control_Screen),
                 ),
                 SizedBox(
                   height: 15,

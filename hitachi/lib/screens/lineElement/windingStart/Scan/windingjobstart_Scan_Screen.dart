@@ -453,6 +453,28 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       });
                       if (items!.RESULT == true) {
                         _saveWindingStartOnlyWeight(weightValue: items!.WEIGHT);
+                        showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                  backgroundColor: COLOR_WHITE,
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Label(
+                                          "Batch No. :${batchNoController.text.trim()}"),
+                                      Label("Target :${items!.WEIGHT}")
+                                    ],
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Label('OK'),
+                                    ),
+                                  ],
+                                ));
                       } else {
                         EasyLoading.showInfo(
                             "Send complete \n Can not save weight , Element",
@@ -503,8 +525,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         controller: operatorNameController,
                         textInputFormatter: [
                           FilteringTextInputFormatter.allow(
-                              RegExp(r'^[a-zA-Z0-9]+$')),
-                          LengthLimitingTextInputFormatter(12),
+                            RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -537,6 +559,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               controller: productController,
                               maxLength: 5,
                               type: TextInputType.number,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
                             ),
                           ),
                         ],
@@ -555,6 +581,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               maxLength: 8,
                               maxLines: 2,
                               onChanged: (_) => checkFilmPackNo(),
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
                             ),
                           ),
                           Expanded(
@@ -623,32 +653,32 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      Container(
-                        child: Button(
-                          bgColor: COLOR_BLUE_DARK,
-                          text: Label(
-                            "TestSendSqlite",
-                            color: COLOR_WHITE,
-                          ),
-                          onPress: () {
-                            _SaveWindingStartWithWeight(
-                                weight: 0,
-                                MACHINE_NO: machineNoController.text.trim(),
-                                OPERATOR_NAME:
-                                    operatorNameController.text.trim(),
-                                BATCH_NO:
-                                    int.tryParse(batchNoController.text.trim()),
-                                PRODUCT:
-                                    int.tryParse(productController.text.trim()),
-                                PACK_NO: int.tryParse(
-                                    filmPackNoController.text.trim()),
-                                PAPER_CORE: paperCodeLotController.text.trim(),
-                                PP_CORE: ppFilmLotController.text.trim(),
-                                FOIL_CORE: foilLotController.text.trim(),
-                                BATCH_START_DATE: DateTime.now().toString());
-                          },
-                        ),
-                      ),
+                      // Container(
+                      //   child: Button(
+                      //     bgColor: COLOR_BLUE_DARK,
+                      //     text: Label(
+                      //       "TestSendSqlite",
+                      //       color: COLOR_WHITE,
+                      //     ),
+                      //     onPress: () {
+                      //       _SaveWindingStartWithWeight(
+                      //           weight: 0,
+                      //           MACHINE_NO: machineNoController.text.trim(),
+                      //           OPERATOR_NAME:
+                      //               operatorNameController.text.trim(),
+                      //           BATCH_NO:
+                      //               int.tryParse(batchNoController.text.trim()),
+                      //           PRODUCT:
+                      //               int.tryParse(productController.text.trim()),
+                      //           PACK_NO: int.tryParse(
+                      //               filmPackNoController.text.trim()),
+                      //           PAPER_CORE: paperCodeLotController.text.trim(),
+                      //           PP_CORE: ppFilmLotController.text.trim(),
+                      //           FOIL_CORE: foilLotController.text.trim(),
+                      //           BATCH_START_DATE: DateTime.now().toString());
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 )),

@@ -1,12 +1,14 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
@@ -57,16 +59,20 @@ class _MachineBreakDownScanScreenState
         _operatorname_Controller.text.isNotEmpty &&
         _serviceNo_Controller.text.isNotEmpty &&
         _start_Technical_1_Controller.text.isNotEmpty &&
-        _start_Technical_2_Controller.text.isNotEmpty &&
         _stop_Technical_1_Controller.text.isNotEmpty &&
-        _stop_Technical_2_Controller.text.isNotEmpty &&
-        _operator_accept_Controller.text.isNotEmpty) {
+        _operator_accept_Controller.text.isNotEmpty &&
+        _start_Technical_1_Controller.text ==
+            _stop_Technical_1_Controller.text) {
       _sendData();
       Future.delayed(Duration(seconds: 5), () {
         _callBreakDownMachine();
       });
     } else {
       EasyLoading.showError("Please Input Data");
+    }
+    if (_start_Technical_1_Controller.text !=
+        _stop_Technical_1_Controller.text) {
+      EasyLoading.showError("Start technical 1 don't match Stop technical 2");
     }
   }
 
@@ -174,9 +180,11 @@ class _MachineBreakDownScanScreenState
             SERVICE: _serviceNo_Controller.text.trim(),
             BREAK_START_DATE: DateTime.now().toString(),
             TECH1: _start_Technical_1_Controller.text.trim(),
-            START_DATE_TECH_1: "",
+            START_DATE_TECH_1: DateTime.now().toString(),
             TECH2: _start_Technical_2_Controller.text.trim(),
-            START_DATE_TECH_2: "",
+            START_DATE_TECH_2: _start_Technical_2_Controller.text.isEmpty
+                ? ""
+                : _start_Technical_2_Controller.text.trim(),
             STOP_TECH_DATE_1: _stop_Technical_1_Controller.text.trim(),
             STOP_TECH_DATE_2: _stop_Technical_2_Controller.text.trim(),
             ACCEPT: _operator_accept_Controller.text.trim(),
@@ -216,7 +224,7 @@ class _MachineBreakDownScanScreenState
       child: BgWhite(
           isHideAppBar: true,
           body: Container(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
             width: MediaQuery.of(context).size.width,
             child: SingleChildScrollView(
               child: Column(
@@ -229,77 +237,81 @@ class _MachineBreakDownScanScreenState
                     children: [
                       Label("Machine No. : "),
                       Expanded(
-                        child: DropdownButtonFormField2(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                        child: SizedBox(
+                          height: 40,
+                          child: DropdownButtonFormField2(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
-                          ),
-                          isExpanded: true,
-                          hint: Center(
-                            child: Text(
-                              'New',
-                              style: TextStyle(fontSize: 14),
+                            isExpanded: true,
+                            hint: Center(
+                              child: Text(
+                                'New',
+                                style: TextStyle(fontSize: 14),
+                              ),
                             ),
-                          ),
-                          items: bdsList
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item.MACHINE_NO,
-                                    child: Text(
-                                      "${item.MACHINE_NO}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                            items: bdsList
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.MACHINE_NO,
+                                      child: Text(
+                                        "${item.MACHINE_NO}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ))
-                              .toList(),
-                          // validator: (value) {
-                          //   if (value == null) {
-                          //     return 'Please select gender.';
-                          //   }
-                          //   return null;
-                          // },
-                          onChanged: (value) {
-                            for (var item in bdsList) {
-                              if (value == item.MACHINE_NO && value != 'NEW') {
-                                setState(() {
-                                  _machineNo_Controller.text =
-                                      item.MACHINE_NO.toString();
-                                });
-                                print(value);
-                                break;
-                              } else if (value == 'NEW') {
-                                setState(() {
-                                  _machineNo_Controller.text = '';
-                                  _operatorname_Controller.text = '';
-                                  _serviceNo_Controller.text = '';
-                                  _start_Technical_1_Controller.text = '';
-                                  _start_Technical_2_Controller.text = '';
-                                  _stop_Technical_1_Controller.text = '';
-                                  _stop_Technical_2_Controller.text = '';
-                                  _operator_accept_Controller.text = '';
-                                });
+                                    ))
+                                .toList(),
+                            // validator: (value) {
+                            //   if (value == null) {
+                            //     return 'Please select gender.';
+                            //   }
+                            //   return null;
+                            // },
+                            onChanged: (value) {
+                              for (var item in bdsList) {
+                                if (value == item.MACHINE_NO &&
+                                    value != 'NEW') {
+                                  setState(() {
+                                    _machineNo_Controller.text =
+                                        item.MACHINE_NO.toString();
+                                  });
+                                  print(value);
+                                  break;
+                                } else if (value == 'NEW') {
+                                  setState(() {
+                                    _machineNo_Controller.text = '';
+                                    _operatorname_Controller.text = '';
+                                    _serviceNo_Controller.text = '';
+                                    _start_Technical_1_Controller.text = '';
+                                    _start_Technical_2_Controller.text = '';
+                                    _stop_Technical_1_Controller.text = '';
+                                    _stop_Technical_2_Controller.text = '';
+                                    _operator_accept_Controller.text = '';
+                                  });
+                                }
                               }
-                            }
-                          },
-                          onSaved: (value) {
-                            selectedValue = value.toString();
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            height: 50,
-                            padding: EdgeInsets.only(left: 20, right: 10),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.black45,
+                            },
+                            onSaved: (value) {
+                              selectedValue = value.toString();
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
                             ),
-                            iconSize: 30,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
                           ),
                         ),
@@ -315,16 +327,22 @@ class _MachineBreakDownScanScreenState
                   ),
                   RowBoxInputField(
                     labelText: "Machine No. : ",
-                    height: 50,
+                    height: 30,
                     controller: _machineNo_Controller,
+                    maxLength: 3,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   RowBoxInputField(
                     labelText: "Operator Name : ",
-                    height: 50,
+                    height: 30,
                     controller: _operatorname_Controller,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^[a-zA-Z0-9]+$')),
+                      LengthLimitingTextInputFormatter(12),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
@@ -332,34 +350,64 @@ class _MachineBreakDownScanScreenState
                   RowBoxInputField(
                     labelText: "Service No. : ",
                     controller: _serviceNo_Controller,
+                    height: 30,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
-                  RowBoxInputField(
-                    labelText: "Start Technical 1 : ",
-                    controller: _start_Technical_1_Controller,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Start Technical 1 : ",
+                          controller: _start_Technical_1_Controller,
+                          height: 30,
+                          onChanged: (p0) {
+                            setState(() {
+                              if (p0.length > 1) {
+                                _start_Technical_1_Controller.text.isNotEmpty;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Start Technical 2 : ",
+                          controller: _start_Technical_2_Controller,
+                          height: 30,
+                          enabled:
+                              _start_Technical_1_Controller.text.isNotEmpty,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
                   ),
-                  RowBoxInputField(
-                    labelText: "Start Technical 2 : ",
-                    controller: _start_Technical_2_Controller,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Stop Technical 1 : ",
-                    controller: _stop_Technical_1_Controller,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Stop Technical 2 : ",
-                    controller: _stop_Technical_2_Controller,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Stop Technical 1 : ",
+                          controller: _stop_Technical_1_Controller,
+                          height: 30,
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Expanded(
+                        flex: 4,
+                        child: BoxInputField(
+                          labelText: "Stop Technical 2 : ",
+                          controller: _stop_Technical_2_Controller,
+                          height: 30,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
@@ -367,6 +415,7 @@ class _MachineBreakDownScanScreenState
                   RowBoxInputField(
                     labelText: "Operator Accept : ",
                     controller: _operator_accept_Controller,
+                    height: 30,
                   ),
                   const SizedBox(
                     height: 5,
