@@ -41,9 +41,13 @@ class ApiConfig {
 
   ///---------------------MaterialInput ----------------------///
 
-  //Get
+  //POST
   static String LE_MATERIALINPUT =
       "${BASE_API_URL}LineElement/SendMaterialInput";
+  //
+  static String LE_CHECK_MATERIAL_INPUT =
+      "${BASE_API_URL}LineElement/CheckMaterial?material="; // ID  GET
+  ///---------------------MACHINE BREAKDOWN ----------------------///
 
   //POST MACHINE BREAKDOWN
   static String MACHINE_BREAKDOWN = "${BASE_API_URL}LineElement/SendMachine";

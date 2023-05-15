@@ -15,7 +15,9 @@ class BoxInputField extends StatelessWidget {
       this.validator,
       this.maxLines,
       this.textStyle,
-      this.enabled})
+      this.enabled,
+      this.onEditingComplete,
+      this.focusNode})
       : super(key: key);
 
   final String? labelText;
@@ -29,6 +31,8 @@ class BoxInputField extends StatelessWidget {
   final int? maxLines;
   final TextStyle? textStyle;
   final bool? enabled;
+  final Function()? onEditingComplete;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +44,14 @@ class BoxInputField extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: height,
           child: TextFormField(
+            focusNode: focusNode,
             validator: validator,
             onChanged: onChanged,
             controller: controller,
             maxLength: maxLength,
             keyboardType: type,
             enabled: enabled,
+            onEditingComplete: () => onEditingComplete?.call(),
             // maxLines: maxLines,
             decoration: InputDecoration(
               counterText: "",

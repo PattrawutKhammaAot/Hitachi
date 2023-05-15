@@ -11,33 +11,27 @@ import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+class MainMenuScreen extends StatefulWidget {
+  const MainMenuScreen({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<MainMenuScreen> createState() => _MainMenuScreenState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _MainMenuScreenState extends State<MainMenuScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   int batch = 100136982104;
   ReportRouteSheetModel? items;
 
   @override
   void initState() {
-    CreateDatabase();
     super.initState();
-  }
-
-  void CreateDatabase() async {
-    // สร้างฐานข้อมูล SQLite และตาราง my_table
-    await databaseHelper.initializeDatabase();
   }
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      isHidePreviour: false,
+      isHidePreviour: true,
       textTitle: "Element : Main Menu",
       body: Padding(
         padding: const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),
@@ -86,7 +80,8 @@ class _HomepageState extends State<Homepage> {
                 ),
                 CardButton(
                   text: "6.Zinc Thickness",
-                  onPress: () => print("test2"),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.ZincThickness_control),
                 ),
               ],
             ),

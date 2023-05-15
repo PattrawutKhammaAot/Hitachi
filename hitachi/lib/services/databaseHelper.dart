@@ -764,6 +764,7 @@ class DatabaseHelper {
 
   void _createWindingPlan(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_PLAN_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'IDPlanDate INTEGER, '
         'PlanDate TEXT, '
         'OrderPlan INTEGER, '
@@ -776,6 +777,7 @@ class DatabaseHelper {
 
   void _createBarcodePrinting(Database db, int newVersion) async {
     await db.execute('CREATE TABLE BARCODE_PRINTING_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'CheckUser TEXT, '
         'Batch TEXT, '
         'Product TEXT, '
@@ -786,6 +788,7 @@ class DatabaseHelper {
 
   void _createZincThickness(Database db, int newVersion) async {
     await db.execute('CREATE TABLE ZINCTHICKNESS_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'CheckUser TEXT, '
         'Batch TEXT, '
         'Thickness1 TEXT, '
@@ -797,6 +800,15 @@ class DatabaseHelper {
         'Thickness8 TEXT, '
         'Thickness9 TEXT, '
         'DateData TEXT)');
+  }
+
+  Future<List<Map<String, dynamic>>> fetchZincThickness({String? batch}) async {
+    Database db = await database;
+    List<Map<String, dynamic>> result = await db.rawQuery(
+      "SELECT * FROM ZincThickness WHERE Batch = ?",
+      [batch],
+    );
+    return result;
   }
 
 /////////Select Database ////

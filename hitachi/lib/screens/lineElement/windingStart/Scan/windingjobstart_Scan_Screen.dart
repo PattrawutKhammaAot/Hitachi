@@ -41,6 +41,19 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final TextEditingController foilLotController = TextEditingController();
   final TextEditingController weight1Controller = TextEditingController();
   final TextEditingController weight2Controller = TextEditingController();
+//FOCUS
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+  final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
+  final f7 = FocusNode();
+  final f8 = FocusNode();
+  final f9 = FocusNode();
+  final f10 = FocusNode();
+//
+  ///
   final _formKey = GlobalKey<FormState>();
 
   sendWdsReturnWeightInputModel? items;
@@ -513,14 +526,17 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                   child: Column(
                     children: [
                       BoxInputField(
+                        focusNode: f1,
                         labelText: "Machine No :",
                         controller: machineNoController,
                         maxLength: 3,
+                        onEditingComplete: () => f2.requestFocus(),
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       BoxInputField(
+                        focusNode: f2,
                         labelText: "Operator Name :",
                         controller: operatorNameController,
                         textInputFormatter: [
@@ -528,6 +544,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
                           ),
                         ],
+                        onEditingComplete: () => f3.requestFocus(),
                       ),
                       SizedBox(
                         height: 5,
@@ -537,6 +554,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 8,
                             child: BoxInputField(
+                              focusNode: f3,
+                              onEditingComplete: () => f4.requestFocus(),
                               labelText: "Batch No :",
                               controller: batchNoController,
                               type: TextInputType.number,
@@ -555,6 +574,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 5,
                             child: BoxInputField(
+                              focusNode: f4,
+                              onEditingComplete: () => f5.requestFocus(),
                               labelText: "Product",
                               controller: productController,
                               maxLength: 5,
@@ -575,6 +596,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 5,
                             child: BoxInputField(
+                              focusNode: f5,
+                              onEditingComplete: () => f6.requestFocus(),
                               labelText: "Film Pack No :",
                               controller: filmPackNoController,
                               type: TextInputType.number,
@@ -595,6 +618,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 5,
                             child: BoxInputField(
+                              focusNode: f6,
+                              onEditingComplete: () => f7.requestFocus(),
                               labelText: "Paper Code Lot :",
                               controller: paperCodeLotController,
                             ),
@@ -609,6 +634,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 5,
                             child: BoxInputField(
+                              focusNode: f7,
+                              onEditingComplete: () => f8.requestFocus(),
                               labelText: "PP Film Lot :",
                               controller: ppFilmLotController,
                             ),
@@ -621,6 +648,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           Expanded(
                             flex: 5,
                             child: BoxInputField(
+                              focusNode: f8,
+                              onEditingComplete: () {
+                                if (isDisableOnClick == true) {
+                                  _btnSendClick();
+                                } else {
+                                  EasyLoading.showError("Please Input Info");
+                                }
+                              },
                               labelText: "Foil Lot:",
                               controller: foilLotController,
                             ),
@@ -645,7 +680,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             if (isDisableOnClick == true) {
                               _btnSendClick();
                             } else {
-                              print("Can't Click it");
+                              EasyLoading.showError("Please Input Info");
                             }
                           },
                         ),
@@ -653,32 +688,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      // Container(
-                      //   child: Button(
-                      //     bgColor: COLOR_BLUE_DARK,
-                      //     text: Label(
-                      //       "TestSendSqlite",
-                      //       color: COLOR_WHITE,
-                      //     ),
-                      //     onPress: () {
-                      //       _SaveWindingStartWithWeight(
-                      //           weight: 0,
-                      //           MACHINE_NO: machineNoController.text.trim(),
-                      //           OPERATOR_NAME:
-                      //               operatorNameController.text.trim(),
-                      //           BATCH_NO:
-                      //               int.tryParse(batchNoController.text.trim()),
-                      //           PRODUCT:
-                      //               int.tryParse(productController.text.trim()),
-                      //           PACK_NO: int.tryParse(
-                      //               filmPackNoController.text.trim()),
-                      //           PAPER_CORE: paperCodeLotController.text.trim(),
-                      //           PP_CORE: ppFilmLotController.text.trim(),
-                      //           FOIL_CORE: foilLotController.text.trim(),
-                      //           BATCH_START_DATE: DateTime.now().toString());
-                      //     },
-                      //   ),
-                      // ),
                     ],
                   ),
                 )),
@@ -785,7 +794,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         child: SizedBox(
                           height: 40,
                           child: TextFormField(
+                            focusNode: f9,
                             controller: weight1Controller,
+                            onEditingComplete: () {
+                              f10.requestFocus();
+                            },
                             decoration:
                                 InputDecoration(border: OutlineInputBorder()),
                           ),
@@ -801,6 +814,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         child: SizedBox(
                           height: 40,
                           child: TextFormField(
+                            focusNode: f10,
+                            onEditingComplete: () {
+                              okBtnWeight();
+                            },
                             controller: weight2Controller,
                             decoration:
                                 InputDecoration(border: OutlineInputBorder()),

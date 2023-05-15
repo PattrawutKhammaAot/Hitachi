@@ -8,6 +8,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/route/router_list.dart';
@@ -29,10 +30,17 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   final TextEditingController _machineOrProcessController =
       TextEditingController();
   final TextEditingController _lotNoController = TextEditingController();
+//Foucs
+  final _materialFoucus = FocusNode();
+  final _operatorNameFouc = FocusNode();
+  final _batchOrSerialFocus = FocusNode();
+  final _machineFocus = FocusNode();
+  final _lotNoFocus = FocusNode();
 
   final DateTime _dateTime = DateTime.now();
   MaterialInputModel? _inputMtModel;
   DatabaseHelper databaseHelper = DatabaseHelper();
+  ResponeDefault? _responeDefault;
 
   @override
   void initState() {
@@ -89,18 +97,41 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
               if (state is MaterialInputLoadingState) {
                 EasyLoading.show();
               } else if (state is MaterialInputLoadedState) {
-                if (state.item.RESULT == true) {
+                setState(() {
+                  _inputMtModel = state.item;
+                });
+
+                if (_inputMtModel!.RESULT == true) {
                   EasyLoading.showSuccess("SendComplete");
-                } else if (state.item.RESULT == false) {
+                } else if (_inputMtModel!.RESULT == false) {
                   EasyLoading.showError("Please Check Data");
                   _insertSqlite();
                 }
-              } else {
+              } else if (state is MaterialInputErrorState) {
                 EasyLoading.dismiss();
                 _insertSqlite();
                 EasyLoading.showError("Please Check Connection Internet");
               }
+              if (state is CheckMaterialInputLoadingState) {
+                EasyLoading.show();
+              } else if (state is CheckMaterialInputLoadedState) {
+                setState(() {
+                  _responeDefault = state.item;
+                });
+                if (_responeDefault!.RESULT == true) {
+                  EasyLoading.showSuccess("Success");
+                } else {
+                  EasyLoading.showError("Not found Material");
+                }
+              } else if (state is CheckMaterialInputErrorState) {
+                EasyLoading.dismiss();
+
+                EasyLoading.showError("TEST");
+              }
             },
+          ),
+          BlocListener<LineElementBloc, LineElementState>(
+            listener: (context, state) {},
           )
         ],
         child: SingleChildScrollView(
@@ -109,20 +140,37 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
             child: Column(
               children: [
                 BoxInputField(
+                  focusNode: _materialFoucus,
                   labelText: "Material:",
                   controller: _materialController,
+                  onEditingComplete: () {
+                    BlocProvider.of<LineElementBloc>(context).add(
+                      CheckMaterialInputEvent(_materialController.text.trim()),
+                    );
+                    _operatorNameFouc.requestFocus();
+                  },
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 BoxInputField(
+                  focusNode: _operatorNameFouc,
                   labelText: "Operator Name",
                   controller: _operatorNameController,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                    ),
+                  ],
+                  onEditingComplete: () {
+                    _batchOrSerialFocus.requestFocus();
+                  },
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 BoxInputField(
+                  focusNode: _batchOrSerialFocus,
                   labelText: "Batch/Serial",
                   controller: _batchOrSerialController,
                   maxLength: 12,
@@ -132,21 +180,26 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
                     ),
                   ],
+                  onEditingComplete: () => _machineFocus.requestFocus(),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 BoxInputField(
+                  focusNode: _machineFocus,
                   labelText: 'Machine/Process',
                   controller: _machineOrProcessController,
                   maxLength: 3,
+                  onEditingComplete: () => _lotNoFocus.requestFocus(),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 BoxInputField(
+                  focusNode: _lotNoFocus,
                   labelText: "Lot No. :",
                   controller: _lotNoController,
+                  onEditingComplete: () => checkValueController(),
                   textInputFormatter: [
                     FilteringTextInputFormatter.allow(
                       RegExp(r'^(?!.*\d{3})[a-zA-Z0-9]+$'),

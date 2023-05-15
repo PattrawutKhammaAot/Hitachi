@@ -21,14 +21,23 @@ import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Sc
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.dart';
 import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
+import 'package:hitachi/screens/mainMenu/Homepage.dart';
 
 import 'package:hitachi/screens/planWinding/planwinding_Screen.dart';
+import 'package:hitachi/screens/zincthickness/zthnControl.dart';
 import 'package:page_transition/page_transition.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     print(settings.name);
     switch (settings.name) {
+      ///MainMenu
+      case RouterList.MAIN_MENU:
+        return PageTransition(
+            settings: settings,
+            child: MainMenuScreen(),
+            type: PageTransitionType.fade);
+
       ///LineElementMenu
       case RouterList.LINE_ELEMENT_SCREEN:
         return PageTransition(
@@ -86,7 +95,7 @@ class RouteGenerator {
             settings: settings,
             child: MaterialInputControlPage(),
             type: PageTransitionType.fade);
-      //PlanWinding - LineElement
+      //PlanWinding
       case RouterList.Plan_winding:
         return PageTransition(
             settings: settings,
@@ -103,6 +112,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: FilmReceiveControlPage(),
+            type: PageTransitionType.fade);
+      //ZincThickness
+      case RouterList.ZincThickness_control:
+        return PageTransition(
+            settings: settings,
+            child: ZincThicknessControl(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

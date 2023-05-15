@@ -157,13 +157,39 @@ class ProcessInputLoadingState extends LineElementState {
 class ProcessInputLoadedState extends LineElementState {
   const ProcessInputLoadedState(this.item);
   final ProcessInputModel item;
-
   @override
   List<Object> get props => [item];
 }
 
 class ProcessInputErrorState extends LineElementState {
   const ProcessInputErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
+///  GET MaterialInput//////
+class CheckMaterialInputLoadingState extends LineElementState {
+  const CheckMaterialInputLoadingState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class CheckMaterialInputLoadedState extends LineElementState {
+  const CheckMaterialInputLoadedState(this.item);
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+// class ProcessInputErrorState extends LineElementState {
+//   const ProcessInputErrorState(this.error);
+
+class CheckMaterialInputErrorState extends LineElementState {
+  const CheckMaterialInputErrorState(this.error);
   final String error;
 
   @override
