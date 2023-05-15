@@ -46,6 +46,7 @@ dependencies:
   dotted_line: ^3.1.0
   dropdown_button2: ^2.1.0
   intl: ^0.18.1
+  flutter_spinkit: ^5.2.0
 
 dev_dependencies:
   flutter_test:
