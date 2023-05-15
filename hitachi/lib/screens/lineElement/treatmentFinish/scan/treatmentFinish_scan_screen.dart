@@ -8,7 +8,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
-import 'package:hitachi/models/treatmentStartModel/treatmentStartOutputModel.dart';
+import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
 class TreatmentFinishScanScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
 
   void _callApi() {
     BlocProvider.of<TreatmentBloc>(context).add(
-      TreatmentFinishSendEvent(TreatMentStartOutputModel(
+      TreatmentFinishSendEvent(TreatMentOutputModel(
           MACHINE_NO: _machineNoController.text.trim(),
           OPERATOR_NAME: int.tryParse(_operatorNameController.text.trim()),
           BATCH_NO_1: _batch1Controller.text.trim(),
@@ -92,24 +92,25 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
-      listeners: [  BlocListener<TreatmentBloc, TreatmentState>(
-        listener: (context, state) {
-          if (state is TreatmentStartSendLoadingState) {
-            EasyLoading.show();
-          } else if (state is TreatmentStartSendLoadedState) {
-            if (state.item.RESULT == true) {
-              EasyLoading.showSuccess("SendComplete");
+      listeners: [
+        BlocListener<TreatmentBloc, TreatmentState>(
+          listener: (context, state) {
+            if (state is TreatmentStartSendLoadingState) {
+              EasyLoading.show();
+            } else if (state is TreatmentStartSendLoadedState) {
+              if (state.item.RESULT == true) {
+                EasyLoading.showSuccess("SendComplete");
+              } else {
+                EasyLoading.showError("Check Data");
+              }
+            } else {
+              EasyLoading.dismiss();
 
-            }else{
-              EasyLoading.showError("Check Data");
+              EasyLoading.showError("Please Check Connection Internet");
             }
-          } else {
-            EasyLoading.dismiss();
-
-            EasyLoading.showError("Please Check Connection Internet");
-          }
-        },
-      )],
+          },
+        )
+      ],
       child: BgWhite(
           isHideAppBar: true,
           textTitle: "Treatment Finish",
@@ -253,7 +254,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                       "Send",
                       color: COLOR_WHITE,
                     ),
-                    onPress: (){
+                    onPress: () {
                       print('send');
                       _btnSend();
                     },

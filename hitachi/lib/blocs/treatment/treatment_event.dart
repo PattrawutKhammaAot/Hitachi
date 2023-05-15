@@ -10,7 +10,7 @@ abstract class TreatmentEvent extends Equatable {
 class TreatmentStartSendEvent extends TreatmentEvent {
   const TreatmentStartSendEvent(this.items);
 
-  final TreatMentStartOutputModel items;
+  final TreatMentOutputModel items;
 
   @override
   List<Object> get prop => [items];
@@ -19,7 +19,7 @@ class TreatmentStartSendEvent extends TreatmentEvent {
 class TreatmentFinishSendEvent extends TreatmentEvent {
   const TreatmentFinishSendEvent(this.items);
 
-  final TreatMentStartOutputModel items;
+  final TreatMentOutputModel items;
 
   @override
   List<Object> get prop => [items];

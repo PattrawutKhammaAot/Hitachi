@@ -10,7 +10,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../../blocs/treatment/treatment_bloc.dart';
 import '../../../../helper/colors/colors.dart';
 import '../../../../helper/text/label.dart';
-import '../../../../models/treatmentStartModel/treatmentStartOutputModel.dart';
+import '../../../../models/treatmentModel/treatmentOutputModel.dart';
 
 class TreatmentFinishHoldScreen extends StatefulWidget {
   const TreatmentFinishHoldScreen({super.key});
@@ -337,7 +337,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                       onPress: () {
                         if (tmSqliteModel != null) {
                           BlocProvider.of<TreatmentBloc>(context).add(
-                            TreatmentFinishSendEvent(TreatMentStartOutputModel(
+                            TreatmentFinishSendEvent(TreatMentOutputModel(
                               MACHINE_NO: tmList![selectedRowIndex!].MACHINE_NO,
                               OPERATOR_NAME: int.tryParse(
                                   tmList![selectedRowIndex!]

@@ -21,19 +21,14 @@ import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Sc
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.dart';
 import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
-import 'package:hitachi/screens/mainMenu/MainMenu.dart';
+
+import 'package:hitachi/screens/planWinding/planwinding_Screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     print(settings.name);
     switch (settings.name) {
-      case RouterList.MAIN_MENU:
-        return PageTransition(
-            settings: settings,
-            child: MainMenu(),
-            type: PageTransitionType.fade);
-
       ///LineElementMenu
       case RouterList.LINE_ELEMENT_SCREEN:
         return PageTransition(
@@ -90,6 +85,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: MaterialInputControlPage(),
+            type: PageTransitionType.fade);
+      //PlanWinding - LineElement
+      case RouterList.Plan_winding:
+        return PageTransition(
+            settings: settings,
+            child: PlanWinding_Screen(),
             type: PageTransitionType.fade);
       //MachineBreakDown
       case RouterList.MachineBreakDown_control_Screen:
