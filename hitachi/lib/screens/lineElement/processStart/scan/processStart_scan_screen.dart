@@ -1,5 +1,6 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -39,7 +40,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   maxLength: 3,
                   controller: MachineNoController,
                   height: 35,
-                  type: TextInputType.number,
                 ),
                 SizedBox(
                   height: 5,
@@ -86,10 +86,13 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 ),
                 RowBoxInputField(
                   labelText: "Batch No :",
-                  maxLength: 3,
+                  maxLength: 8,
                   height: 35,
                   controller: batchNoController,
                   type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                 ),
                 SizedBox(
                   height: 10,
@@ -118,6 +121,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   ),
                   onPress: () => print("send"),
                 ),
+                SizedBox(
+                  height: 5,
+                ),
                 Container(
                   child: Button(
                     bgColor: COLOR_BLUE,
@@ -136,15 +142,18 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
 
   void _testSendSqlite() async {
     try {
-      await databaseHelper.insertSqlite('PROCESS_SHEET', {
-        'Machine': int.tryParse(MachineNoController.text.trim()),
-        'OperatorName': operatorNameController.text.trim(),
-        'OperatorName1': operatorName1Controller.text.trim(),
-        'OperatorName2': operatorName2Controller.text.trim(),
-        'OperatorName3': operatorName3Controller.text.trim(),
-        'BatchNo': int.tryParse(batchNoController.text.trim()),
-      });
-      print("ok");
+      if (operatorNameController.text.isNotEmpty) {
+        await databaseHelper.insertSqlite('PROCESS_SHEET', {
+          'Machine': MachineNoController.text.trim(),
+          'OperatorName': operatorNameController.text.trim(),
+          'OperatorName1': operatorName1Controller.text.trim(),
+          'OperatorName2': operatorName2Controller.text.trim(),
+          'OperatorName3': operatorName3Controller.text.trim(),
+          'BatchNo': int.tryParse(batchNoController.text.trim()),
+          'StartDate': DateTime.now().toString(),
+        });
+        print("ok");
+      }
     } catch (e) {
       print(e);
     }

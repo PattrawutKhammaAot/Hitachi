@@ -52,4 +52,8 @@ class ApiConfig {
 
   //Get
   static String LE_PROCESSINPUT = "${BASE_API_URL}LineElement/SendProcessStart";
+
+  //POST PROCESS BREAKDOWN
+  static String PROCESS_BREAKDOWN =
+      "${BASE_API_URL}LineElement/SendProcessStart";
 }

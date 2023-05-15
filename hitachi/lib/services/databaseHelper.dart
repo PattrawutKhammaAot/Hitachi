@@ -344,7 +344,7 @@ class DatabaseHelper {
     String? operator_Name1,
     String? operator_Name2,
     String? operator_Name3,
-    int? batch_No,
+    String? batch_No,
     String? start_Date,
     String? garbage,
     String? fin_Date,
@@ -382,7 +382,7 @@ class DatabaseHelper {
         'OperatorName1 TEXT,'
         'OperatorName2 TEXT,'
         'OperatorName3 TEXT,'
-        'BatchNo INTEGER,'
+        'BatchNo TEXT,'
         'StartDate TEXT, '
         'Garbage TEXT,'
         'FinDate TEXT,'
