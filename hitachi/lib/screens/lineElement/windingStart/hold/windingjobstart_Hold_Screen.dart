@@ -444,14 +444,6 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
 
   void _checkValueController() async {
     if (password.text.isNotEmpty) {
-      deletedInfo();
-
-      setState(() {
-        _getWindingSheet().then((result) {
-          wdsList = result;
-          WindingDataSource = WindingsDataSource(process: wdsList);
-        });
-      });
       Navigator.pop(context);
       Navigator.pop(context);
       EasyLoading.showSuccess("Delete Success");

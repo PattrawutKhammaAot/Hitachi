@@ -43,7 +43,14 @@ class DatabaseHelper {
   }
 
   @override
-  void _onUpgrade(Database db, int oldVersion, int newVer) {}
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (newVersion > oldVersion) {
+      await db.execute('DROP TABLE IF EXISTS table1');
+      await db.execute('DROP TABLE IF EXISTS table2');
+      await db.execute('DROP TABLE IF EXISTS table3');
+      _createDb(db, newVersion);
+    }
+  }
   //สร้างไฟล์กับ Column
 
   void _createDb(Database db, int newVersion) async {
@@ -53,6 +60,7 @@ class DatabaseHelper {
     _createTableJob(db, newVersion);
     _createTableProcess(db, newVersion);
     _createTableTreatment(db, newVersion);
+
     _createComboProblem(db, newVersion);
     _createTableBreakDown(db, newVersion);
     _createTableProblem(db, newVersion);
@@ -451,7 +459,8 @@ class DatabaseHelper {
 
   void _createTableTreatment(Database db, int newVersion) async {
     await db.execute('CREATE TABLE TREATMENT_SHEET ('
-        'MachineNo INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT ,'
+        'MachineNo TEXT,'
         'OperatorName TEXT,'
         'Batch1 TEXT,'
         'Batch2 TEXT,'

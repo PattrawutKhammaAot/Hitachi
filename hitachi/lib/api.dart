@@ -50,4 +50,9 @@ class ApiConfig {
 
   //POST SEND FILM IN
   static String FILM_RECEIVE = "${BASE_API_URL}LineElement/SendFilmIn";
+  //POST SEND TreatmentStart
+  static String TREAMTMENT_START = "${BASE_API_URL}LineElement/SendTreatStart";
+  //POST SEND TreatmentFinish
+  static String TREAMTMENT_FINISH =
+      "${BASE_API_URL}LineElement/SendTreatFinish";
 }

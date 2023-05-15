@@ -1,18 +1,20 @@
 class TreatmentModel {
-  const TreatmentModel({
-    this.MATERIAL,
-    this.OPERATOR_NAME,
-    this.BATCH1,
-    this.BATCH2,
-    this.BATCH3,
-    this.BATCH4,
-    this.BATCH5,
-    this.BATCH6,
-    this.BATCH7,
-    this.STARTDATE,
-    this.FINDATE,
-  });
-  final String? MATERIAL;
+  const TreatmentModel(
+      {this.ID,
+      this.MACHINE_NO,
+      this.OPERATOR_NAME,
+      this.BATCH1,
+      this.BATCH2,
+      this.BATCH3,
+      this.BATCH4,
+      this.BATCH5,
+      this.BATCH6,
+      this.BATCH7,
+      this.STARTDATE,
+      this.FINDATE,
+      this.CHECK_COMPLETE});
+  final int? ID;
+  final String? MACHINE_NO;
   final String? OPERATOR_NAME;
   final String? BATCH1;
   final String? BATCH2;
@@ -23,9 +25,11 @@ class TreatmentModel {
   final String? BATCH7;
   final String? STARTDATE;
   final String? FINDATE;
+  final String? CHECK_COMPLETE;
 
   List<Object> get props => [
-        MATERIAL!,
+        ID!,
+        MACHINE_NO!,
         OPERATOR_NAME!,
         BATCH1!,
         BATCH2!,
@@ -36,17 +40,20 @@ class TreatmentModel {
         BATCH7!,
         STARTDATE!,
         FINDATE!,
+        CHECK_COMPLETE!
       ];
   TreatmentModel.fromMap(Map<String, dynamic> map)
-      : MATERIAL = map['Machine'],
+      : ID = map['ID'],
+        MACHINE_NO = map['MachineNo'],
         OPERATOR_NAME = map['OperatorName'],
-        BATCH1 = map['Bacth1'],
-        BATCH2 = map['Bacth2'],
-        BATCH3 = map['Bacth3'],
-        BATCH4 = map['Bacth4'],
-        BATCH5 = map['Bacth5'],
-        BATCH6 = map['Bacth6'],
-        BATCH7 = map['Bacth7'],
+        BATCH1 = map['Batch1'],
+        BATCH2 = map['Batch2'],
+        BATCH3 = map['Batch3'],
+        BATCH4 = map['Batch4'],
+        BATCH5 = map['Batch5'],
+        BATCH6 = map['Batch6'],
+        BATCH7 = map['Batch7'],
         STARTDATE = map['StartDate'],
-        FINDATE = map['FinDate'];
+        FINDATE = map['FinDate'],
+        CHECK_COMPLETE = map['CheckComplete'];
 }

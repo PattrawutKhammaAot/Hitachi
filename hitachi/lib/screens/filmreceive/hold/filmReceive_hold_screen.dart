@@ -459,8 +459,6 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
 
   void _checkValueController() async {
     if (password.text.isNotEmpty) {
-      deletedInfo();
-
       Navigator.pop(context);
       Navigator.pop(context);
       EasyLoading.showSuccess("Delete Success");

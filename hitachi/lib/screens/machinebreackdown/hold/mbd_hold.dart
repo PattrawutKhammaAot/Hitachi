@@ -443,14 +443,6 @@ class _MachineBreakDownHoldScreenState
 
   void _checkValueController() async {
     if (password.text.isNotEmpty) {
-      deletedInfo();
-
-      setState(() {
-        _getWindingSheet().then((result) {
-          bdsList = result;
-          BreakdownDataSource = BreakDownDataSource(process: bdsList);
-        });
-      });
       Navigator.pop(context);
       Navigator.pop(context);
       EasyLoading.showSuccess("Delete Success");
