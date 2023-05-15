@@ -380,11 +380,7 @@ class _MachineBreakDownScanScreenState
                         child: BoxInputField(
                           focusNode: f4,
                           onEditingComplete: () {
-                            if (_start_Technical_1_Controller.text.isNotEmpty) {
-                              f5.requestFocus();
-                            } else {
-                              f6.requestFocus();
-                            }
+                            f6.requestFocus();
                           },
                           labelText: "Start Technical 1 : ",
                           controller: _start_Technical_1_Controller,
@@ -444,7 +440,7 @@ class _MachineBreakDownScanScreenState
                         flex: 4,
                         child: BoxInputField(
                           focusNode: f6,
-                          onEditingComplete: () => f8.requestFocus(),
+                          onEditingComplete: () => f5.requestFocus(),
                           labelText: "Stop Technical 1 : ",
                           controller: _stop_Technical_1_Controller,
                           height: 30,
@@ -455,7 +451,7 @@ class _MachineBreakDownScanScreenState
                         flex: 4,
                         child: BoxInputField(
                           focusNode: f7,
-                          onEditingComplete: () => f9.requestFocus(),
+                          onEditingComplete: () => f8.requestFocus(),
                           labelText: "Stop Technical 2 : ",
                           controller: _stop_Technical_2_Controller,
                           height: 30,
