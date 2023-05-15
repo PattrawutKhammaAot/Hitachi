@@ -74,7 +74,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       (event, emit) async {
         try {
           emit(GetReportRuteSheetLoadingState());
-          final mlist = await fetchReportRouteSheetModel(event.items);
+          final mlist = await 
+          fetchReportRouteSheetModel(event.items);
           emit(GetReportRuteSheetLoadedState(mlist));
         } catch (e) {
           emit(GetReportRuteSheetErrorState(e.toString()));
