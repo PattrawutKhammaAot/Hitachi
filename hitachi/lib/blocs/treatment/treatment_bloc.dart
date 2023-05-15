@@ -45,8 +45,8 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
       Response responese = await Dio().post(ApiConfig.TREAMTMENT_START,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 10),
-              receiveTimeout: Duration(seconds: 10)),
+              sendTimeout: Duration(minutes: 60),
+              receiveTimeout: Duration(minutes: 60)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
@@ -63,8 +63,8 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
       Response responese = await Dio().post(ApiConfig.TREAMTMENT_FINISH,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(minutes: 60),
+              receiveTimeout: Duration(minutes: 60)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
