@@ -8,7 +8,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
-import 'package:hitachi/models/treatmentStartModel/treatmentStartOutputModel.dart';
+import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
 class TreatMentStartScanScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
 
   void _callApi() {
     BlocProvider.of<TreatmentBloc>(context).add(
-      TreatmentStartSendEvent(TreatMentStartOutputModel(
+      TreatmentStartSendEvent(TreatMentOutputModel(
         MACHINE_NO: _machineNoController.text.trim(),
         OPERATOR_NAME: int.tryParse(_operatorNameController.text.trim()),
         BATCH_NO_1: _batch1Controller.text.trim(),
@@ -101,7 +101,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                 EasyLoading.showError("Can not send & save Data");
                 _saveDataToSqlite();
               }
-            } else {
+            } else if (state is TreatmentStartSendErrorState) {
               EasyLoading.dismiss();
               _saveDataToSqlite();
               EasyLoading.showError("Please Check Connection Internet");

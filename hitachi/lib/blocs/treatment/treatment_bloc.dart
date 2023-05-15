@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
-import 'package:hitachi/models/treatmentStartModel/treatmentStartOutputModel.dart';
+import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 
 import '../../models/ResponeDefault.dart';
 
@@ -40,13 +40,13 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
     );
   }
   Future<ResponeDefault> fetchTreatmentSendStart(
-      TreatMentStartOutputModel item) async {
+      TreatMentOutputModel item) async {
     try {
       Response responese = await Dio().post(ApiConfig.TREAMTMENT_START,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 10),
+              receiveTimeout: Duration(seconds: 10)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
@@ -58,7 +58,7 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
   }
 
   Future<ResponeDefault> fetchTreatmentSendFinish(
-      TreatMentStartOutputModel item) async {
+      TreatMentOutputModel item) async {
     try {
       Response responese = await Dio().post(ApiConfig.TREAMTMENT_FINISH,
           options: Options(

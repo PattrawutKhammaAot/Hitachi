@@ -11,14 +11,14 @@ import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
-class MainMenu extends StatefulWidget {
-  const MainMenu({super.key});
+class Homepage extends StatefulWidget {
+  const Homepage({super.key});
 
   @override
-  State<MainMenu> createState() => _MainMenuState();
+  State<Homepage> createState() => _HomepageState();
 }
 
-class _MainMenuState extends State<MainMenu> {
+class _HomepageState extends State<Homepage> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   int batch = 100136982104;
   ReportRouteSheetModel? items;
@@ -55,7 +55,8 @@ class _MainMenuState extends State<MainMenu> {
                 ),
                 CardButton(
                   text: "2.Plan Winding",
-                  onPress: () => print("test2"),
+                  onPress: () =>
+                      Navigator.pushNamed(context, RouterList.Plan_winding),
                 ),
                 SizedBox(
                   height: 15,

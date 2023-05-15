@@ -1,5 +1,5 @@
-class TreatMentStartOutputModel {
-  const TreatMentStartOutputModel(
+class TreatMentOutputModel {
+  const TreatMentOutputModel(
       {this.MACHINE_NO,
       this.OPERATOR_NAME,
       this.BATCH_NO_1,
@@ -23,7 +23,7 @@ class TreatMentStartOutputModel {
   final String? BATCH_NO_7;
   final String? START_DATE;
   final String? FINISH_DATE;
-  TreatMentStartOutputModel copyWith(
+  TreatMentOutputModel copyWith(
       {String? MACHINE_NO,
       int? OPERATOR_NAME,
       String? BATCH_NO_1,
@@ -35,7 +35,7 @@ class TreatMentStartOutputModel {
       String? BATCH_NO_7,
       String? START_DATE,
       String? FINISH_DATE}) {
-    return TreatMentStartOutputModel(
+    return TreatMentOutputModel(
         MACHINE_NO: MACHINE_NO ?? this.MACHINE_NO,
         OPERATOR_NAME: OPERATOR_NAME ?? this.OPERATOR_NAME,
         BATCH_NO_1: BATCH_NO_1 ?? this.BATCH_NO_1,

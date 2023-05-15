@@ -7,7 +7,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/treatmentModel.dart';
-import 'package:hitachi/models/treatmentStartModel/treatmentStartOutputModel.dart';
+import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -334,7 +334,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                       onPress: () {
                         if (tmSqliteModel != null) {
                           BlocProvider.of<TreatmentBloc>(context).add(
-                            TreatmentStartSendEvent(TreatMentStartOutputModel(
+                            TreatmentStartSendEvent(TreatMentOutputModel(
                               MACHINE_NO: tmList![selectedRowIndex!].MACHINE_NO,
                               OPERATOR_NAME: int.tryParse(
                                   tmList![selectedRowIndex!]
@@ -411,37 +411,38 @@ class TreatMentStartDataSource extends DataGridSource {
   TreatMentStartDataSource({List<TreatmentModel>? process}) {
     if (process != null) {
       for (var _item in process) {
-       if(_item.CHECK_COMPLETE == 'S'){
-         _employees.add(
-           DataGridRow(
-             cells: [
-               DataGridCell<String>(columnName: 'mac', value: _item.MACHINE_NO),
-               DataGridCell<String>(
-                   columnName: 'operator', value: _item.OPERATOR_NAME),
-               DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
-               DataGridCell<String>(
-                   columnName: 'b2',
-                   value: _item.BATCH2 == null ? '' : _item.BATCH2),
-               DataGridCell<String>(
-                   columnName: 'b3',
-                   value: _item.BATCH3 == null ? '' : _item.BATCH3),
-               DataGridCell<String>(
-                   columnName: 'b4',
-                   value: _item.BATCH4 == null ? '' : _item.BATCH4),
-               DataGridCell<String>(
-                   columnName: 'b5',
-                   value: _item.BATCH5 == null ? '' : _item.BATCH5),
-               DataGridCell<String>(
-                   columnName: 'b6',
-                   value: _item.BATCH6 == null ? '' : _item.BATCH6),
-               DataGridCell<String>(
-                   columnName: 'b7',
-                   value: _item.BATCH7 == null ? '' : _item.BATCH7),
-               DataGridCell<String>(columnName: 'std', value: _item.STARTDATE),
-             ],
-           ),
-         );
-       }
+        if (_item.CHECK_COMPLETE == 'S') {
+          _employees.add(
+            DataGridRow(
+              cells: [
+                DataGridCell<String>(
+                    columnName: 'mac', value: _item.MACHINE_NO),
+                DataGridCell<String>(
+                    columnName: 'operator', value: _item.OPERATOR_NAME),
+                DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
+                DataGridCell<String>(
+                    columnName: 'b2',
+                    value: _item.BATCH2 == null ? '' : _item.BATCH2),
+                DataGridCell<String>(
+                    columnName: 'b3',
+                    value: _item.BATCH3 == null ? '' : _item.BATCH3),
+                DataGridCell<String>(
+                    columnName: 'b4',
+                    value: _item.BATCH4 == null ? '' : _item.BATCH4),
+                DataGridCell<String>(
+                    columnName: 'b5',
+                    value: _item.BATCH5 == null ? '' : _item.BATCH5),
+                DataGridCell<String>(
+                    columnName: 'b6',
+                    value: _item.BATCH6 == null ? '' : _item.BATCH6),
+                DataGridCell<String>(
+                    columnName: 'b7',
+                    value: _item.BATCH7 == null ? '' : _item.BATCH7),
+                DataGridCell<String>(columnName: 'std', value: _item.STARTDATE),
+              ],
+            ),
+          );
+        }
       }
     }
   }
