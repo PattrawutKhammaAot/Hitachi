@@ -62,14 +62,19 @@ class _ProcessPageState extends State<ProcessPage> {
                   type: TextInputType.number,
                   maxLength: 12,
                   controller: batchNoController,
-                  onChanged: (value) {
-                    if (value.length >= 12) {
+                  onEditingComplete: () {
+                    if (batchNoController.text.isNotEmpty) {
                       BlocProvider.of<LineElementBloc>(context).add(
                         ReportRouteSheetEvenet(batchNoController.text.trim()),
                       );
                       widget.onChange!(batchNoController.text.trim());
+                    } else {
+                      EasyLoading.showError("Please Input Batch No.");
                     }
                   },
+                  // onChanged: (value) {
+                  //   if (value.length >= 12) {}
+                  // },
                 ),
               ),
               SizedBox(

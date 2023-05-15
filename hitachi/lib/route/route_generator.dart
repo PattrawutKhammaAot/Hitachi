@@ -23,6 +23,7 @@ import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.da
 import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
 
 import 'package:hitachi/screens/planWinding/planwinding_Screen.dart';
+import 'package:hitachi/screens/zincthickness/zthnControl.dart';
 import 'package:page_transition/page_transition.dart';
 
 class RouteGenerator {
@@ -86,7 +87,7 @@ class RouteGenerator {
             settings: settings,
             child: MaterialInputControlPage(),
             type: PageTransitionType.fade);
-      //PlanWinding - LineElement
+      //PlanWinding
       case RouterList.Plan_winding:
         return PageTransition(
             settings: settings,
@@ -103,6 +104,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: FilmReceiveControlPage(),
+            type: PageTransitionType.fade);
+      //ZincThickness
+      case RouterList.ZincThickness_control:
+        return PageTransition(
+            settings: settings,
+            child: ZincThicknessControl(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

@@ -12,7 +12,10 @@ class RowBoxInputField extends StatelessWidget {
       this.maxLength,
       this.textInputFormatter,
       this.onChanged,
-      this.validator})
+      this.validator,
+      this.textColor = Colors.black,
+      this.focusNode,
+      this.onEditingComplete})
       : super(key: key);
 
   final String? labelText;
@@ -23,6 +26,9 @@ class RowBoxInputField extends StatelessWidget {
   final List<TextInputFormatter>? textInputFormatter;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final Color textColor;
+  final Function()? onEditingComplete;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +40,12 @@ class RowBoxInputField extends StatelessWidget {
           child: SizedBox(
             height: height,
             child: TextFormField(
+              focusNode: focusNode,
+              onEditingComplete: () => onEditingComplete?.call(),
               validator: validator,
               onChanged: onChanged,
               controller: controller,
+              style: TextStyle(color: textColor),
               maxLength: maxLength,
               keyboardType: type,
               decoration: InputDecoration(

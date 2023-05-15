@@ -32,10 +32,16 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   final TextEditingController elementQtyController = TextEditingController();
   String batchEndate = DateTime.now().toString();
 
+//FOCUS
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+
+  ///
   DatabaseHelper databaseHelper = DatabaseHelper();
   SendWdsFinishInputModel? items;
   SendWdsFinishOutputModel? _outputModel;
-  int batch = 100136982104;
+
   ReportRouteSheetModel? itemsReport;
   String? target = "invaild";
   void _btnSend_Click() async {
@@ -190,6 +196,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 BoxInputField(
+                  focusNode: f1,
+                  onEditingComplete: () => f2.requestFocus(),
                   labelText: "Operator Name :",
                   controller: operatorNameController,
                   textInputFormatter: [
@@ -199,6 +207,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   ],
                 ),
                 BoxInputField(
+                  focusNode: f2,
+                  onEditingComplete: () => f3.requestFocus(),
                   labelText: "Batch No :",
                   maxLength: 12,
                   controller: batchNoController,
@@ -210,6 +220,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   },
                 ),
                 BoxInputField(
+                  focusNode: f3,
+                  onEditingComplete: () => _btnSend_Click(),
                   labelText: "Element QTY :",
                   controller: elementQtyController,
                 ),

@@ -86,7 +86,8 @@ class _HomepageState extends State<Homepage> {
                 ),
                 CardButton(
                   text: "6.Zinc Thickness",
-                  onPress: () => print("test2"),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.ZincThickness_control),
                 ),
               ],
             ),

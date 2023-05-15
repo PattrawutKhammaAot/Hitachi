@@ -29,6 +29,18 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
   final TextEditingController _batch5Controller = TextEditingController();
   final TextEditingController _batch6Controller = TextEditingController();
   final TextEditingController _batch7Controller = TextEditingController();
+  //FOCUS
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+  final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
+  final f7 = FocusNode();
+  final f8 = FocusNode();
+  final f9 = FocusNode();
+  final f10 = FocusNode();
+//
 
   Color? bgChange;
 
@@ -111,13 +123,14 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          textTitle: "Treatment Finish",
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   RowBoxInputField(
+                    focusNode: f1,
+                    onEditingComplete: () => f2.requestFocus(),
                     labelText: "Machine No. : ",
                     height: 35,
                     maxLength: 3,
@@ -127,6 +140,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f2,
+                    onEditingComplete: () => f3.requestFocus(),
                     labelText: "Operator Name : ",
                     height: 35,
                     maxLength: 12,
@@ -141,6 +156,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f3,
+                    onEditingComplete: () => f4.requestFocus(),
                     labelText: "Batch 1 : ",
                     height: 35,
                     controller: _batch1Controller,
@@ -166,6 +183,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f4,
+                    onEditingComplete: () => f5.requestFocus(),
                     labelText: "Batch 2 : ",
                     height: 35,
                     controller: _batch2Controller,
@@ -178,6 +197,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f5,
+                    onEditingComplete: () => f6.requestFocus(),
                     labelText: "Batch 3 : ",
                     height: 35,
                     controller: _batch3Controller,
@@ -190,6 +211,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f6,
+                    onEditingComplete: () => f7.requestFocus(),
                     labelText: "Batch 4 : ",
                     height: 35,
                     controller: _batch4Controller,
@@ -202,6 +225,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f7,
+                    onEditingComplete: () => f8.requestFocus(),
                     labelText: "Batch 5 : ",
                     height: 35,
                     controller: _batch5Controller,
@@ -217,6 +242,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     children: [
                       Expanded(
                         child: RowBoxInputField(
+                          focusNode: f8,
+                          onEditingComplete: () => f9.requestFocus(),
                           labelText: "Batch 6 : ",
                           height: 35,
                           controller: _batch6Controller,
@@ -231,6 +258,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                       ),
                       Expanded(
                         child: RowBoxInputField(
+                          focusNode: f9,
+                          onEditingComplete: () => _btnSend(),
                           labelText: "Batch 7 : ",
                           height: 35,
                           controller: _batch7Controller,

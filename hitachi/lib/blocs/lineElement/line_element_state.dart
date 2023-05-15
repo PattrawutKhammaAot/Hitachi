@@ -146,3 +146,26 @@ class MaterialInputErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  GET MaterialInput//////
+class CheckMaterialInputLoadingState extends LineElementState {
+  const CheckMaterialInputLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class CheckMaterialInputLoadedState extends LineElementState {
+  const CheckMaterialInputLoadedState(this.item);
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class CheckMaterialInputErrorState extends LineElementState {
+  const CheckMaterialInputErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

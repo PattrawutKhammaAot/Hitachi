@@ -51,7 +51,18 @@ class _MachineBreakDownScanScreenState
   List<BreakDownSheetModel> bdsList = [];
 
   String? selectedValue;
-
+  //FOCUS
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+  final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
+  final f7 = FocusNode();
+  final f8 = FocusNode();
+  final f9 = FocusNode();
+  final f10 = FocusNode();
+//
   final _formKey = GlobalKey<FormState>();
 
   void _checkValueController() {
@@ -290,6 +301,7 @@ class _MachineBreakDownScanScreenState
                                     _stop_Technical_1_Controller.text = '';
                                     _stop_Technical_2_Controller.text = '';
                                     _operator_accept_Controller.text = '';
+                                    f1.requestFocus();
                                   });
                                 }
                               }
@@ -326,6 +338,8 @@ class _MachineBreakDownScanScreenState
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f1,
+                    onEditingComplete: () => f2.requestFocus(),
                     labelText: "Machine No. : ",
                     height: 30,
                     controller: _machineNo_Controller,
@@ -335,6 +349,8 @@ class _MachineBreakDownScanScreenState
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f2,
+                    onEditingComplete: () => f3.requestFocus(),
                     labelText: "Operator Name : ",
                     height: 30,
                     controller: _operatorname_Controller,
@@ -348,6 +364,8 @@ class _MachineBreakDownScanScreenState
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f3,
+                    onEditingComplete: () => f4.requestFocus(),
                     labelText: "Service No. : ",
                     controller: _serviceNo_Controller,
                     height: 30,
@@ -360,13 +378,25 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f4,
+                          onEditingComplete: () {
+                            if (_start_Technical_1_Controller.text.isNotEmpty) {
+                              f5.requestFocus();
+                            } else {
+                              f6.requestFocus();
+                            }
+                          },
                           labelText: "Start Technical 1 : ",
                           controller: _start_Technical_1_Controller,
                           height: 30,
                           onChanged: (p0) {
                             setState(() {
-                              if (p0.length > 1) {
+                              if (p0.length >= 1) {
                                 _start_Technical_1_Controller.text.isNotEmpty;
+                              } else {
+                                _start_Technical_1_Controller.text.isEmpty;
+                                _start_Technical_2_Controller.text = '';
+                                _stop_Technical_2_Controller.text = '';
                               }
                             });
                           },
@@ -376,6 +406,26 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f5,
+                          onEditingComplete: () {
+                            f7.requestFocus();
+                            setState(() {
+                              if (_start_Technical_2_Controller.text != null) {
+                                _start_Technical_2_Controller.text.isNotEmpty;
+                              } else {
+                                _start_Technical_2_Controller.text.isNotEmpty;
+                              }
+                            });
+                          },
+                          onChanged: (p0) {
+                            setState(() {
+                              if (p0.length > 1) {
+                                _start_Technical_2_Controller.text.isNotEmpty;
+                              } else {
+                                _start_Technical_2_Controller.text.isEmpty;
+                              }
+                            });
+                          },
                           labelText: "Start Technical 2 : ",
                           controller: _start_Technical_2_Controller,
                           height: 30,
@@ -393,6 +443,8 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f6,
+                          onEditingComplete: () => f8.requestFocus(),
                           labelText: "Stop Technical 1 : ",
                           controller: _stop_Technical_1_Controller,
                           height: 30,
@@ -402,9 +454,13 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f7,
+                          onEditingComplete: () => f9.requestFocus(),
                           labelText: "Stop Technical 2 : ",
                           controller: _stop_Technical_2_Controller,
                           height: 30,
+                          enabled:
+                              _start_Technical_2_Controller.text.isNotEmpty,
                         ),
                       ),
                     ],
@@ -413,6 +469,8 @@ class _MachineBreakDownScanScreenState
                     height: 5,
                   ),
                   RowBoxInputField(
+                    focusNode: f8,
+                    onEditingComplete: () => _checkValueController(),
                     labelText: "Operator Accept : ",
                     controller: _operator_accept_Controller,
                     height: 30,
