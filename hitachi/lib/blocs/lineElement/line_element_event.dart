@@ -77,7 +77,7 @@ class ProcessStartEvent extends LineElementEvent {
 class ProcessFinishInputEvent extends LineElementEvent {
   const ProcessFinishInputEvent(this.items);
 
-  final ProcessOutputModel items;
+  final ProcessFinishInputModel items;
   @override
   List<Object> get prop => [items];
 }

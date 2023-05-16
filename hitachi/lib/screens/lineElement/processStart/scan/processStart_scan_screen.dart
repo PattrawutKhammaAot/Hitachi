@@ -49,8 +49,12 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             if (state is ProcessStartLoadingState) {
               // EasyLoading.show();
               print("loading");
-            } else if (state is ProcessStartLoadedState) {
-              print("ss");
+            }
+            if (state is ProcessStartLoadedState) {
+              print("Loaded");
+
+              EasyLoading.show(status: "Loaded");
+
               // if (state.item.RESULT == true) {
               //   EasyLoading.showSuccess("SendComplete");
               // } else if (state.item.RESULT == false) {
@@ -60,7 +64,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               //   EasyLoading.showError("Can not Call API");
               //   // _saveSendSqlite();
               // }
-            } else if (state is ProcessStartErrorState) {
+            }
+            if (state is ProcessStartErrorState) {
               print("ERROR");
               // EasyLoading.dismiss();
               // _saveSendSqlite();

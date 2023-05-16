@@ -273,8 +273,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response response = await Dio().post(ApiConfig.LE_PROCESSSTARTINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 1),
-              receiveTimeout: Duration(seconds: 1)),
+              sendTimeout: Duration(seconds: 3),
+              receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(items));
 
       ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
