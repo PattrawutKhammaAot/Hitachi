@@ -144,7 +144,7 @@ class DatabaseHelper {
       {String? table,
       String? key1,
       String? key2,
-      int? yieldKey1,
+      String? yieldKey1,
       num? yieldKey2,
       String? whereKey,
       String? value}) async {
@@ -160,7 +160,7 @@ class DatabaseHelper {
   Future<void> deleteDataFromSQLite({
     String? tableName,
     String? where,
-    required int? id,
+    String? id,
   }) async {
     try {
       Database db = await DatabaseHelper().database;
@@ -268,15 +268,15 @@ class DatabaseHelper {
         'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
         'MachineNo TEXT, '
         'OperatorName TEXT, '
-        'BatchNo INTEGER, '
-        'Product INTEGER, '
-        'PackNo INTEGER, '
+        'BatchNo TEXT, '
+        'Product TEXT, '
+        'PackNo TEXT, '
         'PaperCore TEXT, '
         'PPCore TEXT, '
         'FoilCore TEXT, '
         'BatchStartDate TEXT, '
         'BatchEndDate TEXT, '
-        'Element INTEGER, '
+        'Element TEXT, '
         'Status TEXT, '
         'start_end TEXT, '
         'value TEXT,'

@@ -37,6 +37,8 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   final _machineFocus = FocusNode();
   final _lotNoFocus = FocusNode();
 
+  Color bgColor = Colors.grey;
+
   final DateTime _dateTime = DateTime.now();
   MaterialInputModel? _inputMtModel;
   DatabaseHelper databaseHelper = DatabaseHelper();
@@ -95,8 +97,10 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
           BlocListener<LineElementBloc, LineElementState>(
             listener: (context, state) {
               if (state is MaterialInputLoadingState) {
-                EasyLoading.show();
+                EasyLoading.show(status: "Loading ...");
               } else if (state is MaterialInputLoadedState) {
+                EasyLoading.dismiss();
+                print("object");
                 setState(() {
                   _inputMtModel = state.item;
                 });
@@ -104,30 +108,47 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 if (_inputMtModel!.RESULT == true) {
                   EasyLoading.showSuccess("SendComplete");
                 } else if (_inputMtModel!.RESULT == false) {
-                  EasyLoading.showError("Please Check Data");
-                  _insertSqlite();
-                }
-              } else if (state is MaterialInputErrorState) {
-                EasyLoading.dismiss();
-                _insertSqlite();
-                EasyLoading.showError("Please Check Connection Internet");
-              }
-              if (state is CheckMaterialInputLoadingState) {
-                EasyLoading.show();
-              } else if (state is CheckMaterialInputLoadedState) {
-                setState(() {
-                  _responeDefault = state.item;
-                });
-                if (_responeDefault!.RESULT == true) {
-                  EasyLoading.showSuccess("Success");
+                  if (_machineOrProcessController.text.isNotEmpty &&
+                      _operatorNameController.text.isNotEmpty &&
+                      _batchOrSerialController.text.isNotEmpty &&
+                      _machineOrProcessController.text.isNotEmpty &&
+                      _lotNoController.text.isNotEmpty) {
+                    _insertSqlite();
+                    EasyLoading.showError("Please Check Data");
+                  } else {
+                    EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+                  }
                 } else {
-                  EasyLoading.showError("Not found Material");
+                  if (_machineOrProcessController.text.isNotEmpty &&
+                      _operatorNameController.text.isNotEmpty &&
+                      _batchOrSerialController.text.isNotEmpty &&
+                      _machineOrProcessController.text.isNotEmpty &&
+                      _lotNoController.text.isNotEmpty) {
+                    _insertSqlite();
+                    EasyLoading.showError(
+                        "Please Check Connection Internet & Save Complete");
+                  } else {
+                    EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+                  }
                 }
-              } else if (state is CheckMaterialInputErrorState) {
-                EasyLoading.dismiss();
-
-                EasyLoading.showError("TEST");
               }
+              // if (state is CheckMaterialInputLoadingState) {
+              //   EasyLoading.show();
+              // }
+              // if (state is CheckMaterialInputLoadedState) {
+              //   setState(() {
+              //     _responeDefault = state.item;
+              //   });
+              //   if (_responeDefault!.RESULT == true) {
+              //     EasyLoading.showSuccess("Success");
+              //   } else {
+              //     EasyLoading.showError("Not found Material");
+              //   }
+              // } else if (state is CheckMaterialInputErrorState) {
+              //   EasyLoading.dismiss();
+
+              //   EasyLoading.showError("TEST");
+              // }
             },
           ),
           BlocListener<LineElementBloc, LineElementState>(
@@ -213,6 +234,17 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                           value == _materialController.text) {
                         _lotNoController.text = "";
                         EasyLoading.showError("Input Again");
+                      } else if (_batchOrSerialController.text.isNotEmpty &&
+                          _machineOrProcessController.text.isNotEmpty &&
+                          _operatorNameController.text.isNotEmpty &&
+                          _materialController.text.isNotEmpty) {
+                        setState(() {
+                          bgColor = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgColor = COLOR_BLUE_DARK;
+                        });
                       }
                     });
                   },
@@ -221,6 +253,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   height: 5,
                 ),
                 Button(
+                  bgColor: bgColor,
                   text: Label(
                     "Send",
                     color: COLOR_WHITE,

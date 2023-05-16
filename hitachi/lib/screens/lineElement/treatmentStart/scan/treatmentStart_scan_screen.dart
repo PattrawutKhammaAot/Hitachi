@@ -105,18 +105,29 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
         BlocListener<TreatmentBloc, TreatmentState>(
           listener: (context, state) {
             if (state is TreatmentStartSendLoadingState) {
-              EasyLoading.show();
+              EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentStartSendLoadedState) {
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
-                _saveDataToSqlite();
+                if (_machineNoController.text.isNotEmpty &&
+                    _operatorNameController.text.isNotEmpty &&
+                    _batch1Controller.text.isNotEmpty) {
+                  EasyLoading.showError("Can not send & save Data");
+                  _saveDataToSqlite();
+                } else {
+                  EasyLoading.showError("Please Input Info");
+                }
+              } else {
+                if (_machineNoController.text.isNotEmpty &&
+                    _operatorNameController.text.isNotEmpty &&
+                    _batch1Controller.text.isNotEmpty) {
+                  EasyLoading.showError("Please Check Internet & save Data");
+                  _saveDataToSqlite();
+                } else {
+                  EasyLoading.showError("Please Input Info");
+                }
               }
-            } else if (state is TreatmentStartSendErrorState) {
-              EasyLoading.dismiss();
-              _saveDataToSqlite();
-              EasyLoading.showError("Please Check Connection Internet");
             }
           },
         )

@@ -70,8 +70,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   String text = "";
 
   bool isDisableOnClick = false;
-
 //
+  @override
+  void initState() {
+    f1.requestFocus();
+    super.initState();
+  }
+
   void _btnSendClick() async {
     if (machineNoController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
@@ -223,9 +228,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         await databaseHelper.updateWindingWeight(
             table: 'WINDING_WEIGHT_SHEET',
             key1: 'BatchNo',
-            yieldKey1: int.tryParse(
-              batchNoController.text.trim(),
-            ),
+            yieldKey1: batchNoController.text.trim(),
             key2: 'Target',
             yieldKey2: target,
             whereKey: 'MachineNo',
@@ -234,7 +237,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       await databaseHelper.deleteDataFromSQLite(
           tableName: 'WINDING_SHEET',
           where: 'BatchNo',
-          id: int.tryParse(batchNoController.text.trim()));
+          id: batchNoController.text.trim());
 
       return true;
     } catch (e) {
@@ -259,9 +262,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       bool isSave = await _SaveWindingStartWithWeight(
           MACHINE_NO: machineNoController.text.trim(),
           OPERATOR_NAME: operatorNameController.text.trim(),
-          BATCH_NO: int.tryParse(batchNoController.text.trim()),
-          PRODUCT: int.tryParse(productController.text.trim()),
-          PACK_NO: int.tryParse(filmPackNoController.text.trim()),
+          BATCH_NO: batchNoController.text.trim(),
+          PRODUCT: productController.text.trim(),
+          PACK_NO: filmPackNoController.text.trim(),
           PAPER_CORE: paperCodeLotController.text.trim(),
           PP_CORE: ppFilmLotController.text.trim(),
           FOIL_CORE: foilLotController.text.trim(),
@@ -279,9 +282,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   Future<bool> _SaveWindingStartWithWeight({
     String? MACHINE_NO,
     String? OPERATOR_NAME,
-    int? BATCH_NO,
-    int? PRODUCT,
-    int? PACK_NO,
+    String? BATCH_NO,
+    String? PRODUCT,
+    String? PACK_NO,
     String? PAPER_CORE,
     String? PP_CORE,
     String? FOIL_CORE,
@@ -297,7 +300,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           where: 'BatchNo',
           keyAnd: 'start_end',
           value: 'S',
-          intValue: BATCH_NO);
+          stringValue: BATCH_NO);
 
       //notsure
       if (sql_packNo.length <=
