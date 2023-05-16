@@ -49,8 +49,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             if (state is ProcessStartLoadingState) {
               // EasyLoading.show();
               print("loading");
-            } else if (state is ProcessStartLoadedState) {
+            }
+            if (state is ProcessStartLoadedState) {
               print("ss");
+              EasyLoading.show(status: "Loaded");
               // if (state.item.RESULT == true) {
               //   EasyLoading.showSuccess("SendComplete");
               // } else if (state.item.RESULT == false) {
