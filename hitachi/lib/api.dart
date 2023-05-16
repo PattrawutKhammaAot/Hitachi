@@ -54,8 +54,13 @@ class ApiConfig {
 
   ///---------------------ProcessInput ----------------------///
 
-  //Get
-  static String LE_PROCESSINPUT = "${BASE_API_URL}LineElement/SendProcessStart";
+  //POST ProcessStart
+  static String LE_PROCESSSTARTINPUT =
+      "${BASE_API_URL}LineElement/SendProcessStart";
+
+  //POST ProcessFinish
+  static String LE_PROCESSFINISHINPUT =
+      "${BASE_API_URL}LineElement/SendProcessFinish";
 
   //POST PROCESS BREAKDOWN
   static String PROCESS_BREAKDOWN =

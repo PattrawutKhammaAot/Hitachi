@@ -64,16 +64,16 @@ class MaterialInputEvent extends LineElementEvent {
   List<Object> get prop => [items];
 }
 
-//////////////////------------ProcessEvent-----------///////////////
-class ProcessInputEvent extends LineElementEvent {
-  const ProcessInputEvent(this.items);
+//////////////////------------ProcessStartEvent-----------///////////////
+class ProcessStartEvent extends LineElementEvent {
+  const ProcessStartEvent(this.items);
 
   final ProcessOutputModel items;
   @override
   List<Object> get prop => [items];
 }
 
-//////////////////------------ProcessEvent-----------///////////////
+//////////////////------------ProcessFinishEvent-----------///////////////
 class ProcessFinishInputEvent extends LineElementEvent {
   const ProcessFinishInputEvent(this.items);
 

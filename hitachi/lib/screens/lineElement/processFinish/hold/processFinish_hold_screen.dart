@@ -310,26 +310,26 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                       bgColor: _colorSend,
                       onPress: () {
                         if (processModelSqlite != null) {
-                          BlocProvider.of<LineElementBloc>(context).add(
-                            ProcessInputEvent(
-                              ProcessOutputModel(
-                                MACHINE:
-                                    processList![selectedRowIndex!].MACHINE,
-                                OPERATORNAME: processList![selectedRowIndex!]
-                                    .OPERATOR_NAME,
-                                OPERATORNAME1: processList![selectedRowIndex!]
-                                    .OPERATOR_NAME1,
-                                OPERATORNAME2: processList![selectedRowIndex!]
-                                    .OPERATOR_NAME2,
-                                OPERATORNAME3: processList![selectedRowIndex!]
-                                    .OPERATOR_NAME3,
-                                BATCHNO: int.tryParse(
-                                    processList![selectedRowIndex!]
-                                        .BATCH_NO
-                                        .toString()),
-                              ),
-                            ),
-                          );
+                          // BlocProvider.of<LineElementBloc>(context).add(
+                          //   ProcessInputEvent(
+                          //     ProcessOutputModel(
+                          //       MACHINE:
+                          //           processList![selectedRowIndex!].MACHINE,
+                          //       OPERATORNAME: int.tryParse(processList![selectedRowIndex!]
+                          //           .OPERATOR_NAME.toString()),
+                          //       OPERATORNAME1: int.tryParse(processList![selectedRowIndex!]
+                          //           .OPERATOR_NAME1.toString()),
+                          //       OPERATORNAME2: int.tryParse(processList![selectedRowIndex!]
+                          //           .OPERATOR_NAME2.toString()),
+                          //       OPERATORNAME3: int.tryParse(processList![selectedRowIndex!]
+                          //           .OPERATOR_NAME3.toString()),
+                          //       BATCHNO:
+                          //           processList![selectedRowIndex!]
+                          //               .BATCH_NO
+                          //               .toString()),
+                          //     ),
+                          //   ),
+                          // );
                         } else {
                           EasyLoading.showInfo("Please Select Data");
                         }

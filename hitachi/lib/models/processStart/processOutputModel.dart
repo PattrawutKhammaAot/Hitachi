@@ -10,20 +10,20 @@ class ProcessOutputModel {
   });
 
   final String? MACHINE;
-  final String? OPERATORNAME;
-  final String? OPERATORNAME1;
-  final String? OPERATORNAME2;
-  final String? OPERATORNAME3;
-  final int? BATCHNO;
+  final int? OPERATORNAME;
+  final int? OPERATORNAME1;
+  final int? OPERATORNAME2;
+  final int? OPERATORNAME3;
+  final String? BATCHNO;
   final String? STARTDATE;
 
   ProcessOutputModel copyWith({
     String? MACHINE,
-    String? OPERATORNAME,
-    String? OPERATORNAME1,
-    String? OPERATORNAME2,
-    String? OPERATORNAME3,
-    int? BATCHNO,
+    int? OPERATORNAME,
+    int? OPERATORNAME1,
+    int? OPERATORNAME2,
+    int? OPERATORNAME3,
+    String? BATCHNO,
     String? STARTDATE,
   }) {
     return ProcessOutputModel(

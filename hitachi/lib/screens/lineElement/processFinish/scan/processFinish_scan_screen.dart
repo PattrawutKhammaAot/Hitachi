@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -21,6 +22,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final TextEditingController operatorNameController = TextEditingController();
   final TextEditingController batchNoController = TextEditingController();
   final TextEditingController rejectQtyController = TextEditingController();
+  Color? bgChange;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,21 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                   labelText: "Batch No : ",
                   controller: batchNoController,
                   type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
+                  onChanged: (value) {
+                    if (MachineNoController.text.isNotEmpty &&
+                        operatorNameController.text.isNotEmpty) {
+                      setState(() {
+                        bgChange = COLOR_RED;
+                      });
+                    } else {
+                      setState(() {
+                        bgChange = Colors.grey;
+                      });
+                    }
+                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -71,20 +88,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     "Send",
                     color: COLOR_WHITE,
                   ),
-                  onPress: () => print("send"),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  child: Button(
-                    bgColor: COLOR_BLUE,
-                    text: Label(
-                      "TestSend",
-                      color: COLOR_WHITE,
-                    ),
-                    onPress: () => {_testSendSqlite()},
-                  ),
+                  // onPress: () => _btnSend(),
                 ),
               ],
             ),
@@ -95,10 +99,11 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   void _testSendSqlite() async {
     try {
       await databaseHelper.insertSqlite('PROCESS_SHEET', {
-        'Machine': int.tryParse(MachineNoController.text.trim()),
-        'OperatorName': operatorNameController.text.trim(),
-        'BatchNo': int.tryParse(batchNoController.text.trim()),
+        'Machine': MachineNoController.text.trim(),
         'OperatorName1': rejectQtyController.text.trim(),
+        'BatchNo': int.tryParse(batchNoController.text.trim()),
+        // 'RejectQty': ,
+        'StartEnd': DateTime.now().toString(),
       });
       print("ok");
     } catch (e) {

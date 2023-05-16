@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +30,14 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   final TextEditingController operatorName2Controller = TextEditingController();
   final TextEditingController operatorName3Controller = TextEditingController();
   final TextEditingController batchNoController = TextEditingController();
+  Color? bgChange;
+
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+  final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
@@ -36,19 +46,25 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       listeners: [
         BlocListener<LineElementBloc, LineElementState>(
           listener: (context, state) {
-            if (state is ProcessInputLoadingState) {
-              EasyLoading.show();
-            } else if (state is ProcessInputLoadedState) {
-              if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
-              } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
-                _testSendSqlite();
-              }
-            } else if (state is ProcessInputErrorState) {
-              EasyLoading.dismiss();
-              _testSendSqlite();
-              EasyLoading.showError("Please Check Connection Internet");
+            if (state is ProcessStartLoadingState) {
+              // EasyLoading.show();
+              print("loading");
+            } else if (state is ProcessStartLoadedState) {
+              print("ss");
+              // if (state.item.RESULT == true) {
+              //   EasyLoading.showSuccess("SendComplete");
+              // } else if (state.item.RESULT == false) {
+              //   EasyLoading.showError("Can not send & save Data");
+              //   _saveSendSqlite();
+              // } else {
+              //   EasyLoading.showError("Can not Call API");
+              //   // _saveSendSqlite();
+              // }
+            } else if (state is ProcessStartErrorState) {
+              print("ERROR");
+              // EasyLoading.dismiss();
+              // _saveSendSqlite();
+              // EasyLoading.showError("Please Check Connection Internet");
             }
           },
         )
@@ -66,6 +82,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     maxLength: 3,
                     controller: MachineController,
                     height: 35,
+                    focusNode: f1,
+                    onEditingComplete: () => f2.requestFocus(),
                   ),
                   SizedBox(
                     height: 5,
@@ -74,6 +92,26 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     labelText: "Operator Name :",
                     height: 35,
                     controller: operatorNameController,
+                    maxLength: 12,
+                    focusNode: f2,
+                    onEditingComplete: () => f3.requestFocus(),
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (MachineController.text.isNotEmpty &&
+                          batchNoController.text.isNotEmpty) {
+                        setState(() {
+                          bgChange = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgChange = Colors.grey;
+                        });
+                      }
+                    },
                   ),
                   SizedBox(
                     height: 5,
@@ -85,7 +123,15 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   RowBoxInputField(
                     labelText: "Operator Name :",
                     height: 35,
+                    maxLength: 12,
                     controller: operatorName1Controller,
+                    focusNode: f3,
+                    onEditingComplete: () => f4.requestFocus(),
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 5,
@@ -93,7 +139,15 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   RowBoxInputField(
                     labelText: "Operator Name :",
                     height: 35,
+                    maxLength: 12,
                     controller: operatorName2Controller,
+                    focusNode: f4,
+                    onEditingComplete: () => f5.requestFocus(),
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 5,
@@ -101,7 +155,15 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   RowBoxInputField(
                     labelText: "Operator Name :",
                     height: 35,
+                    maxLength: 12,
                     controller: operatorName3Controller,
+                    focusNode: f5,
+                    onEditingComplete: () => f6.requestFocus(),
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 5,
@@ -112,13 +174,26 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   ),
                   RowBoxInputField(
                     labelText: "Batch No :",
-                    maxLength: 8,
+                    maxLength: 12,
                     height: 35,
                     controller: batchNoController,
                     type: TextInputType.number,
+                    focusNode: f6,
                     textInputFormatter: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
+                    onChanged: (value) {
+                      if (MachineController.text.isNotEmpty &&
+                          operatorNameController.text.isNotEmpty) {
+                        setState(() {
+                          bgChange = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgChange = Colors.grey;
+                        });
+                      }
+                    },
                   ),
                   SizedBox(
                     height: 10,
@@ -138,28 +213,17 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  Button(
-                    height: 40,
-                    bgColor: COLOR_RED,
-                    text: Label(
-                      "Send",
-                      color: COLOR_WHITE,
+                  Container(
+                    child: Button(
+                      height: 40,
+                      bgColor: bgChange ?? Colors.grey,
+                      text: Label(
+                        "Send",
+                        color: COLOR_WHITE,
+                      ),
+                      onPress: () => _btnSend(),
                     ),
-                    onPress: () => _btnSend(),
                   ),
-                  // SizedBox(
-                  //   height: 5,
-                  // ),
-                  // Container(
-                  //   child: Button(
-                  //     bgColor: COLOR_BLUE,
-                  //     text: Label(
-                  //       "TestSend",
-                  //       color: COLOR_WHITE,
-                  //     ),
-                  //     onPress: () => {_testSendSqlite()},
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -167,7 +231,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     );
   }
 
-  void _testSendSqlite() async {
+  void _saveSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
         await databaseHelper.insertSqlite('PROCESS_SHEET', {
@@ -182,7 +246,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           'OperatorName3': operatorName3Controller.text == null
               ? ""
               : operatorName3Controller.text.trim(),
-          'BatchNo': int.tryParse(batchNoController.text.trim()),
+          'BatchNo': batchNoController.text.trim(),
           'StartDate': DateTime.now().toString(),
         });
         print("ok");
@@ -191,50 +255,27 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       print(e);
     }
   }
-  // void _saveDataToSqlite() async {
-  //   await databaseHelper.insertSqlite('TREATMENT_SHEET', {
-  //     'MachineNo': _machineNoController.text.trim(),
-  //     'OperatorName': _operatorNameController.text.trim(),
-  //     'Batch1': _batch1Controller.text.trim(),
-  //     'Batch2':
-  //     _batch2Controller.text == null ? "" : _batch2Controller.text.trim(),
-  //     'Batch3':
-  //     _batch3Controller.text == null ? "" : _batch3Controller.text.trim(),
-  //     'Batch4':
-  //     _batch4Controller.text == null ? "" : _batch4Controller.text.trim(),
-  //     'Batch5':
-  //     _batch5Controller.text == null ? "" : _batch5Controller.text.trim(),
-  //     'Batch6':
-  //     _batch6Controller.text == null ? "" : _batch6Controller.text.trim(),
-  //     'Batch7':
-  //     _batch7Controller.text == null ? "" : _batch7Controller.text.trim(),
-  //     'StartDate': DateTime.now().toString(),
-  //     'FinDate': '',
-  //     'StartEnd': '',
-  //     'CheckComplete': 'S',
-  //   });
-  // }
 
   void _btnSend() async {
     if (MachineController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
-        operatorName1Controller.text.isNotEmpty) {
+        batchNoController.text.isNotEmpty) {
       _callAPI();
       // _saveDataToSqlite();
     } else {
-      EasyLoading.showError("Please Input Info");
+      EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
   }
 
   void _callAPI() {
     BlocProvider.of<LineElementBloc>(context).add(
-      ProcessInputEvent(ProcessOutputModel(
+      ProcessStartEvent(ProcessOutputModel(
         MACHINE: MachineController.text.trim(),
-        OPERATORNAME: operatorNameController.text.trim(),
-        OPERATORNAME1: operatorName1Controller.text.trim(),
-        OPERATORNAME2: operatorName2Controller.text.trim(),
-        OPERATORNAME3: operatorName3Controller.text.trim(),
-        BATCHNO: int.tryParse(batchNoController.text.trim()),
+        OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
+        OPERATORNAME1: int.tryParse(operatorName1Controller.text.trim()),
+        OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
+        OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
+        BATCHNO: batchNoController.text.trim(),
         STARTDATE: DateTime.now().toString(),
       )),
     );

@@ -13,6 +13,8 @@ import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
+import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
@@ -103,6 +105,18 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(CheckMaterialInputLoadedState(mlist));
         } catch (e) {
           emit(CheckMaterialInputErrorState(e.toString()));
+        }
+      },
+    );
+//ProcessStart
+    on<ProcessStartEvent>(
+      (event, emit) async {
+        try {
+          emit(ProcessStartLoadingState());
+          final mlist = await fetchStartProcess(event.items);
+          emit(ProcessStartLoadedState(mlist));
+        } catch (e) {
+          emit(ProcessStartErrorState(e.toString()));
         }
       },
     );
@@ -254,21 +268,42 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   }
 
   //ProcessStart
-  Future<ProcessInputModel> fetchProcess(ProcessOutputModel items) async {
+  Future<ProcessInputModel> fetchStartProcess(ProcessOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_PROCESSINPUT,
+      Response response = await Dio().post(ApiConfig.LE_PROCESSSTARTINPUT,
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 1),
+              receiveTimeout: Duration(seconds: 1)),
+          data: jsonEncode(items));
+
+      ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
+      print(tmp);
+      return tmp;
+    } catch (e) {
+      print(e);
+      return ProcessInputModel();
+    }
+  }
+
+  //ProcessFinish
+  Future<ProcessFinishInputModel> fetchProcessFinish(
+      ProcessFinishOutputModel items) async {
+    try {
+      Response response = await Dio().post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
               receiveTimeout: Duration(seconds: 3)),
           data: jsonEncode(items));
 
-      ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
+      ProcessFinishInputModel tmp =
+          ProcessFinishInputModel.fromJson(response.data);
 
       return tmp;
     } catch (e) {
       print(e);
-      return ProcessInputModel();
+      return ProcessFinishInputModel();
     }
   }
 }
