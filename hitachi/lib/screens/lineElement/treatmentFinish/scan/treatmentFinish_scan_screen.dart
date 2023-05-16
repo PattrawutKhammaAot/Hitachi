@@ -107,18 +107,26 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
       listeners: [
         BlocListener<TreatmentBloc, TreatmentState>(
           listener: (context, state) {
-            if (state is TreatmentStartSendLoadingState) {
-              EasyLoading.show();
-            } else if (state is TreatmentStartSendLoadedState) {
+            if (state is TreatmentFinishSendLoadingState) {
+              EasyLoading.show(status: "Loading...");
+            } else if (state is TreatmentFinishSendLoadedState) {
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
+              } else if (state.item.RESULT == false) {
+                EasyLoading.showError("Please Check Info & Save Complete");
+                _saveDataToSqlite();
               } else {
-                EasyLoading.showError("Check Data");
+                if (_machineNoController.text.isNotEmpty &&
+                    _operatorNameController.text.isNotEmpty &&
+                    _batch1Controller.text.isNotEmpty) {
+                  // _callApi();
+                  _saveDataToSqlite();
+                  EasyLoading.showError(
+                      "Please Check Connection Internet & Save Complete");
+                } else {
+                  EasyLoading.showError("Please Input Info");
+                }
               }
-            } else {
-              EasyLoading.dismiss();
-
-              EasyLoading.showError("Please Check Connection Internet");
             }
           },
         )

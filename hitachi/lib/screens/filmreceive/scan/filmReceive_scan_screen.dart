@@ -342,7 +342,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                 Icons.arrow_drop_down,
                                 color: Colors.black45,
                               ),
-                              iconSize: 30,
+                              iconSize: 20,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(

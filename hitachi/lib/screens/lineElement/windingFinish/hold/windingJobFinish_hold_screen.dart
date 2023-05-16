@@ -155,18 +155,18 @@ class _WindingJobFinishHoldScreenState
                             }
                           },
                           columns: <GridColumn>[
-                            GridColumn(
-                                columnName: 'operatorName',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Operator Name.',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                  // color: COLOR_BLUE_DARK,
-                                )),
+                            // GridColumn(
+                            //     columnName: 'operatorName',
+                            //     label: Container(
+                            //       color: COLOR_BLUE_DARK,
+                            //       child: Center(
+                            //           child: Label(
+                            //         'Operator Name.',
+                            //         fontSize: 14,
+                            //         color: COLOR_WHITE,
+                            //       )),
+                            //       // color: COLOR_BLUE_DARK,
+                            //     )),
                             GridColumn(
                               columnName: 'batch',
                               label: Container(
@@ -242,13 +242,13 @@ class _WindingJobFinishHoldScreenState
                                 DataColumn(label: Label(""))
                               ],
                               rows: [
-                                DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Operator Name"))),
-                                  DataCell(Label(wdsList[selectedRowIndex!]
-                                          .OPERATOR_NAME ??
-                                      ""))
-                                ]),
+                                // DataRow(cells: [
+                                //   DataCell(
+                                //       Center(child: Label("Operator Name"))),
+                                //   DataCell(Label(wdsList[selectedRowIndex!]
+                                //           .OPERATOR_NAME ??
+                                //       ""))
+                                // ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Batch No."))),
                                   DataCell(Label(
@@ -402,17 +402,14 @@ class WindingsDataSource extends DataGridSource {
             _employees.add(
               DataGridRow(
                 cells: [
-                  DataGridCell<int>(
-                      columnName: 'operatorName',
-                      value: int.tryParse(_item.OPERATOR_NAME.toString())),
-                  DataGridCell<int>(
-                      columnName: 'batch',
-                      value: int.tryParse(_item.BATCH_NO.toString())),
+                  // DataGridCell<String>(
+                  //     columnName: 'operatorName', value: _item.OPERATOR_NAME),
+                  DataGridCell<String>(
+                      columnName: 'batch', value: _item.BATCH_NO),
                   DataGridCell<String>(
                       columnName: 'startEnd', value: _item.START_END),
-                  DataGridCell<int>(
-                      columnName: 'element',
-                      value: int.tryParse(_item.ELEMENT.toString())),
+                  DataGridCell<String>(
+                      columnName: 'element', value: _item.ELEMENT),
                 ],
               ),
             );

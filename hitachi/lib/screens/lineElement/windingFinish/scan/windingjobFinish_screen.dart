@@ -38,6 +38,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   final f3 = FocusNode();
 
   ///
+  Color bgColor = Colors.grey;
   DatabaseHelper databaseHelper = DatabaseHelper();
   SendWdsFinishInputModel? items;
   SendWdsFinishOutputModel? _outputModel;
@@ -97,9 +98,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
       var sqlInsertWINDING_SHEET =
           await databaseHelper.insertSqlite('WINDING_SHEET', {
         'MachineNo': 'WD',
-        'BatchNo': int.tryParse(batchNoController.text.trim()),
-        'Element': int.tryParse(elementQtyController.text.trim()),
-        'BatchEndDate': batchNoController.text.trim(),
+        'BatchNo': batchNoController.text.trim(),
+        'Element': batchNoController.text.trim(),
+        'BatchEndDate': DateTime.now().toString(),
         'start_end': 'E',
         'checkComplete': '0',
       });
@@ -155,6 +156,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
 
   @override
   void initState() {
+    f1.requestFocus();
     super.initState();
   }
 
@@ -168,20 +170,33 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
           BlocListener<LineElementBloc, LineElementState>(
             listener: (context, state) {
               if (state is PostSendWindingFinishLoadingState) {
-                EasyLoading.show();
-              }
-              if (state is PostSendWindingFinishLoadedState) {
+                EasyLoading.show(status: "Loading...");
+              } else if (state is PostSendWindingFinishLoadedState) {
                 setState(() {
                   items = state.item;
                 });
                 if (items!.RESULT == true) {
                   _deleteSave();
+                  EasyLoading.showSuccess("Send Complete");
                 } else if (items!.RESULT == false) {
-                  _insertSqlite();
-                  EasyLoading.showError("Please Check Data");
+                  if (batchNoController.text.trim().isNotEmpty &&
+                      operatorNameController.text.trim().isNotEmpty &&
+                      elementQtyController.text.trim().isNotEmpty) {
+                    _insertSqlite();
+                    EasyLoading.showError("Save Complete &  Can not  Send");
+                  } else {
+                    EasyLoading.showError("Please Input Info");
+                  }
+                } else {
+                  if (batchNoController.text.trim().isNotEmpty &&
+                      operatorNameController.text.trim().isNotEmpty &&
+                      elementQtyController.text.trim().isNotEmpty) {
+                    _insertSqlite();
+                    EasyLoading.showError(
+                        "Please Check Connection Internet & Save Complete");
+                  }
                 }
-              }
-              if (state is PostSendWindingFinishErrorState) {
+              } else {
                 EasyLoading.showError("Can not send",
                     duration: Duration(seconds: 3));
                 // _insertSqlite();
@@ -224,6 +239,21 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   onEditingComplete: () => _btnSend_Click(),
                   labelText: "Element QTY :",
                   controller: elementQtyController,
+                  type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
+                  onChanged: (p0) {
+                    if (p0.length > 0) {
+                      setState(() {
+                        bgColor = COLOR_RED;
+                      });
+                    } else {
+                      setState(() {
+                        bgColor = COLOR_BLUE_DARK;
+                      });
+                    }
+                  },
                 ),
                 SizedBox(
                   height: 15,
@@ -248,7 +278,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 ),
                 Container(
                   child: Button(
-                    bgColor: COLOR_RED,
+                    bgColor: bgColor,
                     text: Label(
                       "Send",
                       color: COLOR_WHITE,
