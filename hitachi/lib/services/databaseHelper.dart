@@ -364,12 +364,13 @@ class DatabaseHelper {
   //TABLE PROCESS------------------------------------------------------------------------------------------------------------------------------------------------------------
   ///
   Future<void> writeTableProcess_ToSqlite({
+    int? ID,
     String? machine_No,
     String? operator_Name,
     String? operator_Name1,
     String? operator_Name2,
     String? operator_Name3,
-    int? batch_No,
+    String? batch_No,
     String? start_Date,
     String? garbage,
     String? fin_Date,
@@ -379,6 +380,7 @@ class DatabaseHelper {
     try {
       Database db = await DatabaseHelper().database;
       Map<String, dynamic> row = {
+        'ID': ID,
         'Machine': machine_No,
         'OperatorName': operator_Name,
         'OperatorName1': operator_Name1,
@@ -400,13 +402,13 @@ class DatabaseHelper {
 
   void _createTableProcess(Database db, int newVersion) async {
     await db.execute('CREATE TABLE PROCESS_SHEET ('
-        'ID INTEGER PRIMARY KEY AUTOINCREMENT'
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'Machine TEXT,'
         'OperatorName TEXT,'
         'OperatorName1 TEXT,'
         'OperatorName2 TEXT,'
         'OperatorName3 TEXT,'
-        'BatchNo INTEGER,'
+        'BatchNo TEXT,'
         'StartDate TEXT, '
         'Garbage TEXT,'
         'FinDate TEXT,'

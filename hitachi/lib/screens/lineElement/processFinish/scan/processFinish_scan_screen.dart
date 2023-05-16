@@ -73,6 +73,19 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                   ),
                   onPress: () => print("send"),
                 ),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  child: Button(
+                    bgColor: COLOR_BLUE,
+                    text: Label(
+                      "TestSend",
+                      color: COLOR_WHITE,
+                    ),
+                    onPress: () => {_testSendSqlite()},
+                  ),
+                ),
               ],
             ),
           ),

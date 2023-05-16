@@ -52,6 +52,15 @@ class ApiConfig {
   //POST MACHINE BREAKDOWN
   static String MACHINE_BREAKDOWN = "${BASE_API_URL}LineElement/SendMachine";
 
+  ///---------------------ProcessInput ----------------------///
+
+  //Get
+  static String LE_PROCESSINPUT = "${BASE_API_URL}LineElement/SendProcessStart";
+
+  //POST PROCESS BREAKDOWN
+  static String PROCESS_BREAKDOWN =
+      "${BASE_API_URL}LineElement/SendProcessStart";
+
   //POST SEND FILM IN
   static String FILM_RECEIVE = "${BASE_API_URL}LineElement/SendFilmIn";
   //POST SEND TreatmentStart

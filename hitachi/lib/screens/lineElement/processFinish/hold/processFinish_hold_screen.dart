@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -11,6 +9,8 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processStart/processOutputModel.dart';
+
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -23,13 +23,15 @@ class ProcessFinishHoldScreen extends StatefulWidget {
 }
 
 class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
-  List<ProcessModel>? Process;
+  List<ProcessModel>? processList;
   DatabaseHelper databaseHelper = DatabaseHelper();
-  ProcessStartDataSource? matTracDs;
+  ProcessFinishDataSource? matTracDs;
   int? selectedRowIndex;
   DataGridRow? datagridRow;
-  List<ProcessModel>? mtModel;
+  List<ProcessModel>? processModelSqlite;
   final TextEditingController _passwordController = TextEditingController();
+  Color _colorSend = COLOR_GREY;
+  Color _colorDelete = COLOR_GREY;
 
   ////
   Future<List<ProcessModel>> _getWindingSheet() async {
@@ -49,9 +51,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   void initState() {
     _getWindingSheet().then((result) {
       setState(() {
-        Process = result;
-        matTracDs = ProcessStartDataSource(process: Process);
-        getshow();
+        processList = result;
+        matTracDs = ProcessFinishDataSource(process: processList);
       });
     });
     super.initState();
@@ -60,25 +61,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   void deletedInfo() async {
     await databaseHelper.deletedRowSqlite(
         tableName: 'PROCESS_SHEET',
-        columnName: 'Machine',
-        columnValue: Process![selectedRowIndex!].MATERIAL);
-  }
-
-  getshow() async {
-    await databaseHelper.insertSqlite('PROCESS_SHEET', {
-      'Machine': 1,
-      'OperatorName': '2',
-      'OperatorName1': '3',
-      'OperatorName2': '3',
-      'OperatorName3': '3',
-      'BatchNo': 3,
-      'StartDate': '4',
-      'Garbage': '4',
-      'FinDate': '5',
-      'StartEnd': '5',
-      'CheckComplete': '6',
-    });
-    print("---getshow---");
+        columnName: 'ID',
+        columnValue: processList![selectedRowIndex!].ID);
   }
 
   @override
@@ -93,9 +77,15 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                 if (state is MaterialInputLoadingState) {
                   EasyLoading.show();
                 } else if (state is MaterialInputLoadedState) {
-                  EasyLoading.dismiss();
-                  EasyLoading.showSuccess("Send complete",
-                      duration: Duration(seconds: 3));
+                  if (state.item.RESULT == true) {
+                    deletedInfo();
+                    Navigator.canPop(context);
+                    EasyLoading.dismiss();
+                    EasyLoading.showSuccess("Send complete",
+                        duration: Duration(seconds: 3));
+                  } else {
+                    EasyLoading.showError("Please Check Data");
+                  }
                 } else {
                   EasyLoading.dismiss();
                   EasyLoading.showError("Please Check Connection Internet");
@@ -111,11 +101,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                     ? Expanded(
                         child: Container(
                           child: SfDataGrid(
+                            showCheckboxColumn: true,
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.multiple,
-                            showCheckboxColumn: true,
+                            selectionMode: SelectionMode.single,
                             onCellTap: (details) async {
                               if (details.rowColumnIndex.rowIndex != 0) {
                                 setState(() {
@@ -123,125 +113,89 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                       details.rowColumnIndex.rowIndex - 1;
                                   datagridRow = matTracDs!.effectiveRows
                                       .elementAt(selectedRowIndex!);
-                                  mtModel = datagridRow!
+                                  processModelSqlite = datagridRow!
                                       .getCells()
                                       .map(
                                         (e) => ProcessModel(
-                                          MATERIAL: e.value,
+                                          MACHINE: e.value.toString(),
                                           OPERATOR_NAME: e.value.toString(),
                                           OPERATOR_NAME1: e.value.toString(),
                                           OPERATOR_NAME2: e.value.toString(),
                                           OPERATOR_NAME3: e.value.toString(),
-                                          BATCH_NO: e.value,
-                                          STARTDATE: e.value.toString(),
-                                          GARBAGE: e.value.toString(),
-                                          FINDATE: e.value.toString(),
-                                          STARTEND: e.value.toString(),
+                                          BATCH_NO: e.value.toString(),
+                                          // LOTNO_1: e.value.toString(),
+                                          // DATE_1: e.value.toString(),
+                                          // MATERIAL_2: e.value.toString(),
+                                          // LOT_NO_2: e.value.toString(),
+                                          // DATE_2: e.value.toString(),
                                         ),
                                       )
                                       .toList();
                                 });
-                                print(Process![selectedRowIndex!].MATERIAL);
+                                _colorDelete = COLOR_RED;
+                                _colorSend = COLOR_SUCESS;
                               }
                             },
                             columns: <GridColumn>[
                               GridColumn(
-                                columnName: 'Material=',
+                                columnName: 'Machine',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label(
-                                      'Material',
+                                      'Machine',
                                       color: COLOR_WHITE,
                                     ),
                                   ),
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'OperatorName',
+                                  columnName: 'Operatorname',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('OperatorName',
+                                      child: Label('Operatorname',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'OperatorName1',
+                                  columnName: 'Operatorname1',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('OperatorName1',
+                                      child: Label('Operatorname1',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'OperatorName2',
+                                  columnName: 'Operatorname2',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('OperatorName2',
+                                      child: Label('Operatorname2',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
                               GridColumn(
-                                columnName: 'OperatorName3',
+                                columnName: 'Operatorname3',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
-                                    child: Label('OperatorName3',
+                                    child: Label('Operatorname3',
                                         color: COLOR_WHITE),
                                   ),
                                 ),
                               ),
                               GridColumn(
-                                columnName: 'BatchNo',
+                                columnName: 'BatchNO',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label('Batch/Serial',
                                         color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'StartDate',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child:
-                                        Label('StartDate', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'Garbage',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label('Garbage', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'FinDate',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label('FinDate', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'StartEnd',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child:
-                                        Label('StartEnd', color: COLOR_WHITE),
                                   ),
                                 ),
                               ),
@@ -251,7 +205,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                mtModel != null
+                processModelSqlite != null
                     ? Expanded(
                         child: Container(
                             child: ListView(
@@ -278,50 +232,40 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ],
                                 rows: [
                                   DataRow(cells: [
-                                    DataCell(Center(child: Label("Material"))),
+                                    DataCell(Center(child: Label("Machine"))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].MATERIAL}"))
+                                        "${processList![selectedRowIndex!].MACHINE}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name"))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].OPERATOR_NAME}"))
+                                        "${processList![selectedRowIndex!].OPERATOR_NAME}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name1"))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].OPERATOR_NAME1}"))
+                                        "${processList![selectedRowIndex!].OPERATOR_NAME1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name2"))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].OPERATOR_NAME2}"))
+                                        "${processList![selectedRowIndex!].OPERATOR_NAME2}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name3"))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].OPERATOR_NAME3}"))
+                                        "${processList![selectedRowIndex!].OPERATOR_NAME3}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Batch/Serial No."))),
                                     DataCell(Label(
-                                        "${Process![selectedRowIndex!].BATCH_NO}"))
+                                        "${processList![selectedRowIndex!].BATCH_NO}"))
                                   ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("StartDate"))),
-                                    DataCell(Label(
-                                        "${Process![selectedRowIndex!].STARTDATE}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Garbage"))),
-                                    DataCell(Label(
-                                        "${Process![selectedRowIndex!].GARBAGE}"))
-                                  ])
                                 ])
                           ],
                         )),
@@ -347,69 +291,48 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (mtModel != null) {
+                        if (processModelSqlite != null) {
                           _AlertDialog();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
                         }
                       },
                       text: Label(
                         "Delete",
                         color: COLOR_WHITE,
                       ),
-                      bgColor: COLOR_RED,
+                      bgColor: _colorDelete,
                     )),
-                    Expanded(
-                        child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Label(
-                            "Scan",
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            height: 15,
-                            child: VerticalDivider(
-                              color: COLOR_BLACK,
-                              thickness: 2,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => print("object"),
-                            // Navigator.pushNamed(context,
-                            // RouterList.WindingJobStart_Hold_Screen),
-                            child: Label(
-                              "Hold",
-                              color: COLOR_BLACK,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                    Expanded(child: Container()),
                     Expanded(
                         child: Button(
                       text: Label("Send", color: COLOR_WHITE),
-                      bgColor: COLOR_SUCESS,
+                      bgColor: _colorSend,
                       onPress: () {
-                        BlocProvider.of<LineElementBloc>(context).add(
-                          MaterialInputEvent(
-                            MaterialOutputModel(
-                              MATERIAL:
-                                  Process![selectedRowIndex!].OPERATOR_NAME,
-                              // MACHINENO:
-                              // Process![selectedRowIndex!].MACHINE_NO,
-                              OPERATORNAME: int.tryParse(
-                                  Process![selectedRowIndex!]
-                                      .OPERATOR_NAME
-                                      .toString()),
-                              BATCHNO: int.tryParse(Process![selectedRowIndex!]
-                                  .BATCH_NO
-                                  .toString()),
-                              // LOT: Process![selectedRowIndex!].LOTNO_1,
-                              STARTDATE: Process![selectedRowIndex!].STARTDATE,
+                        if (processModelSqlite != null) {
+                          BlocProvider.of<LineElementBloc>(context).add(
+                            ProcessInputEvent(
+                              ProcessOutputModel(
+                                MACHINE:
+                                    processList![selectedRowIndex!].MACHINE,
+                                OPERATORNAME: processList![selectedRowIndex!]
+                                    .OPERATOR_NAME,
+                                OPERATORNAME1: processList![selectedRowIndex!]
+                                    .OPERATOR_NAME1,
+                                OPERATORNAME2: processList![selectedRowIndex!]
+                                    .OPERATOR_NAME2,
+                                OPERATORNAME3: processList![selectedRowIndex!]
+                                    .OPERATOR_NAME3,
+                                BATCHNO: int.tryParse(
+                                    processList![selectedRowIndex!]
+                                        .BATCH_NO
+                                        .toString()),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
                       },
                     )),
                   ],
@@ -436,13 +359,17 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
 
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               if (_passwordController.text.trim().length > 6) {
                 deletedInfo();
+
+                Navigator.pop(context);
+                Navigator.pop(context);
+                EasyLoading.showSuccess("Delete Success");
               } else {
                 EasyLoading.showError("Please Input Password");
               }
@@ -455,44 +382,25 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   }
 }
 
-class ProcessStartDataSource extends DataGridSource {
-  ProcessStartDataSource({List<ProcessModel>? process}) {
+class ProcessFinishDataSource extends DataGridSource {
+  ProcessFinishDataSource({List<ProcessModel>? process}) {
     if (process != null) {
       for (var _item in process) {
         _employees.add(
-          // 'Machine': '1',
-          // 'OperatorName': '2',
-          // 'OperatorName1': '3',
-          // 'OperatorName2': '3',
-          // 'OperatorName3': '3',
-          // 'BatchNo': '3',
-          // 'StartDate': '4',
-          // 'Garbage': '4',
-          // 'FinDate': '5',
-          // 'StartEnd': '5',
-          // 'CheckComplete': '6',
-          //
-
           DataGridRow(
             cells: [
-              DataGridCell<int>(columnName: 'ID', value: _item.ID),
+              DataGridCell<String>(columnName: 'Machine', value: _item.MACHINE),
               DataGridCell<String>(
-                  columnName: 'Machine', value: _item.MATERIAL),
+                  columnName: 'Operatorname', value: _item.OPERATOR_NAME),
               DataGridCell<String>(
-                  columnName: 'OperatorName', value: _item.OPERATOR_NAME),
+                  columnName: 'Operatorname1', value: _item.OPERATOR_NAME1),
               DataGridCell<String>(
-                  columnName: 'OperatorName1', value: _item.OPERATOR_NAME1),
+                  columnName: 'Operatorname2', value: _item.OPERATOR_NAME2),
               DataGridCell<String>(
-                  columnName: 'OperatorName2', value: _item.OPERATOR_NAME2),
-              DataGridCell<String>(
-                  columnName: 'OperatorName3', value: _item.OPERATOR_NAME3),
-              DataGridCell<int>(columnName: 'BatchNo', value: _item.BATCH_NO),
-              DataGridCell<String>(
-                  columnName: 'StartDate', value: _item.STARTDATE),
-              DataGridCell<String>(columnName: 'Garbage', value: _item.GARBAGE),
-              DataGridCell<String>(columnName: 'FinDate', value: _item.FINDATE),
-              DataGridCell<String>(
-                  columnName: 'StartEnd', value: _item.STARTEND),
+                  columnName: 'Operatorname3', value: _item.OPERATOR_NAME3),
+              DataGridCell<int>(
+                  columnName: 'BatchNO',
+                  value: int.tryParse(_item.BATCH_NO.toString())),
             ],
           ),
         );
