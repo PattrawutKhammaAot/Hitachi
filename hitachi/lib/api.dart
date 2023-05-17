@@ -73,4 +73,6 @@ class ApiConfig {
   //POST SEND TreatmentFinish
   static String TREAMTMENT_FINISH =
       "${BASE_API_URL}LineElement/SendTreatFinish";
+  //POST SEND ZincThickness
+  static String ZINC_THICKNESS = "${BASE_API_URL}LineElement/SendZinc";
 }

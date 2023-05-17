@@ -151,9 +151,6 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
               // }
             },
           ),
-          BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {},
-          )
         ],
         child: SingleChildScrollView(
           child: Padding(

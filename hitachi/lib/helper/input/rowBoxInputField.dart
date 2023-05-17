@@ -15,7 +15,8 @@ class RowBoxInputField extends StatelessWidget {
       this.validator,
       this.textColor = Colors.black,
       this.focusNode,
-      this.onEditingComplete})
+      this.onEditingComplete,
+      this.enabled})
       : super(key: key);
 
   final String? labelText;
@@ -29,6 +30,7 @@ class RowBoxInputField extends StatelessWidget {
   final Color textColor;
   final Function()? onEditingComplete;
   final FocusNode? focusNode;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class RowBoxInputField extends StatelessWidget {
               validator: validator,
               onChanged: onChanged,
               controller: controller,
+              enabled: enabled,
               style: TextStyle(color: textColor),
               maxLength: maxLength,
               keyboardType: type,
