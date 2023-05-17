@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/connection/testconnection_bloc.dart';
 import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
 
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
@@ -39,6 +40,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ZincThicknessBloc>(
           create: (_) => ZincThicknessBloc(),
+        ),
+        BlocProvider<TestconnectionBloc>(
+          create: (_) => TestconnectionBloc(),
         )
       ],
       child: MaterialApp(

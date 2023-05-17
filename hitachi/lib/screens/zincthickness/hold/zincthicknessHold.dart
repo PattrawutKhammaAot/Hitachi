@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/zincthickness/zinc_thickness_bloc.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -54,14 +55,9 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
 
   Color bgButton = Colors.grey;
 
-  void _queryData() async {
-    var sql = await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
-  }
-
   void _callApi() {
     BlocProvider.of<ZincThicknessBloc>(context).add(
       ZincThickNessSendEvent(ZincThicknessOutputModel(
-// OPERATORNAME:int.tryParse(_)
           BATCHNO: _batchController.text.trim(),
           THICKNESS1: _thickness1Controller.text.trim(),
           THICKNESS2: _thickness2Controller.text.trim(),
@@ -75,11 +71,23 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
     );
   }
 
+  @override
+  void initState() {
+    _checkExpiresData();
+    super.initState();
+  }
+
+  void _checkExpiresData() async {
+    DateTime currentDate = DateTime.now();
+    await databaseHelper.deleted('ZINCTHICKNESS_SHEET',
+        "DATE(DateData, '+7 days') <  DATE(${currentDate})");
+  }
+
   void _checkvalueController() async {
     if (_batchController.text.isNotEmpty) {
       _getZincthicknessInSqlite();
     } else {
-      EasyLoading.showError("Please Input Info");
+      EasyLoading.showError("Please Input Batch");
     }
   }
 
@@ -224,6 +232,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                     labelText: "Batch No. :",
                     controller: _batchController,
                     onEditingComplete: () {
+                      // print(BASE_API_URL);
                       _getZincthicknessInSqlite();
                     },
                   ),

@@ -5,6 +5,7 @@ import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/cardButton.dart';
+import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
@@ -82,6 +83,18 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                   text: "6.Zinc Thickness",
                   onPress: () => Navigator.pushNamed(
                       context, RouterList.ZincThickness_control),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                CardButton(
+                  color: COLOR_SUCESS,
+                  textAlign: TextAlign.center,
+                  text: "Setting Web",
+                  colortext: COLOR_BLUE_DARK,
+                  fontWeight: FontWeight.bold,
+                  onPress: () =>
+                      Navigator.pushNamed(context, RouterList.Setting_web),
                 ),
               ],
             ),

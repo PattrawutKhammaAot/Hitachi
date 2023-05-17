@@ -45,4 +45,6 @@ class RouterList {
   static const String Plan_winding = '/lineElementMenu/planWinding/planWinding';
   //FilmReceive
   static const String ZincThickness_control = '/lineElementMenu/Zincthickness';
+  //Test Connection
+  static const String Setting_web = '/settingWeb/settingWeb';
 }

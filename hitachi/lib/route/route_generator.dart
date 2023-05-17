@@ -24,6 +24,7 @@ import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
 import 'package:hitachi/screens/mainMenu/Homepage.dart';
 
 import 'package:hitachi/screens/planWinding/planwinding_Screen.dart';
+import 'package:hitachi/screens/settingWeb/settingWeb_screen.dart';
 import 'package:hitachi/screens/zincthickness/zthnControl.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -118,6 +119,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: ZincThicknessControl(),
+            type: PageTransitionType.fade);
+      //ZincThickness
+      case RouterList.Setting_web:
+        return PageTransition(
+            settings: settings,
+            child: SettingWebScreen(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

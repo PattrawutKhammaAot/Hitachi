@@ -34,15 +34,19 @@ class DatabaseHelper {
     if (isDatabaseExists) {
       print("Database already exists");
     } else {
-      var database =
-          await openDatabase(dbPath, version: 1, onCreate: _createDb);
+      var database = await openDatabase(
+        dbPath,
+        version: 1,
+        onCreate: _createDb,
+        onUpgrade: (db, oldVersion, newVersion) =>
+            _onUpgrade(db, oldVersion, newVersion),
+      );
       print("Create a Tables Data");
       return database;
     }
-    return await openDatabase(dbPath, version: 1);
+    return await openDatabase(dbPath);
   }
 
-  @override
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (newVersion > oldVersion) {
       await db.execute('DROP TABLE IF EXISTS table1');
@@ -60,7 +64,6 @@ class DatabaseHelper {
     _createTableJob(db, newVersion);
     _createTableProcess(db, newVersion);
     _createTableTreatment(db, newVersion);
-
     _createComboProblem(db, newVersion);
     _createTableBreakDown(db, newVersion);
     _createTableProblem(db, newVersion);
@@ -80,6 +83,13 @@ class DatabaseHelper {
 
     print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.insert(tableName, row);
+  }
+
+  Future<int> deleted(String tableName, String row) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${tableName}");
+    return await db.delete(tableName, where: row);
   }
 
   Future<int> updateSqlite(String tableName, Map<String, dynamic> row,

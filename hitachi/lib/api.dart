@@ -75,4 +75,6 @@ class ApiConfig {
       "${BASE_API_URL}LineElement/SendTreatFinish";
   //POST SEND ZincThickness
   static String ZINC_THICKNESS = "${BASE_API_URL}LineElement/SendZinc";
+  //POST SEND TestConnection
+  static String TEST_CONNECTION = "${BASE_API_URL}Connection/TestConnection";
 }

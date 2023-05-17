@@ -3,10 +3,21 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 
 class CardButton extends StatelessWidget {
-  const CardButton({Key? key, this.text, this.onPress}) : super(key: key);
+  const CardButton(
+      {Key? key,
+      this.text,
+      this.onPress,
+      this.color = COLOR_BLUE_DARK,
+      this.textAlign,
+      this.colortext = COLOR_WHITE,
+      this.fontWeight})
+      : super(key: key);
   final String? text;
   final Function? onPress;
-
+  final Color color;
+  final Color colortext;
+  final TextAlign? textAlign;
+  final FontWeight? fontWeight;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -15,6 +26,7 @@ class CardButton extends StatelessWidget {
           height: 60,
           width: MediaQuery.of(context).size.width,
           child: Card(
+            color: color,
             elevation: 10,
             shadowColor: COLOR_BLACK,
             shape: RoundedRectangleBorder(
@@ -27,12 +39,13 @@ class CardButton extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: Label(
                     text ?? "",
-                    color: COLOR_WHITE,
+                    color: colortext,
+                    textAlign: textAlign,
+                    fontWeight: fontWeight,
                   ),
                 ),
               ],
             ),
-            color: COLOR_BLUE_DARK,
           )),
     );
   }

@@ -24,10 +24,8 @@ class Label extends StatelessWidget {
     return Text(
       text ?? "",
       textAlign: textAlign,
-      style: TextStyle(
-        color: color,
-        fontSize: fontSize,
-      ),
+      style:
+          TextStyle(color: color, fontSize: fontSize, fontWeight: fontWeight),
     );
   }
 }
