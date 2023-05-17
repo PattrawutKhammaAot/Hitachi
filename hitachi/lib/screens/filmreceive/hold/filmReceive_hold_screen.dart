@@ -300,7 +300,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                       ),
                     )
                   : CircularProgressIndicator(),
-              dstSqliteModel != null && dstList != null
+              dstSqliteModel != null
                   ? Expanded(
                       child: Container(
                           child: ListView(
@@ -329,7 +329,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("PO no."))),
                                   DataCell(Label(
-                                      "${dstList[selectedRowIndex!].PO_NO}"))
+                                      "${dstList[selectedRowIndex!].PO_NO ?? ""}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Invoice No."))),
@@ -458,11 +458,11 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   }
 
   void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
+    deletedInfo();
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+    EasyLoading.showSuccess("Delete Success");
   }
 
   void deletedInfo() async {
@@ -478,12 +478,14 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: password,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label(
+                  "Do you want Delete \n Po No ${dstList[selectedRowIndex!].PO_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[

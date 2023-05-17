@@ -419,12 +419,14 @@ class _MachineBreakDownHoldScreenState
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: password,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label(
+                  "Do you want Delete \n MachineNo ${bdsList[selectedRowIndex!].MACHINE_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -442,11 +444,11 @@ class _MachineBreakDownHoldScreenState
   }
 
   void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
+    deletedInfo();
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+    EasyLoading.showSuccess("Delete Success");
   }
 
   void deletedInfo() async {

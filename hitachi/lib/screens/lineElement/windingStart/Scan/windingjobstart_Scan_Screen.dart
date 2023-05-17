@@ -69,7 +69,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final bool isSave = false;
   String text = "";
 
-  bool isDisableOnClick = false;
+  Color bgColor = Colors.grey;
 //
   @override
   void initState() {
@@ -86,10 +86,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         paperCodeLotController.text.isNotEmpty &&
         ppFilmLotController.text.isNotEmpty &&
         foilLotController.text.isNotEmpty) {
-      print("isNotEmpty");
       callWindingStartReturnWeight();
     } else {
-      EasyLoading.showError("Data incomplete", duration: Duration(seconds: 5));
+      EasyLoading.showError("Please Input Info",
+          duration: Duration(seconds: 5));
     }
   }
 
@@ -427,16 +427,12 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   void checkFilmPackNo() {
     int? result = int.tryParse(filmPackNoController.text.trim());
     final text = filmPackNoController.text.trim();
-    if (text.length >= 8) {
-      if (result != null) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          GetCheckPackNoEvent(result),
-        );
-      }
-    } else {
-      setState(() {
-        isDisableOnClick = false;
-      });
+
+    if (result != null) {
+      BlocProvider.of<LineElementBloc>(context).add(
+        GetCheckPackNoEvent(result),
+      );
+      f6.requestFocus();
     }
   }
 
@@ -492,10 +488,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                                   ],
                                 ));
                       } else {
-                        EasyLoading.showInfo(
-                            "Send complete \n Can not save weight , Element",
+                        EasyLoading.showInfo(" Please Input Weight",
                             duration: Duration(seconds: 1));
-                        // _showpopUpWeight();
+                        _showpopUpWeight();
                       }
                     }
                     if (state is PostSendWindingStartReturnWeightErrorState) {
@@ -512,16 +507,16 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       if (packNoModel!.RESULT == true) {
                         EasyLoading.dismiss();
                         setState(() {
-                          isDisableOnClick = true;
+                          bgColor = COLOR_SUCESS;
                         });
                       } else {
                         setState(() {
-                          isDisableOnClick = false;
+                          bgColor = COLOR_SUCESS;
                         });
                       }
                     }
                     if (state is GetCheckPackErrorState) {
-                      EasyLoading.showError("Can't Call API");
+                      EasyLoading.showError("Check Connection");
                     }
                   })
                 ],
@@ -600,13 +595,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             flex: 5,
                             child: BoxInputField(
                               focusNode: f5,
-                              onEditingComplete: () => f6.requestFocus(),
+                              onEditingComplete: () {
+                                checkFilmPackNo();
+                              },
                               labelText: "Film Pack No :",
                               controller: filmPackNoController,
                               type: TextInputType.number,
                               maxLength: 8,
                               maxLines: 2,
-                              onChanged: (_) => checkFilmPackNo(),
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[0-9]')),
@@ -623,7 +619,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             child: BoxInputField(
                               focusNode: f6,
                               onEditingComplete: () => f7.requestFocus(),
-                              labelText: "Paper Code Lot :",
+                              labelText: "Paper Core Lot :",
                               controller: paperCodeLotController,
                             ),
                           ),
@@ -653,11 +649,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             child: BoxInputField(
                               focusNode: f8,
                               onEditingComplete: () {
-                                if (isDisableOnClick == true) {
-                                  _btnSendClick();
-                                } else {
-                                  EasyLoading.showError("Please Input Info");
-                                }
+                                _btnSendClick();
                               },
                               labelText: "Foil Lot:",
                               controller: foilLotController,
@@ -670,21 +662,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       ),
                       Container(
                         child: Button(
-                          bgColor: isDisableOnClick
-                              ? COLOR_BLUE_DARK
-                              : isDisableOnClick == false
-                                  ? Colors.grey
-                                  : COLOR_TRANSPARENT,
+                          bgColor: bgColor,
                           text: Label(
                             "Send",
                             color: COLOR_WHITE,
                           ),
                           onPress: () {
-                            if (isDisableOnClick == true) {
-                              _btnSendClick();
-                            } else {
-                              EasyLoading.showError("Please Input Info");
-                            }
+                            _btnSendClick();
                           },
                         ),
                       ),
@@ -799,6 +783,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           child: TextFormField(
                             focusNode: f9,
                             controller: weight1Controller,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]')),
+                            ],
                             onEditingComplete: () {
                               f10.requestFocus();
                             },
@@ -818,6 +807,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                           height: 40,
                           child: TextFormField(
                             focusNode: f10,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]')),
+                            ],
                             onEditingComplete: () {
                               okBtnWeight();
                             },
@@ -861,7 +855,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             "OK",
                             color: COLOR_WHITE,
                           ),
-                          onPress: () => okBtnWeight(),
+                          onPress: () {
+                            okBtnWeight();
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),

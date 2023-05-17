@@ -420,12 +420,14 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: password,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label(
+                  "Do you want Delete \n BatchNo ${wdsList[selectedRowIndex!].BATCH_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -434,20 +436,34 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _checkValueController(),
+            onPressed: () {
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
+              // Future.delayed(Duration(seconds: 2), () {
+              //   _getWindingSheet().then((result) {
+              //     setState(() {
+              //       wdsList = result;
+              //       if (wdsList.length > 0) {
+              //         WindingDataSource = WindingsDataSource(process: wdsList);
+              //       } else {
+              //         print("Null");
+              //         Container(
+              //           child: Label("No data"),
+              //         );
+              //         WindingDataSource =
+              //             null; // ให้ DataSource เป็น null เพื่อไม่แสดงข้อมูล
+              //       }
+              //     });
+              //   });
+              // });
+            },
             child: const Text('OK'),
           ),
         ],
       ),
     );
-  }
-
-  void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
   }
 
   void deletedInfo() async {

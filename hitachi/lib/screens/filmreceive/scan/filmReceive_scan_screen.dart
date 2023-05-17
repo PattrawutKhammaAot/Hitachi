@@ -271,6 +271,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
+                EasyLoading.showSuccess("Save Complete & Can not Send");
                 callFilmIn();
               }
             }

@@ -333,12 +333,14 @@ class _WindingJobFinishHoldScreenState
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: password,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label(
+                  "Do you want Delete \n BatchNo ${wdsList[selectedRowIndex!].BATCH_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -349,7 +351,6 @@ class _WindingJobFinishHoldScreenState
           TextButton(
             onPressed: () {
               _checkValueController();
-              Navigator.pop(context);
             },
             child: const Text('OK'),
           ),
@@ -359,10 +360,18 @@ class _WindingJobFinishHoldScreenState
   }
 
   void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
+    deletedInfo();
+    Navigator.pop(context);
+    Navigator.pop(context);
+    EasyLoading.showSuccess("Delete Success");
+    // Future.delayed(Duration(seconds: 2), () {
+    //   _getWindingSheet().then((result) {
+    //     setState(() {
+    //       wdsList = result;
+    //       WindingDataSource = WindingsDataSource(process: wdsList);
+    //     });
+    //   });
+    // });
   }
 
   void deletedInfo() async {

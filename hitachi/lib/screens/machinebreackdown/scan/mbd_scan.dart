@@ -72,7 +72,7 @@ class _MachineBreakDownScanScreenState
         _start_Technical_1_Controller.text.isNotEmpty &&
         _stop_Technical_1_Controller.text.isNotEmpty &&
         _operator_accept_Controller.text.isNotEmpty &&
-        _start_Technical_1_Controller.text ==
+        _start_Technical_1_Controller.text !=
             _stop_Technical_1_Controller.text) {
       _sendData();
       Future.delayed(Duration(seconds: 5), () {
@@ -81,7 +81,7 @@ class _MachineBreakDownScanScreenState
     } else {
       EasyLoading.showError("Please Input Data");
     }
-    if (_start_Technical_1_Controller.text !=
+    if (_start_Technical_1_Controller.text ==
         _stop_Technical_1_Controller.text) {
       EasyLoading.showError("Start technical 1 don't match Stop technical 2");
     }

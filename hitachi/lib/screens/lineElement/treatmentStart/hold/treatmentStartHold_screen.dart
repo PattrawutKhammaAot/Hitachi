@@ -369,12 +369,14 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: _passwordController,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label(
+                  "Do you want Delete \n  ${tmList?[selectedRowIndex!].MACHINE_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -384,13 +386,18 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
           ),
           TextButton(
             onPressed: () {
-              if (_passwordController.text.trim().length > 6) {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                EasyLoading.showSuccess("Delete Success");
-              } else {
-                EasyLoading.showError("Please Input Password");
-              }
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
+              // Future.delayed(Duration(seconds: 2), () {
+              //   _getTreatMentSheet().then((result) {
+              //     setState(() {
+              //       tmList = result;
+              //       tmsDatasource = TreatMentStartDataSource(process: tmList);
+              //     });
+              //   });
+              // });
             },
             child: const Text('OK'),
           ),
