@@ -17,7 +17,7 @@ class TestconnectionLoadingState extends TestconnectionState {
 
 class TestconnectionLoadedState extends TestconnectionState {
   const TestconnectionLoadedState(this.item);
-  final bool item;
+  final ResponeDefault item;
 
   @override
   List<Object> get props => [item];

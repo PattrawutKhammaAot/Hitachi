@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
@@ -11,7 +13,19 @@ part 'film_receive_event.dart';
 part 'film_receive_state.dart';
 
 class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
+  Dio dio = Dio();
+
   FilmReceiveBloc() : super(FilmReceiveInitial()) {
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      onHttpClientCreate: (_) {
+        // Don't trust any certificate just because their root cert is trusted.
+        final HttpClient client =
+            HttpClient(context: SecurityContext(withTrustedRoots: false));
+        // You can test the intermediate / root cert here. We just ignore it.
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      },
+    );
     on<FilmReceiveEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -30,7 +44,7 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
   Future<ResponeDefault> fetchSendFilmReceive(
       FilmReceiveOutputModel item) async {
     try {
-      Response responese = await Dio().post(ApiConfig.FILM_RECEIVE,
+      Response responese = await dio.post(ApiConfig.FILM_RECEIVE,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),

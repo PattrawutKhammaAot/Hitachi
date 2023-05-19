@@ -19,6 +19,13 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
   final TextEditingController _urlController = TextEditingController();
   String? _urltestConnect = BASE_API_URL;
   Color _isColorSuccess = Colors.grey;
+
+  @override
+  void initState() {
+    _urlController.text = 'https://dev.lvcap.th.hitachienergy.com/';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -28,7 +35,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
             if (state is TestconnectionLoadingState) {
               EasyLoading.show();
             } else if (state is TestconnectionLoadedState) {
-              if (state.item == true) {
+              if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("Connection Success");
                 setState(() {
                   _isColorSuccess = COLOR_SUCESS;
@@ -65,6 +72,13 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                   SizedBox(
                     height: 10,
                   ),
+                  Label(
+                    " ${TEMP_API_URL}",
+                    fontSize: 20,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Button(
                     text: Label(
                       "Test Connection",
@@ -72,10 +86,11 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                     ),
                     onPress: () {
                       setState(() {
-                        TEMP_API_URL = _urlController.text;
+                        TEMP_API_URL = _urlController.text.trim();
                       });
                       BlocProvider.of<TestconnectionBloc>(context)
                           .add(Test_ConnectionEvent());
+                      print(TEMP_API_URL);
                     },
                   ),
                   SizedBox(
@@ -91,6 +106,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                             setState(() {
                               BASE_API_URL = TEMP_API_URL;
                             });
+                            print(BASE_API_URL);
                             EasyLoading.showSuccess("Save Complete");
                           },
                           text: Label(

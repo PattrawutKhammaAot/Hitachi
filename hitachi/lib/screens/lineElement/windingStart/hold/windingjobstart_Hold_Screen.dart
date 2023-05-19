@@ -39,15 +39,16 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   // final TextEditingController status = TextEditingController();
   final TextEditingController password = TextEditingController();
   WindingsDataSource? WindingDataSource;
-  List<WindingSheetModel>? wdsSqliteModel;
+  // List<WindingSheetModel>? wdsSqliteModel;
   List<WindingSheetModel> wdsList = [];
-  int? selectedRowIndex;
+  List<WindingSheetModel>? wdsSqliteModel;
   DataGridRow? datagridRow;
   bool isClick = false;
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
   bool isHidewidget = false;
-
+  List<WindingSheetModel> wdsSelectdAll = [];
+  int? selectedRowIndex;
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
@@ -107,309 +108,353 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
           )
         ],
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            children: [
-              WindingDataSource != null
-                  ? Expanded(
-                      child: Container(
-                        child: SfDataGrid(
-                          source: WindingDataSource!,
-                          // columnWidthMode: ColumnWidthMode.fill,
-                          showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
-                          headerGridLinesVisibility: GridLinesVisibility.both,
-                          gridLinesVisibility: GridLinesVisibility.both,
-                          onCellTap: (details) async {
-                            if (details.rowColumnIndex.rowIndex != 0) {
-                              setState(() {
-                                selectedRowIndex =
-                                    details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = WindingDataSource!.effectiveRows
-                                    .elementAt(selectedRowIndex!);
-                                wdsSqliteModel = datagridRow!
-                                    .getCells()
-                                    .map(
-                                      (e) => WindingSheetModel(
-                                        MACHINE_NO: e.value.toString(),
-                                        OPERATOR_NAME: e.value.toString(),
-                                        BATCH_NO: e.value.toString(),
-                                        PRODUCT: e.value.toString(),
-                                        PACK_NO: e.value.toString(),
-                                        PAPER_CORE: e.value.toString(),
-                                        PP_CORE: e.value.toString(),
-                                        FOIL_CORE: e.value.toString(),
-                                        BATCH_START_DATE: e.value.toString(),
-                                        BATCH_END_DATE: e.value.toString(),
-                                        ELEMENT: e.value.toString(),
-                                        STATUS: e.value.toString(),
-                                        START_END: e.value.toString(),
-                                        CHECK_COMPLETE: e.value.toString(),
-                                      ),
-                                    )
-                                    .toList();
-                                _colorSend = COLOR_SUCESS;
-                                _colorDelete = COLOR_RED;
-                              });
-                            }
-                          },
-                          columns: <GridColumn>[
-                            GridColumn(
-                                columnName: 'machineno',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Machine No.',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                WindingDataSource != null
+                    ? Expanded(
+                        child: Container(
+                          child: SfDataGrid(
+                            source: WindingDataSource!,
+                            // columnWidthMode: ColumnWidthMode.fill,
+                            showCheckboxColumn: true,
+                            selectionMode: SelectionMode.multiple,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            allowPullToRefresh: true,
+                            // selectionManager:SelectionManagerBase(),
+                            onSelectionChanged:
+                                (selectedRows, deselectedRows) async {
+                              if (selectedRows.isNotEmpty) {
+                                setState(() {
+                                  selectedRowIndex = selectedRows.isNotEmpty
+                                      ? WindingDataSource!.effectiveRows
+                                          .indexOf(selectedRows.first)
+                                      : null;
+                                  datagridRow = WindingDataSource!.effectiveRows
+                                      .elementAt(selectedRowIndex!);
+                                  wdsSqliteModel = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => WindingSheetModel(
+                                          MACHINE_NO: e.value.toString(),
+                                          OPERATOR_NAME: e.value.toString(),
+                                          BATCH_NO: e.value.toString(),
+                                          PRODUCT: e.value.toString(),
+                                          PACK_NO: e.value.toString(),
+                                          PAPER_CORE: e.value.toString(),
+                                          PP_CORE: e.value.toString(),
+                                          FOIL_CORE: e.value.toString(),
+                                          BATCH_START_DATE: e.value.toString(),
+                                          BATCH_END_DATE: e.value.toString(),
+                                          ELEMENT: e.value.toString(),
+                                          STATUS: e.value.toString(),
+                                          START_END: e.value.toString(),
+                                          CHECK_COMPLETE: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  print(wdsList[selectedRowIndex!].ID);
+                                  _colorSend = COLOR_SUCESS;
+                                  _colorDelete = COLOR_RED;
+                                  // if (selectedRowIndex == 0) {
+                                  //   wdsSelectdAll
+                                  //       .add(wdsSqliteModel![selectedRowIndex!]);
+                                  // }
+                                  // print(selectedRows.length);
+                                });
+                              } else {
+                                setState(() {
+                                  wdsSelectdAll.clear();
+                                });
+                                // print(selectedRowIndex);
+                                // ไม่มีการเลือกแถว
+                                print('No Rows Selected');
+                                // ดำเนินการเพิ่มเติมที่คุณต้องการทำ
+                              }
+                            },
+                            onCellTap: (details) async {
+                              // if (details.rowColumnIndex.rowIndex != 0) {
+                              //   setState(() {
+                              //     selectedRowIndex =
+                              //         details.rowColumnIndex.rowIndex - 1;
+                              //     datagridRow = WindingDataSource!.effectiveRows
+                              //         .elementAt(selectedRowIndex!);
+                              //     wdsSqliteModel = datagridRow!
+                              //         .getCells()
+                              //         .map(
+                              //           (e) => WindingSheetModel(
+                              //             MACHINE_NO: e.value.toString(),
+                              //             OPERATOR_NAME: e.value.toString(),
+                              //             BATCH_NO: e.value.toString(),
+                              //             PRODUCT: e.value.toString(),
+                              //             PACK_NO: e.value.toString(),
+                              //             PAPER_CORE: e.value.toString(),
+                              //             PP_CORE: e.value.toString(),
+                              //             FOIL_CORE: e.value.toString(),
+                              //             BATCH_START_DATE: e.value.toString(),
+                              //             BATCH_END_DATE: e.value.toString(),
+                              //             ELEMENT: e.value.toString(),
+                              //             STATUS: e.value.toString(),
+                              //             START_END: e.value.toString(),
+                              //             CHECK_COMPLETE: e.value.toString(),
+                              //           ),
+                              //         )
+                              //         .toList();
+                              //     _colorSend = COLOR_SUCESS;
+                              //     _colorDelete = COLOR_RED;
+                              //   });
+                              // }
+                            },
+                            columns: <GridColumn>[
+                              GridColumn(
+                                  columnName: 'machineno',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Machine No.',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                    // color: COLOR_BLUE_DARK,
                                   )),
-                                  // color: COLOR_BLUE_DARK,
-                                )),
-                            GridColumn(
-                              columnName: 'operatorName',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                    child: Label(
-                                  'Operator Name',
-                                  textAlign: TextAlign.center,
-                                  fontSize: 14,
-                                  color: COLOR_WHITE,
-                                )),
-                              ),
-                            ),
-                            GridColumn(
-                                columnName: 'batchno',
+                              GridColumn(
+                                columnName: 'operatorName',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Batch No.',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
-                            GridColumn(
-                                columnName: 'product',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Product',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
-                            GridColumn(
-                                columnName: 'filmpackno',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Film pack No.',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'papercodelot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Paper code lot',
+                                    'Operator Name',
                                     textAlign: TextAlign.center,
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
-                                )),
-                            GridColumn(
-                                columnName: 'PPfilmlot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'PP film lot',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'foillot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Foil Lot',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'batchstart',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'StartDate',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                            GridColumn(
-                                columnName: 'status',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Status',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                )),
-                          ],
-                        ),
-                      ),
-                    )
-                  : CircularProgressIndicator(),
-              wdsSqliteModel != null && wdsList != null
-                  ? Expanded(
-                      child: Container(
-                          child: ListView(
-                        children: [
-                          DataTable(
-                              horizontalMargin: 20,
-                              headingRowHeight: 30,
-                              dataRowHeight: 30,
-                              headingRowColor: MaterialStateColor.resolveWith(
-                                  (states) => COLOR_BLUE_DARK),
-                              border: TableBorder.all(
-                                width: 1.0,
-                                color: COLOR_BLACK,
-                              ),
-                              columns: [
-                                DataColumn(
-                                  numeric: true,
-                                  label: Label(
-                                    "",
-                                    color: COLOR_BLUE_DARK,
-                                  ),
                                 ),
-                                DataColumn(label: Label(""))
-                              ],
-                              rows: [
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Machine No."))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].MACHINE_NO}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("OperatorName"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].OPERATOR_NAME}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Batch No."))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].BATCH_NO}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Product"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PRODUCT}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Film pack No"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PACK_NO}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Paper Code Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PAPER_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("PP film Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].PP_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Foil Lot"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].FOIL_CORE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("StartDate"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].BATCH_START_DATE}"))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Status"))),
-                                  DataCell(Label(
-                                      "${wdsList[selectedRowIndex!].STATUS}"))
-                                ]),
-                              ])
-                        ],
-                      )),
-                    )
-                  : Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Label(
-                              "No data",
-                              color: COLOR_RED,
-                              fontSize: 30,
-                            ),
-                            CircularProgressIndicator()
-                          ],
+                              ),
+                              GridColumn(
+                                  columnName: 'batchno',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Batch No.',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  ),
+                                  width: 100),
+                              GridColumn(
+                                  columnName: 'product',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Product',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  ),
+                                  width: 100),
+                              GridColumn(
+                                  columnName: 'filmpackno',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Film pack No.',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                              GridColumn(
+                                  columnName: 'papercodelot',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Paper core lot',
+                                      textAlign: TextAlign.center,
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                              GridColumn(
+                                  columnName: 'PPfilmlot',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'PP film lot',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                              GridColumn(
+                                  columnName: 'foillot',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Foil Lot',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                              GridColumn(
+                                  columnName: 'batchstart',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'StartDate',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                              GridColumn(
+                                  columnName: 'status',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                        child: Label(
+                                      'Status',
+                                      fontSize: 14,
+                                      color: COLOR_WHITE,
+                                    )),
+                                  )),
+                            ],
+                          ),
                         ),
+                      )
+                    : CircularProgressIndicator(),
+                wdsSqliteModel != null
+                    ? Expanded(
+                        child: Container(
+                          child: ListView(
+                            children: [
+                              DataTable(
+                                  horizontalMargin: 20,
+                                  headingRowHeight: 30,
+                                  dataRowHeight: 30,
+                                  headingRowColor:
+                                      MaterialStateColor.resolveWith(
+                                          (states) => COLOR_BLUE_DARK),
+                                  border: TableBorder.all(
+                                    width: 1.0,
+                                    color: COLOR_BLACK,
+                                  ),
+                                  columns: [
+                                    DataColumn(
+                                      numeric: true,
+                                      label: Label(
+                                        "",
+                                        color: COLOR_BLUE_DARK,
+                                      ),
+                                    ),
+                                    DataColumn(label: Label(""))
+                                  ],
+                                  rows: [
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("Machine No."))),
+                                      DataCell(Label(
+                                          '${wdsList[selectedRowIndex!].MACHINE_NO} '))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("OperatorName"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("Batch No."))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].BATCH_NO}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(Center(child: Label("Product"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PRODUCT}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("Film pack No"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PACK_NO}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(Center(
+                                          child: Label("Paper Core Lot"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PAPER_CORE}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("PP film Lot"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PP_CORE}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("Foil Lot"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].FOIL_CORE}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(
+                                          Center(child: Label("StartDate"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].BATCH_START_DATE}"))
+                                    ]),
+                                    DataRow(cells: [
+                                      DataCell(Center(child: Label("Status"))),
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].STATUS}"))
+                                    ]),
+                                  ])
+                            ],
+                          ),
+                        ),
+                      )
+                    : CircularProgressIndicator(),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Button(
+                      onPress: () {
+                        if (wdsList != null) {
+                          _AlertDialog();
+                        } else {
+                          _LoadingData();
+                        }
+                      },
+                      text: Label(
+                        "Delete",
+                        color: COLOR_WHITE,
                       ),
-                    ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                      child: Button(
-                    onPress: () {
-                      if (wdsSqliteModel != null) {
-                        _AlertDialog();
-                      } else {
-                        _LoadingData();
-                      }
-                    },
-                    text: Label(
-                      "Delete",
-                      color: COLOR_WHITE,
-                    ),
-                    bgColor: _colorDelete,
-                  )),
-                  Expanded(child: Container()),
-                  Expanded(
-                      child: Button(
-                    text: Label("Send", color: COLOR_WHITE),
-                    bgColor: _colorSend,
-                    onPress: () {
-                      if (wdsSqliteModel != null) {
-                        _sendDataServer();
-                      } else {
-                        EasyLoading.showInfo("Please Select Data");
-                      }
-                    },
-                  )),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+                      bgColor: _colorDelete,
+                    )),
+                    Expanded(child: Container()),
+                    Expanded(
+                        child: Button(
+                      text: Label("Send", color: COLOR_WHITE),
+                      bgColor: _colorSend,
+                      onPress: () {
+                        if (wdsList != null) {
+                          _sendDataServer();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
+                      },
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            )),
       ),
     );
   }
@@ -445,16 +490,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
               //   _getWindingSheet().then((result) {
               //     setState(() {
               //       wdsList = result;
-              //       if (wdsList.length > 0) {
-              //         WindingDataSource = WindingsDataSource(process: wdsList);
-              //       } else {
-              //         print("Null");
-              //         Container(
-              //           child: Label("No data"),
-              //         );
-              //         WindingDataSource =
-              //             null; // ให้ DataSource เป็น null เพื่อไม่แสดงข้อมูล
-              //       }
+              //       WindingDataSource = WindingsDataSource(process: wdsList);
               //     });
               //   });
               // });
@@ -526,7 +562,6 @@ class WindingsDataSource extends DataGridSource {
             ],
           ),
         );
-        print(_item.PACK_NO);
       }
     } else {
       EasyLoading.showError("Can not Call API");

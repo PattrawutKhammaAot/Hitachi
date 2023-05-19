@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -506,10 +504,13 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       });
                       if (packNoModel!.RESULT == true) {
                         EasyLoading.dismiss();
+                        EasyLoading.showSuccess("Success");
                         setState(() {
                           bgColor = COLOR_SUCESS;
                         });
                       } else {
+                        print("object");
+                        EasyLoading.showError("Film Pack No not Found");
                         setState(() {
                           bgColor = COLOR_SUCESS;
                         });

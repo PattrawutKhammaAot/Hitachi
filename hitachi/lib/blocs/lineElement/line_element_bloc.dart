@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/api.dart';
@@ -25,7 +27,19 @@ part 'line_element_event.dart';
 part 'line_element_state.dart';
 
 class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
+  Dio dio = Dio();
+
   LineElementBloc() : super(LineElementInitial()) {
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      onHttpClientCreate: (_) {
+        // Don't trust any certificate just because their root cert is trusted.
+        final HttpClient client =
+            HttpClient(context: SecurityContext(withTrustedRoots: false));
+        // You can test the intermediate / root cert here. We just ignore it.
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      },
+    );
     on<LineElementEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -125,7 +139,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
       sendWdsReturnWeightOutputModel item) async {
     try {
-      Response responese = await Dio().post(
+      Response responese = await dio.post(
           ApiConfig.LE_SEND_WINDING_START_WEIGHT,
           options: Options(
               headers: ApiConfig.HEADER(),
@@ -146,7 +160,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<SendWindingStartModelInput> fetchSendWindingHold(
       SendWindingStartModelOutput itemOutput) async {
     try {
-      Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_START,
+      Response responese = await dio.post(ApiConfig.LE_SEND_WINDING_START,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -168,7 +182,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<SendWdsFinishInputModel> fetchSendWindingFinish(
       SendWdsFinishOutputModel itemOutput) async {
     try {
-      Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_FINISH,
+      Response responese = await dio.post(ApiConfig.LE_SEND_WINDING_FINISH,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -189,8 +203,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<CheckPackNoModel> fetchCheckPackNo(int number) async {
     print(ApiConfig.LE_CHECKPACK_NO);
     try {
-      Response responese = await Dio().get(
-          ApiConfig.LE_CHECKPACK_NO + "$number",
+      Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -210,7 +223,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<ReportRouteSheetModel> fetchReportRouteSheetModel(
       String number) async {
     try {
-      Response response = await Dio().get(
+      Response response = await dio.get(
         ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
         options: Options(
             headers: ApiConfig.HEADER(),
@@ -230,7 +243,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //MaterialInput
   Future<MaterialInputModel> fetchMaterial(MaterialOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_MATERIALINPUT,
+      Response response = await dio.post(ApiConfig.LE_MATERIALINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -249,7 +262,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //CheckMaterialInput
   Future<ResponeDefault> fetchCheckMaterial(String items) async {
     try {
-      Response response = await Dio().get(
+      Response response = await dio.get(
         ApiConfig.LE_CHECK_MATERIAL_INPUT + "${items}",
         options: Options(
             headers: ApiConfig.HEADER(),
@@ -270,7 +283,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //ProcessStart
   Future<ProcessInputModel> fetchStartProcess(ProcessOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_PROCESSSTARTINPUT,
+      Response response = await dio.post(ApiConfig.LE_PROCESSSTARTINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -291,7 +304,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<ProcessFinishInputModel> fetchProcessFinish(
       ProcessFinishOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_PROCESSFINISHINPUT,
+      Response response = await dio.post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),

@@ -78,9 +78,14 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   }
 
   void _checkExpiresData() async {
+    var sql = await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
     DateTime currentDate = DateTime.now();
-    await databaseHelper.deleted('ZINCTHICKNESS_SHEET',
-        "DATE(DateData, '+7 days') <  DATE(${currentDate})");
+    if (sql.length > 0) {
+      await databaseHelper.deleted('ZINCTHICKNESS_SHEET',
+          "DATE(DateData, '+7 days') <  DATE(${currentDate})");
+    } else {
+      EasyLoading.showError("Data not found");
+    }
   }
 
   void _checkvalueController() async {
