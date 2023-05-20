@@ -114,7 +114,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
                     _insertSqlite();
-                    EasyLoading.showError("Please Check Data");
+                    EasyLoading.showError("Failed To Send");
                   } else {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
                   }
@@ -175,10 +175,9 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   focusNode: _operatorNameFouc,
                   labelText: "Operator Name",
                   controller: _operatorNameController,
+                  type: TextInputType.number,
                   textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                    ),
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
                   onEditingComplete: () {
                     _batchOrSerialFocus.requestFocus();
@@ -192,13 +191,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   labelText: "Batch/Serial",
                   controller: _batchOrSerialController,
                   maxLength: 12,
-                  type: TextInputType.number,
-                  textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                    ),
-                  ],
-                  onEditingComplete: () => _machineFocus.requestFocus(),
+                  onEditingComplete: () {
+                    if (_batchOrSerialController.text.length == 7 ||
+                        _batchOrSerialController.text.length == 12) {
+                      _machineFocus.requestFocus();
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 5,

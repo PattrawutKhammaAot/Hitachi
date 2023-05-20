@@ -105,6 +105,18 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
+                              columnName: 'proc',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Proc',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
                               columnName: 'qty',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -118,25 +130,12 @@ class _ProcessPageState extends State<ProcessPage> {
                             ),
                             GridColumn(
                               width: 120,
-                              columnName: 'name',
-                              label: Container(
-                                color: COLOR_BLUE_DARK,
-                                child: Center(
-                                  child: Label(
-                                    'Proc',
-                                    color: COLOR_WHITE,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            GridColumn(
-                              width: 120,
                               columnName: 'startDate',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                   child: Label(
-                                    'start Date',
+                                    'Start Date',
                                     color: COLOR_WHITE,
                                   ),
                                 ),
@@ -149,7 +148,7 @@ class _ProcessPageState extends State<ProcessPage> {
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                   child: Label(
-                                    'Start Time',
+                                    'start Time',
                                     color: COLOR_WHITE,
                                   ),
                                 ),
@@ -157,7 +156,7 @@ class _ProcessPageState extends State<ProcessPage> {
                             ),
                             GridColumn(
                               width: 120,
-                              columnName: 'FINISH_DATE',
+                              columnName: 'EndDate',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
@@ -170,7 +169,7 @@ class _ProcessPageState extends State<ProcessPage> {
                             ),
                             GridColumn(
                               width: 120,
-                              columnName: 'FINISH_TIME',
+                              columnName: 'EndTime',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
@@ -204,16 +203,16 @@ class EmployeeDataSource extends DataGridSource {
           DataGridRow(
             cells: [
               DataGridCell<int>(columnName: 'id', value: _item.ORDER),
-              DataGridCell<String>(columnName: 'name', value: _item.PROCESS),
+              DataGridCell<String>(columnName: 'proc', value: _item.PROCESS),
+              DataGridCell<int>(columnName: 'qty', value: _item.AMOUNT),
               DataGridCell<String>(
                   columnName: 'startDate', value: _item.START_DATE),
               DataGridCell<String>(
                   columnName: 'startTime', value: _item.START_TIME),
               DataGridCell<String>(
-                  columnName: 'FINISH_DATE', value: _item.FINISH_DATE),
+                  columnName: 'EndDate', value: _item.FINISH_DATE),
               DataGridCell<String>(
-                  columnName: 'FINISH_TIME', value: _item.FINISH_TIME),
-              DataGridCell<int>(columnName: 'qty', value: _item.AMOUNT),
+                  columnName: 'EndTime', value: _item.FINISH_TIME),
             ],
           ),
         );

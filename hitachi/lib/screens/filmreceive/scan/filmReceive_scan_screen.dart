@@ -40,7 +40,22 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   DateTime? _selectedDateMfg;
   String? dataFromBarcode1;
 
+  Color bgButton = Colors.grey;
+
   List<String> itemList = ['sea', 'air'];
+  //FOCUS
+  final f1 = FocusNode();
+  final f2 = FocusNode();
+  final f3 = FocusNode();
+  final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
+  final f7 = FocusNode();
+  final f8 = FocusNode();
+  final f9 = FocusNode();
+  final f10 = FocusNode();
+  final f11 = FocusNode();
+//
 
   void _checkValueController() {
     if (_poNoController.text.isNotEmpty &&
@@ -55,9 +70,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         _weight1Controller.text.isNotEmpty &&
         _weight2Controller.text.isNotEmpty &&
         _mfgDateController.text.isNotEmpty &&
-        _wrapGradeController.text.isNotEmpty) {}
-
-    _sendData();
+        _wrapGradeController.text.isNotEmpty) {
+      _sendData();
+    } else {
+      EasyLoading.showError("Please Input Info");
+    }
   }
 
   callFilmIn() async {
@@ -128,7 +145,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         num weight1 = num.tryParse(_weight1Controller.text.trim()) ?? 0;
         num weight2 = num.tryParse(_weight2Controller.text.trim()) ?? 0;
         totalWeight = weight1 + weight2;
-        thickness = _packNoController.text.substring(0, 1);
+        thickness = _packNoController.text.substring(0, 2);
       });
       if (sql.length <= 0) {
         await databaseHelper.insertSqlite('DATA_SHEET', {
@@ -139,16 +156,16 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
           'STORE_DATE': DateTime.now().toString(),
-          'STATUS': "S",
+          'STATUS': " ",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
           'MFG_DATE': _mfgDateController.text.trim(),
-          'THICKNESS1': _packNoController.text.substring(0, 1).trim(),
+          'THICKNESS1': thickness,
           'THICKNESS2': "",
           'WRAP_GRADE': _wrapGradeController.text.trim(),
           'ROLL_NO': _rollNoController.text.trim(),
-          'checkComplete': ""
+          'checkComplete': "S"
         });
       }
     } catch (e, s) {
@@ -295,15 +312,19 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     labelText: "PO No.",
                     height: 30,
                     controller: _poNoController,
+                    focusNode: f1,
+                    onEditingComplete: () => f2.requestFocus(),
                   ),
                   Row(
                     children: [
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f2,
                           labelText: "Invoice No.",
                           height: 30,
                           controller: _InvoiceNoController,
+                          onEditingComplete: () => f3.requestFocus(),
                         ),
                       ),
                       Expanded(child: Container()),
@@ -312,6 +333,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         child: SizedBox(
                           height: 40,
                           child: DropdownButtonFormField2(
+                            focusNode: f3,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.zero,
                               border: OutlineInputBorder(
@@ -333,6 +355,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                 .toList(),
                             onChanged: (value) {
                               _freightController.text = value!;
+                              f4.requestFocus();
                             },
                             buttonStyleData: const ButtonStyleData(
                               height: 50,
@@ -373,6 +396,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                 _IncomingDateController.text =
                                     DateFormat('dd/MM/yy').format(selectedDate);
                               });
+                              f5.requestFocus();
                             }
                           },
                           child: AbsorbPointer(
@@ -380,7 +404,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               labelText: "Incoming Date",
                               controller: _IncomingDateController,
                               type: TextInputType.datetime,
+                              focusNode: f4,
                               height: 30,
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {}
+                              },
                               maxLength: 6,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
@@ -394,9 +422,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f5,
                           labelText: "Store By",
                           height: 30,
                           controller: _storeByController,
+                          onEditingComplete: () => f6.requestFocus(),
                         ),
                       ),
                     ],
@@ -406,6 +436,12 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f6,
+                          onEditingComplete: () {
+                            if (_packNoController.text.length == 8) {
+                              f7.requestFocus();
+                            }
+                          },
                           labelText: "Pack No.",
                           height: 30,
                           controller: _packNoController,
@@ -421,6 +457,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         child: BoxInputField(
                           labelText: "Roll No.",
                           height: 30,
+                          focusNode: f7,
+                          onEditingComplete: () => f8.requestFocus(),
                           controller: _rollNoController,
                           textInputFormatter: [
                             FilteringTextInputFormatter.allow(
@@ -436,9 +474,16 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f8,
                           labelText: "BarCode 1",
                           height: 30,
+                          maxLength: 27,
                           controller: _barCode1Controller,
+                          onEditingComplete: () {
+                            if (_barCode1Controller.text.length == 27) {
+                              f9.requestFocus();
+                            }
+                          },
                           onChanged: (value) {
                             if (value.length > 10) {
                               setState(() {
@@ -451,6 +496,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                     parsedValue.toStringAsFixed(2);
                               });
                             }
+                            _checkMfgDate();
                           },
                         ),
                       ),
@@ -458,6 +504,13 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          focusNode: f9,
+                          maxLength: 27,
+                          onEditingComplete: () {
+                            if (_barCode2Controller.text.length == 27) {
+                              f11.requestFocus();
+                            }
+                          },
                           labelText: "BarCode 2",
                           height: 30,
                           controller: _barCode2Controller,
@@ -500,13 +553,18 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         flex: 4,
                         child: GestureDetector(
                           onTap: () async {
-                            _checkMfgDate();
+                            if (_barCode1Controller.text.isNotEmpty) {
+                              _checkMfgDate();
+                              f11.requestFocus();
+                            } else {}
                           },
                           child: AbsorbPointer(
                             child: BoxInputField(
+                              focusNode: f10,
                               labelText: "Mfg. Date",
                               controller: _mfgDateController,
                               type: TextInputType.datetime,
+                              enabled: false,
                               height: 30,
                             ),
                           ),
@@ -516,9 +574,27 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Expanded(
                         flex: 4,
                         child: BoxInputField(
+                          maxLength: 1,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              setState(() {
+                                bgButton = COLOR_SUCESS;
+                              });
+                            } else {
+                              setState(() {
+                                bgButton = Colors.grey;
+                              });
+                            }
+                          },
+                          focusNode: f11,
                           labelText: "Wrap Grade",
                           height: 30,
                           controller: _wrapGradeController,
+                          onEditingComplete: () => {_checkValueController()},
                         ),
                       ),
                     ],
@@ -527,6 +603,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     height: 5,
                   ),
                   Button(
+                    bgColor: bgButton,
                     onPress: () {
                       _checkValueController();
                       // callFilmIn();

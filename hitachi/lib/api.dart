@@ -32,6 +32,8 @@ class ApiConfig {
   //Post
   static String LE_SEND_WINDING_FINISH =
       "${BASE_API_URL}LineElement/SendWindingFinish";
+  static String LE_CHECK_SEND_WINDING_FINISH =
+      "${BASE_API_URL}LineElement/WFCheckBatch?batch="; //ID
 
   ///---------------------REPORT ROUTE SHEET ----------------------///
 

@@ -2,7 +2,7 @@
     package="com.example.hitachi">
      <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="hitachi"
+        android:label="Element"
         android:usesCleartextTraffic="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

@@ -550,8 +550,7 @@ class FilmReceiveDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'w2', value: _item.W2),
               DataGridCell<String>(columnName: 'Weight', value: _item.WEIGHT),
               DataGridCell<String>(columnName: 'md', value: _item.MFG_DATE),
-              DataGridCell<String>(
-                  columnName: 'tn', value: _item.PACK_NO?.substring(0, 1)),
+              DataGridCell<String>(columnName: 'tn', value: _item.THICKNESS),
               DataGridCell<String>(columnName: 'wg', value: _item.WRAP_GRADE),
               DataGridCell<String>(columnName: 'rn', value: _item.ROLL_NO),
             ],

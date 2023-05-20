@@ -108,7 +108,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
               EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentStartSendLoadedState) {
               if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
+                EasyLoading.showSuccess("Send Complete.");
               } else if (state.item.RESULT == false) {
                 if (_machineNoController.text.isNotEmpty &&
                     _operatorNameController.text.isNotEmpty &&
@@ -156,11 +156,10 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     labelText: "Operator Name : ",
                     height: 35,
                     maxLength: 12,
+                    type: TextInputType.number,
                     controller: _operatorNameController,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   const SizedBox(

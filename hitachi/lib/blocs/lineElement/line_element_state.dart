@@ -78,6 +78,29 @@ class PostSendWindingFinishErrorState extends LineElementState {
   List<Object> get props => [error];
 }
 
+///  CheckWindingFinish
+class CheckWindingFinishLoadingState extends LineElementState {
+  const CheckWindingFinishLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class CheckWindingFinishLoadedState extends LineElementState {
+  const CheckWindingFinishLoadedState(this.item);
+  final CheckWdsFinishInputModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class CheckWindingFinishErrorState extends LineElementState {
+  const CheckWindingFinishErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
 // Check PACK NO
 class GetCheckPackLoadingState extends LineElementState {
   const GetCheckPackLoadingState();

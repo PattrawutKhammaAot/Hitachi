@@ -65,16 +65,15 @@ class _WindingJobFinishHoldScreenState
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_SHEET');
-
       List<WindingSheetModel> result = rows
-          .where((row) => row['start_end'] == 'E')
+          .where((row) => row['Element'] != null)
           .map((row) => WindingSheetModel.fromMap(
               row.map((key, value) => MapEntry(key, value.toString()))))
           .toList();
+
       return result;
-    } catch (e) {
-      print(e);
-      return [];
+    } on Exception {
+      throw Exception();
     }
   }
 
@@ -98,11 +97,11 @@ class _WindingJobFinishHoldScreenState
                   EasyLoading.showSuccess("Send complete",
                       duration: Duration(seconds: 3));
                 } else {
-                  EasyLoading.showError("Please Check Data");
+                  EasyLoading.showError("Failed To Send");
                 }
               }
               if (state is PostSendWindingFinishErrorState) {
-                EasyLoading.showError("Can not send");
+                EasyLoading.showError("Connection Timeout");
               }
             },
           )
@@ -407,22 +406,20 @@ class WindingsDataSource extends DataGridSource {
     try {
       if (process != null) {
         for (var _item in process) {
-          if (_item.START_END == 'E') {
-            _employees.add(
-              DataGridRow(
-                cells: [
-                  // DataGridCell<String>(
-                  //     columnName: 'operatorName', value: _item.OPERATOR_NAME),
-                  DataGridCell<String>(
-                      columnName: 'batch', value: _item.BATCH_NO),
-                  DataGridCell<String>(
-                      columnName: 'startEnd', value: _item.START_END),
-                  DataGridCell<String>(
-                      columnName: 'element', value: _item.ELEMENT),
-                ],
-              ),
-            );
-          }
+          _employees.add(
+            DataGridRow(
+              cells: [
+                // DataGridCell<String>(
+                //     columnName: 'operatorName', value: _item.OPERATOR_NAME),
+                DataGridCell<String>(
+                    columnName: 'batch', value: _item.BATCH_NO),
+                DataGridCell<String>(
+                    columnName: 'startEnd', value: _item.START_END),
+                DataGridCell<String>(
+                    columnName: 'element', value: _item.ELEMENT),
+              ],
+            ),
+          );
         }
       }
     } catch (e) {

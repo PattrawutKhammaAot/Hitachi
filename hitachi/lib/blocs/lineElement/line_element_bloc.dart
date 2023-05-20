@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
+import 'package:hitachi/models/SendWdFinish/checkWdsFinishModel.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
@@ -75,6 +76,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(PostSendWindingFinishLoadedState(mlist));
         } catch (e) {
           emit(PostSendWindingFinishErrorState(e.toString()));
+        }
+      },
+    );
+    on<CheckWindingFinishEvent>(
+      (event, emit) async {
+        try {
+          emit(CheckWindingFinishLoadingState());
+          final mlist = await fetchCheckWindingFinish(event.items);
+          emit(CheckWindingFinishLoadedState(mlist));
+        } catch (e) {
+          emit(CheckWindingFinishErrorState(e.toString()));
         }
       },
     );
@@ -182,13 +194,15 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<SendWdsFinishInputModel> fetchSendWindingFinish(
       SendWdsFinishOutputModel itemOutput) async {
     try {
-      Response responese = await dio.post(ApiConfig.LE_SEND_WINDING_FINISH,
-          options: Options(
-              headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
-          data: jsonEncode(itemOutput));
-      print(responese.data);
+      Response responese = await dio.post(
+        ApiConfig.LE_SEND_WINDING_FINISH,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
+        data: jsonEncode(itemOutput),
+      );
+
       SendWdsFinishInputModel post =
           SendWdsFinishInputModel.fromJson(responese.data);
 
@@ -196,6 +210,26 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     } catch (e, s) {
       print("catch Exception occured: $e StackTrace: $s");
       return SendWdsFinishInputModel();
+    }
+  }
+
+  //CheckWindingFinish
+  Future<CheckWdsFinishInputModel> fetchCheckWindingFinish(
+      String itemOutput) async {
+    try {
+      Response responese = await dio.get(
+        ApiConfig.LE_CHECK_SEND_WINDING_FINISH + itemOutput,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
+      );
+      print(responese.data);
+      CheckWdsFinishInputModel post =
+          CheckWdsFinishInputModel.fromJson(responese.data);
+      return post;
+    } on Exception {
+      throw Exception();
     }
   }
 
@@ -212,10 +246,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
       return post;
-    } catch (e, s) {
-      EasyLoading.showError("Check connection Internet");
-      print("$e" + "$s");
-      return CheckPackNoModel();
+    } on Exception {
+      throw Exception();
     }
   }
 

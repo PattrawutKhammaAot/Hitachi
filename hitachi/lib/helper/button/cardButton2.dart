@@ -23,7 +23,7 @@ class CardButton2 extends StatelessWidget {
               text ?? "",
               color: COLOR_WHITE,
               textAlign: TextAlign.center,
-              // fontSize: 16,
+              fontSize: 25,
             ),
           ),
         )),

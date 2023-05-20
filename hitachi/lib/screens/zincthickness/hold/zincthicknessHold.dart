@@ -9,8 +9,10 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/zincModelSqlite.dart';
 import 'package:hitachi/models/zincthickness/zincOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ZincThickNessHold extends StatefulWidget {
   const ZincThickNessHold({super.key});
@@ -21,59 +23,23 @@ class ZincThickNessHold extends StatefulWidget {
 
 class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  final TextEditingController _batchController = TextEditingController();
-  final TextEditingController _thickness1Controller = TextEditingController();
-  final TextEditingController _thickness2Controller = TextEditingController();
-  final TextEditingController _thickness3Controller = TextEditingController();
-  final TextEditingController _thickness4Controller = TextEditingController();
-  final TextEditingController _thickness6Controller = TextEditingController();
-  final TextEditingController _thickness7Controller = TextEditingController();
-  final TextEditingController _thickness8Controller = TextEditingController();
-  final TextEditingController _thickness9Controller = TextEditingController();
-  String? dateTime;
-  //FOCUS
-  final f1 = FocusNode();
-  final f2 = FocusNode();
-  final f3 = FocusNode();
-  final f4 = FocusNode();
-  final f5 = FocusNode();
-  final f6 = FocusNode();
-  final f7 = FocusNode();
-  final f8 = FocusNode();
-  final f9 = FocusNode();
-  final f10 = FocusNode();
-  //
-
-  Color t1 = Colors.black;
-  Color t2 = Colors.black;
-  Color t3 = Colors.black;
-  Color t4 = Colors.black;
-  Color t6 = Colors.black;
-  Color t7 = Colors.black;
-  Color t8 = Colors.black;
-  Color t9 = Colors.black;
-
-  Color bgButton = Colors.grey;
-
-  void _callApi() {
-    BlocProvider.of<ZincThicknessBloc>(context).add(
-      ZincThickNessSendEvent(ZincThicknessOutputModel(
-          BATCHNO: _batchController.text.trim(),
-          THICKNESS1: _thickness1Controller.text.trim(),
-          THICKNESS2: _thickness2Controller.text.trim(),
-          THICKNESS3: _thickness3Controller.text.trim(),
-          THICKNESS4: _thickness4Controller.text.trim(),
-          THICKNESS6: _thickness6Controller.text.trim(),
-          THICKNESS7: _thickness7Controller.text.trim(),
-          THICKNESS8: _thickness8Controller.text.trim(),
-          THICKNESS9: _thickness9Controller.text.trim(),
-          STARTDATE: dateTime)),
-    );
-  }
+  ZincDataSource? zincDataSource;
+  List<ZincModelSqlite>? zincList;
+  List<ZincModelSqlite> zincSqlite = [];
+  int? selectedRowIndex;
+  DataGridRow? datagridRow;
+  Color _colorSend = COLOR_GREY;
+  Color _colorDelete = COLOR_GREY;
 
   @override
   void initState() {
     _checkExpiresData();
+    _getZincSheet().then((result) {
+      setState(() {
+        zincList = result;
+        zincDataSource = ZincDataSource(process: zincList);
+      });
+    });
     super.initState();
   }
 
@@ -82,121 +48,21 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
     DateTime currentDate = DateTime.now();
     if (sql.length > 0) {
       await databaseHelper.deleted('ZINCTHICKNESS_SHEET',
-          "DATE(DateData, '+7 days') <  DATE(${currentDate})");
+          "DATE(DateData, '+7 days') < DATE('${currentDate}')");
     } else {
       EasyLoading.showError("Data not found");
     }
   }
 
-  void _checkvalueController() async {
-    if (_batchController.text.isNotEmpty) {
-      _getZincthicknessInSqlite();
-    } else {
-      EasyLoading.showError("Please Input Batch");
-    }
-  }
-
-  void _getZincthicknessInSqlite() async {
-    if (_batchController.text.trim().isNotEmpty) {
-      var sql = await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
-      bool found = false;
-      var items;
-      for (items in sql) {
-        if (_batchController.text.trim() == items['Batch'].trim()) {
-          found = true;
-          setState(() {
-            _thickness1Controller.text = items['Thickness1'];
-            _thickness2Controller.text = items['Thickness2'];
-            _thickness3Controller.text = items['Thickness3'];
-            _thickness4Controller.text = items['Thickness4'];
-            _thickness6Controller.text = items['Thickness6'];
-            _thickness7Controller.text = items['Thickness7'];
-            _thickness8Controller.text = items['Thickness8'];
-            _thickness9Controller.text = items['Thickness9'];
-            dateTime = items['DateData'];
-          });
-          break;
-        }
-      }
-      if (found) {
-        setState(() {
-          int? countValue1 =
-              int.tryParse(_thickness1Controller.text.trim().toString());
-          int? countValue2 =
-              int.tryParse(_thickness2Controller.text.trim().toString());
-          int? countValue3 =
-              int.tryParse(_thickness3Controller.text.trim().toString());
-          int? countValue4 =
-              int.tryParse(_thickness4Controller.text.trim().toString());
-          int? countValue6 =
-              int.tryParse(_thickness6Controller.text.trim().toString());
-          int? countValue7 =
-              int.tryParse(_thickness7Controller.text.trim().toString());
-          int? countValue8 =
-              int.tryParse(_thickness8Controller.text.trim().toString());
-          int? countValue9 =
-              int.tryParse(_thickness9Controller.text.trim().toString());
-          if (countValue1! < 20 || countValue1 > 45) {
-            t1 = COLOR_RED;
-          } else {
-            t1 = COLOR_BLACK;
-          }
-          if (countValue2! < 20 || countValue2 > 45) {
-            t2 = COLOR_RED;
-          } else {
-            t2 = COLOR_BLACK;
-          }
-          if (countValue3! < 20 || countValue3 > 45) {
-            t3 = COLOR_RED;
-          } else {
-            t3 = COLOR_BLACK;
-          }
-          if (countValue4! < 20 || countValue4 > 45) {
-            t4 = COLOR_RED;
-          } else {
-            t4 = COLOR_BLACK;
-          }
-
-          if (countValue6! < 45 || countValue6 > 70) {
-            t6 = COLOR_RED;
-          } else {
-            t6 = COLOR_BLACK;
-          }
-          if (countValue7! < 45 || countValue7 > 70) {
-            t7 = COLOR_RED;
-          } else {
-            t7 = COLOR_BLACK;
-          }
-          if (countValue8! < 45 || countValue8 > 70) {
-            t8 = COLOR_RED;
-          } else {
-            t8 = COLOR_BLACK;
-          }
-          if (countValue9! < 45 || countValue9 > 70) {
-            t9 = COLOR_RED;
-          } else {
-            t9 = COLOR_BLACK;
-          }
-          bgButton = COLOR_SUCESS;
-        });
-        _callApi();
-        // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
-      } else {
-        EasyLoading.showError("Data not Found");
-        setState(() {
-          _thickness1Controller.text = '';
-          _thickness2Controller.text = '';
-          _thickness3Controller.text = '';
-          _thickness4Controller.text = '';
-          _thickness6Controller.text = '';
-          _thickness7Controller.text = '';
-          _thickness8Controller.text = '';
-          _thickness9Controller.text = '';
-          bgButton = Colors.grey;
-        });
-      }
-    } else {
-      EasyLoading.showError("Please Input Batch No");
+  Future<List<ZincModelSqlite>> _getZincSheet() async {
+    try {
+      List<Map<String, dynamic>> rows =
+          await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
+      List<ZincModelSqlite> result =
+          rows.map((row) => ZincModelSqlite.fromMap(row)).toList();
+      return result;
+    } on Exception {
+      throw Exception();
     }
   }
 
@@ -212,6 +78,8 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
+                Navigator.pop(context);
+                deletedInfo();
                 EasyLoading.showSuccess("Send complete ",
                     duration: Duration(seconds: 3));
               } else if (state.item.RESULT == false) {
@@ -227,157 +95,422 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          body: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  RowBoxInputField(
-                    labelText: "Batch No. :",
-                    controller: _batchController,
-                    onEditingComplete: () {
-                      // print(BASE_API_URL);
-                      _getZincthicknessInSqlite();
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "1 = ",
-                          controller: _thickness1Controller,
-                          textColor: t1,
-                          focusNode: f1,
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                zincDataSource != null
+                    ? Expanded(
+                        child: Container(
+                          child: SfDataGrid(
+                            showCheckboxColumn: true,
+                            source: zincDataSource!,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            selectionMode: SelectionMode.multiple,
+                            onSelectionChanged:
+                                (selectedRows, deselectedRows) async {
+                              if (selectedRows.isNotEmpty) {
+                                setState(() {
+                                  selectedRowIndex = selectedRows.isNotEmpty
+                                      ? zincDataSource!.effectiveRows
+                                          .indexOf(selectedRows.first)
+                                      : null;
+
+                                  datagridRow = zincDataSource!.effectiveRows
+                                      .elementAt(selectedRowIndex!);
+                                  zincSqlite = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => ZincModelSqlite(
+                                          ID: int.tryParse(e.value.toString()),
+                                          CheckUser: e.value.toString(),
+                                          Batch: e.value.toString(),
+                                          Thickness1: e.value.toString(),
+                                          Thickness2: e.value.toString(),
+                                          Thickness3: e.value.toString(),
+                                          Thickness4: e.value.toString(),
+                                          Thickness6: e.value.toString(),
+                                          Thickness7: e.value.toString(),
+                                          Thickness8: e.value.toString(),
+                                          Thickness9: e.value.toString(),
+                                          DateData: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  _colorDelete = COLOR_RED;
+                                  _colorSend = COLOR_SUCESS;
+                                });
+                                print(selectedRowIndex);
+                              }
+                            },
+                            onCellTap: (details) async {
+                              if (details.rowColumnIndex.rowIndex != 0) {}
+                            },
+                            columns: <GridColumn>[
+                              GridColumn(
+                                columnName: 'batch',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Batch',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                  columnName: 't1',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label('Thickness1',
+                                          color: COLOR_WHITE),
+                                    ),
+                                  ),
+                                  width: 100),
+                              GridColumn(
+                                  columnName: 't2',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label('Thickness2',
+                                          color: COLOR_WHITE),
+                                    ),
+                                  ),
+                                  width: 100),
+                              GridColumn(
+                                  columnName: 't3',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label('Thickness3',
+                                          color: COLOR_WHITE),
+                                    ),
+                                  ),
+                                  width: 100),
+                              GridColumn(
+                                columnName: 't4',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness4', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 't6',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness6', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 't7',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness7', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 't8',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness8', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 't9',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness9', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'date',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('DateTime', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "6 = ",
-                          controller: _thickness6Controller,
-                          textColor: t6,
-                          focusNode: f6,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "2 = ",
-                          controller: _thickness2Controller,
-                          textColor: t2,
-                          focusNode: f2,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "7 = ",
-                          controller: _thickness7Controller,
-                          textColor: t7,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "3 = ",
-                          controller: _thickness3Controller,
-                          textColor: t3,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "8 = ",
-                          controller: _thickness8Controller,
-                          textColor: t8,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "4 = ",
-                          controller: _thickness4Controller,
-                          textColor: t4,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                      Expanded(
-                        flex: 2,
-                        child: RowBoxInputField(
-                          enabled: false,
-                          labelText: "9 = ",
-                          controller: _thickness9Controller,
-                          textColor: t9,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Button(
-                          bgColor: bgButton,
-                          onPress: () => _checkvalueController(),
-                          text: Label(
-                            "Send",
-                            color: COLOR_WHITE,
+                      )
+                    : CircularProgressIndicator(),
+                const SizedBox(height: 20),
+                selectedRowIndex != null
+                    ? Expanded(
+                        child: Container(
+                            child: ListView(
+                          children: [
+                            DataTable(
+                                horizontalMargin: 20,
+                                headingRowHeight: 30,
+                                dataRowHeight: 30,
+                                headingRowColor: MaterialStateColor.resolveWith(
+                                    (states) => COLOR_BLUE_DARK),
+                                border: TableBorder.all(
+                                  width: 1.0,
+                                  color: COLOR_BLACK,
+                                ),
+                                columns: [
+                                  DataColumn(
+                                    numeric: true,
+                                    label: Label(
+                                      "",
+                                      color: COLOR_BLUE_DARK,
+                                    ),
+                                  ),
+                                  DataColumn(label: Label(""))
+                                ],
+                                rows: [
+                                  DataRow(cells: [
+                                    DataCell(Center(child: Label("Batch"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Batch}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness1"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness1}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness2"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness2}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness3"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness3}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness4"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness4}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness6"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness6}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness7"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness7}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness8"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness8}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                        Center(child: Label("Thickness9"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].Thickness9}"))
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Center(child: Label("DateTime"))),
+                                    DataCell(Label(
+                                        "${zincList![selectedRowIndex!].DateData}"))
+                                  ])
+                                ])
+                          ],
+                        )),
+                      )
+                    : Expanded(
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Label(
+                                "No data",
+                                color: COLOR_RED,
+                                fontSize: 30,
+                              ),
+                              CircularProgressIndicator()
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  )
-                ],
-              ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Button(
+                      onPress: () {
+                        if (zincSqlite != null) {
+                          _AlertDialog();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
+                      },
+                      text: Label(
+                        "Delete",
+                        color: COLOR_WHITE,
+                      ),
+                      bgColor: _colorDelete,
+                    )),
+                    Expanded(child: Container()),
+                    Expanded(
+                        child: Button(
+                      text: Label("Send", color: COLOR_WHITE),
+                      bgColor: _colorSend,
+                      onPress: () {
+                        if (zincSqlite != null) {
+                          BlocProvider.of<ZincThicknessBloc>(context).add(
+                            ZincThickNessSendEvent(ZincThicknessOutputModel(
+// OPERATORNAME:int.tryParse(_)
+                                BATCHNO: zincList![selectedRowIndex!].Batch,
+                                THICKNESS1:
+                                    zincList![selectedRowIndex!].Thickness1,
+                                THICKNESS2:
+                                    zincList![selectedRowIndex!].Thickness2,
+                                THICKNESS3:
+                                    zincList![selectedRowIndex!].Thickness3,
+                                THICKNESS4:
+                                    zincList![selectedRowIndex!].Thickness4,
+                                THICKNESS6:
+                                    zincList![selectedRowIndex!].Thickness6,
+                                THICKNESS7:
+                                    zincList![selectedRowIndex!].Thickness7,
+                                THICKNESS8:
+                                    zincList![selectedRowIndex!].Thickness8,
+                                THICKNESS9:
+                                    zincList![selectedRowIndex!].Thickness9,
+                                STARTDATE:
+                                    zincList![selectedRowIndex!].DateData)),
+                          );
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
+                      },
+                    )),
+                  ],
+                )
+              ],
             ),
           )),
+    );
+  }
+
+  void _AlertDialog() async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label("Do you want Delete "),
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deletedInfo() async {
+    await databaseHelper.deletedRowSqlite(
+        tableName: 'ZINCTHICKNESS_SHEET',
+        columnName: 'ID',
+        columnValue: zincList![selectedRowIndex!].ID);
+  }
+}
+
+class ZincDataSource extends DataGridSource {
+  ZincDataSource({List<ZincModelSqlite>? process}) {
+    try {
+      if (process != null) {
+        for (var _item in process) {
+          _employees.add(
+            DataGridRow(
+              cells: [
+                DataGridCell<String>(columnName: 'batch', value: _item.Batch),
+                DataGridCell<String>(columnName: 't1', value: _item.Thickness1),
+                DataGridCell<String>(columnName: 't2', value: _item.Thickness2),
+                DataGridCell<String>(columnName: 't3', value: _item.Thickness3),
+                DataGridCell<String>(columnName: 't4', value: _item.Thickness4),
+                DataGridCell<String>(columnName: 't6', value: _item.Thickness6),
+                DataGridCell<String>(columnName: 't7', value: _item.Thickness7),
+                DataGridCell<String>(columnName: 't8', value: _item.Thickness8),
+                DataGridCell<String>(columnName: 't9', value: _item.Thickness9),
+                DataGridCell<String>(columnName: 'date', value: _item.DateData),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print(e);
+      EasyLoading.showError("Can not Call API");
+    }
+  }
+
+  List<DataGridRow> _employees = [];
+
+  @override
+  List<DataGridRow> get rows => _employees;
+
+  @override
+  DataGridRowAdapter? buildRow(DataGridRow row) {
+    return DataGridRowAdapter(
+      cells: row.getCells().map<Widget>(
+        (dataGridCell) {
+          return Container(
+            alignment: (dataGridCell.columnName == 'id' ||
+                    dataGridCell.columnName == 'qty')
+                ? Alignment.center
+                : Alignment.center,
+            child: Text(dataGridCell.value.toString()),
+          );
+        },
+      ).toList(),
     );
   }
 }

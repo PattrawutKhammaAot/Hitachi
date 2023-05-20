@@ -53,7 +53,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
   Color t9 = Colors.black;
 
   Color bgButton = Colors.grey;
-
+  String? dateTime;
   // void _getDataZincThickness({String? batch}) async {
   //   try {
   //     var sql = databaseHelper.fetchZincThickness(batch: batch);
@@ -124,25 +124,80 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         _thickness7Controller.text.isNotEmpty &&
         _thickness8Controller.text.isNotEmpty &&
         _thickness9Controller.text.isNotEmpty) {
-      convertValuesToDecimal();
+      if (t1 == COLOR_RED ||
+          t2 == COLOR_RED ||
+          t3 == COLOR_RED ||
+          t4 == COLOR_RED ||
+          t6 == COLOR_RED ||
+          t7 == COLOR_RED ||
+          t8 == COLOR_RED ||
+          t9 == COLOR_RED) {
+        _AlertDialog();
+      }
     } else {
       EasyLoading.showError("Please Input Info");
     }
   }
 
   void _insertSqlite() async {
-    await databaseHelper.insertSqlite('ZINCTHICKNESS_SHEET', {
-      'Batch': _batchController.text.trim(),
-      'Thickness1': _thickness1Controller.text.trim(),
-      'Thickness2': _thickness2Controller.text.trim(),
-      'Thickness3': _thickness3Controller.text.trim(),
-      'Thickness4': _thickness4Controller.text.trim(),
-      'Thickness6': _thickness6Controller.text.trim(),
-      'Thickness7': _thickness7Controller.text.trim(),
-      'Thickness8': _thickness8Controller.text.trim(),
-      'Thickness9': _thickness9Controller.text.trim(),
-      'DateData': DateTime.now().toString(),
-    });
+    var sql = await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
+    bool found = false;
+    var items;
+    for (items in sql) {
+      if (_batchController.text.trim() == items['Batch'].trim()) {
+        found = true;
+        print(found);
+        break;
+      }
+    }
+    if (found == true) {
+      await databaseHelper.updateSqlite(
+        'ZINCTHICKNESS_SHEET',
+        {
+          'Thickness1': _thickness1Controller.text.trim(),
+          'Thickness2': _thickness2Controller.text.trim(),
+          'Thickness3': _thickness3Controller.text.trim(),
+          'Thickness4': _thickness4Controller.text.trim(),
+          'Thickness6': _thickness6Controller.text.trim(),
+          'Thickness7': _thickness7Controller.text.trim(),
+          'Thickness8': _thickness8Controller.text.trim(),
+          'Thickness9': _thickness9Controller.text.trim(),
+        },
+        'Batch = ?',
+        [_batchController.text.trim()],
+      ); // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
+      _thickness1Controller.clear();
+      _thickness2Controller.clear();
+      _thickness3Controller.clear();
+      _thickness4Controller.clear();
+      _thickness6Controller.clear();
+      _thickness7Controller.clear();
+      _thickness8Controller.clear();
+      _thickness9Controller.clear();
+      print("isUpdate");
+    } else {
+      print("isNotUpdate");
+      await databaseHelper.insertSqlite('ZINCTHICKNESS_SHEET', {
+        'Batch': _batchController.text.trim(),
+        'Thickness1': _thickness1Controller.text.trim(),
+        'Thickness2': _thickness2Controller.text.trim(),
+        'Thickness3': _thickness3Controller.text.trim(),
+        'Thickness4': _thickness4Controller.text.trim(),
+        'Thickness6': _thickness6Controller.text.trim(),
+        'Thickness7': _thickness7Controller.text.trim(),
+        'Thickness8': _thickness8Controller.text.trim(),
+        'Thickness9': _thickness9Controller.text.trim(),
+        'DateData': DateTime.now().toString(),
+      });
+      _thickness1Controller.clear();
+      _thickness2Controller.clear();
+      _thickness3Controller.clear();
+      _thickness4Controller.clear();
+      _thickness6Controller.clear();
+      _thickness7Controller.clear();
+      _thickness8Controller.clear();
+      _thickness9Controller.clear();
+    }
   }
 
   double convertToDecimal(String value) {
@@ -151,7 +206,6 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
   }
 
   void convertValuesToDecimal() {
-    setState(() {});
     _callApi();
   }
 
@@ -167,11 +221,16 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("Send complete & Save Complete",
-                    duration: Duration(seconds: 3));
+                f1.requestFocus();
                 _insertSqlite();
+
+                setState(() {
+                  bgButton = Colors.grey;
+                });
+                EasyLoading.showSuccess("Send complete",
+                    duration: Duration(seconds: 3));
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Data not found & Save Complete");
+                EasyLoading.showError("Failed To Send");
                 _insertSqlite();
               }
             }
@@ -194,6 +253,13 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                   RowBoxInputField(
                     labelText: "Batch No. :",
                     controller: _batchController,
+                    maxLength: 12,
+                    onEditingComplete: () {
+                      if (_batchController.text.length == 12) {
+                        _getZincthicknessInSqlite();
+                        f1.requestFocus();
+                      }
+                    },
                   ),
                   const SizedBox(
                     height: 10,
@@ -209,7 +275,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t1,
                           focusNode: f1,
                           onEditingComplete: () {
-                            f2.requestFocus();
+                            if (_thickness1Controller.text.length == 2) {
+                              f2.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -241,7 +309,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t6,
                           focusNode: f6,
                           onEditingComplete: () {
-                            f7.requestFocus();
+                            if (_thickness6Controller.text.length == 2) {
+                              f7.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -280,7 +350,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t2,
                           focusNode: f2,
                           onEditingComplete: () {
-                            f3.requestFocus();
+                            if (_thickness2Controller.text.length == 2) {
+                              f3.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -311,7 +383,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t7,
                           focusNode: f7,
                           onEditingComplete: () {
-                            f8.requestFocus();
+                            if (_thickness7Controller.text.length == 2) {
+                              f8.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -350,7 +424,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t3,
                           focusNode: f3,
                           onEditingComplete: () {
-                            f4.requestFocus();
+                            if (_thickness3Controller.text.length == 2) {
+                              f4.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -381,7 +457,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t8,
                           focusNode: f8,
                           onEditingComplete: () {
-                            f9.requestFocus();
+                            if (_thickness8Controller.text.length == 2) {
+                              f9.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -420,7 +498,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                           textColor: t4,
                           focusNode: f4,
                           onEditingComplete: () {
-                            f6.requestFocus();
+                            if (_thickness4Controller.text.length == 2) {
+                              f6.requestFocus();
+                            }
                           },
                           onChanged: (value) {
                             setState(() {
@@ -535,6 +615,146 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  void _getZincthicknessInSqlite() async {
+    try {
+      if (_batchController.text.trim().isNotEmpty) {
+        var sql = await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
+        bool found = false;
+        var items;
+        for (items in sql) {
+          if (_batchController.text.trim() == items['Batch'].trim()) {
+            found = true;
+            setState(() {
+              _thickness1Controller.text = items['Thickness1'];
+              _thickness2Controller.text = items['Thickness2'];
+              _thickness3Controller.text = items['Thickness3'];
+              _thickness4Controller.text = items['Thickness4'];
+              _thickness6Controller.text = items['Thickness6'];
+              _thickness7Controller.text = items['Thickness7'];
+              _thickness8Controller.text = items['Thickness8'];
+              _thickness9Controller.text = items['Thickness9'];
+              dateTime = items['DateData'];
+            });
+            break;
+          }
+        }
+        if (found) {
+          setState(() {
+            int? countValue1 =
+                int.tryParse(_thickness1Controller.text.trim().toString());
+            int? countValue2 =
+                int.tryParse(_thickness2Controller.text.trim().toString());
+            int? countValue3 =
+                int.tryParse(_thickness3Controller.text.trim().toString());
+            int? countValue4 =
+                int.tryParse(_thickness4Controller.text.trim().toString());
+            int? countValue6 =
+                int.tryParse(_thickness6Controller.text.trim().toString());
+            int? countValue7 =
+                int.tryParse(_thickness7Controller.text.trim().toString());
+            int? countValue8 =
+                int.tryParse(_thickness8Controller.text.trim().toString());
+            int? countValue9 =
+                int.tryParse(_thickness9Controller.text.trim().toString());
+            if (countValue1! < 20 || countValue1 > 45) {
+              t1 = COLOR_RED;
+            } else {
+              t1 = COLOR_BLACK;
+            }
+            if (countValue2! < 20 || countValue2 > 45) {
+              t2 = COLOR_RED;
+            } else {
+              t2 = COLOR_BLACK;
+            }
+            if (countValue3! < 20 || countValue3 > 45) {
+              t3 = COLOR_RED;
+            } else {
+              t3 = COLOR_BLACK;
+            }
+            if (countValue4! < 20 || countValue4 > 45) {
+              t4 = COLOR_RED;
+            } else {
+              t4 = COLOR_BLACK;
+            }
+
+            if (countValue6! < 45 || countValue6 > 70) {
+              t6 = COLOR_RED;
+            } else {
+              t6 = COLOR_BLACK;
+            }
+            if (countValue7! < 45 || countValue7 > 70) {
+              t7 = COLOR_RED;
+            } else {
+              t7 = COLOR_BLACK;
+            }
+            if (countValue8! < 45 || countValue8 > 70) {
+              t8 = COLOR_RED;
+            } else {
+              t8 = COLOR_BLACK;
+            }
+            if (countValue9! < 45 || countValue9 > 70) {
+              t9 = COLOR_RED;
+            } else {
+              t9 = COLOR_BLACK;
+            }
+            bgButton = COLOR_SUCESS;
+          });
+
+          // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
+        } else {
+          EasyLoading.showError("Data not Found");
+          setState(() {
+            _thickness1Controller.text = '';
+            _thickness2Controller.text = '';
+            _thickness3Controller.text = '';
+            _thickness4Controller.text = '';
+            _thickness6Controller.text = '';
+            _thickness7Controller.text = '';
+            _thickness8Controller.text = '';
+            _thickness9Controller.text = '';
+            bgButton = Colors.grey;
+          });
+        }
+      } else {
+        EasyLoading.showError("Please Input Batch No");
+      }
+    } on Exception {
+      throw Exception();
+    }
+  }
+
+  void _AlertDialog() async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label("Do you want Send "),
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              convertValuesToDecimal();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

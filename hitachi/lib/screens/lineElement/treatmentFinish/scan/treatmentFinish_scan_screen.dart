@@ -155,11 +155,10 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     labelText: "Operator Name : ",
                     height: 35,
                     maxLength: 12,
+                    type: TextInputType.number,
                     controller: _operatorNameController,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   const SizedBox(

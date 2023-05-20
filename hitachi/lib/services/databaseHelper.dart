@@ -88,7 +88,6 @@ class DatabaseHelper {
   Future<int> deleted(String tableName, String row) async {
     Database db = await this.database;
 
-    print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.delete(tableName, where: row);
   }
 
@@ -96,7 +95,7 @@ class DatabaseHelper {
       String whereClause, List<dynamic> whereArgs) async {
     Database db = await this.database;
 
-    print("WriteData FucnTionUpdateDataSheet ${tableName}");
+    print("Update Data ${tableName}");
     return await db.update(tableName, row,
         where: whereClause, whereArgs: whereArgs);
   }
@@ -114,6 +113,25 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
     Database db = await this.database;
     return await db.query(tableName);
+  }
+
+  Future<List<Map<String, dynamic>>> queryWeight({
+    String? stringValue,
+    String? selected,
+    String? table,
+  }) async {
+    try {
+      String sql = "SELECT $selected " +
+          "FROM  $table " +
+          "WHERE BatchNo = '${stringValue}'"; // แก้ไขตรงนี้
+
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e, s) {
+      print(e);
+      print(s);
+      return [];
+    }
   }
 
   Future<List<Map<String, dynamic>>> queryDataSelect(
@@ -145,9 +163,14 @@ class DatabaseHelper {
 
   Future<void> deleteSave(
       {String? tableName, String? where, String? keyWhere}) async {
-    final Database db = await database;
-    String sql = "delete from ${tableName} WHERE ${where} = '${keyWhere}'";
-    await db.delete(sql);
+    try {
+      final Database db = await database;
+      String sql = "${tableName} WHERE ${where} = '${keyWhere}'";
+      print("Delete Success");
+      await db.delete(sql);
+    } on Exception {
+      throw Exception();
+    }
   }
 
   Future<int> updateWindingWeight(
@@ -724,7 +747,7 @@ class DatabaseHelper {
   void _createWindingWeightSheet(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_WEIGHT_SHEET ('
         'MachineNo TEXT, '
-        'BatchNo INTEGER,'
+        'BatchNo TEXT,'
         'Target REAL'
         ')');
   }

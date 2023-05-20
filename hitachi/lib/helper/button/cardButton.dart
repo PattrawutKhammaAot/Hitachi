@@ -42,6 +42,7 @@ class CardButton extends StatelessWidget {
                     color: colortext,
                     textAlign: textAlign,
                     fontWeight: fontWeight,
+                    fontSize: 25,
                   ),
                 ),
               ],

@@ -67,6 +67,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_SHEET');
       List<WindingSheetModel> result = rows
+          .where((row) => row['Status'] == 'P')
           .map((row) => WindingSheetModel.fromMap(
               row.map((key, value) => MapEntry(key, value.toString()))))
           .toList();
@@ -98,7 +99,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                   EasyLoading.showSuccess("Send complete",
                       duration: Duration(seconds: 3));
                 } else {
-                  EasyLoading.showError("Please Check Data");
+                  EasyLoading.showError("${state.item.MESSAGE}");
                 }
               } else {
                 EasyLoading.dismiss();
@@ -486,14 +487,6 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
               Navigator.pop(context);
               Navigator.pop(context);
               EasyLoading.showSuccess("Delete Success");
-              // Future.delayed(Duration(seconds: 2), () {
-              //   _getWindingSheet().then((result) {
-              //     setState(() {
-              //       wdsList = result;
-              //       WindingDataSource = WindingsDataSource(process: wdsList);
-              //     });
-              //   });
-              // });
             },
             child: const Text('OK'),
           ),
@@ -549,7 +542,7 @@ class WindingsDataSource extends DataGridSource {
                   columnName: 'batchno', value: _item.BATCH_NO),
               DataGridCell<String>(columnName: 'product', value: _item.PRODUCT),
               DataGridCell<String>(
-                  columnName: 'filmpackno', value: _item.FOIL_CORE),
+                  columnName: 'filmpackno', value: _item.PACK_NO),
               DataGridCell<String>(
                   columnName: 'papercodelot', value: _item.PAPER_CORE),
               DataGridCell<String>(
