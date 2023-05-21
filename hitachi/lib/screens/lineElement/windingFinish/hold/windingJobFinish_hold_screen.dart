@@ -42,7 +42,9 @@ class _WindingJobFinishHoldScreenState
   WindingsDataSource? WindingDataSource;
   List<WindingSheetModel>? wdsSqliteModel;
   List<WindingSheetModel> wdsList = [];
-  int? selectedRowIndex;
+  List<WindingSheetModel> selectAll = [];
+  int? index;
+  int? allRowIndex;
   DataGridRow? datagridRow;
   bool isClick = false;
   Color _colorSend = COLOR_GREY;
@@ -93,7 +95,6 @@ class _WindingJobFinishHoldScreenState
                 if (state.item.RESULT == true) {
                   Navigator.pop(context);
                   deletedInfo();
-
                   EasyLoading.showSuccess("Send complete",
                       duration: Duration(seconds: 3));
                 } else {
@@ -115,57 +116,67 @@ class _WindingJobFinishHoldScreenState
                       child: Container(
                         child: SfDataGrid(
                           source: WindingDataSource!,
-                          // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
+                          selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
-                          onCellTap: (details) async {
-                            if (details.rowColumnIndex.rowIndex != 0) {
+                          allowPullToRefresh: true,
+                          onSelectionChanged: (selectRow, deselectedRows) {
+                            if (selectRow.isNotEmpty) {
+                              print(selectRow.length);
+                              print(WindingDataSource!.effectiveRows.length);
+                              if (selectRow.length ==
+                                  WindingDataSource!.effectiveRows.length) {
+                                print("object");
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    allRowIndex = WindingDataSource!
+                                        .effectiveRows
+                                        .indexOf(row);
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                });
+                              } else if (selectRow.length !=
+                                  WindingDataSource!.effectiveRows.length) {
+                                setState(() {
+                                  index = selectRow.isNotEmpty
+                                      ? WindingDataSource!.effectiveRows
+                                          .indexOf(selectRow.first)
+                                      : null;
+                                  datagridRow = WindingDataSource!.effectiveRows
+                                      .elementAt(index!);
+                                  wdsSqliteModel = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => WindingSheetModel(
+                                          MACHINE_NO: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  if (!selectAll.contains(wdsList[index!])) {
+                                    selectAll.add(wdsList[index!]);
+                                    print(selectAll.length);
+                                  }
+                                  _colorDelete = COLOR_RED;
+                                  _colorSend = COLOR_SUCESS;
+                                  print(wdsList[index!].ID);
+                                });
+                              }
+                            } else {
                               setState(() {
-                                selectedRowIndex =
-                                    details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = WindingDataSource!.effectiveRows
-                                    .elementAt(selectedRowIndex!);
-                                wdsSqliteModel = datagridRow!
-                                    .getCells()
-                                    .map(
-                                      (e) => WindingSheetModel(
-                                        MACHINE_NO: e.value.toString(),
-                                        OPERATOR_NAME: e.value.toString(),
-                                        BATCH_NO: e.value.toString(),
-                                        PRODUCT: e.value.toString(),
-                                        PACK_NO: e.value.toString(),
-                                        PAPER_CORE: e.value.toString(),
-                                        PP_CORE: e.value.toString(),
-                                        FOIL_CORE: e.value.toString(),
-                                        BATCH_START_DATE: e.value.toString(),
-                                        BATCH_END_DATE: e.value.toString(),
-                                        ELEMENT: e.value.toString(),
-                                        STATUS: e.value.toString(),
-                                        START_END: e.value.toString(),
-                                        CHECK_COMPLETE: e.value.toString(),
-                                      ),
-                                    )
-                                    .toList();
-                                _colorDelete = COLOR_RED;
-                                _colorSend = COLOR_SUCESS;
+                                if (selectAll.contains(wdsList[index!])) {
+                                  selectAll.remove(wdsList[index!]);
+                                  print("check ${selectAll.length}");
+                                }
+                                _colorSend = Colors.grey;
+                                _colorDelete = Colors.grey;
                               });
+
+                              print('No Rows Selected');
                             }
                           },
                           columns: <GridColumn>[
-                            // GridColumn(
-                            //     columnName: 'operatorName',
-                            //     label: Container(
-                            //       color: COLOR_BLUE_DARK,
-                            //       child: Center(
-                            //           child: Label(
-                            //         'Operator Name.',
-                            //         fontSize: 14,
-                            //         color: COLOR_WHITE,
-                            //       )),
-                            //       // color: COLOR_BLUE_DARK,
-                            //     )),
                             GridColumn(
                               columnName: 'batch',
                               label: Container(
@@ -241,29 +252,19 @@ class _WindingJobFinishHoldScreenState
                                 DataColumn(label: Label(""))
                               ],
                               rows: [
-                                // DataRow(cells: [
-                                //   DataCell(
-                                //       Center(child: Label("Operator Name"))),
-                                //   DataCell(Label(wdsList[selectedRowIndex!]
-                                //           .OPERATOR_NAME ??
-                                //       ""))
-                                // ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Batch No."))),
-                                  DataCell(Label(
-                                      wdsList[selectedRowIndex!].BATCH_NO ??
-                                          ""))
+                                  DataCell(
+                                      Label(wdsList[index!].BATCH_NO ?? ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Finish Date"))),
-                                  DataCell(Label(
-                                      wdsList[selectedRowIndex!].START_END ??
-                                          ""))
+                                  DataCell(
+                                      Label(wdsList[index!].START_END ?? ""))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Element"))),
-                                  DataCell(Label(
-                                      wdsList[selectedRowIndex!].ELEMENT ?? ""))
+                                  DataCell(Label(wdsList[index!].ELEMENT ?? ""))
                                 ]),
                               ])
                         ],
@@ -290,7 +291,7 @@ class _WindingJobFinishHoldScreenState
                   Expanded(
                       child: Button(
                     onPress: () {
-                      if (wdsSqliteModel != null) {
+                      if (wdsList.isNotEmpty) {
                         _AlertDialog();
                         setState(() {});
                       } else {
@@ -309,7 +310,7 @@ class _WindingJobFinishHoldScreenState
                     text: Label("Send", color: COLOR_WHITE),
                     bgColor: _colorSend,
                     onPress: () {
-                      if (wdsSqliteModel != null) {
+                      if (wdsList != null) {
                         _sendDataServer();
                       } else {
                         EasyLoading.showInfo("Please Select Data");
@@ -336,8 +337,7 @@ class _WindingJobFinishHoldScreenState
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Label(
-                  "Do you want Delete \n BatchNo ${wdsList[selectedRowIndex!].BATCH_NO}"),
+              child: Label("Do you want Delete "),
             ),
           ],
         ),
@@ -349,7 +349,10 @@ class _WindingJobFinishHoldScreenState
           ),
           TextButton(
             onPressed: () {
-              _checkValueController();
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
           ),
@@ -358,42 +361,51 @@ class _WindingJobFinishHoldScreenState
     );
   }
 
-  void _checkValueController() async {
-    deletedInfo();
-    Navigator.pop(context);
-    Navigator.pop(context);
-    EasyLoading.showSuccess("Delete Success");
-    // Future.delayed(Duration(seconds: 2), () {
-    //   _getWindingSheet().then((result) {
-    //     setState(() {
-    //       wdsList = result;
-    //       WindingDataSource = WindingsDataSource(process: wdsList);
-    //     });
-    //   });
-    // });
-  }
-
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'WINDING_SHEET',
-        columnName: 'ID',
-        columnValue: wdsList[selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'WINDING_SHEET', columnName: 'ID', columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in wdsList) {
+        await databaseHelper.deletedRowSqlite(
+          tableName: 'WINDING_SHEET',
+          columnName: 'ID',
+          columnValue: row.ID,
+        );
+      }
+    } else {}
   }
 
   void _sendDataServer() async {
-    BlocProvider.of<LineElementBloc>(context).add(
-      PostSendWindingFinishEvent(
-        SendWdsFinishOutputModel(
-          OPERATOR_NAME:
-              int.tryParse(wdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
-          BATCH_NO:
-              int.tryParse(wdsList[selectedRowIndex!].BATCH_NO.toString()),
-          ELEMNT_QTY:
-              int.tryParse(wdsList[selectedRowIndex!].ELEMENT.toString()),
-          FINISH_DATE: DateTime.now().toString(),
-        ),
-      ),
-    );
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<LineElementBloc>(context).add(
+          PostSendWindingFinishEvent(
+            SendWdsFinishOutputModel(
+              OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
+              ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
+              FINISH_DATE: DateTime.now().toString(),
+            ),
+          ),
+        );
+      }
+    } else if (allRowIndex != null) {
+      for (var row in wdsList) {
+        BlocProvider.of<LineElementBloc>(context).add(
+          PostSendWindingFinishEvent(
+            SendWdsFinishOutputModel(
+              OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
+              ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
+              FINISH_DATE: DateTime.now().toString(),
+            ),
+          ),
+        );
+      }
+    } else {}
   }
 
   void _LoadingData() {

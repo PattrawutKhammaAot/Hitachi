@@ -133,7 +133,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       //CheckValueRow
       // var sql_machine = sql_windingSheet[0];
-      if (sql_windingSheet.length == 0) {
+      if (sql_windingSheet.length <= 0) {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
             select2: 'S1',

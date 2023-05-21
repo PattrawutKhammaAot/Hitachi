@@ -26,7 +26,9 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   ZincDataSource? zincDataSource;
   List<ZincModelSqlite>? zincList;
   List<ZincModelSqlite> zincSqlite = [];
-  int? selectedRowIndex;
+  List<ZincModelSqlite> selectAll = [];
+  int? index;
+  int? allRowIndex;
   DataGridRow? datagridRow;
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
@@ -109,43 +111,60 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
                             onSelectionChanged:
-                                (selectedRows, deselectedRows) async {
-                              if (selectedRows.isNotEmpty) {
-                                setState(() {
-                                  selectedRowIndex = selectedRows.isNotEmpty
-                                      ? zincDataSource!.effectiveRows
-                                          .indexOf(selectedRows.first)
-                                      : null;
+                                (selectRow, deselectedRows) async {
+                              if (selectRow.isNotEmpty) {
+                                if (selectRow.length ==
+                                    zincDataSource!.effectiveRows.length) {
+                                  print("all");
+                                  setState(() {
+                                    selectRow.forEach((row) {
+                                      allRowIndex = zincDataSource!
+                                          .effectiveRows
+                                          .indexOf(row);
 
-                                  datagridRow = zincDataSource!.effectiveRows
-                                      .elementAt(selectedRowIndex!);
-                                  zincSqlite = datagridRow!
-                                      .getCells()
-                                      .map(
-                                        (e) => ZincModelSqlite(
-                                          ID: int.tryParse(e.value.toString()),
-                                          CheckUser: e.value.toString(),
-                                          Batch: e.value.toString(),
-                                          Thickness1: e.value.toString(),
-                                          Thickness2: e.value.toString(),
-                                          Thickness3: e.value.toString(),
-                                          Thickness4: e.value.toString(),
-                                          Thickness6: e.value.toString(),
-                                          Thickness7: e.value.toString(),
-                                          Thickness8: e.value.toString(),
-                                          Thickness9: e.value.toString(),
-                                          DateData: e.value.toString(),
-                                        ),
-                                      )
-                                      .toList();
-                                  _colorDelete = COLOR_RED;
-                                  _colorSend = COLOR_SUCESS;
+                                      _colorSend = COLOR_SUCESS;
+                                      _colorDelete = COLOR_RED;
+                                    });
+                                  });
+                                } else if (selectRow.length !=
+                                    zincDataSource!.effectiveRows.length) {
+                                  setState(() {
+                                    selectRow.forEach((element) {
+                                      index = selectRow.isNotEmpty
+                                          ? zincDataSource!.effectiveRows
+                                              .indexOf(element)
+                                          : null;
+                                      datagridRow = zincDataSource!
+                                          .effectiveRows
+                                          .elementAt(index!);
+                                      zincSqlite = datagridRow!
+                                          .getCells()
+                                          .map(
+                                            (e) => ZincModelSqlite(),
+                                          )
+                                          .toList();
+                                    });
+                                    if (!selectAll
+                                        .contains(zincList![index!])) {
+                                      selectAll.add(zincList![index!]);
+                                      print(selectAll.length);
+                                    }
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  if (selectAll.contains(zincList![index!])) {
+                                    selectAll.remove(zincList![index!]);
+                                    print(selectAll.length);
+                                  }
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
                                 });
-                                print(selectedRowIndex);
+
+                                print('No Rows Selected');
                               }
-                            },
-                            onCellTap: (details) async {
-                              if (details.rowColumnIndex.rowIndex != 0) {}
                             },
                             columns: <GridColumn>[
                               GridColumn(
@@ -256,7 +275,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                selectedRowIndex != null
+                index != null
                     ? Expanded(
                         child: Container(
                             child: ListView(
@@ -284,61 +303,61 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 rows: [
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch"))),
-                                    DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Batch}"))
+                                    DataCell(
+                                        Label("${zincList![index!].Batch}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness1"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness1}"))
+                                        "${zincList![index!].Thickness1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness2"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness2}"))
+                                        "${zincList![index!].Thickness2}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness3"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness3}"))
+                                        "${zincList![index!].Thickness3}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness4"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness4}"))
+                                        "${zincList![index!].Thickness4}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness6"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness6}"))
+                                        "${zincList![index!].Thickness6}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness7"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness7}"))
+                                        "${zincList![index!].Thickness7}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness8"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness8}"))
+                                        "${zincList![index!].Thickness8}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Thickness9"))),
                                     DataCell(Label(
-                                        "${zincList![selectedRowIndex!].Thickness9}"))
+                                        "${zincList![index!].Thickness9}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("DateTime"))),
-                                    DataCell(Label(
-                                        "${zincList![selectedRowIndex!].DateData}"))
+                                    DataCell(
+                                        Label("${zincList![index!].DateData}"))
                                   ])
                                 ])
                           ],
@@ -384,29 +403,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                       bgColor: _colorSend,
                       onPress: () {
                         if (zincSqlite != null) {
-                          BlocProvider.of<ZincThicknessBloc>(context).add(
-                            ZincThickNessSendEvent(ZincThicknessOutputModel(
-// OPERATORNAME:int.tryParse(_)
-                                BATCHNO: zincList![selectedRowIndex!].Batch,
-                                THICKNESS1:
-                                    zincList![selectedRowIndex!].Thickness1,
-                                THICKNESS2:
-                                    zincList![selectedRowIndex!].Thickness2,
-                                THICKNESS3:
-                                    zincList![selectedRowIndex!].Thickness3,
-                                THICKNESS4:
-                                    zincList![selectedRowIndex!].Thickness4,
-                                THICKNESS6:
-                                    zincList![selectedRowIndex!].Thickness6,
-                                THICKNESS7:
-                                    zincList![selectedRowIndex!].Thickness7,
-                                THICKNESS8:
-                                    zincList![selectedRowIndex!].Thickness8,
-                                THICKNESS9:
-                                    zincList![selectedRowIndex!].Thickness9,
-                                STARTDATE:
-                                    zincList![selectedRowIndex!].DateData)),
-                          );
+                          _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
                         }
@@ -455,11 +452,61 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
     );
   }
 
+  void _sendDataServer() async {
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<ZincThicknessBloc>(context).add(
+          ZincThickNessSendEvent(ZincThicknessOutputModel(
+// OPERATORNAME:int.tryParse(_)
+              BATCHNO: row.Batch,
+              THICKNESS1: row.Thickness1,
+              THICKNESS2: row.Thickness2,
+              THICKNESS3: row.Thickness3,
+              THICKNESS4: row.Thickness4,
+              THICKNESS6: row.Thickness6,
+              THICKNESS7: row.Thickness7,
+              THICKNESS8: row.Thickness8,
+              THICKNESS9: row.Thickness9,
+              STARTDATE: row.DateData)),
+        );
+        print("Check ${row.ID}");
+      }
+    } else if (allRowIndex != null) {
+      for (var row in zincList!) {
+        BlocProvider.of<ZincThicknessBloc>(context).add(
+          ZincThickNessSendEvent(ZincThicknessOutputModel(
+// OPERATORNAME:int.tryParse(_)
+              BATCHNO: row.Batch,
+              THICKNESS1: row.Thickness1,
+              THICKNESS2: row.Thickness2,
+              THICKNESS3: row.Thickness3,
+              THICKNESS4: row.Thickness4,
+              THICKNESS6: row.Thickness6,
+              THICKNESS7: row.Thickness7,
+              THICKNESS8: row.Thickness8,
+              THICKNESS9: row.Thickness9,
+              STARTDATE: row.DateData)),
+        );
+      }
+    }
+  }
+
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'ZINCTHICKNESS_SHEET',
-        columnName: 'ID',
-        columnValue: zincList![selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'ZINCTHICKNESS_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in zincList!) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'ZINCTHICKNESS_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    }
   }
 }
 

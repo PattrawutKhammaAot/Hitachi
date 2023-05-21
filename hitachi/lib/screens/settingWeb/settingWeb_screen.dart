@@ -73,7 +73,11 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                     height: 10,
                   ),
                   Label(
-                    " ${TEMP_API_URL}",
+                    "Test\n${TEMP_API_URL}",
+                    fontSize: 20,
+                  ),
+                  Label(
+                    "current\n${BASE_API_URL}",
                     fontSize: 20,
                   ),
                   SizedBox(

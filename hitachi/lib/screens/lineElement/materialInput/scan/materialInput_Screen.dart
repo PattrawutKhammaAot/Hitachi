@@ -80,10 +80,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
 
   void _insertSqlite() async {
     await databaseHelper.insertSqlite('MATERIAL_TRACE_SHEET', {
-      'Material': _machineOrProcessController.text.trim(),
+      'Material': _materialController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'BatchNo': _batchOrSerialController.text.trim(),
+      'MachineNo': _machineOrProcessController.text.trim(),
       'LotNo1': _lotNoController.text.trim(),
+      'Date1': DateTime.now().toString()
     });
   }
 

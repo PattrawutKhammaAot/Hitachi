@@ -11,6 +11,8 @@ import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
+import '../../../models/machineBreakdown/machinebreakdownOutputMode.dart';
+
 class MachineBreakDownHoldScreen extends StatefulWidget {
   const MachineBreakDownHoldScreen({super.key});
 
@@ -22,10 +24,12 @@ class MachineBreakDownHoldScreen extends StatefulWidget {
 class _MachineBreakDownHoldScreenState
     extends State<MachineBreakDownHoldScreen> {
   final TextEditingController password = TextEditingController();
-  BreakDownDataSource? BreakdownDataSource;
+  BreakDownDataSource? breakdownDataSource;
   List<BreakDownSheetModel>? bdsSqliteModel;
   List<BreakDownSheetModel> bdsList = [];
-  int? selectedRowIndex;
+  List<BreakDownSheetModel> selectAll = [];
+  int? index;
+  int? allRowIndex;
   DataGridRow? datagridRow;
   bool isClick = false;
   Color _colorSend = COLOR_GREY;
@@ -40,7 +44,7 @@ class _MachineBreakDownHoldScreenState
     _getWindingSheet().then((result) {
       setState(() {
         bdsList = result;
-        BreakdownDataSource = BreakDownDataSource(process: bdsList);
+        breakdownDataSource = BreakDownDataSource(process: bdsList);
       });
     });
   }
@@ -93,34 +97,101 @@ class _MachineBreakDownHoldScreenState
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              BreakdownDataSource != null
+              breakdownDataSource != null
                   ? Expanded(
                       child: Container(
                         child: SfDataGrid(
-                          source: BreakdownDataSource!,
+                          source: breakdownDataSource!,
                           // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
+                          selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
-                          onCellTap: (details) async {
-                            if (details.rowColumnIndex.rowIndex != 0) {
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            if (selectRow.isNotEmpty) {
+                              if (selectRow.length ==
+                                  breakdownDataSource!.effectiveRows.length) {
+                                print("all");
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    allRowIndex = breakdownDataSource!
+                                        .effectiveRows
+                                        .indexOf(row);
+
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                });
+                              } else if (selectRow.length !=
+                                  breakdownDataSource!.effectiveRows.length) {
+                                setState(() {
+                                  index = selectRow.isNotEmpty
+                                      ? breakdownDataSource!.effectiveRows
+                                          .indexOf(selectRow.first)
+                                      : null;
+
+                                  datagridRow = breakdownDataSource!
+                                      .effectiveRows
+                                      .elementAt(index!);
+                                  bdsSqliteModel = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => BreakDownSheetModel(
+                                          MACHINE_NO: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  if (!selectAll.contains(bdsList[index!])) {
+                                    selectAll.add(bdsList[index!]);
+                                    print(selectAll.length);
+                                  }
+                                  // selectAll.add(bdsList[index!]);
+
+                                  _colorSend = COLOR_SUCESS;
+                                  _colorDelete = COLOR_RED;
+                                });
+                              }
+                            } else {
                               setState(() {
-                                selectedRowIndex =
-                                    details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = BreakdownDataSource!.effectiveRows
-                                    .elementAt(selectedRowIndex!);
-                                bdsSqliteModel = datagridRow!
-                                    .getCells()
-                                    .map(
-                                      (e) => BreakDownSheetModel(),
-                                    )
-                                    .toList();
-                                _colorSend = COLOR_SUCESS;
-                                _colorDelete = COLOR_RED;
+                                if (selectAll.contains(bdsList[index!])) {
+                                  selectAll.remove(bdsList[index!]);
+                                  print("check ${selectAll.length}");
+                                }
+                                // if (selectRow.isEmpty) {
+                                //   selectAll.clear();
+                                //   print(selectAll.length);
+                                //   print("selectAll.length");
+                                // } else {
+                                //   selectAll.remove(bdsList[index!]);
+                                //   print(selectAll.length);
+                                // }
+
+                                _colorSend = Colors.grey;
+                                _colorDelete = Colors.grey;
                               });
+
+                              print('No Rows Selected');
                             }
                           },
+                          // onCellTap: (details) async {
+                          //   if (details.rowColumnIndex.rowIndex != 0) {
+                          //     setState(() {
+                          //       selectedRowIndex =
+                          //           details.rowColumnIndex.rowIndex - 1;
+                          //       datagridRow = BreakdownDataSource!.effectiveRows
+                          //           .elementAt(selectedRowIndex!);
+                          //       bdsSqliteModel = datagridRow!
+                          //           .getCells()
+                          //           .map(
+                          //             (e) => BreakDownSheetModel(),
+                          //           )
+                          //           .toList();
+                          //       _colorSend = COLOR_SUCESS;
+                          //       _colorDelete = COLOR_RED;
+                          //     });
+                          //   }
+                          // },
                           columns: <GridColumn>[
                             GridColumn(
                                 columnName: 'machineno',
@@ -293,65 +364,63 @@ class _MachineBreakDownHoldScreenState
                               rows: [
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Machine No."))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].MACHINE_NO}"))
+                                  DataCell(
+                                      Label("${bdsList[index!].MACHINE_NO}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("OperatorName"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].OPERATOR_NAME}"))
+                                  DataCell(
+                                      Label("${bdsList[index!].OPERATOR_NAME}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("SERVICE"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].SERVICE_NO}"))
+                                  DataCell(
+                                      Label("${bdsList[index!].SERVICE_NO}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("BreakStartDate"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].BREAK_START_DATE}"))
+                                      "${bdsList[index!].BREAK_START_DATE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Tech1"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].TECH_1}"))
+                                  DataCell(Label("${bdsList[index!].TECH_1}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("StartTech1"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_1}"))
+                                      "${bdsList[index!].START_TECH_DATE_1}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Tech2"))),
-                                  DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].TECH_2}"))
+                                  DataCell(Label("${bdsList[index!].TECH_2}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("StartTech2"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].START_TECH_DATE_2}"))
+                                      "${bdsList[index!].START_TECH_DATE_2}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("StopTech1"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_1}"))
+                                      "${bdsList[index!].STOP_DATE_TECH_1}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("StopTech2"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].STOP_DATE_TECH_2}"))
+                                      "${bdsList[index!].STOP_DATE_TECH_2}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Accept"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].OPERATOR_ACCEPT}"))
+                                      "${bdsList[index!].OPERATOR_ACCEPT}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("BreakStop"))),
                                   DataCell(Label(
-                                      "${bdsList[selectedRowIndex!].BREAK_STOP_DATE}"))
+                                      "${bdsList[index!].BREAK_STOP_DATE}"))
                                 ]),
                               ])
                         ],
@@ -423,8 +492,7 @@ class _MachineBreakDownHoldScreenState
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Label(
-                  "Do you want Delete \n MachineNo ${bdsList[selectedRowIndex!].MACHINE_NO}"),
+              child: Label("Do you want Delete "),
             ),
           ],
         ),
@@ -435,7 +503,13 @@ class _MachineBreakDownHoldScreenState
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _checkValueController(),
+            onPressed: () {
+              deletedInfo();
+
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
+            },
             child: const Text('OK'),
           ),
         ],
@@ -443,39 +517,69 @@ class _MachineBreakDownHoldScreenState
     );
   }
 
-  void _checkValueController() async {
-    deletedInfo();
-
-    Navigator.pop(context);
-    Navigator.pop(context);
-    EasyLoading.showSuccess("Delete Success");
-  }
-
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'BREAKDOWN_SHEET',
-        columnName: 'ID',
-        columnValue: bdsList[selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'BREAKDOWN_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in bdsList) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'BREAKDOWN_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    }
   }
 
   void _sendDataServer() async {
-    // BlocProvider.of<LineElementBloc>(context).add(
-    //   PostSendWindingStartEvent(
-    //     SendWindingStartModelOutput(
-    //         MACHINE_NO: bdsList[selectedRowIndex!].MACHINE_NO,
-    //         OPERATOR_NAME: int.tryParse(
-    //             bdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
-    //         PRODUCT: int.tryParse(
-    //           bdsList[selectedRowIndex!].PRODUCT.toString(),
-    //         ),
-    //         FILM_PACK_NO: int.tryParse(
-    //           bdsList[selectedRowIndex!].PACK_NO.toString(),
-    //         ),
-    //         PAPER_CODE_LOT: bdsList[selectedRowIndex!].PAPER_CORE,
-    //         PP_FILM_LOT: bdsList[selectedRowIndex!].PP_CORE,
-    //         FOIL_LOT: bdsList[selectedRowIndex!].FOIL_CORE),
-    //   ),
-    // );
+    if (index != null) {
+      for (var row in selectAll) {
+        // BlocProvider.of<MachineBreakDownBloc>(context).add(
+        //   MachineBreakDownSendEvent(
+        //     MachineBreakDownOutputModel(
+        //       MACHINE_NO: row.MACHINE_NO,
+        //       OPERATOR_NAME: row.OPERATOR_NAME,
+        //       SERVICE: row.SERVICE_NO,
+        //       BREAK_START_DATE: row.BREAK_START_DATE,
+        //       TECH1: row.TECH_1,
+        //       START_DATE_TECH_1: row.START_TECH_DATE_1,
+        //       TECH2: row.TECH_2,
+        //       START_DATE_TECH_2: row.START_TECH_DATE_2,
+        //       STOP_TECH_DATE_1: row.STOP_DATE_TECH_1,
+        //       STOP_TECH_DATE_2: row.STOP_DATE_TECH_2,
+        //       ACCEPT: row.OPERATOR_ACCEPT,
+        //       BREAK_STOP_DATE: row.BREAK_STOP_DATE,
+        //     ),
+        //   ),
+        // );
+        print(row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in bdsList) {
+        BlocProvider.of<MachineBreakDownBloc>(context).add(
+          MachineBreakDownSendEvent(
+            MachineBreakDownOutputModel(
+              MACHINE_NO: row.MACHINE_NO,
+              OPERATOR_NAME: row.OPERATOR_NAME,
+              SERVICE: row.SERVICE_NO,
+              BREAK_START_DATE: row.BREAK_START_DATE,
+              TECH1: row.TECH_1,
+              START_DATE_TECH_1: row.START_TECH_DATE_1,
+              TECH2: row.TECH_2,
+              START_DATE_TECH_2: row.START_TECH_DATE_2,
+              STOP_TECH_DATE_1: row.STOP_DATE_TECH_1,
+              STOP_TECH_DATE_2: row.STOP_DATE_TECH_2,
+              ACCEPT: row.OPERATOR_ACCEPT,
+              BREAK_STOP_DATE: row.BREAK_STOP_DATE,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   void _selectData() {

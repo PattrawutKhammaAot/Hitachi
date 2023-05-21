@@ -25,7 +25,18 @@ class WindingJobStartHoldScreen extends StatefulWidget {
 
 class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  // final TextEditingController machineNo = TextEditingController();
+  // final TextEditingController operatorName = TextEditingController();
+  // final TextEditingController batchNo = TextEditingController();
+  // final TextEditingController product = TextEditingController();
+  // final TextEditingController filmPackNo = TextEditingController();
+  // final TextEditingController paperCodeLot = TextEditingController();
+  // final TextEditingController ppFilmLot = TextEditingController();
+  // final TextEditingController foilLot = TextEditingController();
+  // final TextEditingController batchstartdate = TextEditingController();
+  // final TextEditingController batchenddate = TextEditingController();
+  // final TextEditingController element = TextEditingController();
+  // final TextEditingController status = TextEditingController();
   final TextEditingController password = TextEditingController();
   WindingsDataSource? WindingDataSource;
   // List<WindingSheetModel>? wdsSqliteModel;
@@ -36,9 +47,8 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
   bool isHidewidget = false;
-  List<WindingSheetModel> selectAll = [];
-  int? index;
-  int? allRowIndex;
+  List<WindingSheetModel> wdsSelectdAll = [];
+  int? selectedRowIndex;
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
@@ -115,63 +125,88 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                             allowPullToRefresh: true,
                             // selectionManager:SelectionManagerBase(),
                             onSelectionChanged:
-                                (selectRow, deselectedRows) async {
-                              if (selectRow.isNotEmpty) {
-                                if (selectRow.length ==
-                                    WindingDataSource!.effectiveRows.length) {
-                                  print("all");
-                                  setState(() {
-                                    selectRow.forEach((row) {
-                                      allRowIndex = WindingDataSource!
-                                          .effectiveRows
-                                          .indexOf(row);
-
-                                      _colorSend = COLOR_SUCESS;
-                                      _colorDelete = COLOR_RED;
-                                    });
-                                  });
-                                } else if (selectRow.length !=
-                                    WindingDataSource!.effectiveRows.length) {
-                                  setState(() {
-                                    index = selectRow.isNotEmpty
-                                        ? WindingDataSource!.effectiveRows
-                                            .indexOf(selectRow.first)
-                                        : null;
-                                    datagridRow = WindingDataSource!
-                                        .effectiveRows
-                                        .elementAt(index!);
-                                    wdsSqliteModel = datagridRow!
-                                        .getCells()
-                                        .map(
-                                          (e) => WindingSheetModel(
-                                            MACHINE_NO: e.value.toString(),
-                                          ),
-                                        )
-                                        .toList();
-                                    // selectAll.add(wdsList[index!]);
-                                    if (!selectAll.contains(wdsList[index!])) {
-                                      selectAll.add(wdsList[index!]);
-                                      print(selectAll.length);
-                                    }
-                                    _colorSend = COLOR_SUCESS;
-                                    _colorDelete = COLOR_RED;
-                                  });
-                                }
+                                (selectedRows, deselectedRows) async {
+                              if (selectedRows.isNotEmpty) {
+                                setState(() {
+                                  selectedRowIndex = selectedRows.isNotEmpty
+                                      ? WindingDataSource!.effectiveRows
+                                          .indexOf(selectedRows.first)
+                                      : null;
+                                  datagridRow = WindingDataSource!.effectiveRows
+                                      .elementAt(selectedRowIndex!);
+                                  wdsSqliteModel = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => WindingSheetModel(
+                                          MACHINE_NO: e.value.toString(),
+                                          OPERATOR_NAME: e.value.toString(),
+                                          BATCH_NO: e.value.toString(),
+                                          PRODUCT: e.value.toString(),
+                                          PACK_NO: e.value.toString(),
+                                          PAPER_CORE: e.value.toString(),
+                                          PP_CORE: e.value.toString(),
+                                          FOIL_CORE: e.value.toString(),
+                                          BATCH_START_DATE: e.value.toString(),
+                                          BATCH_END_DATE: e.value.toString(),
+                                          ELEMENT: e.value.toString(),
+                                          STATUS: e.value.toString(),
+                                          START_END: e.value.toString(),
+                                          CHECK_COMPLETE: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  print(wdsList[selectedRowIndex!].ID);
+                                  _colorSend = COLOR_SUCESS;
+                                  _colorDelete = COLOR_RED;
+                                  // if (selectedRowIndex == 0) {
+                                  //   wdsSelectdAll
+                                  //       .add(wdsSqliteModel![selectedRowIndex!]);
+                                  // }
+                                  // print(selectedRows.length);
+                                });
                               } else {
                                 setState(() {
-                                  if (selectAll.contains(wdsList[index!])) {
-                                    selectAll.remove(wdsList[index!]);
-                                    print("check ${selectAll.length}");
-                                  }
-                                  // selectAll.remove(wdsList[index!]);
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  wdsSelectdAll.clear();
                                 });
-
+                                // print(selectedRowIndex);
+                                // ไม่มีการเลือกแถว
                                 print('No Rows Selected');
+                                // ดำเนินการเพิ่มเติมที่คุณต้องการทำ
                               }
                             },
-
+                            onCellTap: (details) async {
+                              // if (details.rowColumnIndex.rowIndex != 0) {
+                              //   setState(() {
+                              //     selectedRowIndex =
+                              //         details.rowColumnIndex.rowIndex - 1;
+                              //     datagridRow = WindingDataSource!.effectiveRows
+                              //         .elementAt(selectedRowIndex!);
+                              //     wdsSqliteModel = datagridRow!
+                              //         .getCells()
+                              //         .map(
+                              //           (e) => WindingSheetModel(
+                              //             MACHINE_NO: e.value.toString(),
+                              //             OPERATOR_NAME: e.value.toString(),
+                              //             BATCH_NO: e.value.toString(),
+                              //             PRODUCT: e.value.toString(),
+                              //             PACK_NO: e.value.toString(),
+                              //             PAPER_CORE: e.value.toString(),
+                              //             PP_CORE: e.value.toString(),
+                              //             FOIL_CORE: e.value.toString(),
+                              //             BATCH_START_DATE: e.value.toString(),
+                              //             BATCH_END_DATE: e.value.toString(),
+                              //             ELEMENT: e.value.toString(),
+                              //             STATUS: e.value.toString(),
+                              //             START_END: e.value.toString(),
+                              //             CHECK_COMPLETE: e.value.toString(),
+                              //           ),
+                              //         )
+                              //         .toList();
+                              //     _colorSend = COLOR_SUCESS;
+                              //     _colorDelete = COLOR_RED;
+                              //   });
+                              // }
+                            },
                             columns: <GridColumn>[
                               GridColumn(
                                   columnName: 'machineno',
@@ -325,59 +360,59 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                       DataCell(
                                           Center(child: Label("Machine No."))),
                                       DataCell(Label(
-                                          '${wdsList[index!].MACHINE_NO} '))
+                                          '${wdsList[selectedRowIndex!].MACHINE_NO} '))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("OperatorName"))),
                                       DataCell(Label(
-                                          "${wdsList[index!].OPERATOR_NAME}"))
+                                          "${wdsList[selectedRowIndex!].OPERATOR_NAME}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("Batch No."))),
-                                      DataCell(
-                                          Label("${wdsList[index!].BATCH_NO}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].BATCH_NO}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(Center(child: Label("Product"))),
-                                      DataCell(
-                                          Label("${wdsList[index!].PRODUCT}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PRODUCT}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("Film pack No"))),
-                                      DataCell(
-                                          Label("${wdsList[index!].PACK_NO}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PACK_NO}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(Center(
                                           child: Label("Paper Core Lot"))),
                                       DataCell(Label(
-                                          "${wdsList[index!].PAPER_CORE}"))
+                                          "${wdsList[selectedRowIndex!].PAPER_CORE}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("PP film Lot"))),
-                                      DataCell(
-                                          Label("${wdsList[index!].PP_CORE}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].PP_CORE}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("Foil Lot"))),
-                                      DataCell(
-                                          Label("${wdsList[index!].FOIL_CORE}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].FOIL_CORE}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(
                                           Center(child: Label("StartDate"))),
                                       DataCell(Label(
-                                          "${wdsList[index!].BATCH_START_DATE}"))
+                                          "${wdsList[selectedRowIndex!].BATCH_START_DATE}"))
                                     ]),
                                     DataRow(cells: [
                                       DataCell(Center(child: Label("Status"))),
-                                      DataCell(
-                                          Label("${wdsList[index!].STATUS}"))
+                                      DataCell(Label(
+                                          "${wdsList[selectedRowIndex!].STATUS}"))
                                     ]),
                                   ])
                             ],
@@ -391,7 +426,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (wdsList.isNotEmpty) {
+                        if (wdsList != null) {
                           _AlertDialog();
                         } else {
                           _LoadingData();
@@ -435,7 +470,8 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Label("Do you want Delete"),
+              child: Label(
+                  "Do you want Delete \n BatchNo ${wdsList[selectedRowIndex!].BATCH_NO}"),
             ),
           ],
         ),
@@ -460,62 +496,30 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   }
 
   void deletedInfo() async {
-    if (index != null) {
-      for (var row in selectAll) {
-        await databaseHelper.deletedRowSqlite(
-            tableName: 'WINDING_SHEET', columnName: 'ID', columnValue: row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in wdsList) {
-        await databaseHelper.deletedRowSqlite(
-          tableName: 'WINDING_SHEET',
-          columnName: 'ID',
-          columnValue: row.ID,
-        );
-      }
-    } else {}
+    await databaseHelper.deletedRowSqlite(
+        tableName: 'WINDING_SHEET',
+        columnName: 'ID',
+        columnValue: wdsList[selectedRowIndex!].ID);
   }
 
   void _sendDataServer() async {
-    if (index != null) {
-      for (var row in selectAll) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          PostSendWindingStartEvent(
-            SendWindingStartModelOutput(
-                MACHINE_NO: row.MACHINE_NO,
-                OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-                PRODUCT: int.tryParse(
-                  row.PRODUCT.toString(),
-                ),
-                FILM_PACK_NO: int.tryParse(
-                  row.PACK_NO.toString(),
-                ),
-                PAPER_CODE_LOT: row.PAPER_CORE,
-                PP_FILM_LOT: row.PP_CORE,
-                FOIL_LOT: row.FOIL_CORE),
-          ),
-        );
-      }
-    } else if (allRowIndex != null) {
-      for (var row in wdsList) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          PostSendWindingStartEvent(
-            SendWindingStartModelOutput(
-                MACHINE_NO: row.MACHINE_NO,
-                OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-                PRODUCT: int.tryParse(
-                  row.PRODUCT.toString(),
-                ),
-                FILM_PACK_NO: int.tryParse(
-                  row.PACK_NO.toString(),
-                ),
-                PAPER_CODE_LOT: row.PAPER_CORE,
-                PP_FILM_LOT: row.PP_CORE,
-                FOIL_LOT: row.FOIL_CORE),
-          ),
-        );
-      }
-    }
+    BlocProvider.of<LineElementBloc>(context).add(
+      PostSendWindingStartEvent(
+        SendWindingStartModelOutput(
+            MACHINE_NO: wdsList[selectedRowIndex!].MACHINE_NO,
+            OPERATOR_NAME: int.tryParse(
+                wdsList[selectedRowIndex!].OPERATOR_NAME.toString()),
+            PRODUCT: int.tryParse(
+              wdsList[selectedRowIndex!].PRODUCT.toString(),
+            ),
+            FILM_PACK_NO: int.tryParse(
+              wdsList[selectedRowIndex!].PACK_NO.toString(),
+            ),
+            PAPER_CODE_LOT: wdsList[selectedRowIndex!].PAPER_CORE,
+            PP_FILM_LOT: wdsList[selectedRowIndex!].PP_CORE,
+            FOIL_LOT: wdsList[selectedRowIndex!].FOIL_CORE),
+      ),
+    );
   }
 
   void _LoadingData() {

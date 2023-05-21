@@ -476,6 +476,7 @@ class _MachineBreakDownScanScreenState
                   ),
                   Button(
                     onPress: () {
+                      // _testInsert();
                       _checkValueController();
                     },
                     text: Label(
@@ -488,5 +489,23 @@ class _MachineBreakDownScanScreenState
             ),
           )),
     );
+  }
+
+  void _testInsert() async {
+    await databaseHelper.insertSqlite('BREAKDOWN_SHEET', {
+      'MachineNo': _machineNo_Controller.text.trim(),
+      'CallUser': _operatorname_Controller.text.trim(),
+      'RepairNo': _serviceNo_Controller.text.trim(),
+      'BreakStartDate': DateTime.now().toString(),
+      'MT1': _start_Technical_1_Controller.text.trim(),
+      'MT1StartDate': DateTime.now().toString(),
+      'MT2': _start_Technical_2_Controller.text.trim(),
+      'MT2StartDate': DateTime.now().toString(),
+      'MT1StopDate': _stop_Technical_1_Controller.text.trim(),
+      'MT2StopDate': _stop_Technical_2_Controller.text.trim(),
+      'CheckUser': _operator_accept_Controller.text.trim(),
+      'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
+      'CheckComplete': "",
+    });
   }
 }
