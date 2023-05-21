@@ -1,2 +1,2 @@
-String BASE_API_URL = "http://10.10.60.115/API_Hitachi/";
+String BASE_API_URL = "";
 String TEMP_API_URL = "";

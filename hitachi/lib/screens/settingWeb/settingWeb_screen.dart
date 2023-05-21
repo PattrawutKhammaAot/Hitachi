@@ -22,7 +22,6 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
 
   @override
   void initState() {
-    _urlController.text = 'https://dev.lvcap.th.hitachienergy.com/';
     super.initState();
   }
 
@@ -73,11 +72,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                     height: 10,
                   ),
                   Label(
-                    "Test\n${TEMP_API_URL}",
-                    fontSize: 20,
-                  ),
-                  Label(
-                    "current\n${BASE_API_URL}",
+                    "${BASE_API_URL}",
                     fontSize: 20,
                   ),
                   SizedBox(
