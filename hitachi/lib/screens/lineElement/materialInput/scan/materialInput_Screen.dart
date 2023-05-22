@@ -57,7 +57,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
         _operatorNameController.text.isNotEmpty &&
         _batchOrSerialController.text.isNotEmpty &&
         _machineOrProcessController.text.isNotEmpty &&
-        _lotNoController.text.isNotEmpty) {
+        _lotNoController.text.length != 3) {
       _callApi();
     } else {
       EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
@@ -242,7 +242,11 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   focusNode: _lotNoFocus,
                   labelText: "Lot No. :",
                   controller: _lotNoController,
-                  onEditingComplete: () => checkValueController(),
+                  onEditingComplete: () {
+                    if (_lotNoController.text.length != 3) {
+                      checkValueController();
+                    }
+                  },
                   textInputFormatter: [
                     FilteringTextInputFormatter.allow(
                       RegExp(r'^(?!.*\d{4})[a-zA-Z0-9]+$'),
