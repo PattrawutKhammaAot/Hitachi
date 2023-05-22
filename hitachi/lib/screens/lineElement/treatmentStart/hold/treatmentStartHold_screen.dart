@@ -21,12 +21,14 @@ class TreatmentStartHoldScreen extends StatefulWidget {
 
 class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
   final TextEditingController _passwordController = TextEditingController();
-  int? selectedRowIndex;
+  int? index;
+  int? allRowIndex;
   TreatMentStartDataSource? tmsDatasource;
   DataGridRow? datagridRow;
   List<TreatmentModel>? tmSqliteModel;
-  List<TreatmentModel>? tmList;
+  List<TreatmentModel> tmList = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
+  List<TreatmentModel> selectAll = [];
 
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
@@ -60,12 +62,14 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
       listeners: [
         BlocListener<TreatmentBloc, TreatmentState>(
           listener: (context, state) {
-            if (state is TreatmentStartSendLoadingState) {
+            if (state is TreatmentFinishSendLoadingState) {
               EasyLoading.show();
-            } else if (state is TreatmentStartSendLoadedState) {
+            } else if (state is TreatmentFinishSendLoadedState) {
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
                 deletedInfo();
+              } else {
+                EasyLoading.showError("${state.item.MESSAGE}");
               }
             } else {
               EasyLoading.dismiss();
@@ -90,23 +94,63 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                             source: tmsDatasource!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.single,
-                            onCellTap: (details) async {
-                              if (details.rowColumnIndex.rowIndex != 0) {
+                            selectionMode: SelectionMode.multiple,
+                            onSelectionChanged:
+                                (selectRow, deselectedRows) async {
+                              if (selectRow.isNotEmpty) {
+                                if (selectRow.length ==
+                                    tmsDatasource!.effectiveRows.length) {
+                                  print("all");
+                                  setState(() {
+                                    selectRow.forEach((row) {
+                                      allRowIndex = tmsDatasource!.effectiveRows
+                                          .indexOf(row);
+
+                                      _colorSend = COLOR_SUCESS;
+                                      _colorDelete = COLOR_RED;
+                                    });
+                                  });
+                                } else if (selectRow.length !=
+                                    tmsDatasource!.effectiveRows.length) {
+                                  setState(() {
+                                    selectRow.forEach((element) {
+                                      index = selectRow.isNotEmpty
+                                          ? tmsDatasource!.effectiveRows
+                                              .indexOf(element)
+                                          : null;
+                                      datagridRow = tmsDatasource!.effectiveRows
+                                          .elementAt(index!);
+                                      tmSqliteModel = datagridRow!
+                                          .getCells()
+                                          .map(
+                                            (e) => TreatmentModel(),
+                                          )
+                                          .toList();
+                                    });
+                                    // selectAll.add(tmList[index!]);
+                                    if (!selectAll.contains(tmList[index!])) {
+                                      selectAll.add(tmList[index!]);
+                                      print(selectAll.length);
+                                    }
+
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                  print(tmList[index!].ID);
+                                }
+                              } else {
                                 setState(() {
-                                  selectedRowIndex =
-                                      details.rowColumnIndex.rowIndex - 1;
-                                  datagridRow = tmsDatasource!.effectiveRows
-                                      .elementAt(selectedRowIndex!);
-                                  tmSqliteModel = datagridRow!
-                                      .getCells()
-                                      .map(
-                                        (e) => TreatmentModel(),
-                                      )
-                                      .toList();
-                                  _colorDelete = COLOR_RED;
-                                  _colorSend = COLOR_SUCESS;
+                                  if (selectAll.contains(tmList[index!])) {
+                                    selectAll.remove(tmList[index!]);
+                                    print(selectAll.length);
+                                  }
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 });
+
+                                print('No Rows Selected');
                               }
                             },
                             columns: <GridColumn>[
@@ -195,12 +239,12 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                columnName: 'std',
+                                columnName: 'findate',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child:
-                                        Label('Start Date', color: COLOR_WHITE),
+                                        Label('FinishDate', color: COLOR_WHITE),
                                   ),
                                 ),
                               ),
@@ -239,55 +283,47 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Machine No"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].MACHINE_NO}"))
+                                    DataCell(
+                                        Label("${tmList[index!].MACHINE_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("OperatorName"))),
                                     DataCell(Label(
-                                        "${tmList![selectedRowIndex!].OPERATOR_NAME}"))
+                                        "${tmList[index!].OPERATOR_NAME}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 1"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH1}"))
+                                    DataCell(Label("${tmList[index!].BATCH1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 2"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH2}"))
+                                    DataCell(Label("${tmList[index!].BATCH2}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 3"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH3}"))
+                                    DataCell(Label("${tmList[index!].BATCH3}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 4"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH4}"))
+                                    DataCell(Label("${tmList[index!].BATCH4}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 5"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH5}"))
+                                    DataCell(Label("${tmList[index!].BATCH5}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 6"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH6}"))
+                                    DataCell(Label("${tmList[index!].BATCH6}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Batch 7"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].BATCH7}"))
+                                    DataCell(Label("${tmList[index!].BATCH7}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Start Date"))),
-                                    DataCell(Label(
-                                        "${tmList![selectedRowIndex!].STARTDATE}"))
+                                    DataCell(Label("${tmList[index!].FINDATE}"))
                                   ])
                                 ])
                           ],
@@ -314,7 +350,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (tmSqliteModel != null) {
+                        if (tmList.isNotEmpty) {
                           _AlertDialog();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -332,24 +368,8 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        if (tmSqliteModel != null) {
-                          BlocProvider.of<TreatmentBloc>(context).add(
-                            TreatmentStartSendEvent(TreatMentOutputModel(
-                              MACHINE_NO: tmList![selectedRowIndex!].MACHINE_NO,
-                              OPERATOR_NAME: int.tryParse(
-                                  tmList![selectedRowIndex!]
-                                      .OPERATOR_NAME
-                                      .toString()),
-                              BATCH_NO_1: tmList![selectedRowIndex!].BATCH1,
-                              BATCH_NO_2: tmList![selectedRowIndex!].BATCH2,
-                              BATCH_NO_3: tmList![selectedRowIndex!].BATCH3,
-                              BATCH_NO_4: tmList![selectedRowIndex!].BATCH4,
-                              BATCH_NO_5: tmList![selectedRowIndex!].BATCH5,
-                              BATCH_NO_6: tmList![selectedRowIndex!].BATCH6,
-                              BATCH_NO_7: tmList![selectedRowIndex!].BATCH7,
-                              START_DATE: tmList![selectedRowIndex!].STARTDATE,
-                            )),
-                          );
+                        if (tmList.isNotEmpty) {
+                          _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
                         }
@@ -369,12 +389,13 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: _passwordController,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label("Do you want Delete "),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -384,13 +405,10 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
           ),
           TextButton(
             onPressed: () {
-              if (_passwordController.text.trim().length > 6) {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                EasyLoading.showSuccess("Delete Success");
-              } else {
-                EasyLoading.showError("Please Input Password");
-              }
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
           ),
@@ -399,11 +417,68 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
     );
   }
 
+  _sendDataServer() {
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<TreatmentBloc>(context).add(
+          TreatmentFinishSendEvent(TreatMentOutputModel(
+            MACHINE_NO: row.MACHINE_NO,
+            OPERATOR_NAME:
+                int.tryParse(tmList[index!].OPERATOR_NAME.toString()),
+            BATCH_NO_1: row.BATCH1,
+            BATCH_NO_2: row.BATCH2,
+            BATCH_NO_3: row.BATCH3,
+            BATCH_NO_4: row.BATCH4,
+            BATCH_NO_5: row.BATCH5,
+            BATCH_NO_6: row.BATCH6,
+            BATCH_NO_7: row.BATCH7,
+            FINISH_DATE: row.FINDATE,
+          )),
+        );
+        print("Check ${row.ID}");
+      }
+    } else if (allRowIndex != null) {
+      for (var row in tmList) {
+        BlocProvider.of<TreatmentBloc>(context).add(
+          TreatmentFinishSendEvent(TreatMentOutputModel(
+            MACHINE_NO: row.MACHINE_NO,
+            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            BATCH_NO_1: row.BATCH1,
+            BATCH_NO_2: row.BATCH2,
+            BATCH_NO_3: row.BATCH3,
+            BATCH_NO_4: row.BATCH4,
+            BATCH_NO_5: row.BATCH5,
+            BATCH_NO_6: row.BATCH6,
+            BATCH_NO_7: row.BATCH7,
+            FINISH_DATE: row.FINDATE,
+          )),
+        );
+        print(row.MACHINE_NO);
+      }
+    } else {
+      print("Error");
+    }
+  }
+
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'TREATMENT_SHEET',
-        columnName: 'ID',
-        columnValue: tmList![selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'TREATMENT_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+        print(row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in tmList) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'TREATMENT_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    } else {
+      print("Not Success");
+    }
   }
 }
 

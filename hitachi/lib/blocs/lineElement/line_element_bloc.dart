@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
+import 'package:hitachi/models/SendWdFinish/checkWdsFinishModel.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
@@ -26,7 +29,19 @@ part 'line_element_event.dart';
 part 'line_element_state.dart';
 
 class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
+  Dio dio = Dio();
+
   LineElementBloc() : super(LineElementInitial()) {
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      onHttpClientCreate: (_) {
+        // Don't trust any certificate just because their root cert is trusted.
+        final HttpClient client =
+            HttpClient(context: SecurityContext(withTrustedRoots: false));
+        // You can test the intermediate / root cert here. We just ignore it.
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      },
+    );
     on<LineElementEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -62,6 +77,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           emit(PostSendWindingFinishLoadedState(mlist));
         } catch (e) {
           emit(PostSendWindingFinishErrorState(e.toString()));
+        }
+      },
+    );
+    on<CheckWindingFinishEvent>(
+      (event, emit) async {
+        try {
+          emit(CheckWindingFinishLoadingState());
+          final mlist = await fetchCheckWindingFinish(event.items);
+          emit(CheckWindingFinishLoadedState(mlist));
+        } catch (e) {
+          emit(CheckWindingFinishErrorState(e.toString()));
         }
       },
     );
@@ -151,7 +177,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
       sendWdsReturnWeightOutputModel item) async {
     try {
-      Response responese = await Dio().post(
+      Response responese = await dio.post(
           ApiConfig.LE_SEND_WINDING_START_WEIGHT,
           options: Options(
               headers: ApiConfig.HEADER(),
@@ -172,7 +198,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<SendWindingStartModelInput> fetchSendWindingHold(
       SendWindingStartModelOutput itemOutput) async {
     try {
-      Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_START,
+      Response responese = await dio.post(ApiConfig.LE_SEND_WINDING_START,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -194,13 +220,15 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<SendWdsFinishInputModel> fetchSendWindingFinish(
       SendWdsFinishOutputModel itemOutput) async {
     try {
-      Response responese = await Dio().post(ApiConfig.LE_SEND_WINDING_FINISH,
-          options: Options(
-              headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
-          data: jsonEncode(itemOutput));
-      print(responese.data);
+      Response responese = await dio.post(
+        ApiConfig.LE_SEND_WINDING_FINISH,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
+        data: jsonEncode(itemOutput),
+      );
+
       SendWdsFinishInputModel post =
           SendWdsFinishInputModel.fromJson(responese.data);
 
@@ -211,12 +239,31 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     }
   }
 
+  //CheckWindingFinish
+  Future<CheckWdsFinishInputModel> fetchCheckWindingFinish(
+      String itemOutput) async {
+    try {
+      Response responese = await dio.get(
+        ApiConfig.LE_CHECK_SEND_WINDING_FINISH + itemOutput,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
+      );
+      print(responese.data);
+      CheckWdsFinishInputModel post =
+          CheckWdsFinishInputModel.fromJson(responese.data);
+      return post;
+    } on Exception {
+      throw Exception();
+    }
+  }
+
   //Check packNO
   Future<CheckPackNoModel> fetchCheckPackNo(int number) async {
     print(ApiConfig.LE_CHECKPACK_NO);
     try {
-      Response responese = await Dio().get(
-          ApiConfig.LE_CHECKPACK_NO + "$number",
+      Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -225,10 +272,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
       return post;
-    } catch (e, s) {
-      EasyLoading.showError("Check connection Internet");
-      print("$e" + "$s");
-      return CheckPackNoModel();
+    } on Exception {
+      throw Exception();
     }
   }
 
@@ -236,7 +281,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<ReportRouteSheetModel> fetchReportRouteSheetModel(
       String number) async {
     try {
-      Response response = await Dio().get(
+      Response response = await dio.get(
         ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
         options: Options(
             headers: ApiConfig.HEADER(),
@@ -247,16 +292,15 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
 
       return tmp;
-    } catch (e) {
-      print(e);
-      return ReportRouteSheetModel();
+    } on Exception {
+      throw Exception();
     }
   }
 
   //MaterialInput
   Future<MaterialInputModel> fetchMaterial(MaterialOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_MATERIALINPUT,
+      Response response = await dio.post(ApiConfig.LE_MATERIALINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -275,7 +319,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //CheckMaterialInput
   Future<ResponeDefault> fetchCheckMaterial(String items) async {
     try {
-      Response response = await Dio().get(
+      Response response = await dio.get(
         ApiConfig.LE_CHECK_MATERIAL_INPUT + "${items}",
         options: Options(
             headers: ApiConfig.HEADER(),
@@ -296,7 +340,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //ProcessStart
   Future<ProcessInputModel> fetchProcessStart(ProcessOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_PROCESSSTARTINPUT,
+      Response response = await dio.post(ApiConfig.LE_PROCESSSTARTINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -316,7 +360,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   Future<ProcessFinishInputModel> fetchProcessFinish(
       ProcessFinishOutputModel items) async {
     try {
-      Response response = await Dio().post(ApiConfig.LE_PROCESSFINISHINPUT,
+      Response response = await dio.post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
@@ -332,21 +376,4 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       return ProcessFinishInputModel();
     }
   }
-
-  // Future<ResponeDefault> fetchSendPMDaily(PMDailyOutputModel item) async {
-  //   try {
-  //     Response responese = await Dio().post(ApiConfig.PM_DAILY,
-  //         options: Options(
-  //             headers: ApiConfig.HEADER(),
-  //             sendTimeout: Duration(seconds: 3),
-  //             receiveTimeout: Duration(seconds: 3)),
-  //         data: jsonEncode(item));
-  //     print(responese.data);
-  //     ResponeDefault post = ResponeDefault.fromJson(responese.data);
-  //     return post;
-  //   } catch (e, s) {
-  //     print("Exception occured: $e StackTrace: $s");
-  //     return ResponeDefault();
-  //   }
-  // }
 }

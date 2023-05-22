@@ -24,7 +24,10 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   FilmReceiveDataSource? filmDataSource;
   List<DataSheetTableModel>? dstSqliteModel;
   List<DataSheetTableModel> dstList = [];
-  int? selectedRowIndex;
+  int? index;
+  int? allRowIndex;
+  List<DataSheetTableModel> selectAll = [];
+
   DataGridRow? datagridRow;
   bool isClick = false;
   Color _colorSend = COLOR_GREY;
@@ -101,28 +104,82 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                           source: filmDataSource!,
                           // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
+                          selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
-                          onCellTap: (details) async {
-                            if (details.rowColumnIndex.rowIndex != 0) {
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            if (selectRow.isNotEmpty) {
+                              if (selectRow.length ==
+                                  filmDataSource!.effectiveRows.length) {
+                                print("all");
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    allRowIndex = filmDataSource!.effectiveRows
+                                        .indexOf(row);
+
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                });
+                              } else if (selectRow.length !=
+                                  filmDataSource!.effectiveRows.length) {
+                                setState(() {
+                                  selectRow.forEach((element) {
+                                    index = selectRow.isNotEmpty
+                                        ? filmDataSource!.effectiveRows
+                                            .indexOf(element)
+                                        : null;
+                                    datagridRow = filmDataSource!.effectiveRows
+                                        .elementAt(index!);
+                                    dstSqliteModel = datagridRow!
+                                        .getCells()
+                                        .map(
+                                          (e) => DataSheetTableModel(),
+                                        )
+                                        .toList();
+                                  });
+                                  if (!selectAll.contains(dstList[index!])) {
+                                    selectAll.add(dstList[index!]);
+                                    print(selectAll.length);
+                                  }
+                                  _colorSend = COLOR_SUCESS;
+                                  _colorDelete = COLOR_RED;
+                                });
+                              }
+                            } else {
                               setState(() {
-                                selectedRowIndex =
-                                    details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = filmDataSource!.effectiveRows
-                                    .elementAt(selectedRowIndex!);
-                                dstSqliteModel = datagridRow!
-                                    .getCells()
-                                    .map(
-                                      (e) => DataSheetTableModel(
-                                          PO_NO: e.value.toString()),
-                                    )
-                                    .toList();
-                                _colorSend = COLOR_SUCESS;
-                                _colorDelete = COLOR_RED;
+                                if (selectAll.contains(dstList[index!])) {
+                                  selectAll.remove(dstList[index!]);
+                                  print(selectAll.length);
+                                }
+                               if (selectAll.isEmpty) {
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
+                                }
                               });
+
+                              print('No Rows Selected');
                             }
                           },
+                          // onCellTap: (details) async {
+                          //   if (details.rowColumnIndex.rowIndex != 0) {
+                          //     setState(() {
+                          //       index = details.rowColumnIndex.rowIndex - 1;
+                          //       datagridRow = filmDataSource!.effectiveRows
+                          //           .elementAt(index!);
+                          //       dstSqliteModel = datagridRow!
+                          //           .getCells()
+                          //           .map(
+                          //             (e) => DataSheetTableModel(
+                          //                 PO_NO: e.value.toString()),
+                          //           )
+                          //           .toList();
+                          //       _colorSend = COLOR_SUCESS;
+                          //       _colorDelete = COLOR_RED;
+                          //     });
+                          //   }
+                          // },
                           columns: <GridColumn>[
                             GridColumn(
                                 columnName: 'pono',
@@ -300,7 +357,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                       ),
                     )
                   : CircularProgressIndicator(),
-              dstSqliteModel != null && dstList != null
+              dstSqliteModel != null
                   ? Expanded(
                       child: Container(
                           child: ListView(
@@ -328,74 +385,65 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                               rows: [
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("PO no."))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].PO_NO}"))
+                                  DataCell(
+                                      Label("${dstList[index!].PO_NO ?? ""}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Invoice No."))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].IN_VOICE}"))
+                                  DataCell(Label("${dstList[index!].IN_VOICE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("Incoming Date"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].INCOMING_DATE}"))
+                                  DataCell(
+                                      Label("${dstList[index!].INCOMING_DATE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Store By"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].STORE_BY}"))
+                                  DataCell(Label("${dstList[index!].STORE_BY}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Pack No"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].PACK_NO}"))
+                                  DataCell(Label("${dstList[index!].PACK_NO}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Store Date"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].STORE_DATE}"))
+                                  DataCell(
+                                      Label("${dstList[index!].STORE_DATE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Status"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].STATUS}"))
+                                  DataCell(Label("${dstList[index!].STATUS}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Weight1"))),
-                                  DataCell(
-                                      Label("${dstList[selectedRowIndex!].W1}"))
+                                  DataCell(Label("${dstList[index!].W1}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Weight2"))),
-                                  DataCell(
-                                      Label("${dstList[selectedRowIndex!].W2}"))
+                                  DataCell(Label("${dstList[index!].W2}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Weight"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].WEIGHT}"))
+                                  DataCell(Label("${dstList[index!].WEIGHT}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Mfg.date"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].MFG_DATE}"))
+                                  DataCell(Label("${dstList[index!].MFG_DATE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Thickness"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].THICKNESS}"))
+                                  DataCell(
+                                      Label("${dstList[index!].THICKNESS}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Wrap Grade"))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].WRAP_GRADE}"))
+                                  DataCell(
+                                      Label("${dstList[index!].WRAP_GRADE}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Roll No."))),
-                                  DataCell(Label(
-                                      "${dstList[selectedRowIndex!].ROLL_NO}"))
+                                  DataCell(Label("${dstList[index!].ROLL_NO}"))
                                 ]),
                               ])
                         ],
@@ -440,7 +488,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                     text: Label("Send", color: COLOR_WHITE),
                     bgColor: _colorSend,
                     onPress: () {
-                      if (dstSqliteModel != null) {
+                      if (dstList.isNotEmpty) {
                         _sendDataServer();
                       } else {
                         EasyLoading.showInfo("Please Select Data");
@@ -457,19 +505,18 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
     );
   }
 
-  void _checkValueController() async {
-    if (password.text.isNotEmpty) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      EasyLoading.showSuccess("Delete Success");
-    }
-  }
-
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'DATA_SHEET',
-        columnName: 'ID',
-        columnValue: dstList[selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'DATA_SHEET', columnName: 'ID', columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in dstList) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'DATA_SHEET', columnName: 'ID', columnValue: row.ID);
+      }
+    }
   }
 
   void _AlertDialog() async {
@@ -478,12 +525,14 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: password,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child:
+                  Label("Do you want Delete \n Po No ${dstList[index!].PO_NO}"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -492,7 +541,13 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _checkValueController(),
+            onPressed: () {
+              deletedInfo();
+
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
+            },
             child: const Text('OK'),
           ),
         ],
@@ -501,26 +556,52 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   }
 
   void _sendDataServer() async {
-    BlocProvider.of<FilmReceiveBloc>(context).add(
-      FilmReceiveSendEvent(
-        FilmReceiveOutputModel(
-          PONO: dstList[selectedRowIndex!].PO_NO,
-          INVOICE: dstList[selectedRowIndex!].IN_VOICE,
-          FRIEGHT: dstList[selectedRowIndex!].FRIEGHT,
-          DATERECEIVE: dstList[selectedRowIndex!].INCOMING_DATE,
-          OPERATORNAME:
-              int.tryParse(dstList[selectedRowIndex!].STORE_BY.toString()),
-          PACKNO: dstList[selectedRowIndex!].PACK_NO,
-          STATUS: dstList[selectedRowIndex!].STATUS,
-          WEIGHT1: num.tryParse(dstList[selectedRowIndex!].W1.toString()),
-          WEIGHT2: num.tryParse(dstList[selectedRowIndex!].W2.toString()),
-          MFGDATE: dstList[selectedRowIndex!].MFG_DATE,
-          THICKNESS: dstList[selectedRowIndex!].THICKNESS,
-          WRAPGRADE: dstList[selectedRowIndex!].WRAP_GRADE,
-          ROLL_NO: dstList[selectedRowIndex!].ROLL_NO,
-        ),
-      ),
-    );
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<FilmReceiveBloc>(context).add(
+          FilmReceiveSendEvent(
+            FilmReceiveOutputModel(
+              PONO: row.PO_NO,
+              INVOICE: row.IN_VOICE,
+              FRIEGHT: row.FRIEGHT,
+              DATERECEIVE: row.INCOMING_DATE,
+              OPERATORNAME: int.tryParse(row.STORE_BY.toString()),
+              PACKNO: row.PACK_NO,
+              STATUS: row.STATUS,
+              WEIGHT1: num.tryParse(row.W1.toString()),
+              WEIGHT2: num.tryParse(row.W2.toString()),
+              MFGDATE: row.MFG_DATE,
+              THICKNESS: row.THICKNESS,
+              WRAPGRADE: row.WRAP_GRADE,
+              ROLL_NO: row.ROLL_NO,
+            ),
+          ),
+        );
+        print("Check ${row.ID}");
+      }
+    } else if (allRowIndex != null) {
+      for (var row in dstList) {
+        BlocProvider.of<FilmReceiveBloc>(context).add(
+          FilmReceiveSendEvent(
+            FilmReceiveOutputModel(
+              PONO: row.PO_NO,
+              INVOICE: row.IN_VOICE,
+              FRIEGHT: row.FRIEGHT,
+              DATERECEIVE: row.INCOMING_DATE,
+              OPERATORNAME: int.tryParse(row.STORE_BY.toString()),
+              PACKNO: row.PACK_NO,
+              STATUS: row.STATUS,
+              WEIGHT1: num.tryParse(row.W1.toString()),
+              WEIGHT2: num.tryParse(row.W2.toString()),
+              MFGDATE: row.MFG_DATE,
+              THICKNESS: row.THICKNESS,
+              WRAPGRADE: row.WRAP_GRADE,
+              ROLL_NO: row.ROLL_NO,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   void _selectData() {
@@ -548,8 +629,7 @@ class FilmReceiveDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'w2', value: _item.W2),
               DataGridCell<String>(columnName: 'Weight', value: _item.WEIGHT),
               DataGridCell<String>(columnName: 'md', value: _item.MFG_DATE),
-              DataGridCell<String>(
-                  columnName: 'tn', value: _item.PACK_NO?.substring(0, 1)),
+              DataGridCell<String>(columnName: 'tn', value: _item.THICKNESS),
               DataGridCell<String>(columnName: 'wg', value: _item.WRAP_GRADE),
               DataGridCell<String>(columnName: 'rn', value: _item.ROLL_NO),
             ],

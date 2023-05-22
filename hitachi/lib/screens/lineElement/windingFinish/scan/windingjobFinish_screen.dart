@@ -17,6 +17,7 @@ import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobFinishScreen extends StatefulWidget {
@@ -30,7 +31,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   final TextEditingController operatorNameController = TextEditingController();
   final TextEditingController batchNoController = TextEditingController();
   final TextEditingController elementQtyController = TextEditingController();
-  String batchEndate = DateTime.now().toString();
 
 //FOCUS
   final f1 = FocusNode();
@@ -53,7 +53,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         _callApi(
             batchNo: int.tryParse(batchNoController.text.trim()),
             element: int.tryParse(elementQtyController.text.trim()),
-            batchEnddate: batchEndate);
+            batchEnddate: DateTime.now().toString());
 
         EasyLoading.showSuccess("sendComplete");
       } catch (e) {
@@ -76,7 +76,10 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     BlocProvider.of<LineElementBloc>(context).add(
       PostSendWindingFinishEvent(
         SendWdsFinishOutputModel(
-            BATCH_NO: batchNo, ELEMNT_QTY: element, FINISH_DATE: batchEnddate),
+            OPERATOR_NAME: int.tryParse(operatorNameController.text.trim()),
+            BATCH_NO: batchNo,
+            ELEMNT_QTY: element,
+            FINISH_DATE: batchEnddate),
       ),
     );
   }
@@ -91,7 +94,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
             int.tryParse(batchNoController.text.trim()), // If error check here
         keyAnd: 'MachineNo',
         value: 'WD',
-        keyAnd2: 'start_end',
+        keyAnd2: 'checkComplete',
         value2: 'E');
 
     if (sql.length <= 0) {
@@ -100,9 +103,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         'MachineNo': 'WD',
         'BatchNo': batchNoController.text.trim(),
         'Element': batchNoController.text.trim(),
-        'BatchEndDate': DateTime.now().toString(),
-        'start_end': 'E',
-        'checkComplete': '0',
+        'BatchEndDate': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+        'start_end': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+        'checkComplete': 'E',
       });
     }
   }
@@ -122,35 +125,26 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     queryTarget();
   }
 
-  Future<bool> queryTarget({String? checkRow}) async {
+  void queryTarget({String? checkRow}) async {
+    print("object");
     try {
-      var sql = await databaseHelper.queryDataSelect(
-          select1: 'Target',
-          formTable: 'WINDING_WEIGHT_SHEET',
-          where: 'BatchNo',
-          value: batchNoController.text.trim());
+      var sql = await databaseHelper.queryWeight(
+          table: 'WINDING_WEIGHT_SHEET',
+          selected: 'Target',
+          stringValue: batchNoController.text.trim());
 
       if (sql.length > 0) {
-        var ds = sql[0];
-
         setState(() {
-          final targetTable = ds['Target'];
-          final targetValue = targetTable.rows[0]['Target'] as double;
-          final roundedTarget = targetValue.round();
-          target = roundedTarget.toString();
+          target = sql[0]['Target'].toString();
         });
         print(target);
-
-        return true;
       } else {
         target = "0";
         checkRow = "N/A";
-        return true;
       }
-    } catch (e) {
-      EasyLoading.show(status: "Element Error", dismissOnTap: true);
+    } on Exception {
       target = null;
-      return false;
+      throw Exception();
     }
   }
 
@@ -177,13 +171,13 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 });
                 if (items!.RESULT == true) {
                   _deleteSave();
-                  EasyLoading.showSuccess("Send Complete");
+                  EasyLoading.showSuccess("${items!.MESSAGE}");
                 } else if (items!.RESULT == false) {
                   if (batchNoController.text.trim().isNotEmpty &&
                       operatorNameController.text.trim().isNotEmpty &&
                       elementQtyController.text.trim().isNotEmpty) {
                     _insertSqlite();
-                    EasyLoading.showError("Save Complete &  Can not  Send");
+                    EasyLoading.showError("${items!.MESSAGE}");
                   } else {
                     EasyLoading.showError("Please Input Info");
                   }
@@ -199,7 +193,18 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               } else {
                 EasyLoading.showError("Can not send",
                     duration: Duration(seconds: 3));
-                // _insertSqlite();
+              }
+              if (state is CheckWindingFinishLoadingState) {
+                EasyLoading.show(status: "Loading...");
+              } else if (state is CheckWindingFinishLoadedState) {
+                if (state.item.RESULT == true) {
+                  EasyLoading.showSuccess("${state.item.MESSAGE}");
+                } else {
+                  EasyLoading.showError("${state.item.MESSAGE}");
+                }
+              } else if (state is CheckWindingFinishErrorState) {
+                EasyLoading.showError(
+                    "Please Check Connection & Save Complete");
               }
             },
           )
@@ -215,15 +220,21 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   onEditingComplete: () => f2.requestFocus(),
                   labelText: "Operator Name :",
                   controller: operatorNameController,
+                  type: TextInputType.number,
                   textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                    ),
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
                 ),
                 BoxInputField(
                   focusNode: f2,
-                  onEditingComplete: () => f3.requestFocus(),
+                  onEditingComplete: () {
+                    if (batchNoController.text.length == 12) {
+                      BlocProvider.of<LineElementBloc>(context).add(
+                        CheckWindingFinishEvent(batchNoController.text.trim()),
+                      );
+                      f3.requestFocus();
+                    }
+                  },
                   labelText: "Batch No :",
                   maxLength: 12,
                   controller: batchNoController,
@@ -297,18 +308,18 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     );
   }
 
-  void _testSendSqlite() async {
-    try {
-      await databaseHelper.insertSqlite('WINDING_SHEET', {
-        'BatchNo': batchNoController.text.trim(),
-        'Element': elementQtyController.text.trim(),
-        'BatchEndDate': batchNoController.text.trim(),
-        'start_end': 'E',
-        'checkComplete': '0',
-        'value': 'WD'
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
+  // void _testSendSqlite() async {
+  //   try {
+  //     await databaseHelper.insertSqlite('WINDING_SHEET', {
+  //       'BatchNo': batchNoController.text.trim(),
+  //       'Element': elementQtyController.text.trim(),
+  //       'BatchEndDate': batchNoController.text.trim(),
+  //       'start_end': 'E',
+  //       'checkComplete': '0',
+  //       'value': 'WD'
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 }

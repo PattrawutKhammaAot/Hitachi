@@ -32,6 +32,8 @@ class ApiConfig {
   //Post
   static String LE_SEND_WINDING_FINISH =
       "${BASE_API_URL}LineElement/SendWindingFinish";
+  static String LE_CHECK_SEND_WINDING_FINISH =
+      "${BASE_API_URL}LineElement/WFCheckBatch?batch="; //ID
 
   ///---------------------REPORT ROUTE SHEET ----------------------///
 
@@ -75,6 +77,10 @@ class ApiConfig {
   //POST SEND TreatmentFinish
   static String TREAMTMENT_FINISH =
       "${BASE_API_URL}LineElement/SendTreatFinish";
+  //POST SEND ZincThickness
+  static String ZINC_THICKNESS = "${BASE_API_URL}LineElement/SendZinc";
+  //POST SEND TestConnection
+  static String TEST_CONNECTION = "${BASE_API_URL}Connection/TestConnection";
 
   ///---------------------PM Daily ----------------------///
 

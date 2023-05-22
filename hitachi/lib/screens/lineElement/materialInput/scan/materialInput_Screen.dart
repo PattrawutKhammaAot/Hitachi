@@ -13,6 +13,7 @@ import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class MaterialInputScreen extends StatefulWidget {
@@ -80,10 +81,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
 
   void _insertSqlite() async {
     await databaseHelper.insertSqlite('MATERIAL_TRACE_SHEET', {
-      'Material': _machineOrProcessController.text.trim(),
+      'Material': _materialController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'BatchNo': _batchOrSerialController.text.trim(),
+      'MachineNo': _machineOrProcessController.text.trim(),
       'LotNo1': _lotNoController.text.trim(),
+      'Date1': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())
     });
   }
 
@@ -106,7 +109,17 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 });
 
                 if (_inputMtModel!.RESULT == true) {
-                  EasyLoading.showSuccess("SendComplete");
+                  setState(() {
+                    bgColor = Colors.grey;
+                  });
+                  _materialController.clear();
+                  _operatorNameController.clear();
+                  _batchOrSerialController.clear();
+                  _machineOrProcessController.clear();
+                  _lotNoController.clear();
+                  EasyLoading.showSuccess("${_inputMtModel?.MESSAGE}",
+                      duration: Duration(seconds: 5));
+                  _materialFoucus.requestFocus();
                 } else if (_inputMtModel!.RESULT == false) {
                   if (_machineOrProcessController.text.isNotEmpty &&
                       _operatorNameController.text.isNotEmpty &&
@@ -114,7 +127,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
                     _insertSqlite();
-                    EasyLoading.showError("Please Check Data");
+                    EasyLoading.showError("Failed To Send");
                   } else {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
                   }
@@ -132,28 +145,26 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   }
                 }
               }
-              // if (state is CheckMaterialInputLoadingState) {
-              //   EasyLoading.show();
-              // }
-              // if (state is CheckMaterialInputLoadedState) {
-              //   setState(() {
-              //     _responeDefault = state.item;
-              //   });
-              //   if (_responeDefault!.RESULT == true) {
-              //     EasyLoading.showSuccess("Success");
-              //   } else {
-              //     EasyLoading.showError("Not found Material");
-              //   }
-              // } else if (state is CheckMaterialInputErrorState) {
-              //   EasyLoading.dismiss();
+              if (state is CheckMaterialInputLoadingState) {
+                EasyLoading.show();
+              }
+              if (state is CheckMaterialInputLoadedState) {
+                setState(() {
+                  _responeDefault = state.item;
+                });
+                if (_responeDefault!.RESULT == true) {
+                  EasyLoading.showSuccess("Success");
+                } else {
+                  EasyLoading.showError("${_responeDefault?.MESSAGE}",
+                      duration: Duration(seconds: 5));
+                }
+              } else if (state is CheckMaterialInputErrorState) {
+                EasyLoading.dismiss();
 
-              //   EasyLoading.showError("TEST");
-              // }
+                EasyLoading.showError("Please Check Connection");
+              }
             },
           ),
-          BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {},
-          )
         ],
         child: SingleChildScrollView(
           child: Padding(
@@ -178,10 +189,9 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   focusNode: _operatorNameFouc,
                   labelText: "Operator Name",
                   controller: _operatorNameController,
+                  type: TextInputType.number,
                   textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                    ),
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   ],
                   onEditingComplete: () {
                     _batchOrSerialFocus.requestFocus();
@@ -195,13 +205,12 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   labelText: "Batch/Serial",
                   controller: _batchOrSerialController,
                   maxLength: 12,
-                  type: TextInputType.number,
-                  textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                    ),
-                  ],
-                  onEditingComplete: () => _machineFocus.requestFocus(),
+                  onEditingComplete: () {
+                    if (_batchOrSerialController.text.length == 7 ||
+                        _batchOrSerialController.text.length == 12) {
+                      _machineFocus.requestFocus();
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 5,

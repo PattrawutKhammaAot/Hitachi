@@ -49,4 +49,6 @@ class RouterList {
 
   //PM Daily
   static const String PMDaily_control_Screen = '/LineElement/SendPMDaily';
+  //Test Connection
+  static const String Setting_web = '/settingWeb/settingWeb';
 }

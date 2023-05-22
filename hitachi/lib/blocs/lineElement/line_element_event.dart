@@ -34,6 +34,15 @@ class PostSendWindingFinishEvent extends LineElementEvent {
   List<Object> get prop => [items];
 }
 
+class CheckWindingFinishEvent extends LineElementEvent {
+  const CheckWindingFinishEvent(this.items);
+
+  final String items;
+
+  @override
+  List<Object> get prop => [items];
+}
+
 //// Check Pack No /////////
 class GetCheckPackNoEvent extends LineElementEvent {
   const GetCheckPackNoEvent(this.number);

@@ -24,12 +24,14 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   List<MaterialTraceModel>? materialList;
   DatabaseHelper databaseHelper = DatabaseHelper();
   MaterialTraceDataSource? matTracDs;
-  int? selectedRowIndex;
+  int? index;
+  int? allRowIndex;
   DataGridRow? datagridRow;
   List<MaterialTraceModel>? mtModelSqlite;
   final TextEditingController _passwordController = TextEditingController();
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
+  List<MaterialTraceModel> selectAll = [];
 
   ////
   Future<List<MaterialTraceModel>> _getMaterialSheet() async {
@@ -57,10 +59,21 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   }
 
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'MATERIAL_TRACE_SHEET',
-        columnName: 'ID',
-        columnValue: materialList![selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'MATERIAL_TRACE_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in materialList!) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'MATERIAL_TRACE_SHEET',
+            columnName: 'ID',
+            columnValue: row.ID);
+      }
+    }
   }
 
   @override
@@ -103,29 +116,74 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.single,
+                            selectionMode: SelectionMode.multiple,
+                            onSelectionChanged:
+                                (selectRow, deselectedRows) async {
+                              if (selectRow.isNotEmpty) {
+                                if (selectRow.length ==
+                                    matTracDs!.effectiveRows.length) {
+                                  print("all");
+                                  setState(() {
+                                    selectRow.forEach((row) {
+                                      allRowIndex =
+                                          matTracDs!.effectiveRows.indexOf(row);
+
+                                      _colorSend = COLOR_SUCESS;
+                                      _colorDelete = COLOR_RED;
+                                    });
+                                  });
+                                } else if (selectRow.length !=
+                                    matTracDs!.effectiveRows.length) {
+                                  setState(() {
+                                    selectRow.forEach((element) {
+                                      index = selectRow.isNotEmpty
+                                          ? matTracDs!.effectiveRows
+                                              .indexOf(element)
+                                          : null;
+                                      datagridRow = matTracDs!.effectiveRows
+                                          .elementAt(index!);
+                                      mtModelSqlite = datagridRow!
+                                          .getCells()
+                                          .map(
+                                            (e) => MaterialTraceModel(),
+                                          )
+                                          .toList();
+                                    });
+                                    if (!selectAll
+                                        .contains(materialList![index!])) {
+                                      selectAll.add(materialList![index!]);
+                                      print(selectAll.length);
+                                    }
+                                    // selectAll.add(materialList![index!]);
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  if (selectAll
+                                      .contains(materialList![index!])) {
+                                    selectAll.remove(materialList![index!]);
+                                    print(selectAll.length);
+                                  }
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
+                                });
+
+                                print('No Rows Selected');
+                              }
+                            },
                             onCellTap: (details) async {
                               if (details.rowColumnIndex.rowIndex != 0) {
                                 setState(() {
-                                  selectedRowIndex =
-                                      details.rowColumnIndex.rowIndex - 1;
+                                  index = details.rowColumnIndex.rowIndex - 1;
                                   datagridRow = matTracDs!.effectiveRows
-                                      .elementAt(selectedRowIndex!);
+                                      .elementAt(index!);
                                   mtModelSqlite = datagridRow!
                                       .getCells()
                                       .map(
                                         (e) => MaterialTraceModel(
                                           MATERIAL: e.value.toString(),
-                                          MATERIAL_TYPE: e.value.toString(),
-                                          OPERATOR_NAME: e.value.toString(),
-                                          BATCH_NO: e.value.toString(),
-                                          MACHINE_NO: e.value.toString(),
-                                          MATERIAL_1: e.value.toString(),
-                                          LOTNO_1: e.value.toString(),
-                                          DATE_1: e.value.toString(),
-                                          MATERIAL_2: e.value.toString(),
-                                          LOT_NO_2: e.value.toString(),
-                                          DATE_2: e.value.toString(),
                                         ),
                                       )
                                       .toList();
@@ -135,18 +193,18 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                               }
                             },
                             columns: <GridColumn>[
-                              GridColumn(
-                                columnName: 'matType',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Type',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // GridColumn(
+                              //   columnName: 'matType',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label(
+                              //         'Type',
+                              //         color: COLOR_WHITE,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               GridColumn(
                                   columnName: 'mat',
                                   label: Container(
@@ -186,16 +244,16 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                   ),
                                 ),
                               ),
-                              GridColumn(
-                                columnName: 'mat1',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child:
-                                        Label('Material1', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
+                              // GridColumn(
+                              //   columnName: 'mat1',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child:
+                              //           Label('Material1', color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
                               GridColumn(
                                 columnName: 'lotNo1',
                                 label: Container(
@@ -214,25 +272,25 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                   ),
                                 ),
                               ),
-                              GridColumn(
-                                columnName: 'mat2',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child:
-                                        Label('Material', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'lotNo2',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label('Lot No', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
+                              // GridColumn(
+                              //   columnName: 'mat2',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child:
+                              //           Label('Material', color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   columnName: 'lotNo2',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Lot No', color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -265,49 +323,49 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                   DataColumn(label: Label(""))
                                 ],
                                 rows: [
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("MaterialType"))),
-                                    DataCell(Label(
-                                        "${materialList![selectedRowIndex!].MATERIAL_TYPE}"))
-                                  ]),
+                                  // DataRow(cells: [
+                                  //   DataCell(
+                                  //       Center(child: Label("MaterialType"))),
+                                  //   DataCell(Label(
+                                  //       "${materialList![index!].MATERIAL_TYPE}"))
+                                  // ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Material"))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].MATERIAL}"))
+                                        "${materialList![index!].MATERIAL}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name"))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].OPERATOR_NAME}"))
+                                        "${materialList![index!].OPERATOR_NAME}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Batch/Serial No."))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].BATCH_NO}"))
+                                        "${materialList![index!].BATCH_NO}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(
                                         child: Label("Machine/Process"))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].MACHINE_NO}"))
+                                        "${materialList![index!].MACHINE_NO}"))
                                   ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Material"))),
-                                    DataCell(Label(
-                                        "${materialList![selectedRowIndex!].MATERIAL_1}"))
-                                  ]),
+                                  // DataRow(cells: [
+                                  //   DataCell(Center(child: Label("Material"))),
+                                  //   DataCell(Label(
+                                  //       "${materialList![index!].MATERIAL_1}"))
+                                  // ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Lot No."))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].LOTNO_1}"))
+                                        "${materialList![index!].LOTNO_1}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(Center(child: Label("Date"))),
                                     DataCell(Label(
-                                        "${materialList![selectedRowIndex!].DATE_1}"))
+                                        "${materialList![index!].DATE_1}"))
                                   ])
                                 ])
                           ],
@@ -352,28 +410,8 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        if (mtModelSqlite != null) {
-                          BlocProvider.of<LineElementBloc>(context).add(
-                            MaterialInputEvent(
-                              MaterialOutputModel(
-                                MATERIAL:
-                                    materialList![selectedRowIndex!].MATERIAL,
-                                MACHINENO:
-                                    materialList![selectedRowIndex!].MACHINE_NO,
-                                OPERATORNAME: int.tryParse(
-                                    materialList![selectedRowIndex!]
-                                        .OPERATOR_NAME
-                                        .toString()),
-                                BATCHNO: int.tryParse(
-                                    materialList![selectedRowIndex!]
-                                        .BATCH_NO
-                                        .toString()),
-                                LOT: materialList![selectedRowIndex!].LOTNO_1,
-                                STARTDATE:
-                                    materialList![selectedRowIndex!].DATE_1,
-                              ),
-                            ),
-                          );
+                        if (materialList != null) {
+                          _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
                         }
@@ -387,18 +425,54 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
         ));
   }
 
+  _sendDataServer() {
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<LineElementBloc>(context).add(
+          MaterialInputEvent(
+            MaterialOutputModel(
+              MATERIAL: row.MATERIAL,
+              MACHINENO: row.MACHINE_NO,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              BATCHNO: int.tryParse(row.BATCH_NO.toString()),
+              LOT: row.LOTNO_1,
+              STARTDATE: row.DATE_1,
+            ),
+          ),
+        );
+        print("Check ${row.ID}");
+      }
+    } else if (allRowIndex != null) {
+      for (var row in materialList!) {
+        BlocProvider.of<LineElementBloc>(context).add(
+          MaterialInputEvent(
+            MaterialOutputModel(
+              MATERIAL: row.MATERIAL,
+              MACHINENO: row.MACHINE_NO,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              BATCHNO: int.tryParse(row.BATCH_NO.toString()),
+              LOT: row.LOTNO_1,
+              STARTDATE: row.DATE_1,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   void _AlertDialog() async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: _passwordController,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label("Do you want Delete "),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -408,13 +482,10 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
           ),
           TextButton(
             onPressed: () {
-              if (_passwordController.text.trim().length > 6) {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                EasyLoading.showSuccess("Delete Success");
-              } else {
-                EasyLoading.showError("Please Input Password");
-              }
+              deletedInfo();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
           ),
@@ -431,19 +502,19 @@ class MaterialTraceDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<String>(
-                  columnName: 'matType', value: _item.MATERIAL_TYPE),
+              // DataGridCell<String>(
+              //     columnName: 'matType', value: _item.MATERIAL_TYPE),
               DataGridCell<String>(columnName: 'mat', value: _item.MATERIAL),
               DataGridCell<String>(
                   columnName: 'operator', value: _item.BATCH_NO),
               DataGridCell<String>(columnName: 'batch', value: _item.BATCH_NO),
-              DataGridCell<String>(
-                  columnName: 'Machine', value: _item.MACHINE_NO),
+              // DataGridCell<String>(
+              //     columnName: 'Machine', value: _item.MACHINE_NO),
               DataGridCell<String>(columnName: 'Mat1', value: _item.MATERIAL_1),
               DataGridCell<String>(columnName: 'lotNo1', value: _item.LOTNO_1),
               DataGridCell<String>(columnName: 'Date', value: _item.DATE_1),
-              DataGridCell<String>(columnName: 'Mat2', value: _item.MATERIAL_2),
-              DataGridCell<String>(columnName: 'lotNo2', value: _item.LOT_NO_2),
+              // DataGridCell<String>(columnName: 'Mat2', value: _item.MATERIAL_2),
+              // DataGridCell<String>(columnName: 'lotNo2', value: _item.LOT_NO_2),
             ],
           ),
         );

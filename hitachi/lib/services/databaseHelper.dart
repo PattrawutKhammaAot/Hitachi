@@ -34,15 +34,19 @@ class DatabaseHelper {
     if (isDatabaseExists) {
       print("Database already exists");
     } else {
-      var database =
-          await openDatabase(dbPath, version: 1, onCreate: _createDb);
+      var database = await openDatabase(
+        dbPath,
+        version: 1,
+        onCreate: _createDb,
+        onUpgrade: (db, oldVersion, newVersion) =>
+            _onUpgrade(db, oldVersion, newVersion),
+      );
       print("Create a Tables Data");
       return database;
     }
-    return await openDatabase(dbPath, version: 1);
+    return await openDatabase(dbPath);
   }
 
-  @override
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (newVersion > oldVersion) {
       await db.execute('DROP TABLE IF EXISTS table1');
@@ -60,7 +64,6 @@ class DatabaseHelper {
     _createTableJob(db, newVersion);
     _createTableProcess(db, newVersion);
     _createTableTreatment(db, newVersion);
-
     _createComboProblem(db, newVersion);
     _createTableBreakDown(db, newVersion);
     _createTableProblem(db, newVersion);
@@ -82,11 +85,17 @@ class DatabaseHelper {
     return await db.insert(tableName, row);
   }
 
+  Future<int> deleted(String tableName, String row) async {
+    Database db = await this.database;
+
+    return await db.delete(tableName, where: row);
+  }
+
   Future<int> updateSqlite(String tableName, Map<String, dynamic> row,
       String whereClause, List<dynamic> whereArgs) async {
     Database db = await this.database;
 
-    print("WriteData FucnTionUpdateDataSheet ${tableName}");
+    print("Update Data ${tableName}");
     return await db.update(tableName, row,
         where: whereClause, whereArgs: whereArgs);
   }
@@ -104,6 +113,25 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
     Database db = await this.database;
     return await db.query(tableName);
+  }
+
+  Future<List<Map<String, dynamic>>> queryWeight({
+    String? stringValue,
+    String? selected,
+    String? table,
+  }) async {
+    try {
+      String sql = "SELECT $selected " +
+          "FROM  $table " +
+          "WHERE BatchNo = '${stringValue}'"; // แก้ไขตรงนี้
+
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e, s) {
+      print(e);
+      print(s);
+      return [];
+    }
   }
 
   Future<List<Map<String, dynamic>>> queryDataSelect(
@@ -157,9 +185,14 @@ class DatabaseHelper {
 
   Future<void> deleteSave(
       {String? tableName, String? where, String? keyWhere}) async {
-    final Database db = await database;
-    String sql = "delete from ${tableName} WHERE ${where} = '${keyWhere}'";
-    await db.delete(sql);
+    try {
+      final Database db = await database;
+      String sql = "${tableName} WHERE ${where} = '${keyWhere}'";
+      print("Delete Success");
+      await db.delete(sql);
+    } on Exception {
+      throw Exception();
+    }
   }
 
   Future<int> updateWindingWeight(
@@ -170,10 +203,14 @@ class DatabaseHelper {
       num? yieldKey2,
       String? whereKey,
       String? value}) async {
-    final Database db = await database;
-    String sql =
-        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
-    return await db.rawUpdate(sql);
+    try {
+      final Database db = await database;
+      String sql =
+          "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
+      return await db.rawUpdate(sql);
+    } on Exception {
+      throw Exception();
+    }
   }
 
 //updateProcessStart
@@ -778,7 +815,7 @@ class DatabaseHelper {
   void _createWindingWeightSheet(Database db, int newVersion) async {
     await db.execute('CREATE TABLE WINDING_WEIGHT_SHEET ('
         'MachineNo TEXT, '
-        'BatchNo INTEGER,'
+        'BatchNo TEXT,'
         'Target REAL'
         ')');
   }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/connection/testconnection_bloc.dart';
 import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
 
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/blocs/pmDaily/pm_daily_bloc.dart';
 import 'package:hitachi/blocs/treatment/treatment_bloc.dart';
+import 'package:hitachi/blocs/zincthickness/zinc_thickness_bloc.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/route/route_generator.dart';
 import 'package:hitachi/route/router_list.dart';
@@ -36,6 +38,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<TreatmentBloc>(
           create: (_) => TreatmentBloc(),
+        ),
+        BlocProvider<ZincThicknessBloc>(
+          create: (_) => ZincThicknessBloc(),
+        ),
+        BlocProvider<TestconnectionBloc>(
+          create: (_) => TestconnectionBloc(),
         ),
         BlocProvider<PmDailyBloc>(
           create: (_) => PmDailyBloc(),

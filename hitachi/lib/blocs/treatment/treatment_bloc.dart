@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
@@ -12,7 +14,18 @@ part 'treatment_event.dart';
 part 'treatment_state.dart';
 
 class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
+  Dio dio = Dio();
   TreatmentBloc() : super(TreatmentInitial()) {
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      onHttpClientCreate: (_) {
+        // Don't trust any certificate just because their root cert is trusted.
+        final HttpClient client =
+            HttpClient(context: SecurityContext(withTrustedRoots: false));
+        // You can test the intermediate / root cert here. We just ignore it.
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      },
+    );
     on<TreatmentEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -42,7 +55,7 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
   Future<ResponeDefault> fetchTreatmentSendStart(
       TreatMentOutputModel item) async {
     try {
-      Response responese = await Dio().post(ApiConfig.TREAMTMENT_START,
+      Response responese = await dio.post(ApiConfig.TREAMTMENT_START,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(minutes: 60),
@@ -60,7 +73,7 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
   Future<ResponeDefault> fetchTreatmentSendFinish(
       TreatMentOutputModel item) async {
     try {
-      Response responese = await Dio().post(ApiConfig.TREAMTMENT_FINISH,
+      Response responese = await dio.post(ApiConfig.TREAMTMENT_FINISH,
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(minutes: 60),

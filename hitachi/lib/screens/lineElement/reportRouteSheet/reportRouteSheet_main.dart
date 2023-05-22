@@ -36,8 +36,8 @@ class _ReportRouteSheetScreenState extends State<ReportRouteSheetScreen> {
           setState(() {
             sendValueController = value;
           });
-          print(sendValueController);
         },
+        receiveValue: sendValueController,
       ),
       ProblemPage(
         valueString: sendValueController,

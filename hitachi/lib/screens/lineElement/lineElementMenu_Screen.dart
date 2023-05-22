@@ -25,32 +25,32 @@ class _LineElementScreenState extends State<LineElementScreen> {
         crossAxisCount: 2,
         children: <Widget>[
           CardButton2(
-            text: "Winding Start",
+            text: "Winding\nStart",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.WindingJobStart_Control_Screen),
           ),
           CardButton2(
-            text: "Winding Finish",
+            text: "Winding\nFinish",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.WindingJobFinish_Control_Screen),
           ),
           CardButton2(
-            text: "Process Start",
+            text: "Process\nStart",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.ProcessStart_Control_Screen),
           ),
           CardButton2(
-            text: "Process Finish",
+            text: "Process\nFinish",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.ProcessFinish_control_Screen),
           ),
           CardButton2(
-            text: "Treatment Start",
+            text: "Treatment\nStart",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.TreatMentStart_control_Screen),
           ),
           CardButton2(
-            text: "Treatment Finish",
+            text: "Treatment\nFinish",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.TreatmentFinish_control_Screen),
           ),
@@ -60,7 +60,7 @@ class _LineElementScreenState extends State<LineElementScreen> {
                 context, RouterList.ReportRouteSheet_control_Screen),
           ),
           CardButton2(
-            text: "Material Input",
+            text: "Material\nInput",
             onPress: () => Navigator.pushNamed(
                 context, RouterList.MaterialInput_control_Screen),
           ),

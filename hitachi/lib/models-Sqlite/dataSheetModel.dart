@@ -69,7 +69,7 @@ class DataSheetTableModel {
         W2 = map['W2'],
         WEIGHT = map['WEIGHT'],
         MFG_DATE = map['MFG_DATE'],
-        THICKNESS = map['THICKNESS'],
+        THICKNESS = map['THICKNESS1'],
         WRAP_GRADE = map['WRAP_GRADE'],
         ROLL_NO = map['ROLL_NO'],
         CHECK_COMPLETE = map['checkComplete'];
