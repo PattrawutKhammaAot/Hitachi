@@ -356,9 +356,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   void _btnLoad() {
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailySendEvent(batchNoController.text.trim()),
-    );
+    // BlocProvider.of<PmDailyBloc>(context).add(
+    //   PMDailySendEvent(batchNoController.text.trim()),
+    // );
     // widget.onChange!(operatorNameController.text.trim());
   }
 
