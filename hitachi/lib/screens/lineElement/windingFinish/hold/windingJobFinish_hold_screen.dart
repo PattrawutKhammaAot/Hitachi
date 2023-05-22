@@ -295,7 +295,6 @@ class _WindingJobFinishHoldScreenState
                     onPress: () {
                       if (wdsList.isNotEmpty) {
                         _AlertDialog();
-                        setState(() {});
                       } else {
                         _LoadingData();
                       }

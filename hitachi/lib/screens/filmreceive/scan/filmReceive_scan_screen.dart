@@ -285,6 +285,19 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
+                _InvoiceNoController.clear();
+                _freightController.clear();
+                _IncomingDateController.clear();
+                _storeByController.clear();
+                _packNoController.clear();
+                _rollNoController.clear();
+                _barCode1Controller.clear();
+                _barCode2Controller.clear();
+                _weight1Controller.clear();
+                _weight2Controller.clear();
+                _mfgDateController.clear();
+                _wrapGradeController.clear();
+                f1.requestFocus();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {

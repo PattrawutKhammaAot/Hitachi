@@ -171,6 +171,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 });
                 if (items!.RESULT == true) {
                   _deleteSave();
+                  operatorNameController.clear();
+                  batchNoController.clear();
+                  elementQtyController.clear();
                   EasyLoading.showSuccess("${items!.MESSAGE}");
                 } else if (items!.RESULT == false) {
                   if (batchNoController.text.trim().isNotEmpty &&

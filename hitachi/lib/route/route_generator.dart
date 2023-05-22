@@ -122,7 +122,7 @@ class RouteGenerator {
             settings: settings,
             child: ZincThicknessControl(),
             type: PageTransitionType.fade);
-      //ZincThickness
+      //SettingWeb
       case RouterList.Setting_web:
         return PageTransition(
             settings: settings,

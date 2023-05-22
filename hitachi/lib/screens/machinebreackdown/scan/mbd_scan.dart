@@ -288,6 +288,16 @@ class _MachineBreakDownScanScreenState
                 _respone = state.item;
               });
               if (_respone!.RESULT == true) {
+                _dpbMachineNo_Controller.clear();
+                _machineNo_Controller.clear();
+                _operatorname_Controller.clear();
+                _serviceNo_Controller.clear();
+                _start_Technical_1_Controller.clear();
+                _start_Technical_2_Controller.clear();
+                _stop_Technical_1_Controller.clear();
+                _stop_Technical_2_Controller.clear();
+                _operator_accept_Controller.clear();
+                f1.requestFocus();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {

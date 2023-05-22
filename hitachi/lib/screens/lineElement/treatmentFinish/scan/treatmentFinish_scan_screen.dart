@@ -112,6 +112,16 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
               EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentFinishSendLoadedState) {
               if (state.item.RESULT == true) {
+                _machineNoController.clear();
+                _operatorNameController.clear();
+                _batch1Controller.clear();
+                _batch2Controller.clear();
+                _batch3Controller.clear();
+                _batch4Controller.clear();
+                _batch5Controller.clear();
+                _batch6Controller.clear();
+                _batch7Controller.clear();
+                f1.requestFocus();
                 EasyLoading.showSuccess("SendComplete");
               } else if (state.item.RESULT == false) {
                 EasyLoading.showError("Please Check Info & Save Complete");
