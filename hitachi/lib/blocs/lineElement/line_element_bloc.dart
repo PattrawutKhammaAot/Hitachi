@@ -159,19 +159,6 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         }
       },
     );
-
-    //PMDaily
-    // on<PMDailySendEvent>(
-    //   (event, emit) async {
-    //     try {
-    //       emit(PMDailyLoadingState());
-    //       final mlist = await fetchSendPMDaily(event.items);
-    //       emit(PMDailyLoadedState(mlist));
-    //     } catch (e) {
-    //       emit(PMDailyErrorState(e.toString()));
-    //     }
-    //   },
-    // );
   }
 //Scan
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(

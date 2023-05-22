@@ -73,6 +73,16 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
         START_DATE: DateTime.now().toString(),
       )),
     );
+
+    print(_machineNoController.text);
+    print(_operatorNameController.text);
+    print(_batch1Controller.text);
+    print(_batch2Controller.text);
+    print(_batch3Controller.text);
+    print(_batch4Controller.text);
+    print(_batch5Controller.text);
+    print(_batch6Controller.text);
+    print(_batch7Controller.text);
   }
 
   void _saveDataToSqlite() async {
@@ -108,6 +118,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
             if (state is TreatmentStartSendLoadingState) {
               EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentStartSendLoadedState) {
+              EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 _machineNoController.clear();
                 _operatorNameController.clear();
@@ -119,13 +130,17 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                 _batch6Controller.clear();
                 _batch7Controller.clear();
                 f1.requestFocus();
-                EasyLoading.showSuccess("Send Complete.");
+                EasyLoading.showSuccess("${state.item.MESSAGE}");
               } else if (state.item.RESULT == false) {
                 if (_machineNoController.text.isNotEmpty &&
                     _operatorNameController.text.isNotEmpty &&
                     _batch1Controller.text.isNotEmpty) {
-                  EasyLoading.showError("Can not send & save Data");
-                  _saveDataToSqlite();
+                  _errorDialog(
+                      text: Label("${state.item.MESSAGE}"),
+                      onpressOk: () {
+                        Navigator.pop(context);
+                        _saveDataToSqlite();
+                      });
                 } else {
                   EasyLoading.showError("Please Input Info");
                 }
@@ -308,6 +323,36 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }
