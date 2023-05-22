@@ -71,7 +71,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
           MATERIAL: _materialController.text.trim(),
           MACHINENO: _machineOrProcessController.text.trim(),
           OPERATORNAME: int.tryParse(_operatorNameController.text.trim()),
-          BATCHNO: int.tryParse(_batchOrSerialController.text.trim()),
+          BATCHNO: _batchOrSerialController.text.trim(),
           LOT: _lotNoController.text.trim(),
           STARTDATE: _dateTime.toString(),
         ),
@@ -112,22 +112,31 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   setState(() {
                     bgColor = Colors.grey;
                   });
-                  _materialController.clear();
-                  _operatorNameController.clear();
-                  _batchOrSerialController.clear();
-                  _machineOrProcessController.clear();
-                  _lotNoController.clear();
-                  EasyLoading.showSuccess("${_inputMtModel?.MESSAGE}",
-                      duration: Duration(seconds: 5));
-                  _materialFoucus.requestFocus();
+
+                  _errorDialog(
+                      text: Label("${_inputMtModel?.MESSAGE}"),
+                      onpressOk: () {
+                        Navigator.pop(context);
+                        _materialController.clear();
+                        _operatorNameController.clear();
+                        _batchOrSerialController.clear();
+                        _machineOrProcessController.clear();
+                        _lotNoController.clear();
+                        _materialFoucus.requestFocus();
+                      });
                 } else if (_inputMtModel!.RESULT == false) {
+                  EasyLoading.dismiss();
                   if (_machineOrProcessController.text.isNotEmpty &&
                       _operatorNameController.text.isNotEmpty &&
                       _batchOrSerialController.text.isNotEmpty &&
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
-                    _insertSqlite();
-                    EasyLoading.showError("Failed To Send");
+                    _errorDialog(
+                        text: Label("${_inputMtModel?.MESSAGE}"),
+                        onpressOk: () {
+                          Navigator.pop(context);
+                          _insertSqlite();
+                        });
                   } else {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
                   }
@@ -149,14 +158,19 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 EasyLoading.show();
               }
               if (state is CheckMaterialInputLoadedState) {
+                EasyLoading.dismiss();
                 setState(() {
                   _responeDefault = state.item;
                 });
                 if (_responeDefault!.RESULT == true) {
-                  EasyLoading.showSuccess("Success");
+                  _operatorNameFouc.requestFocus();
                 } else {
-                  EasyLoading.showError("${_responeDefault?.MESSAGE}",
-                      duration: Duration(seconds: 5));
+                  _errorDialog(
+                      text: Label("${_responeDefault?.MESSAGE}"),
+                      onpressOk: () {
+                        _operatorNameFouc.requestFocus();
+                        Navigator.pop(context);
+                      });
                 }
               } else if (state is CheckMaterialInputErrorState) {
                 EasyLoading.dismiss();
@@ -179,7 +193,6 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                     BlocProvider.of<LineElementBloc>(context).add(
                       CheckMaterialInputEvent(_materialController.text.trim()),
                     );
-                    _operatorNameFouc.requestFocus();
                   },
                 ),
                 const SizedBox(
@@ -232,7 +245,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   onEditingComplete: () => checkValueController(),
                   textInputFormatter: [
                     FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{3})[a-zA-Z0-9]+$'),
+                      RegExp(r'^(?!.*\d{4})[a-zA-Z0-9]+$'),
                     ),
                   ],
                   onChanged: (value) {
@@ -242,7 +255,9 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                           value == _operatorNameController.text &&
                           value == _materialController.text) {
                         _lotNoController.text = "";
-                        EasyLoading.showError("Input Again");
+                        _errorDialog(
+                            text: Label("Please Input Lot No. Again"),
+                            onpressOk: () => Navigator.pop(context));
                       } else if (_batchOrSerialController.text.isNotEmpty &&
                           _machineOrProcessController.text.isNotEmpty &&
                           _operatorNameController.text.isNotEmpty &&
@@ -279,6 +294,35 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
     );
   }
 
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
   // Future<void> _selectedSqliteAndInsert({
   //   String? material,
   //   String? typeMaterial,

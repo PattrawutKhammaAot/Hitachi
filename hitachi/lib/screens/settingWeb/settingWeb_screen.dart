@@ -17,7 +17,7 @@ class SettingWebScreen extends StatefulWidget {
 
 class _SettingWebScreenState extends State<SettingWebScreen> {
   final TextEditingController _urlController = TextEditingController();
-  String? _urltestConnect = BASE_API_URL;
+
   Color _isColorSuccess = Colors.grey;
 
   @override

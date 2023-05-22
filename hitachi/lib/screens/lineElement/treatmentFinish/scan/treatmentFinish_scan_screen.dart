@@ -111,6 +111,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
             if (state is TreatmentFinishSendLoadingState) {
               EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentFinishSendLoadedState) {
+              EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 _machineNoController.clear();
                 _operatorNameController.clear();
@@ -121,11 +122,15 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                 _batch5Controller.clear();
                 _batch6Controller.clear();
                 _batch7Controller.clear();
+                EasyLoading.showSuccess("${state.item.MESSAGE}");
                 f1.requestFocus();
-                EasyLoading.showSuccess("SendComplete");
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Please Check Info & Save Complete");
-                _saveDataToSqlite();
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      _saveDataToSqlite();
+                      Navigator.pop(context);
+                    });
               } else {
                 if (_machineNoController.text.isNotEmpty &&
                     _operatorNameController.text.isNotEmpty &&
@@ -307,6 +312,36 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

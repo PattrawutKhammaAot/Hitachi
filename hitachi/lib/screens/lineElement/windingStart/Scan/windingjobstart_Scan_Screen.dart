@@ -492,9 +492,12 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         });
                         EasyLoading.showSuccess(items!.MESSAGE!);
                       } else {
-                        EasyLoading.showInfo(" Please Input Weight",
-                            duration: Duration(seconds: 1));
-                        _showpopUpWeight();
+                        _errorDialog(
+                            text: Label("${state.item.MESSAGE}"),
+                            onpressOk: () {
+                              Navigator.pop(context);
+                              _showpopUpWeight();
+                            });
                       }
                     }
                     if (state is PostSendWindingStartReturnWeightErrorState) {
@@ -503,15 +506,17 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                     if (state is GetCheckPackLoadingState) {
                       EasyLoading.show();
                     } else if (state is GetCheckPackLoadedState) {
+                      EasyLoading.dismiss();
                       setState(() {
                         packNoModel = state.item;
                       });
                       if (packNoModel!.RESULT == true) {
                         EasyLoading.dismiss();
-                        EasyLoading.showSuccess("Success");
                       } else {
-                        print("object");
-                        EasyLoading.showError("${packNoModel?.MESSAGE}");
+                        _errorDialog(
+                            text: Label("${packNoModel?.MESSAGE}"),
+                            onpressOk: () => Navigator.pop(context));
+
                         setState(() {
                           bgColor = COLOR_SUCESS;
                         });
@@ -627,6 +632,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               onEditingComplete: () {
                                 if (filmPackNoController.text.length == 8) {
                                   checkFilmPackNo();
+                                  f6.requestFocus();
                                 }
                               },
                               labelText: "Film Pack No :",
@@ -869,5 +875,35 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             ],
           );
         });
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }

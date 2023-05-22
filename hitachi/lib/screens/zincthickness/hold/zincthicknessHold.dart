@@ -115,17 +115,19 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                               if (selectRow.isNotEmpty) {
                                 if (selectRow.length ==
                                     zincDataSource!.effectiveRows.length) {
-                                  print("all");
-                                  setState(() {
-                                    selectRow.forEach((row) {
-                                      allRowIndex = zincDataSource!
-                                          .effectiveRows
-                                          .indexOf(row);
+                                  if (selectRow.length != 1) {
+                                    print("all");
+                                    setState(() {
+                                      selectRow.forEach((row) {
+                                        allRowIndex = zincDataSource!
+                                            .effectiveRows
+                                            .indexOf(row);
 
-                                      _colorSend = COLOR_SUCESS;
-                                      _colorDelete = COLOR_RED;
+                                        _colorSend = COLOR_SUCESS;
+                                        _colorDelete = COLOR_RED;
+                                      });
                                     });
-                                  });
+                                  }
                                 } else if (selectRow.length !=
                                     zincDataSource!.effectiveRows.length) {
                                   setState(() {
