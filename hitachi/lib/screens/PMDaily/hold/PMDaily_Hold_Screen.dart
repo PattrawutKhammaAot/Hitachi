@@ -34,6 +34,10 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
   Color _colorDelete = COLOR_GREY;
   bool isHidewidget = false;
 
+  int? index;
+  int? allRowIndex;
+  List<PMDailyModel> selectAll = [];
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
@@ -104,27 +108,84 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                           source: PMDataSource!,
                           // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
+                          selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
-                          onCellTap: (details) async {
-                            if (details.rowColumnIndex.rowIndex != 0) {
+                          allowPullToRefresh: true,
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            if (selectRow.isNotEmpty) {
+                              if (selectRow.length ==
+                                  PMDataSource!.effectiveRows.length) {
+                                print("all");
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    allRowIndex = PMDataSource!.effectiveRows
+                                        .indexOf(row);
+
+                                    _colorSend = COLOR_SUCESS;
+                                    _colorDelete = COLOR_RED;
+                                  });
+                                });
+                              } else if (selectRow.length !=
+                                  PMDataSource!.effectiveRows.length) {
+                                setState(() {
+                                  index = selectRow.isNotEmpty
+                                      ? PMDataSource!.effectiveRows
+                                          .indexOf(selectRow.first)
+                                      : null;
+                                  datagridRow = PMDataSource!.effectiveRows
+                                      .elementAt(index!);
+                                  PMSqliteModel = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => PMDailyModel(
+                                          OPERATOR_NAME: e.value.toString(),
+                                        ),
+                                      )
+                                      .toList();
+                                  // selectAll.add(wdsList[index!]);
+                                  if (!selectAll.contains(PMList[index!])) {
+                                    selectAll.add(PMList[index!]);
+                                    print(selectAll.length);
+                                  }
+                                  _colorSend = COLOR_SUCESS;
+                                  _colorDelete = COLOR_RED;
+                                });
+                              }
+                            } else {
                               setState(() {
-                                selectedRowIndex =
-                                    details.rowColumnIndex.rowIndex - 1;
-                                datagridRow = PMDataSource!.effectiveRows
-                                    .elementAt(selectedRowIndex!);
-                                PMSqliteModel = datagridRow!
-                                    .getCells()
-                                    .map(
-                                      (e) => PMDailyModel(ID: e.value),
-                                    )
-                                    .toList();
-                                _colorSend = COLOR_SUCESS;
-                                _colorDelete = COLOR_RED;
+                                if (selectAll.contains(PMList[index!])) {
+                                  selectAll.remove(PMList[index!]);
+                                  print("check ${selectAll.length}");
+                                }
+                                if (selectAll.isEmpty) {
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
+                                }
                               });
+
+                              print('No Rows Selected');
                             }
                           },
+                          // onCellTap: (details) async {
+                          //   if (details.rowColumnIndex.rowIndex != 0) {
+                          //     setState(() {
+                          //       selectedRowIndex =
+                          //           details.rowColumnIndex.rowIndex - 1;
+                          //       datagridRow = PMDataSource!.effectiveRows
+                          //           .elementAt(selectedRowIndex!);
+                          //       PMSqliteModel = datagridRow!
+                          //           .getCells()
+                          //           .map(
+                          //             (e) => PMDailyModel(ID: e.value),
+                          //           )
+                          //           .toList();
+                          //       _colorSend = COLOR_SUCESS;
+                          //       _colorDelete = COLOR_RED;
+                          //     });
+                          //   }
+                          // },
                           columns: <GridColumn>[
                             GridColumn(
                                 columnName: 'Operatorname',
@@ -209,23 +270,21 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("Operator Name."))),
-                                  DataCell(Label(
-                                      "${PMList[selectedRowIndex!].OPERATOR_NAME}"))
+                                  DataCell(
+                                      Label("${PMList[index!].OPERATOR_NAME}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Checkpoint"))),
-                                  DataCell(Label(
-                                      "${PMList[selectedRowIndex!].CHECKPOINT}"))
+                                  DataCell(
+                                      Label("${PMList[index!].CHECKPOINT}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Status"))),
-                                  DataCell(Label(
-                                      "${PMList[selectedRowIndex!].STATUS}"))
+                                  DataCell(Label("${PMList[index!].STATUS}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Start Date"))),
-                                  DataCell(Label(
-                                      "${PMList[selectedRowIndex!].STARTDATE}"))
+                                  DataCell(Label("${PMList[index!].STARTDATE}"))
                                 ]),
                               ])
                         ],
@@ -295,11 +354,28 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
     }
   }
 
+  // void deletedInfo() async {
+  //   await databaseHelper.deletedRowSqlite(
+  //       tableName: 'PM_SHEET',
+  //       columnName: 'ID',
+  //       columnValue: PMList[selectedRowIndex!].ID);
+  // }
+
   void deletedInfo() async {
-    await databaseHelper.deletedRowSqlite(
-        tableName: 'PM_SHEET',
-        columnName: 'ID',
-        columnValue: PMList[selectedRowIndex!].ID);
+    if (index != null) {
+      for (var row in selectAll) {
+        await databaseHelper.deletedRowSqlite(
+            tableName: 'PM_SHEET', columnName: 'ID', columnValue: row.ID);
+      }
+    } else if (allRowIndex != null) {
+      for (var row in PMList) {
+        await databaseHelper.deletedRowSqlite(
+          tableName: 'PM_SHEET',
+          columnName: 'ID',
+          columnValue: row.ID,
+        );
+      }
+    } else {}
   }
 
   void _AlertDialog() async {
@@ -330,33 +406,77 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
     );
   }
 
+  // void _sendDataServer() async {
+  //   BlocProvider.of<PmDailyBloc>(context).add(
+  //     PMDailySendEvent(
+  //       PMDailyOutputModel(
+  //         OPERATORNAME:
+  //             int.tryParse(PMList![selectedRowIndex!].OPERATOR_NAME.toString()),
+  //         CHECKPOINT: PMList![selectedRowIndex!].CHECKPOINT,
+  //         STATUS: PMList![selectedRowIndex!].STATUS,
+  //         STARTDATE: PMList![selectedRowIndex!].STARTDATE,
+  //       ),
+  //     ),
+  //   );
+  // }
+
   void _sendDataServer() async {
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailySendEvent(
-        PMDailyOutputModel(
-          // PONO: dstList[selectedRowIndex!].PO_NO,
-          // INVOICE: dstList[selectedRowIndex!].IN_VOICE,
-          // FRIEGHT: dstList[selectedRowIndex!].FRIEGHT,
-          // DATERECEIVE: dstList[selectedRowIndex!].INCOMING_DATE,
-          // OPERATORNAME:
-          //     int.tryParse(dstList[selectedRowIndex!].STORE_BY.toString()),
-          // PACKNO: dstList[selectedRowIndex!].PACK_NO,
-          // STATUS: dstList[selectedRowIndex!].STATUS,
-          // WEIGHT1: num.tryParse(dstList[selectedRowIndex!].W1.toString()),
-          // WEIGHT2: num.tryParse(dstList[selectedRowIndex!].W2.toString()),
-          // MFGDATE: dstList[selectedRowIndex!].MFG_DATE,
-          // THICKNESS: dstList[selectedRowIndex!].THICKNESS,
-          // WRAPGRADE: dstList[selectedRowIndex!].WRAP_GRADE,
-          // ROLL_NO: dstList[selectedRowIndex!].ROLL_NO,
-          OPERATORNAME:
-              int.tryParse(PMList![selectedRowIndex!].OPERATOR_NAME.toString()),
-          CHECKPOINT: PMList![selectedRowIndex!].CHECKPOINT,
-          STATUS: PMList![selectedRowIndex!].STATUS,
-          STARTDATE: PMList![selectedRowIndex!].STARTDATE,
-        ),
-      ),
-    );
+    if (index != null) {
+      for (var row in selectAll) {
+        BlocProvider.of<PmDailyBloc>(context).add(
+          PMDailySendEvent(
+            PMDailyOutputModel(
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              CHECKPOINT: row.CHECKPOINT,
+              STATUS: row.STATUS,
+              STARTDATE: row.STARTDATE,
+            ),
+          ),
+        );
+      }
+    } else if (allRowIndex != null) {
+      for (var row in PMList) {
+        BlocProvider.of<PmDailyBloc>(context).add(
+          PMDailySendEvent(
+            PMDailyOutputModel(
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              CHECKPOINT: row.CHECKPOINT,
+              STATUS: row.STATUS,
+              STARTDATE: row.STARTDATE,
+            ),
+          ),
+        );
+      }
+    }
   }
+  // void _sendDataServer() async {
+  //   if (index != null) {
+  //     for (var row in selectAll) {
+  //       BlocProvider.of<PmDailyBloc>(context).add(
+  //         PMDailySendEvent(
+  //           PMDailyOutputModel(
+  //               OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+  //               CHECKPOINT: row.CHECKPOINT,
+  //               STATUS: row.STATUS,
+  //               STARTDATE: row.STARTDATE,
+  //
+  //         ),
+  //       );
+  //     }
+  //   } else if (allRowIndex != null) {
+  //     for (var row in PMList) {
+  //       BlocProvider.of<PmDailyBloc>(context).add(
+  //         PMDailySendEvent(
+  //           PMDailyOutputModel(
+  //             OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+  //             CHECKPOINT: row.CHECKPOINT,
+  //             STATUS: row.STATUS,
+  //             STARTDATE: row.STARTDATE,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   void _selectData() {
     EasyLoading.showInfo("Please Select Data", duration: Duration(seconds: 2));
