@@ -163,9 +163,10 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                     selectAll.remove(wdsList[index!]);
                                     print("check ${selectAll.length}");
                                   }
-                                  // selectAll.remove(wdsList[index!]);
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 });
 
                                 print('No Rows Selected');

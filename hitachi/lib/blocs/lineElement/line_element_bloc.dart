@@ -266,9 +266,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
 
       return tmp;
-    } catch (e) {
-      print(e);
-      return ReportRouteSheetModel();
+    } on Exception {
+      throw Exception();
     }
   }
 

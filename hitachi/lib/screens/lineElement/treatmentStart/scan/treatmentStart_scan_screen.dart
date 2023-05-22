@@ -10,6 +10,7 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 
 class TreatMentStartScanScreen extends StatefulWidget {
   const TreatMentStartScanScreen({super.key});
@@ -80,18 +81,18 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       'OperatorName': _operatorNameController.text.trim(),
       'Batch1': _batch1Controller.text.trim(),
       'Batch2':
-          _batch2Controller.text == null ? "" : _batch2Controller.text.trim(),
+          _batch2Controller.text.isEmpty ? "" : _batch2Controller.text.trim(),
       'Batch3':
-          _batch3Controller.text == null ? "" : _batch3Controller.text.trim(),
+          _batch3Controller.text.isEmpty ? "" : _batch3Controller.text.trim(),
       'Batch4':
-          _batch4Controller.text == null ? "" : _batch4Controller.text.trim(),
+          _batch4Controller.text.isEmpty ? "" : _batch4Controller.text.trim(),
       'Batch5':
-          _batch5Controller.text == null ? "" : _batch5Controller.text.trim(),
+          _batch5Controller.text.isEmpty ? "" : _batch5Controller.text.trim(),
       'Batch6':
-          _batch6Controller.text == null ? "" : _batch6Controller.text.trim(),
+          _batch6Controller.text.isEmpty ? "" : _batch6Controller.text.trim(),
       'Batch7':
-          _batch7Controller.text == null ? "" : _batch7Controller.text.trim(),
-      'StartDate': DateTime.now().toString(),
+          _batch7Controller.text.isEmpty ? "" : _batch7Controller.text.trim(),
+      'StartDate': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
       'FinDate': '',
       'StartEnd': '',
       'CheckComplete': 'S',

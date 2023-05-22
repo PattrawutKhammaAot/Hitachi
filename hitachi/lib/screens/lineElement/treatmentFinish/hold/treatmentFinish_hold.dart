@@ -144,8 +144,10 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                     selectAll.remove(tmList[index!]);
                                     print(selectAll.length);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 });
 
                                 print('No Rows Selected');

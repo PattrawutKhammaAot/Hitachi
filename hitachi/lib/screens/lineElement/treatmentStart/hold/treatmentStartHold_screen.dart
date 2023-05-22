@@ -69,7 +69,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                 EasyLoading.showSuccess("SendComplete");
                 deletedInfo();
               } else {
-                EasyLoading.showError("status");
+                EasyLoading.showError("${state.item.MESSAGE}");
               }
             } else {
               EasyLoading.dismiss();
@@ -144,8 +144,10 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                                     selectAll.remove(tmList[index!]);
                                     print(selectAll.length);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 });
 
                                 print('No Rows Selected');

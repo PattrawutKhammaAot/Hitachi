@@ -159,8 +159,10 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                     selectAll.remove(zincList![index!]);
                                     print(selectAll.length);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 });
 
                                 print('No Rows Selected');

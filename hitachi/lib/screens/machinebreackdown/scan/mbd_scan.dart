@@ -15,6 +15,7 @@ import 'package:hitachi/models-Sqlite/breakdownSheetModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/machineBreakdown/machinebreakdownOutputMode.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 
 class MachineBreakDownScanScreen extends StatefulWidget {
   const MachineBreakDownScanScreen({super.key});
@@ -69,11 +70,7 @@ class _MachineBreakDownScanScreenState
     if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
         _serviceNo_Controller.text.isNotEmpty &&
-        _start_Technical_1_Controller.text.isNotEmpty &&
-        _stop_Technical_1_Controller.text.isNotEmpty &&
-        _operator_accept_Controller.text.isNotEmpty &&
-        _start_Technical_1_Controller.text !=
-            _stop_Technical_1_Controller.text) {
+        _start_Technical_1_Controller.text.isNotEmpty) {
       _sendData();
       Future.delayed(Duration(seconds: 5), () {
         _callBreakDownMachine();
@@ -113,29 +110,21 @@ class _MachineBreakDownScanScreenState
 
   void _saveMachine() async {
     try {
-      var sql = await databaseHelper.queryDataSelect(
-          select1: 'MachineNo',
-          formTable: 'BREAKDOWN_SHEET',
-          where: 'MachineNo',
-          stringValue: _machineNo_Controller.text.trim());
+      var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
+      bool found = false;
+      var items;
+      for (items in sql) {
+        if (_machineNo_Controller.text.trim() == items['MachineNo'].trim()) {
+          found = true;
+          print(found);
+          break;
+        } else {
+          found = false;
+          print("Check ${found} = false");
+        }
+      }
 
-      if (sql.length <= 0) {
-        await databaseHelper.insertSqlite('BREAKDOWN_SHEET', {
-          'MachineNo': _machineNo_Controller.text.trim(),
-          'CallUser': _operatorname_Controller.text.trim(),
-          'RepairNo': _serviceNo_Controller.text.trim(),
-          'BreakStartDate': DateTime.now().toString(),
-          'MT1': _start_Technical_1_Controller.text.trim(),
-          'MT1StartDate': DateTime.now().toString(),
-          'MT2': _start_Technical_2_Controller.text.trim(),
-          'MT2StartDate': DateTime.now().toString(),
-          'MT1StopDate': _stop_Technical_1_Controller.text.trim(),
-          'MT2StopDate': _stop_Technical_2_Controller.text.trim(),
-          'CheckUser': _operator_accept_Controller.text.trim(),
-          'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
-          'CheckComplete': "",
-        });
-      } else {
+      if (found == true) {
         var sql_breakdown = await databaseHelper.queryDataSelect(
             select1: 'MT1StartDate',
             select2: 'MT2StartDate',
@@ -143,39 +132,117 @@ class _MachineBreakDownScanScreenState
             select4: 'MT2StopDate',
             formTable: 'BREAKDOWN_SHEET',
             stringValue: _machineNo_Controller.text.trim());
-        if (sql_breakdown.length > 0) {
-          var mt = sql_breakdown[0];
-          var mt1start, mt2start, mt1stop, mt2stop;
-          var mt1StartDate = mt[0]["MT1StartDate"] ?? DateTime.now().toString();
 
-          var mt2StartDate = mt[0]["MT2StartDate"] ?? DateTime.now().toString();
-          var mt1StopDate =
-              mt[0]["MT1StopDate"] ?? _stop_Technical_1_Controller.text.trim();
-          var mt2StopDate =
-              mt[0]["MT2StopDate"] ?? _stop_Technical_2_Controller.text.trim();
-
-          await databaseHelper.updateSqlite(
-              'BREAKDOWN_SHEET',
-              {
-                'MachineNo': _machineNo_Controller.text.trim(),
-                'CallUser': _operatorname_Controller.text.trim(),
-                'RepairNo': _serviceNo_Controller.text.trim(),
-                'BreakStartDate': DateTime.now().toString(),
-                'MT1': _start_Technical_1_Controller.text.trim(),
-                'MT1StartDate': mt1StartDate,
-                'MT2': _start_Technical_2_Controller.text.trim(),
-                'MT2StartDate': mt2StartDate,
-                'MT1StopDate': mt1StopDate,
-                'MT2StopDate': mt2StopDate,
-                'CheckUser': _operator_accept_Controller.text.trim(),
-                'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
-                'CheckComplete': "",
-              },
-              'MachineNo',
-              [_machineNo_Controller.text.trim()]);
-        }
+        await databaseHelper.updateSqlite(
+            'BREAKDOWN_SHEET',
+            {
+              'MachineNo': _machineNo_Controller.text.trim(),
+              'CallUser': _operatorname_Controller.text.trim(),
+              'RepairNo': _serviceNo_Controller.text.trim(),
+              'BreakStartDate':
+                  DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              'MT1': _start_Technical_1_Controller.text.trim(),
+              'MT1StartDate':
+                  DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              'MT2': _start_Technical_2_Controller.text.trim(),
+              'MT2StartDate': _start_Technical_2_Controller.text.isEmpty
+                  ? ""
+                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              'MT1StopDate': _stop_Technical_1_Controller.text.isEmpty
+                  ? ""
+                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              'MT2StopDate': _stop_Technical_2_Controller.text.isEmpty
+                  ? ""
+                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              'CheckUser': _operator_accept_Controller.text.trim(),
+              'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
+              'CheckComplete': "",
+            },
+            'MachineNo = ?',
+            [_machineNo_Controller.text.trim()]);
+        _dpbMachineNo_Controller.clear();
+        _machineNo_Controller.clear();
+        _operatorname_Controller.clear();
+        _serviceNo_Controller.clear();
+        _start_Technical_1_Controller.clear();
+        _start_Technical_2_Controller.clear();
+        _stop_Technical_1_Controller.clear();
+        _stop_Technical_2_Controller.clear();
+        _operator_accept_Controller.clear();
+      } else if (found == false) {
+        print("Insert");
+        await databaseHelper.insertSqlite('BREAKDOWN_SHEET', {
+          'MachineNo': _machineNo_Controller.text.trim(),
+          'CallUser': _operatorname_Controller.text.trim(),
+          'RepairNo': _serviceNo_Controller.text.trim(),
+          'BreakStartDate':
+              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'MT1': _start_Technical_1_Controller.text.trim(),
+          'MT1StartDate':
+              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'MT2': _start_Technical_2_Controller.text.trim(),
+          'MT2StartDate': _start_Technical_2_Controller.text.isEmpty
+              ? ""
+              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'MT1StopDate': _stop_Technical_1_Controller.text.isEmpty
+              ? ""
+              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'MT2StopDate': _stop_Technical_2_Controller.text.isEmpty
+              ? ""
+              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'CheckUser': _operator_accept_Controller.text.trim(),
+          'BreakStopDate': _operator_accept_Controller.text.isEmpty
+              ? ""
+              : DateFormat('dd MMM yyyy HH:mm')
+                  .format(DateTime.now()), //ไม่รู้ว่ามาจากไหน
+          'CheckComplete': "",
+        });
       }
-      EasyLoading.showError("Save complete & Can not Call Api");
+      // if (sql.length <= 0) {
+      //   print("sql.length <= 0");
+
+      // } else {
+      // var sql_breakdown = await databaseHelper.queryDataSelect(
+      //     select1: 'MT1StartDate',
+      //     select2: 'MT2StartDate',
+      //     select3: 'MT1StopDate',
+      //     select4: 'MT2StopDate',
+      //     formTable: 'BREAKDOWN_SHEET',
+      //     stringValue: _machineNo_Controller.text.trim());
+
+      // if (sql_breakdown.length > 0) {
+      //   var mt = sql_breakdown[0];
+      //   var mt1start, mt2start, mt1stop, mt2stop;
+      //   var mt1StartDate = mt[0]["MT1StartDate"] ?? DateTime.now().toString();
+
+      //   var mt2StartDate = mt[0]["MT2StartDate"] ?? DateTime.now().toString();
+      //   var mt1StopDate =
+      //       mt[0]["MT1StopDate"] ?? _stop_Technical_1_Controller.text.trim();
+      //   var mt2StopDate =
+      //       mt[0]["MT2StopDate"] ?? _stop_Technical_2_Controller.text.trim();
+      //   print("sql_breakdown.length > 0");
+      //   await databaseHelper.updateSqlite(
+      //       'BREAKDOWN_SHEET',
+      //       {
+      //         'MachineNo': _machineNo_Controller.text.trim(),
+      //         'CallUser': _operatorname_Controller.text.trim(),
+      //         'RepairNo': _serviceNo_Controller.text.trim(),
+      //         'BreakStartDate': DateTime.now().toString(),
+      //         'MT1': _start_Technical_1_Controller.text.trim(),
+      //         'MT1StartDate': mt1StartDate,
+      //         'MT2': _start_Technical_2_Controller.text.trim(),
+      //         'MT2StartDate': mt2StartDate,
+      //         'MT1StopDate': mt1StopDate,
+      //         'MT2StopDate': mt2StopDate,
+      //         'CheckUser': _operator_accept_Controller.text.trim(),
+      //         'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
+      //         'CheckComplete': "",
+      //       },
+      //       'MachineNo = ?',
+      //       [_machineNo_Controller.text.trim()]);
+      // }
+      // }
+      // EasyLoading.showError("Save complete & Can not Call Api");
     } catch (e, s) {
       print("${e}${s}");
       EasyLoading.showError("Can not Save");
@@ -191,15 +258,18 @@ class _MachineBreakDownScanScreenState
             SERVICE: _serviceNo_Controller.text.trim(),
             BREAK_START_DATE: DateTime.now().toString(),
             TECH1: _start_Technical_1_Controller.text.trim(),
-            START_DATE_TECH_1: DateTime.now().toString(),
+            START_DATE_TECH_1:
+                DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
             TECH2: _start_Technical_2_Controller.text.trim(),
             START_DATE_TECH_2: _start_Technical_2_Controller.text.isEmpty
                 ? ""
-                : _start_Technical_2_Controller.text.trim(),
+                : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
             STOP_TECH_DATE_1: _stop_Technical_1_Controller.text.trim(),
             STOP_TECH_DATE_2: _stop_Technical_2_Controller.text.trim(),
             ACCEPT: _operator_accept_Controller.text.trim(),
-            BREAK_STOP_DATE: ""),
+            BREAK_STOP_DATE: _operator_accept_Controller.text.isEmpty
+                ? ""
+                : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())),
       ),
     );
   }
@@ -211,7 +281,7 @@ class _MachineBreakDownScanScreenState
         BlocListener<MachineBreakDownBloc, MachineBreakDownState>(
           listener: (context, state) {
             if (state is PostMachineBreakdownLoadingState) {
-              EasyLoading.show();
+              EasyLoading.show(status: "Loading");
             } else if (state is PostMachineBreakdownLoadedState) {
               EasyLoading.dismiss();
               setState(() {
@@ -221,6 +291,8 @@ class _MachineBreakDownScanScreenState
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
+                EasyLoading.showError("${_respone?.MESSAGE}",
+                    duration: Duration(seconds: 6));
                 _saveMachine();
               }
             }
@@ -288,6 +360,18 @@ class _MachineBreakDownScanScreenState
                                   setState(() {
                                     _machineNo_Controller.text =
                                         item.MACHINE_NO.toString();
+                                    _operatorname_Controller.text =
+                                        item.OPERATOR_NAME.toString();
+                                    _serviceNo_Controller.text =
+                                        item.SERVICE_NO.toString();
+                                    if (item.TECH_1 != null) {
+                                      _start_Technical_1_Controller.text =
+                                          item.TECH_1.toString();
+                                    }
+                                    if (item.STOP_DATE_TECH_1 != null) {
+                                      _stop_Technical_1_Controller.text =
+                                          item.STOP_DATE_TECH_1.toString();
+                                    }
                                   });
                                   print(value);
                                   break;
@@ -350,14 +434,18 @@ class _MachineBreakDownScanScreenState
                   ),
                   RowBoxInputField(
                     focusNode: f2,
-                    onEditingComplete: () => f3.requestFocus(),
+                    onEditingComplete: () {
+                      if (_operatorname_Controller.text.length == 12) {
+                        f3.requestFocus();
+                      }
+                    },
                     labelText: "Operator Name : ",
                     height: 30,
                     controller: _operatorname_Controller,
+                    maxLength: 12,
+                    type: TextInputType.number,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^[a-zA-Z0-9]+$')),
-                      LengthLimitingTextInputFormatter(12),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   const SizedBox(

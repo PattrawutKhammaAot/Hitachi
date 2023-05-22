@@ -155,7 +155,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'INCOMING_DATE': _IncomingDateController.text.trim(),
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
-          'STORE_DATE': DateTime.now().toString(),
+          'STORE_DATE': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
           'STATUS': " ",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),

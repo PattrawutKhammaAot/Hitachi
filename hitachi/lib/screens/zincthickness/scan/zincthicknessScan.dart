@@ -10,6 +10,7 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/zincthickness/zincOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 
 class ZincThickNessScanScreen extends StatefulWidget {
   const ZincThickNessScanScreen({super.key});
@@ -187,7 +188,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         'Thickness7': _thickness7Controller.text.trim(),
         'Thickness8': _thickness8Controller.text.trim(),
         'Thickness9': _thickness9Controller.text.trim(),
-        'DateData': DateTime.now().toString(),
+        'DateData': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
       });
       _thickness1Controller.clear();
       _thickness2Controller.clear();

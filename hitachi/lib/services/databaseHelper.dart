@@ -181,10 +181,14 @@ class DatabaseHelper {
       num? yieldKey2,
       String? whereKey,
       String? value}) async {
-    final Database db = await database;
-    String sql =
-        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
-    return await db.rawUpdate(sql);
+    try {
+      final Database db = await database;
+      String sql =
+          "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
+      return await db.rawUpdate(sql);
+    } on Exception {
+      throw Exception();
+    }
   }
 
   //เขียนข้อมูลในSQlite

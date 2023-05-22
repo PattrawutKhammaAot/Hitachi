@@ -146,10 +146,10 @@ class _MachineBreakDownHoldScreenState
                                     selectAll.add(bdsList[index!]);
                                     print(selectAll.length);
                                   }
-                                  // selectAll.add(bdsList[index!]);
-
                                   _colorSend = COLOR_SUCESS;
                                   _colorDelete = COLOR_RED;
+
+                                  // selectAll.add(bdsList[index!]);
                                 });
                               }
                             } else {
@@ -157,6 +157,10 @@ class _MachineBreakDownHoldScreenState
                                 if (selectAll.contains(bdsList[index!])) {
                                   selectAll.remove(bdsList[index!]);
                                   print("check ${selectAll.length}");
+                                  if (selectAll.isEmpty) {
+                                    _colorSend = Colors.grey;
+                                    _colorDelete = Colors.grey;
+                                  }
                                 }
                                 // if (selectRow.isEmpty) {
                                 //   selectAll.clear();
@@ -166,12 +170,7 @@ class _MachineBreakDownHoldScreenState
                                 //   selectAll.remove(bdsList[index!]);
                                 //   print(selectAll.length);
                                 // }
-
-                                _colorSend = Colors.grey;
-                                _colorDelete = Colors.grey;
                               });
-
-                              print('No Rows Selected');
                             }
                           },
                           // onCellTap: (details) async {
@@ -336,7 +335,7 @@ class _MachineBreakDownHoldScreenState
                       ),
                     )
                   : CircularProgressIndicator(),
-              bdsSqliteModel != null && bdsList != null
+              bdsSqliteModel != null
                   ? Expanded(
                       child: Container(
                           child: ListView(
@@ -538,25 +537,24 @@ class _MachineBreakDownHoldScreenState
   void _sendDataServer() async {
     if (index != null) {
       for (var row in selectAll) {
-        // BlocProvider.of<MachineBreakDownBloc>(context).add(
-        //   MachineBreakDownSendEvent(
-        //     MachineBreakDownOutputModel(
-        //       MACHINE_NO: row.MACHINE_NO,
-        //       OPERATOR_NAME: row.OPERATOR_NAME,
-        //       SERVICE: row.SERVICE_NO,
-        //       BREAK_START_DATE: row.BREAK_START_DATE,
-        //       TECH1: row.TECH_1,
-        //       START_DATE_TECH_1: row.START_TECH_DATE_1,
-        //       TECH2: row.TECH_2,
-        //       START_DATE_TECH_2: row.START_TECH_DATE_2,
-        //       STOP_TECH_DATE_1: row.STOP_DATE_TECH_1,
-        //       STOP_TECH_DATE_2: row.STOP_DATE_TECH_2,
-        //       ACCEPT: row.OPERATOR_ACCEPT,
-        //       BREAK_STOP_DATE: row.BREAK_STOP_DATE,
-        //     ),
-        //   ),
-        // );
-        print(row.ID);
+        BlocProvider.of<MachineBreakDownBloc>(context).add(
+          MachineBreakDownSendEvent(
+            MachineBreakDownOutputModel(
+              MACHINE_NO: row.MACHINE_NO,
+              OPERATOR_NAME: row.OPERATOR_NAME,
+              SERVICE: row.SERVICE_NO,
+              BREAK_START_DATE: row.BREAK_START_DATE,
+              TECH1: row.TECH_1,
+              START_DATE_TECH_1: row.START_TECH_DATE_1,
+              TECH2: row.TECH_2,
+              START_DATE_TECH_2: row.START_TECH_DATE_2,
+              STOP_TECH_DATE_1: row.STOP_DATE_TECH_1,
+              STOP_TECH_DATE_2: row.STOP_DATE_TECH_2,
+              ACCEPT: row.OPERATOR_ACCEPT,
+              BREAK_STOP_DATE: row.BREAK_STOP_DATE,
+            ),
+          ),
+        );
       }
     } else if (allRowIndex != null) {
       for (var row in bdsList) {

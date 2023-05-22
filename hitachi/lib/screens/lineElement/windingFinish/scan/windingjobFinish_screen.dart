@@ -17,6 +17,7 @@ import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobFinishScreen extends StatefulWidget {
@@ -102,8 +103,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         'MachineNo': 'WD',
         'BatchNo': batchNoController.text.trim(),
         'Element': batchNoController.text.trim(),
-        'BatchEndDate': DateTime.now().toString(),
-        'start_end': DateTime.now().toString(),
+        'BatchEndDate': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+        'start_end': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
         'checkComplete': 'E',
       });
     }

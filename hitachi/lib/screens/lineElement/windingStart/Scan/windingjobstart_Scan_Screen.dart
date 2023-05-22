@@ -18,6 +18,7 @@ import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Mod
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
@@ -130,9 +131,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
           stringValue: machineNoController.text.trim());
-
-      //CheckValueRow
-      // var sql_machine = sql_windingSheet[0];
+      print("check1");
       if (sql_windingSheet.length <= 0) {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
@@ -147,6 +146,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         // var checkValueSpec = sql_specification[0];
 
         if (sql_specification.length > 0) {
+          print("Check2");
           var spec = sql_specification[0];
 
           if (spec['SM'] != null && spec['SM'].isNotEmpty) {
@@ -180,6 +180,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             batchNo: int.tryParse(batchNoController.text.trim()),
             target: target);
       } else {
+        print("check3");
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
             select2: 'S1',
@@ -189,6 +190,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             where: 'IPE',
             stringValue: productController.text.trim());
         if (sql_specification.length > 0) {
+          print("check4");
           var spec = sql_specification[0];
 
           if (spec['SM'] != null && spec['SM'].isNotEmpty) {
@@ -215,6 +217,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         } else {
           target = weight;
         }
+        print("check5");
         await databaseHelper.updateWindingWeight(
             table: 'WINDING_WEIGHT_SHEET',
             key1: 'BatchNo',
@@ -224,6 +227,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             whereKey: 'MachineNo',
             value: machineNoController.text.trim());
       }
+      print("check6");
       await databaseHelper.deleteDataFromSQLite(
           tableName: 'WINDING_SHEET',
           where: 'BatchNo',
@@ -306,9 +310,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           'PaperCore': PAPER_CORE,
           'PPCore': PP_CORE,
           'FoilCore': FOIL_CORE,
-          'BatchStartDate': DateTime.now().toString(),
+          'BatchStartDate':
+              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
           'Status': 'P',
-          'start_end': DateTime.now().toString(),
+          'start_end': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
           'checkComplete': '0'
         });
       }
