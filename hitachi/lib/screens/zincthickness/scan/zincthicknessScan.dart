@@ -42,6 +42,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
   final f8 = FocusNode();
   final f9 = FocusNode();
   final f10 = FocusNode();
+  final batchFocus = FocusNode();
   //
 
   Color t1 = Colors.black;
@@ -62,6 +63,11 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
   //     EasyLoading.showError("Can not Save");
   //   }
   // }
+
+  void initState() {
+    batchFocus.requestFocus();
+    super.initState();
+  }
 
   void _txtBatch() async {
     var sql = await databaseHelper.fetchZincThickness(
@@ -175,6 +181,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
       _thickness7Controller.clear();
       _thickness8Controller.clear();
       _thickness9Controller.clear();
+      f1.requestFocus();
       print("isUpdate");
     } else {
       print("isNotUpdate");
@@ -190,6 +197,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         'Thickness9': _thickness9Controller.text.trim(),
         'DateData': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
       });
+      f1.requestFocus();
       _thickness1Controller.clear();
       _thickness2Controller.clear();
       _thickness3Controller.clear();
@@ -224,7 +232,14 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
               if (state.item.RESULT == true) {
                 f1.requestFocus();
                 _insertSqlite();
-
+                // _thickness1Controller.clear();
+                // _thickness2Controller.clear();
+                // _thickness3Controller.clear();
+                // _thickness4Controller.clear();
+                // _thickness6Controller.clear();
+                // _thickness7Controller.clear();
+                // _thickness8Controller.clear();
+                // _thickness9Controller.clear();
                 setState(() {
                   bgButton = Colors.grey;
                 });
@@ -233,12 +248,28 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
               } else if (state.item.RESULT == false) {
                 EasyLoading.showError("Failed To Send");
                 _insertSqlite();
+                // _thickness1Controller.clear();
+                // _thickness2Controller.clear();
+                // _thickness3Controller.clear();
+                // _thickness4Controller.clear();
+                // _thickness6Controller.clear();
+                // _thickness7Controller.clear();
+                // _thickness8Controller.clear();
+                // _thickness9Controller.clear();
               }
             }
             if (state is ZincThicknessErrorState) {
               EasyLoading.dismiss();
               EasyLoading.showError("Check connection & Save Complete");
               _insertSqlite();
+              // _thickness1Controller.clear();
+              // _thickness2Controller.clear();
+              // _thickness3Controller.clear();
+              // _thickness4Controller.clear();
+              // _thickness6Controller.clear();
+              // _thickness7Controller.clear();
+              // _thickness8Controller.clear();
+              // _thickness9Controller.clear();
             }
           },
         )
@@ -255,6 +286,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                     labelText: "Batch No. :",
                     controller: _batchController,
                     maxLength: 12,
+                    focusNode: batchFocus,
                     onEditingComplete: () {
                       if (_batchController.text.length == 12) {
                         _getZincthicknessInSqlite();

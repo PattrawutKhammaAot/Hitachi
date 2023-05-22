@@ -112,13 +112,11 @@ class _MachineBreakDownHoldScreenState
                             if (selectRow.isNotEmpty) {
                               if (selectRow.length ==
                                   breakdownDataSource!.effectiveRows.length) {
-                                print("all");
                                 setState(() {
                                   selectRow.forEach((row) {
                                     allRowIndex = breakdownDataSource!
                                         .effectiveRows
                                         .indexOf(row);
-
                                     _colorSend = COLOR_SUCESS;
                                     _colorDelete = COLOR_RED;
                                   });

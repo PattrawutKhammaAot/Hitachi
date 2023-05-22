@@ -446,6 +446,8 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
               deletedInfo();
               Navigator.pop(context);
               Navigator.pop(context);
+              EasyLoading.showSuccess("Delete Complete",
+                  duration: Duration(seconds: 3));
             },
             child: const Text('OK'),
           ),

@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
       await databaseHelper.initializeDatabase();
     } catch (e, s) {
-      EasyLoading.showError("Please Call Oga");
+      EasyLoading.showError("Error");
     }
   }
 

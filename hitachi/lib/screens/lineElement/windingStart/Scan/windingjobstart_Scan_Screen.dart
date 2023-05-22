@@ -264,7 +264,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           BATCH_START_DATE: DateTime.now().toString(),
           weight: weight);
 
-      EasyLoading.showSuccess("Save Weight Complete${weight}",
+      EasyLoading.showSuccess("Save Weight Complete\n Weight = ${weight}",
           duration: Duration(seconds: 5));
       f5.requestFocus();
       Navigator.pop(context);
@@ -486,6 +486,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         paperCodeLotController.clear();
                         ppFilmLotController.clear();
                         foilLotController.clear();
+                        f1.requestFocus();
                         setState(() {
                           bgColor = Colors.grey;
                         });

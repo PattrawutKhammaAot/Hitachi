@@ -22,6 +22,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
 
   @override
   void initState() {
+    _urlController.text = BASE_API_URL;
     super.initState();
   }
 

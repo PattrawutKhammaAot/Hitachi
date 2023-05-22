@@ -109,6 +109,16 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
               EasyLoading.show(status: "Loading...");
             } else if (state is TreatmentStartSendLoadedState) {
               if (state.item.RESULT == true) {
+                _machineNoController.clear();
+                _operatorNameController.clear();
+                _batch1Controller.clear();
+                _batch2Controller.clear();
+                _batch3Controller.clear();
+                _batch4Controller.clear();
+                _batch5Controller.clear();
+                _batch6Controller.clear();
+                _batch7Controller.clear();
+                f1.requestFocus();
                 EasyLoading.showSuccess("Send Complete.");
               } else if (state.item.RESULT == false) {
                 if (_machineNoController.text.isNotEmpty &&
