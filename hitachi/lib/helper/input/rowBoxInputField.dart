@@ -3,20 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:hitachi/helper/text/label.dart';
 
 class RowBoxInputField extends StatelessWidget {
-  const RowBoxInputField(
-      {Key? key,
-      this.labelText,
-      this.controller,
-      this.height = 50,
-      this.type,
-      this.maxLength,
-      this.textInputFormatter,
-      this.onChanged,
-      this.validator,
-      this.textColor = Colors.black,
-      this.focusNode,
-      this.onEditingComplete})
-      : super(key: key);
+  const RowBoxInputField({
+    Key? key,
+    this.labelText,
+    this.controller,
+    this.height = 50,
+    this.type,
+    this.maxLength,
+    this.textInputFormatter,
+    this.onChanged,
+    this.validator,
+    this.textColor = Colors.black,
+    this.focusNode,
+    this.onEditingComplete,
+    this.enabled,
+    // this.onFieldSubmitted
+  }) : super(key: key);
 
   final String? labelText;
   final TextEditingController? controller;
@@ -29,6 +31,9 @@ class RowBoxInputField extends StatelessWidget {
   final Color textColor;
   final Function()? onEditingComplete;
   final FocusNode? focusNode;
+  final bool? enabled;
+  // final Function()? onFieldSubmitted;
+  // final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +53,9 @@ class RowBoxInputField extends StatelessWidget {
               style: TextStyle(color: textColor),
               maxLength: maxLength,
               keyboardType: type,
+              enabled: enabled,
+              // textInputAction: textInputAction,
+              // onFieldSubmitted: () => onFieldSubmitted?.call(),
               decoration: InputDecoration(
                 counterText: "",
                 border:

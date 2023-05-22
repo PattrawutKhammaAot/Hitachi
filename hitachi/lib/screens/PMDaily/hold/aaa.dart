@@ -2,43 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/pmDaily/pm_daily_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
+import 'package:hitachi/models-Sqlite/pmdailyModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
-import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class ProcessStartHoldScreen extends StatefulWidget {
-  const ProcessStartHoldScreen({super.key});
+class PMdailyHold_Screen extends StatefulWidget {
+  const PMdailyHold_Screen({super.key});
 
   @override
-  State<ProcessStartHoldScreen> createState() => _ProcessStartHoldScreenState();
+  State<PMdailyHold_Screen> createState() => _PMDailyHoldScreenState();
 }
 
-class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
-  List<ProcessModel>? processList;
+class _PMDailyHoldScreenState extends State<PMdailyHold_Screen> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  ProcessStartDataSource? matTracDs;
+  PMDailyDataSource? matTracDs;
   int? selectedRowIndex;
   DataGridRow? datagridRow;
-  List<ProcessModel>? processModelSqlite;
+  List<PMDailyModel>? processList;
+  List<PMDailyModel>? processModelSqlite;
   final TextEditingController _passwordController = TextEditingController();
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
 
   ////
-  Future<List<ProcessModel>> _getProcessStart() async {
+  Future<List<PMDailyModel>> _getProcessStart() async {
     try {
       List<Map<String, dynamic>> rows =
-          await databaseHelper.queryAllRows('PROCESS_SHEET');
-      List<ProcessModel> result =
-          rows.map((row) => ProcessModel.fromMap(row)).toList();
+          await databaseHelper.queryAllRows('PM_SHEET');
+      List<PMDailyModel> result =
+          rows.map((row) => PMDailyModel.fromMap(row)).toList();
       return result;
     } catch (e) {
       print(e);
@@ -51,7 +53,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     _getProcessStart().then((result) {
       setState(() {
         processList = result;
-        matTracDs = ProcessStartDataSource(process: processList);
+        matTracDs = PMDailyDataSource(process: processList);
       });
     });
     super.initState();
@@ -59,7 +61,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
 
   void deletedInfo() async {
     await databaseHelper.deletedRowSqlite(
-        tableName: 'PROCESS_SHEET',
+        tableName: 'PM_SHEET',
         columnName: 'ID',
         columnValue: processList![selectedRowIndex!].ID);
   }
@@ -71,11 +73,11 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
         textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
-            BlocListener<LineElementBloc, LineElementState>(
+            BlocListener<PmDailyBloc, PmDailyState>(
               listener: (context, state) {
-                if (state is MaterialInputLoadingState) {
+                if (state is PMDailyLoadingState) {
                   EasyLoading.show();
-                } else if (state is MaterialInputLoadedState) {
+                } else if (state is PMDailyLoadedState) {
                   if (state.item.RESULT == true) {
                     deletedInfo();
                     Navigator.canPop(context);
@@ -104,7 +106,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                             source: matTracDs!,
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.multiple,
+                            selectionMode: SelectionMode.single,
                             onCellTap: (details) async {
                               if (details.rowColumnIndex.rowIndex != 0) {
                                 setState(() {
@@ -115,13 +117,9 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   processModelSqlite = datagridRow!
                                       .getCells()
                                       .map(
-                                        (e) => ProcessModel(
-                                          MACHINE: e.value.toString(),
+                                        (e) => PMDailyModel(
                                           OPERATOR_NAME: e.value.toString(),
-                                          OPERATOR_NAME1: e.value.toString(),
-                                          OPERATOR_NAME2: e.value.toString(),
-                                          OPERATOR_NAME3: e.value.toString(),
-                                          BATCH_NO: e.value.toString(),
+                                          CHECKPOINT: e.value.toString(),
                                         ),
                                       )
                                       .toList();
@@ -131,18 +129,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                               }
                             },
                             columns: <GridColumn>[
-                              GridColumn(
-                                columnName: 'Machine',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Machine',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
                               GridColumn(
                                   columnName: 'Operatorname',
                                   label: Container(
@@ -154,45 +140,25 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'Operatorname1',
+                                  columnName: 'Checkpoint',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Operatorname1',
+                                      child: Label('Checkpoint',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'Operatorname2',
+                                  columnName: 'Status',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Operatorname2',
-                                          color: COLOR_WHITE),
+                                      child:
+                                          Label('Status', color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
-                              GridColumn(
-                                columnName: 'Operatorname3',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label('Operatorname3',
-                                        color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'BatchNO',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label('Batch/Serial',
-                                        color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
                               GridColumn(
                                 columnName: 'StartDate',
                                 label: Container(
@@ -236,11 +202,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ],
                                 rows: [
                                   DataRow(cells: [
-                                    DataCell(Center(child: Label("Machine"))),
-                                    DataCell(Label(
-                                        "${processList![selectedRowIndex!].MACHINE}"))
-                                  ]),
-                                  DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Operator Name"))),
                                     DataCell(Label(
@@ -248,27 +209,9 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
-                                        Center(child: Label("Operator Name1"))),
+                                        Center(child: Label("Checkpoint"))),
                                     DataCell(Label(
-                                        "${processList![selectedRowIndex!].OPERATOR_NAME1}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name2"))),
-                                    DataCell(Label(
-                                        "${processList![selectedRowIndex!].OPERATOR_NAME2}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name3"))),
-                                    DataCell(Label(
-                                        "${processList![selectedRowIndex!].OPERATOR_NAME3}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(
-                                        child: Label("Batch/Serial No."))),
-                                    DataCell(Label(
-                                        "${processList![selectedRowIndex!].BATCH_NO}"))
+                                        "${processList![selectedRowIndex!].CHECKPOINT}"))
                                   ]),
                                   DataRow(cells: [
                                     DataCell(
@@ -320,29 +263,16 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       bgColor: _colorSend,
                       onPress: () {
                         if (processModelSqlite != null) {
-                          BlocProvider.of<LineElementBloc>(context).add(
-                            ProcessStartEvent(
-                              ProcessOutputModel(
-                                MACHINE:
-                                    processList![selectedRowIndex!].MACHINE,
+                          BlocProvider.of<PmDailyBloc>(context).add(
+                            PMDailySendEvent(
+                              PMDailyOutputModel(
                                 OPERATORNAME: int.tryParse(
                                     processList![selectedRowIndex!]
                                         .OPERATOR_NAME
                                         .toString()),
-                                OPERATORNAME1: int.tryParse(
-                                    processList![selectedRowIndex!]
-                                        .OPERATOR_NAME1
-                                        .toString()),
-                                OPERATORNAME2: int.tryParse(
-                                    processList![selectedRowIndex!]
-                                        .OPERATOR_NAME2
-                                        .toString()),
-                                OPERATORNAME3: int.tryParse(
-                                    processList![selectedRowIndex!]
-                                        .OPERATOR_NAME3
-                                        .toString()),
-                                BATCHNO:
-                                    processList![selectedRowIndex!].BATCH_NO,
+                                CHECKPOINT:
+                                    processList![selectedRowIndex!].CHECKPOINT,
+                                STATUS: processList![selectedRowIndex!].STATUS,
                                 STARTDATE:
                                     processList![selectedRowIndex!].STARTDATE,
                               ),
@@ -400,27 +330,20 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   }
 }
 
-class ProcessStartDataSource extends DataGridSource {
-  ProcessStartDataSource({List<ProcessModel>? process}) {
+class PMDailyDataSource extends DataGridSource {
+  PMDailyDataSource({List<PMDailyModel>? process}) {
     if (process != null) {
       for (var _item in process) {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<String>(columnName: 'Machine', value: _item.MACHINE),
               DataGridCell<String>(
                   columnName: 'Operatorname', value: _item.OPERATOR_NAME),
               DataGridCell<String>(
-                  columnName: 'Operatorname1', value: _item.OPERATOR_NAME1),
+                  columnName: 'Checkpoint', value: _item.CHECKPOINT),
+              DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
               DataGridCell<String>(
-                  columnName: 'Operatorname2', value: _item.OPERATOR_NAME2),
-              DataGridCell<String>(
-                  columnName: 'Operatorname3', value: _item.OPERATOR_NAME3),
-              DataGridCell<int>(
-                  columnName: 'BatchNO',
-                  value: int.tryParse(_item.BATCH_NO.toString())),
-              DataGridCell<String>(
-                  columnName: 'StartDate', value: _item.STARTEND.toString()),
+                  columnName: 'StartDate', value: _item.STARTDATE.toString()),
             ],
           ),
         );

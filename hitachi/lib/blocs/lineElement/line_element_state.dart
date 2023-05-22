@@ -178,7 +178,7 @@ class ProcessFinishLoadingState extends LineElementState {
 
 class ProcessFinishLoadedState extends LineElementState {
   const ProcessFinishLoadedState(this.item);
-  final ProcessInputModel item;
+  final ProcessFinishInputModel item;
   @override
   List<Object> get props => [item];
 }
@@ -214,3 +214,26 @@ class CheckMaterialInputErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+// ///  GET PMDaily//////
+// class PMDailyLoadingState extends LineElementState {
+//   const PMDailyLoadingState();
+//   @override
+//   List<Object> get props => [];
+// }
+//
+// class PMDailyLoadedState extends LineElementState {
+//   const PMDailyLoadedState(this.item);
+//   final ResponeDefault item;
+//
+//   @override
+//   List<Object> get props => [item];
+// }
+//
+// class PMDailyErrorState extends LineElementState {
+//   const PMDailyErrorState(this.error);
+//   final String error;
+//
+//   @override
+//   List<Object> get props => [error];
+// }

@@ -133,6 +133,28 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<Map<String, dynamic>>> queryDataSelectProcess({
+    String? select1,
+    String? select2,
+    String? select3,
+    String? select4,
+    String? select5,
+    String? select6,
+    String? formTable,
+    String? where,
+    String? stringValue,
+  }) async {
+    try {
+      String sql =
+          "SELECT ${select1}, ${select2}, ${select3}, ${select4}, ${select5}, ${select6} FROM ${formTable} WHERE ${where} = '${stringValue}'"; // แก้ไขตรงนี้;
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<void> deleteSave(
       {String? tableName, String? where, String? keyWhere}) async {
     final Database db = await database;
@@ -151,6 +173,48 @@ class DatabaseHelper {
     final Database db = await database;
     String sql =
         "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2' WHERE ${whereKey}= '$value'";
+    return await db.rawUpdate(sql);
+  }
+
+//updateProcessStart
+  Future<int> updateProcessStart(
+      {String? table,
+      String? key1,
+      String? key2,
+      String? key3,
+      String? key4,
+      String? key5,
+      String? key6,
+      num? yieldKey1,
+      num? yieldKey2,
+      num? yieldKey3,
+      num? yieldKey4,
+      String? yieldKey5,
+      String? yieldKey6,
+      String? whereKey,
+      String? value}) async {
+    final Database db = await database;
+    String sql =
+        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2', ${key3}= '$yieldKey3', ${key4}= '$yieldKey4', ${key5}= '$yieldKey5', ${key6}= '$yieldKey6' WHERE ${whereKey}= '$value'";
+    return await db.rawUpdate(sql);
+  }
+
+  //updateProcessFinish
+  Future<int> updateProcessFinish(
+      {String? table,
+      String? key1,
+      String? key2,
+      String? key3,
+      String? key4,
+      num? yieldKey1,
+      String? yieldKey2,
+      String? yieldKey3,
+      String? yieldKey4,
+      String? whereKey,
+      String? value}) async {
+    final Database db = await database;
+    String sql =
+        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2', ${key3}= '$yieldKey3', ${key4}= '$yieldKey4' WHERE ${whereKey}= '$value'";
     return await db.rawUpdate(sql);
   }
 
@@ -750,6 +814,7 @@ class DatabaseHelper {
 
   void _craetePM(Database db, int newVersion) async {
     await db.execute('CREATE TABLE PM_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT, '
         'OperatorName TEXT, '
         'CheckPointPM TEXT, '
         'Status TEXT, '

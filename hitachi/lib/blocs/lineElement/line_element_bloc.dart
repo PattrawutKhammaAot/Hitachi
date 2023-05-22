@@ -13,6 +13,7 @@ import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
@@ -113,13 +114,38 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       (event, emit) async {
         try {
           emit(ProcessStartLoadingState());
-          final mlist = await fetchStartProcess(event.items);
+          final mlist = await fetchProcessStart(event.items);
           emit(ProcessStartLoadedState(mlist));
         } catch (e) {
           emit(ProcessStartErrorState(e.toString()));
         }
       },
     );
+    //ProcessFinish
+    on<ProcessFinishInputEvent>(
+      (event, emit) async {
+        try {
+          emit(ProcessFinishLoadingState());
+          final mlist = await fetchProcessFinish(event.items);
+          emit(ProcessFinishLoadedState(mlist));
+        } catch (e) {
+          emit(ProcessFinishErrorState(e.toString()));
+        }
+      },
+    );
+
+    //PMDaily
+    // on<PMDailySendEvent>(
+    //   (event, emit) async {
+    //     try {
+    //       emit(PMDailyLoadingState());
+    //       final mlist = await fetchSendPMDaily(event.items);
+    //       emit(PMDailyLoadedState(mlist));
+    //     } catch (e) {
+    //       emit(PMDailyErrorState(e.toString()));
+    //     }
+    //   },
+    // );
   }
 //Scan
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
@@ -268,7 +294,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   }
 
   //ProcessStart
-  Future<ProcessInputModel> fetchStartProcess(ProcessOutputModel items) async {
+  Future<ProcessInputModel> fetchProcessStart(ProcessOutputModel items) async {
     try {
       Response response = await Dio().post(ApiConfig.LE_PROCESSSTARTINPUT,
           options: Options(
@@ -280,9 +306,9 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
       print(tmp);
       return tmp;
-    } catch (e) {
-      print(e);
-      return ProcessInputModel();
+    } on Exception {
+      throw (Exception);
+      // return ProcessInputModel();
     }
   }
 
@@ -306,4 +332,21 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       return ProcessFinishInputModel();
     }
   }
+
+  // Future<ResponeDefault> fetchSendPMDaily(PMDailyOutputModel item) async {
+  //   try {
+  //     Response responese = await Dio().post(ApiConfig.PM_DAILY,
+  //         options: Options(
+  //             headers: ApiConfig.HEADER(),
+  //             sendTimeout: Duration(seconds: 3),
+  //             receiveTimeout: Duration(seconds: 3)),
+  //         data: jsonEncode(item));
+  //     print(responese.data);
+  //     ResponeDefault post = ResponeDefault.fromJson(responese.data);
+  //     return post;
+  //   } catch (e, s) {
+  //     print("Exception occured: $e StackTrace: $s");
+  //     return ResponeDefault();
+  //   }
+  // }
 }

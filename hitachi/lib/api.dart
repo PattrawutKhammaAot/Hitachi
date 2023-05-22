@@ -58,10 +58,12 @@ class ApiConfig {
   static String LE_PROCESSSTARTINPUT =
       "${BASE_API_URL}LineElement/SendProcessStart";
 
+  ///---------------------ProcessFinish ----------------------///
   //POST ProcessFinish
   static String LE_PROCESSFINISHINPUT =
       "${BASE_API_URL}LineElement/SendProcessFinish";
 
+  ///---------------------PROCESS BREAKDOWN ----------------------///
   //POST PROCESS BREAKDOWN
   static String PROCESS_BREAKDOWN =
       "${BASE_API_URL}LineElement/SendProcessStart";
@@ -73,4 +75,14 @@ class ApiConfig {
   //POST SEND TreatmentFinish
   static String TREAMTMENT_FINISH =
       "${BASE_API_URL}LineElement/SendTreatFinish";
+
+  ///---------------------PM Daily ----------------------///
+
+  //POST SEND PM_DAILY
+  static String PM_DAILY = "${BASE_API_URL}LineElement/SendPMDaily";
+
+  ///---------------------REPORT ROUTE SHEET ----------------------///
+
+  //Get PLAN_WINDING
+  static String PLAN_WINDING = "${BASE_API_URL}LineElement/GetPlanWinding";
 }

@@ -49,8 +49,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 ),
                 CardButton(
                   text: "2.Plan Winding",
-                  onPress: () =>
-                      Navigator.pushNamed(context, RouterList.Plan_winding),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.Planwinding_control_Screen),
                 ),
                 SizedBox(
                   height: 15,
@@ -65,7 +65,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 ),
                 CardButton(
                   text: "4.PM Daily",
-                  onPress: () => print("test2"),
+                  onPress: () => Navigator.pushNamed(
+                      context, RouterList.PMDaily_control_Screen),
                 ),
                 SizedBox(
                   height: 15,
