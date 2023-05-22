@@ -25,7 +25,7 @@ class PlanWinding_Screen extends StatefulWidget {
 class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   final TextEditingController batchNoController = TextEditingController();
   List<PlanWindingOutputModelProcess>? PlanWindingModel;
-  EmployeeDataSource? employeeDataSource;
+  PlanWindingDataSource? planwindingDataSource;
   Color? bgChange;
   String _loadData = "วันเวลาที่ load : ";
 
@@ -44,19 +44,19 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
     return MultiBlocListener(
       listeners: [
         // BlocListener<PlanWindingBloc, PlanWindingState>(
-        BlocListener<LineElementBloc, LineElementState>(
+        BlocListener<PlanWindingBloc, PlanWindingState>(
           listener: (context, state) {
-            if (state is GetReportRuteSheetLoadingState) {
+            if (state is PlanWindingLoadingState) {
               EasyLoading.show();
             }
-            if (state is GetReportRuteSheetLoadedState) {
+            if (state is PlanWindingLoadedState) {
               EasyLoading.dismiss();
               setState(() {
-                employeeDataSource =
-                    EmployeeDataSource(process: PlanWindingModel);
+                planwindingDataSource =
+                    PlanWindingDataSource(process: PlanWindingModel);
               });
             }
-            if (state is GetReportRuteSheetErrorState) {
+            if (state is PlanWindingErrorState) {
               EasyLoading.dismiss();
               EasyLoading.showError("Can not Call Api");
               // print(state.error);
@@ -77,7 +77,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
               SizedBox(
                 height: 5,
               ),
-              employeeDataSource != null
+              planwindingDataSource != null
                   ? Expanded(
                       flex: 5,
                       child: Container(
@@ -85,7 +85,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                           footerHeight: 10,
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
-                          source: employeeDataSource!,
+                          source: planwindingDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
                           columns: [
                             GridColumn(
@@ -190,7 +190,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                           "Load Plan",
                           color: COLOR_WHITE,
                         ),
-                        onPress: () => _btnSend(),
+                        onPress: () => _loadPlan(),
                       ),
                     ),
             ],
@@ -200,20 +200,20 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
     );
   }
 
-  _btnSend() {
+  _loadPlan() {
     _loadData = "วันเวลาที่ load : " + DateTime.now().toString();
     // BlocProvider.of<PlanWindingBloc>(context).add(
     //   PlanWindingSendEvent(batchNoController.text.trim()),
     // );
-    BlocProvider.of<LineElementBloc>(context).add(
-      ReportRouteSheetEvenet(batchNoController.text.trim()),
+    BlocProvider.of<PlanWindingBloc>(context).add(
+      PlanWindingSendEvent(batchNoController.text.trim()),
     );
     widget.onChange!(batchNoController.text.trim());
   }
 }
 
-class EmployeeDataSource extends DataGridSource {
-  EmployeeDataSource({List<PlanWindingOutputModelProcess>? process}) {
+class PlanWindingDataSource extends DataGridSource {
+  PlanWindingDataSource({List<PlanWindingOutputModelProcess>? process}) {
     if (process != null) {
       for (var _item in process) {
         _employees.add(

@@ -89,41 +89,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       print("Catch : ${e}");
       return false;
     }
-
-    //   List<Map<String, dynamic>> rows = await databaseHelper.queryDataSelect(
-    //     select1: 'Machine',
-    //     select2: 'OperatorName',
-    //     select3: 'OperatorName1',
-    //     select4: 'OperatorName2',
-    //     select5: 'OperatorName3',
-    //     select6: 'BatchNo',
-    //     formTable: 'PROCESS_SHEET',
-    //     where: 'Machine',
-    //     stringValue: MachineController.text,
-    //   );
-    //   List<ProcessModel> result =
-    //       rows.map((row) => ProcessModel.fromMap(row)).toList();
-    //
-    //   print(MachineController.text.trim());
-    //   print(result.length);
-    //   if (result.isEmpty) {
-    //     print("if");
-    //     setState(() {
-    //       _checkSendSqlite = true;
-    //     });
-    //     _saveSendSqlite();
-    //   } else {
-    //     setState(() {
-    //       _checkSendSqlite = false;
-    //     });
-    //     print("else");
-    //   }
-    //
-    //   return true;
-    // } catch (e) {
-    //   print("Catch : ${e}");
-    //   return false;
-    // }
   }
 
   @override
@@ -156,10 +121,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 _getProcessStart();
                 if (_checkSendSqlite == true) {
                   _saveSendSqlite();
-                  print("save true");
+                  print("saveSendSqlite");
                 } else if (_checkSendSqlite == false) {
                   _updateSendSqlite();
-                  print("save false");
+                  print("updateSendSqlite");
                 }
                 _clearAllData();
               } else {
@@ -167,10 +132,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 _getProcessStart();
                 if (_checkSendSqlite == true) {
                   _saveSendSqlite();
-                  print("save true");
+                  print("saveSendSqlite");
                 } else if (_checkSendSqlite == false) {
                   _updateSendSqlite();
-                  print("save false");
+                  print("updateSendSqlite");
                 }
                 _clearAllData();
               }
