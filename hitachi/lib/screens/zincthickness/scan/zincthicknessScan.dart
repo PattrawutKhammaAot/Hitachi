@@ -56,13 +56,6 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
 
   Color bgButton = Colors.grey;
   String? dateTime;
-  // void _getDataZincThickness({String? batch}) async {
-  //   try {
-  //     var sql = databaseHelper.fetchZincThickness(batch: batch);
-  //   } catch (e, s) {
-  //     EasyLoading.showError("Can not Save");
-  //   }
-  // }
 
   void initState() {
     batchFocus.requestFocus();
@@ -90,7 +83,6 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
     });
     BlocProvider.of<ZincThicknessBloc>(context).add(
       ZincThickNessSendEvent(ZincThicknessOutputModel(
-// OPERATORNAME:int.tryParse(_)
           BATCHNO: _batchController.text.trim(),
           THICKNESS1: th1,
           THICKNESS2: th2,
@@ -100,7 +92,9 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
           THICKNESS7: th7,
           THICKNESS8: th8,
           THICKNESS9: th9,
-          STARTDATE: DateTime.now().toString())),
+          STARTDATE: DateFormat('yyyy-MMM-dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString())),
     );
   }
 
@@ -128,7 +122,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         convertValuesToDecimal();
       }
     } else {
-      EasyLoading.showError("Please Input Info");
+      EasyLoading.showError("Please Batch 12 digits");
     }
   }
 
@@ -176,7 +170,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         },
         'Batch = ?',
         [_batchController.text.trim()],
-      ); // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
+      );
 
       f1.requestFocus();
       print("isUpdate");
@@ -192,7 +186,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         'Thickness7': th7,
         'Thickness8': th8,
         'Thickness9': th9,
-        'DateData': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+        'DateData': DateFormat('yyyy-MMM-dd HH:mm:ss').format(DateTime.now()),
       });
 
       f1.requestFocus();
@@ -254,8 +248,20 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
             }
             if (state is ZincThicknessErrorState) {
               EasyLoading.dismiss();
-              EasyLoading.showError("Check connection & Save Complete");
-              _insertSqlite();
+              _errorDialog(
+                  text: Label("Check Connection & Save"),
+                  onpressOk: () async {
+                    Navigator.pop(context);
+                    await _insertSqlite();
+                    _thickness1Controller.clear();
+                    _thickness2Controller.clear();
+                    _thickness3Controller.clear();
+                    _thickness4Controller.clear();
+                    _thickness6Controller.clear();
+                    _thickness7Controller.clear();
+                    _thickness8Controller.clear();
+                    _thickness9Controller.clear();
+                  });
             }
           },
         )
@@ -733,14 +739,15 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
           // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
         } else {
           setState(() {
-            _thickness1Controller.text = '';
-            _thickness2Controller.text = '';
-            _thickness3Controller.text = '';
-            _thickness4Controller.text = '';
-            _thickness6Controller.text = '';
-            _thickness7Controller.text = '';
-            _thickness8Controller.text = '';
-            _thickness9Controller.text = '';
+            _thickness1Controller.clear();
+            _thickness2Controller.clear();
+            _thickness3Controller.clear();
+            _thickness4Controller.clear();
+            _thickness6Controller.clear();
+            _thickness7Controller.clear();
+            _thickness8Controller.clear();
+            _thickness9Controller.clear();
+            print("Clear");
             bgButton = Colors.grey;
           });
         }

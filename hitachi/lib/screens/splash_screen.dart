@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,12 +23,24 @@ class _SplashScreenState extends State<SplashScreen> {
     color: COLOR_WHITE,
     size: 100,
   );
+
+// ฟังก์ชันสำหรับอ่านข้อมูลสตริง
+  Future getStringFromSharedPreferences() async {
+    SharedPreferences pre = await SharedPreferences.getInstance();
+    setState(() {
+      BASE_API_URL = pre.getString("API").toString();
+    });
+    print("TEst");
+    print(pre.getString("API"));
+    print("TEst");
+  }
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    getStringFromSharedPreferences();
     CreateDatabase();
   }
 

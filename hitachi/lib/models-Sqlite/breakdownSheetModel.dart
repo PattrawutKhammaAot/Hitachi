@@ -15,7 +15,7 @@ class BreakDownSheetModel {
       this.STOP_DATE_TECH_1,
       this.STOP_DATE_TECH_2,
       this.NEW});
-  final String? ID;
+  final int? ID;
   final String? MACHINE_NO;
   final String? OPERATOR_NAME;
   final String? SERVICE_NO;

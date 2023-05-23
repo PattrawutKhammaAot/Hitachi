@@ -140,10 +140,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           formTable: 'DATA_SHEET',
           where: 'PACK_NO',
           stringValue: _packNoController.text.trim());
-      num? totalWeight;
+      double? totalWeight;
       setState(() {
-        num weight1 = num.tryParse(_weight1Controller.text.trim()) ?? 0;
-        num weight2 = num.tryParse(_weight2Controller.text.trim()) ?? 0;
+        double weight1 = double.tryParse(_weight1Controller.text.trim()) ?? 0;
+        double weight2 = double.tryParse(_weight2Controller.text.trim()) ?? 0;
         totalWeight = weight1 + weight2;
         thickness = _packNoController.text.substring(0, 2);
       });
@@ -155,7 +155,9 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'INCOMING_DATE': _IncomingDateController.text.trim(),
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
-          'STORE_DATE': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'STORE_DATE': DateFormat('yyyy-MM-dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString(),
           'STATUS': " ",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
@@ -175,10 +177,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   }
 
   void _sendData() {
-    num? totalWeight;
+    double? totalWeight;
     setState(() {
-      num weight1 = num.tryParse(_weight1Controller.text.trim()) ?? 0;
-      num weight2 = num.tryParse(_weight2Controller.text.trim()) ?? 0;
+      double weight1 = double.tryParse(_weight1Controller.text.trim()) ?? 0;
+      double weight2 = double.tryParse(_weight2Controller.text.trim()) ?? 0;
       totalWeight = weight1 + weight2;
     });
 
@@ -285,10 +287,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
-                _InvoiceNoController.clear();
-                _freightController.clear();
-                _IncomingDateController.clear();
-                _storeByController.clear();
                 _packNoController.clear();
                 _rollNoController.clear();
                 _barCode1Controller.clear();
@@ -301,8 +299,22 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
-                EasyLoading.showSuccess("Save Complete & Can not Send");
-                callFilmIn();
+                _errorDialog(
+                    text: Label(
+                        "${state.item.MESSAGE ?? "Check Connection & Save"}"),
+                    onpressOk: () async {
+                      await callFilmIn();
+                      _packNoController.clear();
+                      _rollNoController.clear();
+                      _barCode1Controller.clear();
+                      _barCode2Controller.clear();
+                      _weight1Controller.clear();
+                      _weight2Controller.clear();
+                      _mfgDateController.clear();
+                      _wrapGradeController.clear();
+                      f6.requestFocus();
+                      Navigator.pop(context);
+                    });
               }
             }
             if (state is FilmReceiveErrorState) {
@@ -368,7 +380,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                 .toList(),
                             onChanged: (value) {
                               _freightController.text = value!;
-                              f4.requestFocus();
                             },
                             buttonStyleData: const ButtonStyleData(
                               height: 50,
@@ -397,6 +408,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         flex: 4,
                         child: GestureDetector(
                           onTap: () async {
+                            f4.requestFocus();
                             final DateTime? selectedDate = await showDatePicker(
                               context: context,
                               initialDate: _selectedDate ?? DateTime.now(),
@@ -471,13 +483,13 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Roll No.",
                           height: 30,
                           focusNode: f7,
-                          onEditingComplete: () => f8.requestFocus(),
+                          maxLength: 14,
+                          onEditingComplete: () {
+                            if (_rollNoController.text.length == 14) {
+                              f8.requestFocus();
+                            }
+                          },
                           controller: _rollNoController,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^(?!.*\d{8})[a-zA-Z0-9]+$'),
-                            ),
-                          ],
                         ),
                       ),
                     ],

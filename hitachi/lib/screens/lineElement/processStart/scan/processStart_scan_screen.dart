@@ -151,9 +151,14 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 EasyLoading.showSuccess("SendComplete");
                 _clearAllData();
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
                 items = state.item;
-                _getProcessStart();
+
                 if (_checkSendSqlite == true) {
                   _saveSendSqlite();
                   print("save true");

@@ -7,6 +7,7 @@ import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingWebScreen extends StatefulWidget {
   const SettingWebScreen({super.key});
@@ -22,7 +23,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
 
   @override
   void initState() {
-    _urlController.text = BASE_API_URL;
+    _urlController.text = "";
     super.initState();
   }
 
@@ -102,11 +103,15 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                         flex: 4,
                         child: Button(
                           bgColor: _isColorSuccess,
-                          onPress: () {
+                          onPress: () async {
                             setState(() {
                               BASE_API_URL = TEMP_API_URL;
                             });
-                            print(BASE_API_URL);
+                            SharedPreferences pre =
+                                await SharedPreferences.getInstance();
+                            pre.setString("API", BASE_API_URL);
+
+                            // print(saveStringToSharedPreferences(BASE_API_URL));
                             EasyLoading.showSuccess("Save Complete");
                           },
                           text: Label(

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -22,8 +24,8 @@ class TreatmentFinishHoldScreen extends StatefulWidget {
 
 class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
   final TextEditingController _passwordController = TextEditingController();
-  int? index;
-  int? allRowIndex;
+  List<int> _index = [];
+
   TreatMentStartDataSource? tmsDatasource;
   DataGridRow? datagridRow;
   List<TreatmentModel>? tmSqliteModel;
@@ -38,6 +40,8 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       setState(() {
         tmList = result;
         tmsDatasource = TreatMentStartDataSource(process: tmList);
+        print(jsonEncode(tmList[0].MACHINE_NO));
+        // print(jsonEncode(tmsDatasource));
       });
     });
 
@@ -59,25 +63,64 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
     }
   }
 
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
         BlocListener<TreatmentBloc, TreatmentState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is TreatmentFinishSendLoadingState) {
               EasyLoading.show();
             } else if (state is TreatmentFinishSendLoadedState) {
-              if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
-                deletedInfo();
-              } else {
-                EasyLoading.showError("status");
-              }
-            } else {
               EasyLoading.dismiss();
-
-              EasyLoading.showError("Please Check Connection Internet");
+              if (state.item.RESULT == true) {
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                    });
+                await deletedInfo();
+                await _refreshPage();
+              } else {
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                    });
+              }
+            } else if (state is TreatmentFinishSendErrorState) {
+              EasyLoading.dismiss();
+              _errorDialog(
+                  text: Label("${state.error}"),
+                  onpressOk: () {
+                    Navigator.pop(context);
+                  });
             }
           },
         )
@@ -98,62 +141,65 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
+                            allowPullToRefresh: true,
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
                                 if (selectRow.length ==
-                                    tmsDatasource!.effectiveRows.length) {
-                                  print("all");
+                                        tmsDatasource!.effectiveRows.length &&
+                                    selectRow.length > 1) {
                                   setState(() {
                                     selectRow.forEach((row) {
-                                      allRowIndex = tmsDatasource!.effectiveRows
-                                          .indexOf(row);
+                                      _index.add(int.tryParse(
+                                          row.getCells()[0].value.toString())!);
 
                                       _colorSend = COLOR_SUCESS;
                                       _colorDelete = COLOR_RED;
                                     });
                                   });
-                                } else if (selectRow.length !=
-                                    tmsDatasource!.effectiveRows.length) {
+                                } else {
                                   setState(() {
-                                    selectRow.forEach((element) {
-                                      index = selectRow.isNotEmpty
-                                          ? tmsDatasource!.effectiveRows
-                                              .indexOf(element)
-                                          : null;
-                                      datagridRow = tmsDatasource!.effectiveRows
-                                          .elementAt(index!);
-                                      tmSqliteModel = datagridRow!
-                                          .getCells()
-                                          .map(
-                                            (e) => TreatmentModel(),
-                                          )
-                                          .toList();
-                                    });
-                                    if (!selectAll.contains(tmList[index!])) {
-                                      selectAll.add(tmList[index!]);
-                                      print(selectAll.length);
-                                    }
+                                    _index.add(int.tryParse(selectRow.first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                    datagridRow = selectRow.first;
+                                    tmSqliteModel = datagridRow!
+                                        .getCells()
+                                        .map(
+                                          (e) => TreatmentModel(),
+                                        )
+                                        .toList();
+                                    print(_index);
                                     _colorSend = COLOR_SUCESS;
                                     _colorDelete = COLOR_RED;
                                   });
                                 }
                               } else {
                                 setState(() {
-                                  if (selectAll.contains(tmList[index!])) {
-                                    selectAll.remove(tmList[index!]);
-                                    print(selectAll.length);
-                                  }
-                                  if (selectAll.isEmpty) {
-                                    _colorSend = Colors.grey;
-                                    _colorDelete = Colors.grey;
+                                  if (deselectedRows.length > 1) {
+                                    _index.clear();
+                                  } else {
+                                    _index.remove(int.tryParse(deselectedRows
+                                        .first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
                                   }
                                 });
-
-                                print('No Rows Selected');
                               }
                             },
                             columns: <GridColumn>[
+                              GridColumn(
+                                  visible: false,
+                                  columnName: 'id',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label('ID', color: COLOR_WHITE),
+                                    ),
+                                  ),
+                                  width: 100),
                               GridColumn(
                                   columnName: 'mac',
                                   label: Container(
@@ -254,103 +300,96 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                tmSqliteModel != null
+                _index.isNotEmpty
                     ? Expanded(
-                        child: Container(
-                            child: ListView(
-                          children: [
-                            DataTable(
-                                horizontalMargin: 20,
-                                headingRowHeight: 30,
-                                dataRowHeight: 30,
-                                headingRowColor: MaterialStateColor.resolveWith(
-                                    (states) => COLOR_BLUE_DARK),
-                                border: TableBorder.all(
-                                  width: 1.0,
-                                  color: COLOR_BLACK,
-                                ),
-                                columns: [
-                                  DataColumn(
-                                    numeric: true,
-                                    label: Label(
-                                      "",
-                                      color: COLOR_BLUE_DARK,
-                                    ),
-                                  ),
-                                  DataColumn(label: Label(""))
-                                ],
-                                rows: [
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Machine No"))),
-                                    DataCell(
-                                        Label("${tmList[index!].MACHINE_NO}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("OperatorName"))),
-                                    DataCell(Label(
-                                        "${tmList[index!].OPERATOR_NAME}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 1"))),
-                                    DataCell(Label("${tmList[index!].BATCH1}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 2"))),
-                                    DataCell(Label("${tmList[index!].BATCH2}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 3"))),
-                                    DataCell(Label("${tmList[index!].BATCH3}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 4"))),
-                                    DataCell(Label("${tmList[index!].BATCH4}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 5"))),
-                                    DataCell(Label("${tmList[index!].BATCH5}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 6"))),
-                                    DataCell(Label("${tmList[index!].BATCH6}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch 7"))),
-                                    DataCell(Label("${tmList[index!].BATCH7}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Start Date"))),
-                                    DataCell(Label("${tmList[index!].FINDATE}"))
-                                  ])
-                                ])
-                          ],
-                        )),
-                      )
-                    : Expanded(
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Label(
-                                "No data",
-                                color: COLOR_RED,
-                                fontSize: 30,
+                        child: ListView.builder(
+                          itemCount: _index.length,
+                          itemBuilder: ((context, index) {
+                            return DataTable(
+                              horizontalMargin: 20,
+                              headingRowHeight: 30,
+                              dataRowHeight: 30,
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => COLOR_BLUE_DARK),
+                              border: TableBorder.all(
+                                width: 1.0,
+                                color: COLOR_BLACK,
                               ),
-                              CircularProgressIndicator()
-                            ],
-                          ),
+                              columns: [
+                                DataColumn(
+                                  numeric: true,
+                                  label: Label(
+                                    "",
+                                    color: COLOR_BLUE_DARK,
+                                  ),
+                                ),
+                                DataColumn(label: Label(""))
+                              ],
+                              rows: [
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Machine No"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.MACHINE_NO ?? ""}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("OperatorName"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.OPERATOR_NAME}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 1"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 2"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 3"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH3}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 4"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH4}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 5"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH5}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 6"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH6}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch 7"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.BATCH7}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Start Date"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.FINDATE}"))
+                                ])
+                              ],
+                            );
+                          }),
                         ),
-                      ),
+                      )
+                    : CircularProgressIndicator(),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (tmList.isNotEmpty) {
+                        if (_index.isNotEmpty) {
                           _AlertDialog();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -368,7 +407,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        if (tmList.isNotEmpty) {
+                        if (_index.isNotEmpty) {
                           _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -384,54 +423,29 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
   }
 
   _sendDataServer() {
-    if (index != null) {
-      for (var row in selectAll) {
-        BlocProvider.of<TreatmentBloc>(context).add(
-          TreatmentFinishSendEvent(TreatMentOutputModel(
-            MACHINE_NO: row.MACHINE_NO,
-            OPERATOR_NAME:
-                int.tryParse(tmList[index!].OPERATOR_NAME.toString()),
-            BATCH_NO_1: row.BATCH1,
-            BATCH_NO_2: row.BATCH2,
-            BATCH_NO_3: row.BATCH3,
-            BATCH_NO_4: row.BATCH4,
-            BATCH_NO_5: row.BATCH5,
-            BATCH_NO_6: row.BATCH6,
-            BATCH_NO_7: row.BATCH7,
-            FINISH_DATE: row.FINDATE,
-          )),
-        );
-        print("Check ${row.ID}");
-      }
-    } else if (allRowIndex != null) {
-      for (var row in tmList) {
-        BlocProvider.of<TreatmentBloc>(context).add(
-          TreatmentFinishSendEvent(TreatMentOutputModel(
-            MACHINE_NO: row.MACHINE_NO,
-            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            BATCH_NO_1: row.BATCH1,
-            BATCH_NO_2: row.BATCH2,
-            BATCH_NO_3: row.BATCH3,
-            BATCH_NO_4: row.BATCH4,
-            BATCH_NO_5: row.BATCH5,
-            BATCH_NO_6: row.BATCH6,
-            BATCH_NO_7: row.BATCH7,
-            FINISH_DATE: row.FINDATE,
-          )),
-        );
-        print(row.MACHINE_NO);
-      }
-    } else {
-      print("Error");
-    }
+    _index.forEach((element) async {
+      var row = tmList.where((value) => value.ID == element).first;
+      BlocProvider.of<TreatmentBloc>(context).add(
+        TreatmentFinishSendEvent(TreatMentOutputModel(
+          MACHINE_NO: row.MACHINE_NO,
+          OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+          BATCH_NO_1: row.BATCH1,
+          BATCH_NO_2: row.BATCH2,
+          BATCH_NO_3: row.BATCH3,
+          BATCH_NO_4: row.BATCH4,
+          BATCH_NO_5: row.BATCH5,
+          BATCH_NO_6: row.BATCH6,
+          BATCH_NO_7: row.BATCH7,
+          FINISH_DATE: row.FINDATE,
+        )),
+      );
+    });
   }
 
   void _AlertDialog() async {
-    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        // title: const Text('AlertDialog Title'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -440,17 +454,17 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
             ),
           ],
         ),
-
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              deletedInfo();
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pop(context);
+              await deletedInfo();
+              await _refreshPage();
+
               EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
@@ -460,25 +474,27 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
     );
   }
 
-  void deletedInfo() async {
-    if (index != null) {
-      for (var row in selectAll) {
+  Future _refreshPage() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      _getTreatMentSheet().then((result) {
+        setState(() {
+          tmList = result;
+          tmsDatasource = TreatMentStartDataSource(process: tmList);
+        });
+      });
+    });
+  }
+
+  Future deletedInfo() async {
+    setState(() {
+      _index.forEach((element) async {
         await databaseHelper.deletedRowSqlite(
             tableName: 'TREATMENT_SHEET',
             columnName: 'ID',
-            columnValue: row.ID);
-        print(row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in tmList) {
-        await databaseHelper.deletedRowSqlite(
-            tableName: 'TREATMENT_SHEET',
-            columnName: 'ID',
-            columnValue: row.ID);
-      }
-    } else {
-      print("Not Success");
-    }
+            columnValue: element);
+        _index.clear();
+      });
+    });
   }
 }
 
@@ -490,6 +506,7 @@ class TreatMentStartDataSource extends DataGridSource {
           _employees.add(
             DataGridRow(
               cells: [
+                DataGridCell<int>(columnName: 'id', value: _item.ID),
                 DataGridCell<String>(
                     columnName: 'mac', value: _item.MACHINE_NO),
                 DataGridCell<String>(

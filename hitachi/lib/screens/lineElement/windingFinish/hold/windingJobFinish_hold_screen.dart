@@ -43,7 +43,7 @@ class _WindingJobFinishHoldScreenState
   List<WindingSheetModel>? wdsSqliteModel;
   List<WindingSheetModel> wdsList = [];
   List<WindingSheetModel> selectAll = [];
-  int? index;
+  List<int> _index = [];
   int? allRowIndex;
   DataGridRow? datagridRow;
   bool isClick = false;
@@ -68,15 +68,39 @@ class _WindingJobFinishHoldScreenState
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_SHEET');
       List<WindingSheetModel> result = rows
-          .where((row) => row['Element'] != null)
-          .map((row) => WindingSheetModel.fromMap(
-              row.map((key, value) => MapEntry(key, value.toString()))))
+          .where((row) => row['checkComplete'] == 'E')
+          .map((row) => WindingSheetModel.fromMap(row))
           .toList();
-
       return result;
     } on Exception {
       throw Exception();
     }
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -87,18 +111,22 @@ class _WindingJobFinishHoldScreenState
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is PostSendWindingFinishLoadingState) {
                 EasyLoading.show();
               }
               if (state is PostSendWindingFinishLoadedState) {
+                EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
-                  Navigator.pop(context);
-                  deletedInfo();
-                  EasyLoading.showSuccess("Send complete",
-                      duration: Duration(seconds: 3));
+                  await deletedInfo();
+                  await _refreshPage();
+                  _errorDialog(
+                      text: Label("Success"),
+                      onpressOk: () => Navigator.pop(context));
                 } else {
-                  EasyLoading.showError("Failed To Send");
+                  _errorDialog(
+                      text: Label("${state.item.MESSAGE}"),
+                      onpressOk: () => Navigator.pop(context));
                 }
               }
               if (state is PostSendWindingFinishErrorState) {
@@ -123,62 +151,67 @@ class _WindingJobFinishHoldScreenState
                           allowPullToRefresh: true,
                           onSelectionChanged: (selectRow, deselectedRows) {
                             if (selectRow.isNotEmpty) {
-                              print(selectRow.length);
-                              print(WindingDataSource!.effectiveRows.length);
                               if (selectRow.length ==
-                                  WindingDataSource!.effectiveRows.length) {
-                                print("object");
+                                      WindingDataSource!.effectiveRows.length &&
+                                  selectRow.length > 1) {
                                 setState(() {
                                   selectRow.forEach((row) {
-                                    allRowIndex = WindingDataSource!
-                                        .effectiveRows
-                                        .indexOf(row);
+                                    _index.add(int.tryParse(
+                                        row.getCells()[0].value.toString())!);
+
                                     _colorSend = COLOR_SUCESS;
                                     _colorDelete = COLOR_RED;
                                   });
                                 });
-                              } else if (selectRow.length !=
-                                  WindingDataSource!.effectiveRows.length) {
+                              } else {
                                 setState(() {
-                                  index = selectRow.isNotEmpty
-                                      ? WindingDataSource!.effectiveRows
-                                          .indexOf(selectRow.first)
-                                      : null;
-                                  datagridRow = WindingDataSource!.effectiveRows
-                                      .elementAt(index!);
+                                  _index.add(int.tryParse(selectRow.first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                  datagridRow = selectRow.first;
                                   wdsSqliteModel = datagridRow!
                                       .getCells()
                                       .map(
-                                        (e) => WindingSheetModel(
-                                          MACHINE_NO: e.value.toString(),
-                                        ),
+                                        (e) => WindingSheetModel(),
                                       )
                                       .toList();
-                                  if (!selectAll.contains(wdsList[index!])) {
-                                    selectAll.add(wdsList[index!]);
-                                    print(selectAll.length);
-                                  }
-                                  _colorDelete = COLOR_RED;
+                                  print(_index);
                                   _colorSend = COLOR_SUCESS;
-                                  print(wdsList[index!].ID);
+                                  _colorDelete = COLOR_RED;
                                 });
                               }
                             } else {
                               setState(() {
-                                if (selectAll.contains(wdsList[index!])) {
-                                  selectAll.remove(wdsList[index!]);
-                                  print("check ${selectAll.length}");
+                                if (deselectedRows.length > 1) {
+                                  _index.clear();
+                                } else {
+                                  _index.remove(int.tryParse(deselectedRows
+                                      .first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
                                 }
-                                if (selectAll.isEmpty) {
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
-                                }
+                                _colorSend = Colors.grey;
+                                _colorDelete = Colors.grey;
                               });
-
-                              print('No Rows Selected');
                             }
                           },
                           columns: <GridColumn>[
+                            GridColumn(
+                              visible: false,
+                              columnName: 'ID',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'ID',
+                                  textAlign: TextAlign.center,
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                             GridColumn(
                               columnName: 'batch',
                               label: Container(
@@ -228,72 +261,60 @@ class _WindingJobFinishHoldScreenState
                         ),
                       ),
                     ),
-              wdsSqliteModel != null
+              _index.isNotEmpty
                   ? Expanded(
-                      child: Container(
-                          child: ListView(
-                        children: [
-                          DataTable(
-                              horizontalMargin: 20,
-                              headingRowHeight: 30,
-                              dataRowHeight: 30,
-                              headingRowColor: MaterialStateColor.resolveWith(
-                                  (states) => COLOR_BLUE_DARK),
-                              border: TableBorder.all(
-                                width: 1.0,
-                                color: COLOR_BLACK,
-                              ),
-                              columns: [
-                                DataColumn(
-                                  numeric: true,
-                                  label: Label(
-                                    "",
-                                    color: COLOR_BLUE_DARK,
-                                  ),
-                                ),
-                                DataColumn(label: Label(""))
-                              ],
-                              rows: [
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Batch No."))),
-                                  DataCell(
-                                      Label(wdsList[index!].BATCH_NO ?? ""))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Finish Date"))),
-                                  DataCell(
-                                      Label(wdsList[index!].START_END ?? ""))
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Center(child: Label("Element"))),
-                                  DataCell(Label(wdsList[index!].ELEMENT ?? ""))
-                                ]),
-                              ])
-                        ],
-                      )),
-                    )
-                  : Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Label(
-                              "No data",
-                              color: COLOR_RED,
-                              fontSize: 30,
+                      child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: ((context, index) {
+                          return DataTable(
+                            horizontalMargin: 20,
+                            headingRowHeight: 30,
+                            dataRowHeight: 30,
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => COLOR_BLUE_DARK),
+                            border: TableBorder.all(
+                              width: 1.0,
+                              color: COLOR_BLACK,
                             ),
-                            CircularProgressIndicator()
-                          ],
-                        ),
+                            columns: [
+                              DataColumn(
+                                numeric: true,
+                                label: Label(
+                                  "",
+                                  color: COLOR_BLUE_DARK,
+                                ),
+                              ),
+                              DataColumn(label: Label(""))
+                            ],
+                            rows: [
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Batch No."))),
+                                DataCell(Label(
+                                    "${wdsList.where((element) => element.ID == _index.first).first.BATCH_NO}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Finish Date"))),
+                                DataCell(Label(
+                                    "${wdsList.where((element) => element.ID == _index.first).first.BATCH_END_DATE}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Element"))),
+                                DataCell(Label(
+                                    "${wdsList.where((element) => element.ID == _index.first).first.ELEMENT}"))
+                              ]),
+                            ],
+                          );
+                        }),
                       ),
-                    ),
+                    )
+                  : CircularProgressIndicator(),
               const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
                       child: Button(
                     onPress: () {
-                      if (wdsList.isNotEmpty) {
+                      if (_index.isNotEmpty) {
                         _AlertDialog();
                       } else {
                         _LoadingData();
@@ -311,7 +332,7 @@ class _WindingJobFinishHoldScreenState
                     text: Label("Send", color: COLOR_WHITE),
                     bgColor: _colorSend,
                     onPress: () {
-                      if (wdsList != null) {
+                      if (_index.isNotEmpty) {
                         _sendDataServer();
                       } else {
                         EasyLoading.showInfo("Please Select Data");
@@ -349,10 +370,10 @@ class _WindingJobFinishHoldScreenState
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              deletedInfo();
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pop(context);
+              await deletedInfo();
+              await _refreshPage();
               EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
@@ -362,51 +383,39 @@ class _WindingJobFinishHoldScreenState
     );
   }
 
-  void deletedInfo() async {
-    if (index != null) {
-      for (var row in selectAll) {
+  Future _refreshPage() async {
+    _getWindingSheet().then((result) {
+      setState(() {
+        wdsList = result;
+        WindingDataSource = WindingsDataSource(process: wdsList);
+      });
+    });
+  }
+
+  Future deletedInfo() async {
+    setState(() {
+      _index.forEach((element) async {
         await databaseHelper.deletedRowSqlite(
-            tableName: 'WINDING_SHEET', columnName: 'ID', columnValue: row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in wdsList) {
-        await databaseHelper.deletedRowSqlite(
-          tableName: 'WINDING_SHEET',
-          columnName: 'ID',
-          columnValue: row.ID,
-        );
-      }
-    } else {}
+            tableName: 'WINDING_SHEET', columnName: 'ID', columnValue: element);
+        _index.clear();
+      });
+    });
   }
 
   void _sendDataServer() async {
-    if (index != null) {
-      for (var row in selectAll) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          PostSendWindingFinishEvent(
-            SendWdsFinishOutputModel(
-              OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-              BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
-              ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
-              FINISH_DATE: DateTime.now().toString(),
-            ),
+    _index.forEach((element) async {
+      var row = wdsList.where((value) => value.ID == element).first;
+      BlocProvider.of<LineElementBloc>(context).add(
+        PostSendWindingFinishEvent(
+          SendWdsFinishOutputModel(
+            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
+            ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
+            FINISH_DATE: DateTime.now().toString(),
           ),
-        );
-      }
-    } else if (allRowIndex != null) {
-      for (var row in wdsList) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          PostSendWindingFinishEvent(
-            SendWdsFinishOutputModel(
-              OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-              BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
-              ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
-              FINISH_DATE: DateTime.now().toString(),
-            ),
-          ),
-        );
-      }
-    } else {}
+        ),
+      );
+    });
   }
 
   void _LoadingData() {
@@ -422,8 +431,8 @@ class WindingsDataSource extends DataGridSource {
           _employees.add(
             DataGridRow(
               cells: [
-                // DataGridCell<String>(
-                //     columnName: 'operatorName', value: _item.OPERATOR_NAME),
+                DataGridCell<int>(
+                    columnName: 'ID', value: int.tryParse(_item.ID.toString())),
                 DataGridCell<String>(
                     columnName: 'batch', value: _item.BATCH_NO),
                 DataGridCell<String>(
