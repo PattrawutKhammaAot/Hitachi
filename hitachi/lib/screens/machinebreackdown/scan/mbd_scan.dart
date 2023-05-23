@@ -63,17 +63,59 @@ class _MachineBreakDownScanScreenState
 //
   final _formKey = GlobalKey<FormState>();
 
-  void _checkValueController() {
+  Future _refreshPage() async {
+    Future.delayed(Duration(seconds: 2), () {
+      _callBreakDownMachine();
+    });
+  }
+
+  void _checkValueController() async {
     if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
-        _start_Technical_1_Controller.text.isNotEmpty) {
+        _serviceNo_Controller.text.isNotEmpty &&
+        _start_Technical_1_Controller.text.isNotEmpty &&
+        _stop_Technical_1_Controller.text.isNotEmpty &&
+        _operator_accept_Controller.text.isNotEmpty) {
       _sendData();
-      Future.delayed(Duration(seconds: 5), () {
-        _callBreakDownMachine();
-      });
+      _callBreakDownMachine();
+    } else if (_machineNo_Controller.text.isNotEmpty &&
+        _operatorname_Controller.text.isNotEmpty &&
+        _start_Technical_1_Controller.text.isNotEmpty) {
+      _errorDialog(
+          text: Label("Do you wanna Save ?"),
+          onpressOk: () async {
+            await _saveMachine();
+            _callBreakDownMachine();
+            _checkControllerIsNull();
+            f1.requestFocus();
+            Navigator.pop(context);
+            _callBreakDownMachine();
+            EasyLoading.showSuccess("Save Successs");
+          });
     } else {
-      EasyLoading.showError("Please Input Data");
+      EasyLoading.showInfo("Please Input Info");
     }
+  }
+
+  void _checkControllerIsNull() {
+    _machineNo_Controller.text.isNotEmpty
+        ? _machineNo_Controller.clear()
+        : _machineNo_Controller.text;
+    _operatorname_Controller.text.isNotEmpty
+        ? _operatorname_Controller.clear()
+        : _operatorname_Controller.text;
+    _serviceNo_Controller.text.isNotEmpty
+        ? _serviceNo_Controller.clear()
+        : _serviceNo_Controller.text;
+    _start_Technical_1_Controller.text.isNotEmpty
+        ? _start_Technical_1_Controller.clear()
+        : _start_Technical_1_Controller.text;
+    _stop_Technical_1_Controller.text.isNotEmpty
+        ? _stop_Technical_1_Controller.clear()
+        : _stop_Technical_1_Controller.text;
+    _operator_accept_Controller.text.isNotEmpty
+        ? _operator_accept_Controller.clear()
+        : _operator_accept_Controller.text;
   }
 
   void _callBreakDownMachine() async {
@@ -82,7 +124,7 @@ class _MachineBreakDownScanScreenState
       setState(() {
         bdsList = sql
             .map((row) => BreakDownSheetModel.fromMap(
-                row.map((key, value) => MapEntry(key, value.toString()))))
+                row.map((key, value) => MapEntry(key, value))))
             .toList();
       });
     } else {
@@ -281,16 +323,9 @@ class _MachineBreakDownScanScreenState
               });
               if (_respone!.RESULT == true) {
                 await _delete();
-                _dpbMachineNo_Controller.clear();
-                _machineNo_Controller.clear();
-                _operatorname_Controller.clear();
-                _serviceNo_Controller.clear();
-                _start_Technical_1_Controller.clear();
-                _start_Technical_2_Controller.clear();
-                _stop_Technical_1_Controller.clear();
-                _stop_Technical_2_Controller.clear();
-                _operator_accept_Controller.clear();
+                _checkControllerIsNull();
                 f1.requestFocus();
+                await _refreshPage();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
@@ -377,6 +412,18 @@ class _MachineBreakDownScanScreenState
                                     if (item.STOP_DATE_TECH_1 != null) {
                                       _stop_Technical_1_Controller.text =
                                           item.STOP_DATE_TECH_1.toString();
+                                    }
+                                    if (item.OPERATOR_ACCEPT != null) {
+                                      _operator_accept_Controller.text =
+                                          item.OPERATOR_ACCEPT.toString();
+                                    }
+                                    if (item.TECH_2 != null) {
+                                      _start_Technical_2_Controller.text =
+                                          item.TECH_2.toString();
+                                    }
+                                    if (item.STOP_DATE_TECH_2 != null) {
+                                      _stop_Technical_2_Controller.text =
+                                          item.STOP_DATE_TECH_2.toString();
                                     }
                                   });
                                   print(value);

@@ -134,7 +134,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     height: 15,
                   ),
                   Label(
-                    "Version ${_packageInfo.version} (3)",
+                    "Version ${_packageInfo.version} (6)",
                     fontSize: 20,
                   )
                 ],

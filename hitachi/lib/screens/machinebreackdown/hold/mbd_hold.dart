@@ -55,7 +55,7 @@ class _MachineBreakDownHoldScreenState
           await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
       List<BreakDownSheetModel> result = rows
           .map((row) => BreakDownSheetModel.fromMap(
-              row.map((key, value) => MapEntry(key, value.toString()))))
+              row.map((key, value) => MapEntry(key, value))))
           .toList();
 
       return result;
@@ -133,7 +133,6 @@ class _MachineBreakDownHoldScreenState
                       child: Container(
                         child: SfDataGrid(
                           source: breakdownDataSource!,
-                          // columnWidthMode: ColumnWidthMode.fill,
                           showCheckboxColumn: true,
                           selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
@@ -188,7 +187,6 @@ class _MachineBreakDownHoldScreenState
                               });
                             }
                           },
-
                           columns: <GridColumn>[
                             GridColumn(
                                 visible: false,

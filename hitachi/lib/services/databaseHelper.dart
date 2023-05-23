@@ -183,6 +183,26 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<Map<String, dynamic>>> queryDataPMDaily({
+    String? select1,
+    String? select2,
+    String? select3,
+    String? select4,
+    String? formTable,
+    String? where,
+    String? stringValue,
+  }) async {
+    try {
+      String sql =
+          "SELECT ${select1}, ${select2}, ${select3}, ${select4} FROM ${formTable} WHERE ${where} = '${stringValue}'"; // แก้ไขตรงนี้;
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<void> deleteSave(
       {String? tableName, String? where, String? keyWhere}) async {
     try {
