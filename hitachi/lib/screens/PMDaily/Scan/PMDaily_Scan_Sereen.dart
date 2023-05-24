@@ -44,6 +44,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   String valuetxtinput = "";
   Color? bgChange;
 
+  bool _enabledPMDaily = true;
+
   final f1 = FocusNode();
   final f2 = FocusNode();
 
@@ -76,6 +78,43 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   //     return false;
   //   }
   // }
+  Future<bool> _getProcessStart() async {
+    try {
+      var sql_pmDailySheet = await databaseHelper.queryDataSelectPMDaily(
+        select1: 'OperatorName'.trim(),
+        select2: 'CheckPointPM'.trim(),
+        select3: 'Status'.trim(),
+        select4: 'StartDate'.trim(),
+        formTable: 'PM_SHEET'.trim(),
+        where: 'OperatorName'.trim(),
+        stringValue: operatorNameController.text.trim(),
+      );
+      print(sql_pmDailySheet.length);
+
+      // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
+      print(operatorNameController.text.trim());
+      print(sql_pmDailySheet.length);
+      if (sql_pmDailySheet.isEmpty) {
+        print("if");
+        // setState(() {
+        _checkSendSqlite = true;
+        print("_checkSendSqlite = true;");
+        _saveSendSqlite();
+        // });
+      } else {
+        // setState(() {
+        _checkSendSqlite = false;
+        print("_checkSendSqlite = false;");
+        // _updateSendSqlite();//
+        // });
+        print("else");
+      }
+      return true;
+    } catch (e) {
+      print("Catch : ${e}");
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -95,34 +134,71 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             }
             if (state is PMDailyLoadedState) {
               print("Loaded");
-
               EasyLoading.show(status: "Loaded");
-
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
-                _clearAllData();
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
+                // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
-                // _getProcessStart();
-                _saveSendSqlite();
-                _clearAllData();
+                _errorDialog(
+                    text: Label("Can not send & save Data"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               } else {
-                EasyLoading.showError("Can not Call API");
-                // _getProcessStart();
-                _saveSendSqlite();
-                _clearAllData();
+                // EasyLoading.showError("Can not Call API");
+                _errorDialog(
+                    text: Label("Can not Call API"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               }
             }
             if (state is PMDailyErrorState) {
               print("ERROR");
-              EasyLoading.dismiss();
-              // _getProcessStart();
-              _saveSendSqlite();
-              _clearAllData();
+              // EasyLoading.dismiss();
+              // _errorDialog();
+              _getProcessStart();
               EasyLoading.showError("Please Check Connection Internet");
             }
           },
+          // listener: (context, state) {
+          //   if (state is PMDailyLoadingState) {
+          //     EasyLoading.show();
+          //     print("loading");
+          //   }
+          //   if (state is PMDailyLoadedState) {
+          //     print("Loaded");
+          //
+          //     EasyLoading.show(status: "Loaded");
+          //
+          //     if (state.item.RESULT == true) {
+          //       EasyLoading.showSuccess("SendComplete");
+          //       _clearAllData();
+          //     } else if (state.item.RESULT == false) {
+          //       EasyLoading.showError("Can not send & save Data");
+          //       items = state.item;
+          //       // _getProcessStart();
+          //       _saveSendSqlite();
+          //       _clearAllData();
+          //     } else {
+          //       EasyLoading.showError("Can not Call API");
+          //       // _getProcessStart();
+          //       _saveSendSqlite();
+          //       _clearAllData();
+          //     }
+          //   }
+          //   if (state is PMDailyErrorState) {
+          //     print("ERROR");
+          //     EasyLoading.dismiss();
+          //     // _getProcessStart();
+          //     _saveSendSqlite();
+          //     _clearAllData();
+          //     EasyLoading.showError("Please Check Connection Internet");
+          //   }
+          // },
         )
       ],
       child: BgWhite(
@@ -139,6 +215,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     controller: operatorNameController,
                     maxLength: 12,
                     focusNode: f1,
+                    enabled: _enabledPMDaily,
                     onEditingComplete: () {
                       if (operatorNameController.text.isNotEmpty) {
                         setState(() {
@@ -166,9 +243,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                   RowBoxInputField(
                     labelText: "Check Point : ",
                     height: 35,
-                    maxLength: 12,
+                    maxLength: 1,
                     controller: checkpointController,
                     focusNode: f2,
+                    enabled: _enabledPMDaily,
+
                     onChanged: (value) {
                       if (operatorNameController.text.isNotEmpty &&
                           checkpointController.text.isNotEmpty) {
@@ -183,7 +262,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     },
                     // onEditingComplete: () => f4.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(RegExp(r'[1-3]')),
                     ],
                   ),
                   PMDDs != null
@@ -223,71 +302,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                                     ),
                                   ),
                                 ),
-                                GridColumn(
-                                  width: 120,
-                                  columnName: 'order',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label(
-                                        'Order',
-                                        color: COLOR_WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  width: 120,
-                                  columnName: 'b',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label(
-                                        'B',
-                                        color: COLOR_WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  width: 120,
-                                  columnName: 'ipe',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label(
-                                        'IPE',
-                                        color: COLOR_WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  width: 120,
-                                  columnName: 'qty',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label(
-                                        'QTY',
-                                        color: COLOR_WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GridColumn(
-                                  width: 120,
-                                  columnName: 'remark',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label(
-                                        'Remark',
-                                        color: COLOR_WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -312,7 +326,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       Expanded(
                         flex: 3,
                         child: Button(
-                          onPress: () => _btnLoad(),
+                          onPress: () => _btnLoad(checkpointController.text),
                           text: Label(
                             "Load Status",
                             color: COLOR_WHITE,
@@ -339,14 +353,44 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     );
   }
 
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _saveSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.insertSqlite('PROCESS_SHEET', {
+        await databaseHelper.insertSqlite('PM_SHEET', {
           'OperatorName': operatorNameController.text.trim(),
           'CheckPointPM': checkpointController.text.trim(),
           'Status': checkpointController.text.trim(),
-          'StartDate': DateTime.now().toString(),
+          'DatePM': DateTime.now().toString(),
         });
         print("ok");
       }
@@ -355,9 +399,39 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     }
   }
 
-  void _btnLoad() {
+  // void _updateSendSqlite() async {
+  //   try {
+  //     if (operatorNameController.text.isNotEmpty) {
+  //       await databaseHelper.updateProcessStart(
+  //           table: 'PROCESS_SHEET',
+  //           key1: 'OperatorName',
+  //           yieldKey1: int.tryParse(operatorNameController.text.trim()),
+  //           key2: 'OperatorName1',
+  //           yieldKey2: int.tryParse(operatorName1Controller.text.trim() ?? ""),
+  //           key3: 'OperatorName2',
+  //           yieldKey3: int.tryParse(operatorName2Controller.text.trim() ?? ""),
+  //           key4: 'OperatorName3',
+  //           yieldKey4: int.tryParse(operatorName3Controller.text.trim() ?? ""),
+  //           key5: 'BatchNo',
+  //           yieldKey5: batchNoController.text.trim(),
+  //           key6: 'StartDate',
+  //           yieldKey6: startDate.toString(),
+  //           whereKey: 'Machine',
+  //           value: MachineController.text.trim());
+  //       print("updateSendSqlite");
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  void _btnLoad(String checkpoint) {
+    setState(() {
+      _enabledPMDaily = false;
+    });
+
     // BlocProvider.of<PmDailyBloc>(context).add(
-    //   PMDailySendEvent(batchNoController.text.trim()),
+    //   PMDailyGetSendEvent(checkpointController.text.trim()),
     // );
     // widget.onChange!(operatorNameController.text.trim());
   }
@@ -368,7 +442,13 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       _callAPI();
       // _checkSendSqlite();
       // _saveDataToSqlite();
+      setState(() {
+        _enabledPMDaily = true;
+      });
     } else {
+      setState(() {
+        _enabledPMDaily = true;
+      });
       EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
   }
@@ -407,7 +487,7 @@ class PMDailyDataSource extends DataGridSource {
                   columnName: 'Checkpoint', value: _item.CHECKPOINT),
               DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
               DataGridCell<String>(
-                  columnName: 'StartDate', value: _item.STARTDATE),
+                  columnName: 'StartDate', value: _item.DATEPM),
             ],
           ),
         );
@@ -439,3 +519,49 @@ class PMDailyDataSource extends DataGridSource {
     );
   }
 }
+
+// class PMDailyCheckPointDataSource extends DataGridSource {
+//   PMDailyDataSource({List<PMDailyModel>? process}) {
+//     if (process != null) {
+//       for (var _item in process) {
+//         _employees.add(
+//           DataGridRow(
+//             cells: [
+//               DataGridCell<String>(
+//                   columnName: 'Operatorname', value: _item.OPERATOR_NAME),
+//               DataGridCell<String>(
+//                   columnName: 'Checkpoint', value: _item.CHECKPOINT),
+//               DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
+//               DataGridCell<String>(
+//                   columnName: 'StartDate', value: _item.DATEPM),
+//             ],
+//           ),
+//         );
+//       }
+//     } else {
+//       EasyLoading.showError("Can not request Data");
+//     }
+//   }
+//
+//   List<DataGridRow> _employees = [];
+//
+//   @override
+//   List<DataGridRow> get rows => _employees;
+//
+//   @override
+//   DataGridRowAdapter? buildRow(DataGridRow row) {
+//     return DataGridRowAdapter(
+//       cells: row.getCells().map<Widget>(
+//         (dataGridCell) {
+//           return Container(
+//             alignment: (dataGridCell.columnName == 'id' ||
+//                     dataGridCell.columnName == 'qty')
+//                 ? Alignment.center
+//                 : Alignment.center,
+//             child: Text(dataGridCell.value.toString()),
+//           );
+//         },
+//       ).toList(),
+//     );
+//   }
+// }

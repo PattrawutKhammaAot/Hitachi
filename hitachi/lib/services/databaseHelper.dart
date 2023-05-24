@@ -115,6 +115,22 @@ class DatabaseHelper {
     return await db.query(tableName);
   }
 
+  Future<List<Map<String, dynamic>>> queryAllProcessStartRows(
+      String? tableName, String? whereName) async {
+    try {
+      String sql =
+          // " SELECT Machine,OperatorName,OperatorName1,OperatorName2,OperatorName3,BatchNo,StartDate,Garbage,FinDate,StartEnd,CheckComplete " +
+          " SELECT * " +
+              "FROM  $tableName " +
+              "WHERE (StartEnd = '${whereName}')";
+      Database db = await this.database;
+      return await db.rawQuery(sql);
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<List<Map<String, dynamic>>> queryWeight({
     String? stringValue,
     String? selected,
@@ -153,6 +169,26 @@ class DatabaseHelper {
           "WHERE ${where} = '${stringValue ?? intValue}'" + // แก้ไขตรงนี้
           " AND (${keyAnd}='${value}') " +
           "AND (${keyAnd2}='${value2}')";
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> queryDataSelectPMDaily({
+    String? select1,
+    String? select2,
+    String? select3,
+    String? select4,
+    String? formTable,
+    String? where,
+    String? stringValue,
+  }) async {
+    try {
+      String sql =
+          "SELECT ${select1}, ${select2}, ${select3}, ${select4} FROM ${formTable} WHERE ${where} = '${stringValue}'"; // แก้ไขตรงนี้;
       Database db = await this.database;
       return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
     } catch (e) {

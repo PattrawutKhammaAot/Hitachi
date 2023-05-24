@@ -4,25 +4,25 @@ class PMDailyModel {
     this.OPERATOR_NAME,
     this.CHECKPOINT,
     this.STATUS,
-    this.STARTDATE,
+    this.DATEPM,
   });
   final int? ID;
   final String? OPERATOR_NAME;
   final String? CHECKPOINT;
   final String? STATUS;
-  final String? STARTDATE;
+  final String? DATEPM;
 
   List<Object> get props => [
         ID!,
         OPERATOR_NAME!,
         CHECKPOINT!,
         STATUS!,
-        STARTDATE!,
+        DATEPM!,
       ];
   PMDailyModel.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
         OPERATOR_NAME = map['OperatorName'],
         CHECKPOINT = map['CheckPointPM'],
         STATUS = map['Status'],
-        STARTDATE = map['DatePM'];
+        DATEPM = map['DatePM'];
 }

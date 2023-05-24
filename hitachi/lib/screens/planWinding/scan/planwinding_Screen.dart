@@ -24,7 +24,7 @@ class PlanWinding_Screen extends StatefulWidget {
 
 class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   final TextEditingController batchNoController = TextEditingController();
-  List<PlanWindingOutputModelProcess>? PlanWindingModel;
+  List<PlanWindingOutputModelPlan>? PlanWindingModel;
   PlanWindingDataSource? planwindingDataSource;
   Color? bgChange;
   String _loadData = "วันเวลาที่ load : ";
@@ -53,7 +53,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
               EasyLoading.dismiss();
               setState(() {
                 planwindingDataSource =
-                    PlanWindingDataSource(process: PlanWindingModel);
+                    PlanWindingDataSource(PLAN: PlanWindingModel);
               });
             }
             if (state is PlanWindingErrorState) {
@@ -206,27 +206,27 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
     //   PlanWindingSendEvent(batchNoController.text.trim()),
     // );
     BlocProvider.of<PlanWindingBloc>(context).add(
-      PlanWindingSendEvent(batchNoController.text.trim()),
+      PlanWindingSendEvent(),
     );
-    widget.onChange!(batchNoController.text.trim());
+    // widget.onChange!(batchNoController.text.trim());
   }
 }
 
 class PlanWindingDataSource extends DataGridSource {
-  PlanWindingDataSource({List<PlanWindingOutputModelProcess>? process}) {
-    if (process != null) {
-      for (var _item in process) {
+  PlanWindingDataSource({List<PlanWindingOutputModelPlan>? PLAN}) {
+    if (PLAN != null) {
+      for (var _item in PLAN) {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<int>(columnName: 'data', value: _item.ORDER),
-              DataGridCell<String>(columnName: 'no', value: _item.PROCESS),
               DataGridCell<String>(
-                  columnName: 'order', value: _item.START_DATE),
-              DataGridCell<String>(columnName: 'b', value: _item.START_TIME),
-              DataGridCell<String>(columnName: 'ipe', value: _item.FINISH_DATE),
-              DataGridCell<String>(columnName: 'qty', value: _item.FINISH_TIME),
-              DataGridCell<int>(columnName: 'remark', value: _item.AMOUNT),
+                  columnName: 'data', value: _item.WDGDATEPLANS),
+              DataGridCell<int>(columnName: 'no', value: _item.ORDER),
+              DataGridCell<String>(columnName: 'order', value: _item.ORDERNO),
+              DataGridCell<String>(columnName: 'b', value: _item.BATCH),
+              DataGridCell<int>(columnName: 'ipe', value: _item.IPECODE),
+              DataGridCell<int>(columnName: 'qty', value: _item.WDGQTYPLAN),
+              DataGridCell<String>(columnName: 'remark', value: _item.NOTE),
             ],
           ),
         );

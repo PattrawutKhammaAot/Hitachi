@@ -41,7 +41,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
       List<Map<String, dynamic>> rows =
-          await databaseHelper.queryAllRows('PROCESS_SHEET');
+          await databaseHelper.queryAllProcessStartRows('PROCESS_SHEET', 'S');
+      // await databaseHelper.queryAllRows('PROCESS_SHEET');
       List<ProcessModel> result =
           rows.map((row) => ProcessModel.fromMap(row)).toList();
       return result;
@@ -61,13 +62,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     });
     super.initState();
   }
-
-  // void deletedInfo() async {
-  //   await databaseHelper.deletedRowSqlite(
-  //       tableName: 'PROCESS_SHEET',
-  //       columnName: 'ID',
-  //       columnValue: processList![selectedRowIndex!].ID);
-  // }
 
   void deletedInfo() async {
     if (index != null) {
@@ -95,9 +89,9 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) {
-                if (state is MaterialInputLoadingState) {
+                if (state is ProcessStartLoadingState) {
                   EasyLoading.show();
-                } else if (state is MaterialInputLoadedState) {
+                } else if (state is ProcessStartLoadedState) {
                   if (state.item.RESULT == true) {
                     deletedInfo();
                     Navigator.canPop(context);
@@ -328,8 +322,9 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   DataRow(cells: [
                                     DataCell(
                                         Center(child: Label("Start Date."))),
-                                    DataCell(Label(
-                                        "${processList[index!].STARTDATE}"))
+                                    DataCell(Label(processList[index!]
+                                        .STARTDATE
+                                        .toString()))
                                   ]),
                                 ])
                           ],
@@ -356,7 +351,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (processModelSqlite != null) {
+                        if (processList != null) {
                           _AlertDialog();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -374,39 +369,11 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        _sendDataServer();
-                        // if (processModelSqlite != null) {
-                        //   BlocProvider.of<LineElementBloc>(context).add(
-                        //     ProcessStartEvent(
-                        //       ProcessOutputModel(
-                        //         MACHINE:
-                        //             processList![selectedRowIndex!].MACHINE,
-                        //         OPERATORNAME: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME
-                        //                 .toString()),
-                        //         OPERATORNAME1: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME1
-                        //                 .toString()),
-                        //         OPERATORNAME2: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME2
-                        //                 .toString()),
-                        //         OPERATORNAME3: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME3
-                        //                 .toString()),
-                        //         BATCHNO:
-                        //             processList![selectedRowIndex!].BATCH_NO,
-                        //         STARTDATE:
-                        //             processList![selectedRowIndex!].STARTDATE,
-                        //       ),
-                        //     ),
-                        //   );
-                        // } else {
-                        //   EasyLoading.showInfo("Please Select Data");
-                        // }
+                        if (processList != null) {
+                          _sendDataServer();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
                       },
                     )),
                   ],
@@ -524,7 +491,7 @@ class ProcessStartDataSource extends DataGridSource {
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
               DataGridCell<String>(
-                  columnName: 'StartDate', value: _item.STARTEND.toString()),
+                  columnName: 'StartDate', value: _item.STARTDATE),
             ],
           ),
         );

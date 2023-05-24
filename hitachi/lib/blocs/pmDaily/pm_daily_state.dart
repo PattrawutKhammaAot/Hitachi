@@ -10,27 +10,7 @@ abstract class PmDailyState {
 
 class PmDailyInitial extends PmDailyState {}
 
-// class PMDailyLoadingState extends PmDailyState {
-//   const PMDailyLoadingState();
-//   @override
-//   List<Object> get props => [];
-// }
-//
-// class PMDailyLoadedState extends PmDailyState {
-//   const PMDailyLoadedState(this.item);
-//   final ResponeDefault item;
-//
-//   @override
-//   List<Object> get props => [item];
-// }
-//
-// class PMDailyErrorState extends PmDailyState {
-//   const PMDailyErrorState(this.error);
-//   final String error;
-//
-//   @override
-//   List<Object> get props => [error];
-// }
+//post
 
 class PMDailyLoadingState extends PmDailyState {
   const PMDailyLoadingState();
@@ -49,6 +29,31 @@ class PMDailyLoadedState extends PmDailyState {
 
 class PMDailyErrorState extends PmDailyState {
   const PMDailyErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
+//Get
+
+class PMDailyGetLoadingState extends PmDailyState {
+  const PMDailyGetLoadingState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class PMDailyGetLoadedState extends PmDailyState {
+  const PMDailyGetLoadedState(this.item);
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class PMDailyGetErrorState extends PmDailyState {
+  const PMDailyGetErrorState(this.error);
   final String error;
 
   @override

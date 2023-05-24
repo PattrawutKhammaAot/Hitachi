@@ -56,15 +56,12 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('PM_SHEET');
-      List<PMDailyModel> result = rows
-          .map((row) => PMDailyModel.fromMap(
-              row.map((key, value) => MapEntry(key, value.toString()))))
-          .toList();
-
+      // await databaseHelper.queryAllRows('PROCESS_SHEET');
+      List<PMDailyModel> result =
+          rows.map((row) => PMDailyModel.fromMap(row)).toList();
       return result;
-    } catch (e, s) {
+    } catch (e) {
       print(e);
-      print(s);
       return [];
     }
   }
@@ -284,7 +281,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 ]),
                                 DataRow(cells: [
                                   DataCell(Center(child: Label("Start Date"))),
-                                  DataCell(Label("${PMList[index!].STARTDATE}"))
+                                  DataCell(Label("${PMList[index!].DATEPM}"))
                                 ]),
                               ])
                         ],
@@ -311,7 +308,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                   Expanded(
                       child: Button(
                     onPress: () {
-                      if (PMSqliteModel != null) {
+                      if (PMList != null) {
                         _AlertDialog();
                       } else {
                         _selectData();
@@ -329,7 +326,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                     text: Label("Send", color: COLOR_WHITE),
                     bgColor: _colorSend,
                     onPress: () {
-                      if (PMSqliteModel != null) {
+                      if (PMList != null) {
                         _sendDataServer();
                       } else {
                         EasyLoading.showInfo("Please Select Data");
@@ -429,7 +426,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
               OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
               CHECKPOINT: row.CHECKPOINT,
               STATUS: row.STATUS,
-              STARTDATE: row.STARTDATE,
+              STARTDATE: row.DATEPM,
             ),
           ),
         );
@@ -442,7 +439,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
               OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
               CHECKPOINT: row.CHECKPOINT,
               STATUS: row.STATUS,
-              STARTDATE: row.STARTDATE,
+              STARTDATE: row.DATEPM,
             ),
           ),
         );
@@ -496,7 +493,7 @@ class PMDailyDataSource extends DataGridSource {
                   columnName: 'Checkpoint', value: _item.CHECKPOINT),
               DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
               DataGridCell<String>(
-                  columnName: 'StartDate', value: _item.STARTDATE.toString()),
+                  columnName: 'StartDate', value: _item.DATEPM.toString()),
             ],
           ),
         );

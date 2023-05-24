@@ -87,7 +87,7 @@ class ApiConfig {
   //POST SEND PM_DAILY
   static String PM_DAILY = "${BASE_API_URL}LineElement/SendPMDaily";
 
-  ///---------------------REPORT ROUTE SHEET ----------------------///
+  ///---------------------PLAN_WINDING ----------------------///
 
   //Get PLAN_WINDING
   static String PLAN_WINDING = "${BASE_API_URL}LineElement/GetPlanWinding";

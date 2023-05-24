@@ -1,4 +1,4 @@
-// ignore_for_file: unrelated_type_equality_checks
+// ignore_for_file: unrelated_type_equality_checks, unnecessary_null_comparison
 
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +44,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   String Focustxt = "";
   String valuetxtinput = "";
   Color? bgChange;
+  DateTime startDate = DateTime.now();
+  String StartEndValue = 'S';
 
   final f1 = FocusNode();
   final f2 = FocusNode();
@@ -68,21 +70,22 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       print(sql_processSheet.length);
 
       // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
+      print(MachineController.text.trim());
+      print(sql_processSheet.length);
       if (sql_processSheet.isEmpty) {
-        print(MachineController.text.trim());
-        print(sql_processSheet.length);
-        if (sql_processSheet.isEmpty) {
-          print("if");
-          setState(() {
-            _checkSendSqlite = true;
-          });
-          _saveSendSqlite();
-        } else {
-          setState(() {
-            _checkSendSqlite = false;
-          });
-          print("else");
-        }
+        print("if");
+        // setState(() {
+        _checkSendSqlite = true;
+        print("_checkSendSqlite = true;");
+        _saveSendSqlite();
+        // });
+      } else {
+        // setState(() {
+        _checkSendSqlite = false;
+        print("_checkSendSqlite = false;");
+        _updateSendSqlite();
+        // });
+        print("else");
       }
       return true;
     } catch (e) {
@@ -109,49 +112,34 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             }
             if (state is ProcessStartLoadedState) {
               print("Loaded");
-
               EasyLoading.show(status: "Loaded");
-
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
-                _clearAllData();
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
+                // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
-                _getProcessStart();
-                if (_checkSendSqlite == true) {
-                  _saveSendSqlite();
-                  print("saveSendSqlite");
-                } else if (_checkSendSqlite == false) {
-                  _updateSendSqlite();
-                  print("updateSendSqlite");
-                }
-                _clearAllData();
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               } else {
-                EasyLoading.showError("Can not Call API");
-                _getProcessStart();
-                if (_checkSendSqlite == true) {
-                  _saveSendSqlite();
-                  print("saveSendSqlite");
-                } else if (_checkSendSqlite == false) {
-                  _updateSendSqlite();
-                  print("updateSendSqlite");
-                }
-                _clearAllData();
+                // EasyLoading.showError("Can not Call API");
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               }
             }
             if (state is ProcessStartErrorState) {
               print("ERROR");
-              EasyLoading.dismiss();
+              // EasyLoading.dismiss();
+              // _errorDialog();
               _getProcessStart();
-              if (_checkSendSqlite == true) {
-                _saveSendSqlite();
-                print("save true");
-              } else if (_checkSendSqlite == false) {
-                _updateSendSqlite();
-                print("save false");
-              }
-              _clearAllData();
+              _enabledMachineNo = true;
               EasyLoading.showError("Please Check Connection Internet");
             }
           },
@@ -376,9 +364,13 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               ? ""
               : operatorName3Controller.text.trim(),
           'BatchNo': batchNoController.text.trim(),
-          'StartDate': DateTime.now().toString(),
+          'StartDate': startDate.toString(),
+          'StartEnd': StartEndValue.toString(),
         });
-        print("ok");
+        print("saveSendSqlite");
+        setState(() {
+          _clearAllData();
+        });
       }
     } catch (e) {
       print(e);
@@ -401,7 +393,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             key5: 'BatchNo',
             yieldKey5: batchNoController.text.trim(),
             key6: 'StartDate',
-            yieldKey6: DateTime.now().toString(),
+            yieldKey6: startDate.toString(),
             whereKey: 'Machine',
             value: MachineController.text.trim());
         print("updateSendSqlite");
@@ -416,6 +408,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
       _callAPI();
+      // _clearAllData();
+      _enabledMachineNo = true;
+      // f1.requestFocus();
       // _checkSendSqlite();
       // _saveDataToSqlite();
     } else {
@@ -432,7 +427,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
         OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
         BATCHNO: batchNoController.text.trim(),
-        STARTDATE: DateTime.now().toString(),
+        STARTDATE: startDate.toString(),
+        STARTEND: 'S',
       )),
     );
   }
@@ -500,6 +496,8 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
+              DataGridCell<String>(
+                  columnName: 'StartEnd', value: _item.STARTEND.toString()),
             ],
           ),
         );

@@ -38,6 +38,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final f3 = FocusNode();
   final f4 = FocusNode();
 
+  String StartEndValue = 'E';
+
   @override
   void initState() {
     super.initState();
@@ -61,44 +63,31 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
 
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
-                _clearAllData();
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Can not send & save Data");
+                // EasyLoading.dismiss();
+                // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
-                _getProcessStart();
-                if (_checkSendSqlite == true) {
-                  _saveSendSqlite();
-                  print("save true");
-                } else if (_checkSendSqlite == false) {
-                  _updateSendSqlite();
-                  print("save false");
-                }
-                _clearAllData();
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               } else {
-                EasyLoading.showError("Can not Call API");
-                _getProcessStart();
-                if (_checkSendSqlite == true) {
-                  _saveSendSqlite();
-                  print("save true");
-                } else if (_checkSendSqlite == false) {
-                  _updateSendSqlite();
-                  print("save false");
-                }
-                _clearAllData();
+                // EasyLoading.dismiss();
+                // EasyLoading.showError("Can not Call API");
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      _getProcessStart();
+                    });
               }
             }
             if (state is ProcessFinishErrorState) {
               print("ERROR");
-              EasyLoading.dismiss();
+              // EasyLoading.dismiss();
               _getProcessStart();
-              if (_checkSendSqlite == true) {
-                _saveSendSqlite();
-                print("save true");
-              } else if (_checkSendSqlite == false) {
-                _updateSendSqlite();
-                print("save false");
-              }
-              _clearAllData();
               EasyLoading.showError("Please Check Connection Internet");
             }
           },
@@ -118,6 +107,20 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     controller: machineNoController,
                     type: TextInputType.number,
                     focusNode: f1,
+                    onChanged: (value) {
+                      if (machineNoController.text.isNotEmpty &&
+                          operatorNameController.text.isNotEmpty &&
+                          batchNoController.text.isNotEmpty &&
+                          rejectQtyController.text.isNotEmpty) {
+                        setState(() {
+                          bgChange = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgChange = Colors.grey;
+                        });
+                      }
+                    },
                     onEditingComplete: () {
                       // f2.requestFocus();
                       if (machineNoController.text.length > 2) {
@@ -141,6 +144,20 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Operator Name : ",
                     controller: operatorNameController,
                     focusNode: f2,
+                    onChanged: (value) {
+                      if (machineNoController.text.isNotEmpty &&
+                          operatorNameController.text.isNotEmpty &&
+                          batchNoController.text.isNotEmpty &&
+                          rejectQtyController.text.isNotEmpty) {
+                        setState(() {
+                          bgChange = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgChange = Colors.grey;
+                        });
+                      }
+                    },
                     textInputFormatter: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
@@ -181,7 +198,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                         }
                       }
                       if (machineNoController.text.isNotEmpty &&
-                          operatorNameController.text.isNotEmpty) {
+                          operatorNameController.text.isNotEmpty &&
+                          batchNoController.text.isNotEmpty &&
+                          rejectQtyController.text.isNotEmpty) {
                         setState(() {
                           bgChange = COLOR_RED;
                         });
@@ -199,6 +218,20 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Reject Qty : ",
                     controller: rejectQtyController,
                     focusNode: f4,
+                    onChanged: (value) {
+                      if (machineNoController.text.isNotEmpty &&
+                          operatorNameController.text.isNotEmpty &&
+                          batchNoController.text.isNotEmpty &&
+                          rejectQtyController.text.isNotEmpty) {
+                        setState(() {
+                          bgChange = COLOR_RED;
+                        });
+                      } else {
+                        setState(() {
+                          bgChange = Colors.grey;
+                        });
+                      }
+                    },
                     // type: TextInputType.number,
                   ),
                   SizedBox(
@@ -279,7 +312,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
             yieldKey2: operatorNameController.text.trim(),
             key3: 'Garbage',
             yieldKey3: rejectQtyController.text.trim(),
-            key4: 'StartEnd',
+            key4: 'FinDate',
             yieldKey4: DateTime.now().toString(),
             whereKey: 'Machine',
             value: machineNoController.text.trim());
@@ -288,6 +321,36 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<bool> _getProcessStart() async {
@@ -304,21 +367,22 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       print(sql_processSheet.length);
 
       // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
+      print(machineNoController.text.trim());
+      print(sql_processSheet.length);
       if (sql_processSheet.isEmpty) {
-        print(machineNoController.text.trim());
-        print(sql_processSheet.length);
-        if (sql_processSheet.isEmpty) {
-          print("if");
-          setState(() {
-            _checkSendSqlite = true;
-          });
-          _saveSendSqlite();
-        } else {
-          setState(() {
-            _checkSendSqlite = false;
-          });
-          print("else");
-        }
+        print("if");
+        // setState(() {
+        _checkSendSqlite = true;
+        print("_checkSendSqlite = true;");
+        _saveSendSqlite();
+        // });
+      } else {
+        // setState(() {
+        _checkSendSqlite = false;
+        print("_checkSendSqlite = false;");
+        _updateSendSqlite();
+        // });
+        print("else");
       }
       return true;
     } catch (e) {
@@ -333,8 +397,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'Machine': machineNoController.text.trim(),
         'OperatorName1': rejectQtyController.text.trim(),
         'BatchNo': int.tryParse(batchNoController.text.trim()),
-        'RejectQty': rejectQtyController.text.trim(),
-        'StartEnd': DateTime.now().toString(),
+        'Garbage': rejectQtyController.text.trim(),
+        'FinDate': DateTime.now().toString(),
+        'StartEnd': StartEndValue.toString(),
       });
       print("ok");
     } catch (e) {

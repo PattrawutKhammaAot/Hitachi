@@ -43,7 +43,7 @@ class RouterList {
       '/lineElementMenu/FilmReceive/FilmReceive_control_page';
   //PlanWinding
   static const String Planwinding_control_Screen =
-      '/lineElementMenu/planWinding/planWinding';
+      '/lineElementMenu/planWinding';
   //FilmReceive
   static const String ZincThickness_control = '/lineElementMenu/Zincthickness';
 

@@ -8,11 +8,11 @@ abstract class PlanWindingEvent extends Equatable {
 }
 
 class PlanWindingSendEvent extends PlanWindingEvent {
-  const PlanWindingSendEvent(this.items);
+  const PlanWindingSendEvent();
 
   // final PlanWindingOutputModel items;
-  final String items;
+  // final String items;
 
   @override
-  List<Object> get prop => [items];
+  List<Object> get prop => [];
 }

@@ -1,58 +1,83 @@
 class PlanWindingOutputModel {
-  const PlanWindingOutputModel({this.PROCESS});
+  const PlanWindingOutputModel({
+    this.PLAN,
+    // this.NOWDATETIME
+  });
   // PlanWindingOutputModel
-  final List<PlanWindingOutputModelProcess>? PROCESS;
+  final List<PlanWindingOutputModelPlan>? PLAN;
+  // final List<PlanWindingOutputModelNowDateTime>? NOWDATETIME;
 
-  List<Object> get props => [PROCESS!];
+  List<Object> get props => [
+        PLAN!
+        // , NOWDATETIME!
+      ];
 
   static PlanWindingOutputModel fromJson(dynamic json) {
     return PlanWindingOutputModel(
-      PROCESS: json['Process'] != null
-          ? json['Process']
-              .map((dynamic item) =>
-                  PlanWindingOutputModelProcess.fromJson(item))
-              .cast<PlanWindingOutputModelProcess>()
+      PLAN: json['Plan'] != null
+          ? json['Plan']
+              .map((dynamic item) => PlanWindingOutputModelPlan.fromJson(item))
+              .cast<PlanWindingOutputModelPlan>()
               .toList()
           : [],
+      // NOWDATETIME: json['NowDateTime'] != null
+      //     ? json['NowDateTime']
+      //         .map((dynamic item) =>
+      //             PlanWindingOutputModelNowDateTime.fromJson(item))
+      //         .cast<PlanWindingOutputModelNowDateTime>()
+      //         .toList()
+      //     : [],
     );
   }
 }
 
-class PlanWindingOutputModelProcess {
-  const PlanWindingOutputModelProcess(
-      {this.AMOUNT,
-      this.FINISH_DATE,
-      this.FINISH_TIME,
+class PlanWindingOutputModelPlan {
+  const PlanWindingOutputModelPlan(
+      {this.WDGDATEPLANS,
       this.ORDER,
-      this.PROCESS,
-      this.START_DATE,
-      this.START_TIME});
+      this.ORDERNO,
+      this.BATCH,
+      this.IPECODE,
+      this.WDGQTYPLAN,
+      this.NOTE});
+  final String? WDGDATEPLANS;
   final int? ORDER;
-  final String? PROCESS;
-  final String? START_DATE;
-  final String? START_TIME;
-  final String? FINISH_DATE;
-  final String? FINISH_TIME;
-  final int? AMOUNT;
+  final String? ORDERNO;
+  final String? BATCH;
+  final int? IPECODE;
+  final int? WDGQTYPLAN;
+  final String? NOTE;
   List<Object> get props => [
-        AMOUNT!,
-        FINISH_DATE!,
-        FINISH_TIME!,
+        WDGDATEPLANS!,
         ORDER!,
-        PROCESS!,
-        START_DATE!,
-        START_TIME!,
+        ORDERNO!,
+        BATCH!,
+        IPECODE!,
+        WDGQTYPLAN!,
+        NOTE!,
       ];
 
-  static PlanWindingOutputModelProcess fromJson(dynamic json) {
-    return PlanWindingOutputModelProcess(
+  static PlanWindingOutputModelPlan fromJson(dynamic json) {
+    return PlanWindingOutputModelPlan(
+      WDGDATEPLANS: json['WDGdatePlans'],
       ORDER: json['Order'],
-      PROCESS: json['Process'],
-      START_DATE: json['START_DATE'],
-      START_TIME: json['START_TIME'],
-      FINISH_DATE: json['FINISH_DATE'],
-      FINISH_TIME: json['FINISH_TIME'],
-      AMOUNT: json['Amount'],
+      ORDERNO: json['OrderNo'],
+      BATCH: json['Batch'],
+      IPECODE: json['IPE_CODE'],
+      WDGQTYPLAN: json['WDGqtyPlan'],
+      NOTE: json['Note'],
     );
   }
 }
+
+// class PlanWindingOutputModelNowDateTime {
+//   const PlanWindingOutputModelNowDateTime({this.NOWDATE, this.NOWTIME});
+//   final String? NOWDATE;
+//   final String? NOWTIME;
+//   List<Object> get props => [NOWDATE!, NOWTIME!];
+//
+//   static PlanWindingOutputModelNowDateTime fromJson(dynamic json) {
+//     return PlanWindingOutputModelNowDateTime(
+//         NOWDATE: json['NowDate'], NOWTIME: json['NowTime']);
+//   }
+// }
