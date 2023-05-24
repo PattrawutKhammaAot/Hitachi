@@ -115,6 +115,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
                 _clearAllData();
+                f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
@@ -311,6 +312,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     labelText: "Batch No :",
                     maxLength: 12,
                     height: 35,
+                    onEditingComplete: () {
+                      _btnSend();
+                    },
                     controller: batchNoController,
                     type: TextInputType.number,
                     focusNode: f6,

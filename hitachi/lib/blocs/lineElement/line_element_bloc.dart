@@ -248,14 +248,13 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
   //Check packNO
   Future<CheckPackNoModel> fetchCheckPackNo(int number) async {
-    print(ApiConfig.LE_CHECKPACK_NO);
     try {
       Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 3),
               receiveTimeout: Duration(seconds: 3)));
-
+      print(ApiConfig.LE_CHECKPACK_NO + "$number");
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
       return post;
@@ -275,6 +274,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 3),
             receiveTimeout: Duration(seconds: 3)),
       );
+      print(ApiConfig.LE_REPORT_ROUTE_SHEET + "$number");
 
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
 

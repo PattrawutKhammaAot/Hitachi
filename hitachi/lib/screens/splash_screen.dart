@@ -28,11 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Future getStringFromSharedPreferences() async {
     SharedPreferences pre = await SharedPreferences.getInstance();
     setState(() {
-      BASE_API_URL = pre.getString("API").toString();
+      if (pre.getString("API") == null) {
+        print("Empty");
+      } else {
+        BASE_API_URL = pre.getString("API").toString();
+      }
     });
-    print("TEst");
-    print(pre.getString("API"));
-    print("TEst");
   }
 
   DatabaseHelper databaseHelper = DatabaseHelper();

@@ -302,6 +302,7 @@ class _MachineBreakDownScanScreenState
   }
 
   Future _delete() async {
+    print("delete");
     await databaseHelper.deletedRowSqlite(
         tableName: 'BREAKDOWN_SHEET',
         columnName: 'ID',
@@ -325,7 +326,8 @@ class _MachineBreakDownScanScreenState
                 await _delete();
                 _checkControllerIsNull();
                 f1.requestFocus();
-                await _refreshPage();
+                _callBreakDownMachine();
+
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {

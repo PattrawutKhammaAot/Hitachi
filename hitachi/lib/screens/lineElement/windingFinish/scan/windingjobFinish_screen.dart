@@ -49,12 +49,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     if (batchNoController.text.trim().isNotEmpty &&
         operatorNameController.text.trim().isNotEmpty &&
         elementQtyController.text.trim().isNotEmpty) {
-      try {
-        _callApi(
-            batchNo: int.tryParse(batchNoController.text.trim()),
-            element: int.tryParse(elementQtyController.text.trim()),
-            batchEnddate: DateTime.now().toString());
-      } catch (e) {}
+      _callApi();
     } else {
       EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
@@ -67,15 +62,16 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         keyWhere: batchNoController.text.trim());
   }
 
-  Future<void> _callApi(
-      {int? batchNo, int? element, String? batchEnddate}) async {
+  Future<void> _callApi() async {
     BlocProvider.of<LineElementBloc>(context).add(
       PostSendWindingFinishEvent(
         SendWdsFinishOutputModel(
             OPERATOR_NAME: int.tryParse(operatorNameController.text.trim()),
-            BATCH_NO: batchNo,
-            ELEMNT_QTY: element,
-            FINISH_DATE: batchEnddate),
+            BATCH_NO: batchNoController.text.trim(),
+            ELEMNT_QTY: int.tryParse(elementQtyController.text.trim()),
+            FINISH_DATE: DateFormat('yyyy-MM-dd HH:mm:ss')
+                .format(DateTime.now())
+                .toString()),
       ),
     );
   }
@@ -86,8 +82,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         select2: 'MachineNo',
         formTable: 'WINDING_SHEET',
         where: 'BatchNo',
-        intValue:
-            int.tryParse(batchNoController.text.trim()), // If error check here
+        stringValue: batchNoController.text.trim(), // If error check here
         keyAnd: 'MachineNo',
         value: 'WD',
         keyAnd2: 'checkComplete',

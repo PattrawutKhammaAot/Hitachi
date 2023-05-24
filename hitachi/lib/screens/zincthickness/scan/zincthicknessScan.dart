@@ -146,6 +146,14 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
       th8 = convertToDecimal(_thickness8Controller.text.trim()).toString();
       th9 = convertToDecimal(_thickness9Controller.text.trim()).toString();
     });
+    print(_thickness1Controller.text);
+    print(_thickness2Controller.text);
+    print(_thickness3Controller.text);
+    print(_thickness4Controller.text);
+    print(_thickness6Controller.text);
+    print(_thickness7Controller.text);
+    print(_thickness8Controller.text);
+    print(_thickness9Controller.text);
     bool found = false;
     var items;
     for (items in sql) {
@@ -195,7 +203,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
 
   double convertToDecimal(String value) {
     double numericValue = double.parse(value);
-    return numericValue / 10;
+    return numericValue / 100;
   }
 
   void convertValuesToDecimal() {
@@ -654,21 +662,21 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
             found = true;
             setState(() {
               _thickness1Controller.text =
-                  items['Thickness1'].replaceAll('.', '');
+                  (double.parse(items['Thickness1']) * 100).toInt().toString();
               _thickness2Controller.text =
-                  items['Thickness2'].replaceAll('.', '');
+                  (double.parse(items['Thickness2']) * 100).toInt().toString();
               _thickness3Controller.text =
-                  items['Thickness3'].replaceAll('.', '');
+                  (double.parse(items['Thickness3']) * 100).toInt().toString();
               _thickness4Controller.text =
-                  items['Thickness4'].replaceAll('.', '');
+                  (double.parse(items['Thickness4']) * 100).toInt().toString();
               _thickness6Controller.text =
-                  items['Thickness6'].replaceAll('.', '');
+                  (double.parse(items['Thickness6']) * 100).toInt().toString();
               _thickness7Controller.text =
-                  items['Thickness7'].replaceAll('.', '');
+                  (double.parse(items['Thickness7']) * 100).toInt().toString();
               _thickness8Controller.text =
-                  items['Thickness8'].replaceAll('.', '');
+                  (double.parse(items['Thickness8']) * 100).toInt().toString();
               _thickness9Controller.text =
-                  items['Thickness9'].replaceAll('.', '');
+                  (double.parse(items['Thickness9']) * 100).toInt().toString();
               dateTime = items['DateData'];
             });
             break;

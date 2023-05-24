@@ -409,7 +409,7 @@ class _WindingJobFinishHoldScreenState
         PostSendWindingFinishEvent(
           SendWdsFinishOutputModel(
             OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            BATCH_NO: int.tryParse(row.BATCH_NO.toString()),
+            BATCH_NO: row.BATCH_NO.toString(),
             ELEMNT_QTY: int.tryParse(row.ELEMENT.toString()),
             FINISH_DATE: DateTime.now().toString(),
           ),
