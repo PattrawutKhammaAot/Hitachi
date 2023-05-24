@@ -49,16 +49,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     if (batchNoController.text.trim().isNotEmpty &&
         operatorNameController.text.trim().isNotEmpty &&
         elementQtyController.text.trim().isNotEmpty) {
-      try {
-        _callApi(
-            batchNo: int.tryParse(batchNoController.text.trim()),
-            element: int.tryParse(elementQtyController.text.trim()),
-            batchEnddate: DateTime.now().toString());
-
-        EasyLoading.showSuccess("sendComplete");
-      } catch (e) {
-        EasyLoading.showError("Can not send");
-      }
+      _callApi();
     } else {
       EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
@@ -71,15 +62,16 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         keyWhere: batchNoController.text.trim());
   }
 
-  Future<void> _callApi(
-      {int? batchNo, int? element, String? batchEnddate}) async {
+  Future<void> _callApi() async {
     BlocProvider.of<LineElementBloc>(context).add(
       PostSendWindingFinishEvent(
         SendWdsFinishOutputModel(
             OPERATOR_NAME: int.tryParse(operatorNameController.text.trim()),
-            BATCH_NO: batchNo,
-            ELEMNT_QTY: element,
-            FINISH_DATE: batchEnddate),
+            BATCH_NO: batchNoController.text.trim(),
+            ELEMNT_QTY: int.tryParse(elementQtyController.text.trim()),
+            FINISH_DATE: DateFormat('yyyy-MM-dd HH:mm:ss')
+                .format(DateTime.now())
+                .toString()),
       ),
     );
   }
@@ -90,8 +82,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         select2: 'MachineNo',
         formTable: 'WINDING_SHEET',
         where: 'BatchNo',
-        intValue:
-            int.tryParse(batchNoController.text.trim()), // If error check here
+        stringValue: batchNoController.text.trim(), // If error check here
         keyAnd: 'MachineNo',
         value: 'WD',
         keyAnd2: 'checkComplete',
@@ -103,8 +94,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         'MachineNo': 'WD',
         'BatchNo': batchNoController.text.trim(),
         'Element': batchNoController.text.trim(),
-        'BatchEndDate': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-        'start_end': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+        'BatchEndDate':
+            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
+        'start_end': DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
         'checkComplete': 'E',
       });
     }
@@ -175,6 +167,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   operatorNameController.clear();
                   batchNoController.clear();
                   elementQtyController.clear();
+                  f1.requestFocus();
                   EasyLoading.showSuccess("${items!.MESSAGE}");
                 } else if (items!.RESULT == false) {
                   if (batchNoController.text.trim().isNotEmpty &&
@@ -186,8 +179,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                           _insertSqlite();
                           Navigator.pop(context);
                         });
-
-                    ;
                   } else {
                     EasyLoading.showError("Please Input Info");
                   }
@@ -200,17 +191,23 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                         "Please Check Connection Internet & Save Complete");
                   }
                 }
-              } else {
+              } else if (state is PostSendWindingFinishErrorState) {
                 EasyLoading.showError("Can not send",
                     duration: Duration(seconds: 3));
               }
               if (state is CheckWindingFinishLoadingState) {
                 EasyLoading.show(status: "Loading...");
               } else if (state is CheckWindingFinishLoadedState) {
+                EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
-                  EasyLoading.showSuccess("${state.item.MESSAGE}");
+                  f3.requestFocus();
                 } else {
-                  EasyLoading.showError("${state.item.MESSAGE}");
+                  _errorDialog(
+                      text: Label("${state.item.MESSAGE}"),
+                      onpressOk: () {
+                        Navigator.pop(context);
+                        f3.requestFocus();
+                      });
                 }
               } else if (state is CheckWindingFinishErrorState) {
                 EasyLoading.showError(
@@ -242,7 +239,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                       BlocProvider.of<LineElementBloc>(context).add(
                         CheckWindingFinishEvent(batchNoController.text.trim()),
                       );
-                      f3.requestFocus();
                     }
                   },
                   labelText: "Batch No :",

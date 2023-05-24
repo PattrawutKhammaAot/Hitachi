@@ -45,10 +45,7 @@ class _MachineBreakDownScanScreenState
       TextEditingController();
   DatabaseHelper databaseHelper = DatabaseHelper();
   ResponeDefault? _respone;
-  final List<String> genderItems = [
-    'Male',
-    'Female',
-  ];
+
   List<BreakDownSheetModel> bdsList = [];
 
   String? selectedValue;
@@ -66,37 +63,66 @@ class _MachineBreakDownScanScreenState
 //
   final _formKey = GlobalKey<FormState>();
 
-  void _checkValueController() {
+  void _checkValueController() async {
     if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
         _serviceNo_Controller.text.isNotEmpty &&
-        _start_Technical_1_Controller.text.isNotEmpty) {
+        _start_Technical_1_Controller.text.isNotEmpty &&
+        _stop_Technical_1_Controller.text.isNotEmpty &&
+        _operator_accept_Controller.text.isNotEmpty) {
+      await _saveMachine();
       _sendData();
-      Future.delayed(Duration(seconds: 5), () {
-        _callBreakDownMachine();
-      });
+    } else if (_machineNo_Controller.text.isNotEmpty &&
+        _operatorname_Controller.text.isNotEmpty &&
+        _start_Technical_1_Controller.text.isNotEmpty) {
+      _errorDialog(
+          text: Label("Do you wanna Save ?"),
+          onpressOk: () async {
+            await _saveMachine();
+            await _callBreakDownMachine();
+            _checkControllerIsNull();
+            f1.requestFocus();
+            Navigator.pop(context);
+            EasyLoading.showSuccess("Save Successs");
+          });
     } else {
-      EasyLoading.showError("Please Input Data");
-    }
-    if (_start_Technical_1_Controller.text ==
-        _stop_Technical_1_Controller.text) {
-      EasyLoading.showError("Start technical 1 don't match Stop technical 2");
+      EasyLoading.showInfo("Please Input Info");
     }
   }
 
-  void _callBreakDownMachine() async {
+  void _checkControllerIsNull() {
+    _dpbMachineNo_Controller.clear();
+    _machineNo_Controller.text.isNotEmpty
+        ? _machineNo_Controller.clear()
+        : _machineNo_Controller.text;
+    _operatorname_Controller.text.isNotEmpty
+        ? _operatorname_Controller.clear()
+        : _operatorname_Controller.text;
+    _serviceNo_Controller.text.isNotEmpty
+        ? _serviceNo_Controller.clear()
+        : _serviceNo_Controller.text;
+    _start_Technical_1_Controller.text.isNotEmpty
+        ? _start_Technical_1_Controller.clear()
+        : _start_Technical_1_Controller.text;
+    _stop_Technical_1_Controller.text.isNotEmpty
+        ? _stop_Technical_1_Controller.clear()
+        : _stop_Technical_1_Controller.text;
+    _operator_accept_Controller.text.isNotEmpty
+        ? _operator_accept_Controller.clear()
+        : _operator_accept_Controller.text;
+  }
+
+  Future _callBreakDownMachine({bool isCallBdm = false}) async {
     var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
     if (sql.length > 0) {
       setState(() {
+        bdsList = [];
         bdsList = sql
             .map((row) => BreakDownSheetModel.fromMap(
-                row.map((key, value) => MapEntry(key, value.toString()))))
+                row.map((key, value) => MapEntry(key, value))))
             .toList();
       });
-    } else {
-      print(bdsList.length);
     }
-
     setState(() {
       bdsList.insert(0, BreakDownSheetModel(MACHINE_NO: "NEW"));
     });
@@ -104,11 +130,11 @@ class _MachineBreakDownScanScreenState
 
   @override
   void initState() {
-    _callBreakDownMachine();
+    _callBreakDownMachine(isCallBdm: true);
     super.initState();
   }
 
-  void _saveMachine() async {
+  Future _saveMachine() async {
     try {
       var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
       bool found = false;
@@ -140,20 +166,16 @@ class _MachineBreakDownScanScreenState
               'CallUser': _operatorname_Controller.text.trim(),
               'RepairNo': _serviceNo_Controller.text.trim(),
               'BreakStartDate':
-                  DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
               'MT1': _start_Technical_1_Controller.text.trim(),
               'MT1StartDate':
-                  DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
               'MT2': _start_Technical_2_Controller.text.trim(),
               'MT2StartDate': _start_Technical_2_Controller.text.isEmpty
                   ? ""
-                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-              'MT1StopDate': _stop_Technical_1_Controller.text.isEmpty
-                  ? ""
-                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-              'MT2StopDate': _stop_Technical_2_Controller.text.isEmpty
-                  ? ""
-                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+                  : DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+              'MT1StopDate': _stop_Technical_1_Controller.text.trim(),
+              'MT2StopDate': _stop_Technical_2_Controller.text.trim(),
               'CheckUser': _operator_accept_Controller.text.trim(),
               'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
               'CheckComplete': "",
@@ -176,24 +198,20 @@ class _MachineBreakDownScanScreenState
           'CallUser': _operatorname_Controller.text.trim(),
           'RepairNo': _serviceNo_Controller.text.trim(),
           'BreakStartDate':
-              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'MT1': _start_Technical_1_Controller.text.trim(),
           'MT1StartDate':
-              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'MT2': _start_Technical_2_Controller.text.trim(),
           'MT2StartDate': _start_Technical_2_Controller.text.isEmpty
               ? ""
-              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-          'MT1StopDate': _stop_Technical_1_Controller.text.isEmpty
-              ? ""
-              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-          'MT2StopDate': _stop_Technical_2_Controller.text.isEmpty
-              ? ""
-              : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              : DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+          'MT1StopDate': _stop_Technical_1_Controller.text.trim(),
+          'MT2StopDate': _stop_Technical_2_Controller.text.trim(),
           'CheckUser': _operator_accept_Controller.text.trim(),
           'BreakStopDate': _operator_accept_Controller.text.isEmpty
               ? ""
-              : DateFormat('dd MMM yyyy HH:mm')
+              : DateFormat('yyyy-MM-dd HH:mm:ss')
                   .format(DateTime.now()), //ไม่รู้ว่ามาจากไหน
           'CheckComplete': "",
         });
@@ -256,22 +274,30 @@ class _MachineBreakDownScanScreenState
             MACHINE_NO: _machineNo_Controller.text.trim(),
             OPERATOR_NAME: _operatorname_Controller.text.trim(),
             SERVICE: _serviceNo_Controller.text.trim(),
-            BREAK_START_DATE: DateTime.now().toString(),
-            TECH1: _start_Technical_1_Controller.text.trim(),
-            START_DATE_TECH_1:
-                DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-            TECH2: _start_Technical_2_Controller.text.trim(),
-            START_DATE_TECH_2: _start_Technical_2_Controller.text.isEmpty
+            BREAK_START_DATE:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            MT1: _start_Technical_1_Controller.text.trim(),
+            MT1_START_DATE:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            MT2: _start_Technical_2_Controller.text.trim(),
+            MT2_START_DATE: _start_Technical_2_Controller.text.isEmpty
                 ? ""
-                : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
-            STOP_TECH_DATE_1: _stop_Technical_1_Controller.text.trim(),
-            STOP_TECH_DATE_2: _stop_Technical_2_Controller.text.trim(),
+                : DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            MT1_STOP: _stop_Technical_1_Controller.text.trim(),
+            MT2_STOP: _stop_Technical_2_Controller.text.trim(),
             ACCEPT: _operator_accept_Controller.text.trim(),
             BREAK_STOP_DATE: _operator_accept_Controller.text.isEmpty
                 ? ""
-                : DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())),
+                : DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
       ),
     );
+  }
+
+  Future _delete() async {
+    await databaseHelper.deletedRowSqlite(
+        tableName: 'BREAKDOWN_SHEET',
+        columnName: 'MachineNo',
+        columnValue: _machineNo_Controller.text);
   }
 
   @override
@@ -279,7 +305,7 @@ class _MachineBreakDownScanScreenState
     return MultiBlocListener(
       listeners: [
         BlocListener<MachineBreakDownBloc, MachineBreakDownState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is PostMachineBreakdownLoadingState) {
               EasyLoading.show(status: "Loading");
             } else if (state is PostMachineBreakdownLoadedState) {
@@ -288,22 +314,20 @@ class _MachineBreakDownScanScreenState
                 _respone = state.item;
               });
               if (_respone!.RESULT == true) {
-                _dpbMachineNo_Controller.clear();
-                _machineNo_Controller.clear();
-                _operatorname_Controller.clear();
-                _serviceNo_Controller.clear();
-                _start_Technical_1_Controller.clear();
-                _start_Technical_2_Controller.clear();
-                _stop_Technical_1_Controller.clear();
-                _stop_Technical_2_Controller.clear();
-                _operator_accept_Controller.clear();
+                await _delete();
+                await _callBreakDownMachine();
+
+                _checkControllerIsNull();
                 f1.requestFocus();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
-                EasyLoading.showError("${_respone?.MESSAGE}",
-                    duration: Duration(seconds: 6));
-                _saveMachine();
+                _errorDialog(
+                    text: Label("${_respone?.MESSAGE ?? "Check Connection"}"),
+                    onpressOk: () {
+                      _saveMachine();
+                      Navigator.pop(context);
+                    });
               }
             }
             if (state is PostMachineBreakdownErrorState) {
@@ -346,23 +370,20 @@ class _MachineBreakDownScanScreenState
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            items: bdsList
-                                .map((item) => DropdownMenuItem<String>(
-                                      value: item.MACHINE_NO,
-                                      child: Text(
-                                        "${item.MACHINE_NO}",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            // validator: (value) {
-                            //   if (value == null) {
-                            //     return 'Please select gender.';
-                            //   }
-                            //   return null;
-                            // },
+                            items: bdsList.isNotEmpty
+                                ? bdsList
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.MACHINE_NO,
+                                          child: Text(
+                                            "${item.MACHINE_NO}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ))
+                                    .toSet()
+                                    .toList()
+                                : null,
                             onChanged: (value) {
                               for (var item in bdsList) {
                                 if (value == item.MACHINE_NO &&
@@ -382,19 +403,30 @@ class _MachineBreakDownScanScreenState
                                       _stop_Technical_1_Controller.text =
                                           item.STOP_DATE_TECH_1.toString();
                                     }
+                                    if (item.OPERATOR_ACCEPT != null) {
+                                      _operator_accept_Controller.text =
+                                          item.OPERATOR_ACCEPT.toString();
+                                    }
+                                    if (item.TECH_2 != null) {
+                                      _start_Technical_2_Controller.text =
+                                          item.TECH_2.toString();
+                                    }
+                                    if (item.STOP_DATE_TECH_2 != null) {
+                                      _stop_Technical_2_Controller.text =
+                                          item.STOP_DATE_TECH_2.toString();
+                                    }
                                   });
-                                  print(value);
                                   break;
                                 } else if (value == 'NEW') {
                                   setState(() {
-                                    _machineNo_Controller.text = '';
-                                    _operatorname_Controller.text = '';
-                                    _serviceNo_Controller.text = '';
-                                    _start_Technical_1_Controller.text = '';
-                                    _start_Technical_2_Controller.text = '';
-                                    _stop_Technical_1_Controller.text = '';
-                                    _stop_Technical_2_Controller.text = '';
-                                    _operator_accept_Controller.text = '';
+                                    _machineNo_Controller.clear();
+                                    _operatorname_Controller.clear();
+                                    _serviceNo_Controller.clear();
+                                    _start_Technical_1_Controller.clear();
+                                    _start_Technical_2_Controller.clear();
+                                    _stop_Technical_1_Controller.clear();
+                                    _stop_Technical_2_Controller.clear();
+                                    _operator_accept_Controller.clear();
                                     f1.requestFocus();
                                   });
                                 }
@@ -402,6 +434,7 @@ class _MachineBreakDownScanScreenState
                             },
                             onSaved: (value) {
                               selectedValue = value.toString();
+                              print(value);
                             },
                             buttonStyleData: const ButtonStyleData(
                               height: 50,
@@ -433,7 +466,11 @@ class _MachineBreakDownScanScreenState
                   ),
                   RowBoxInputField(
                     focusNode: f1,
-                    onEditingComplete: () => f2.requestFocus(),
+                    onEditingComplete: () {
+                      if (_machineNo_Controller.text.length == 3) {
+                        f2.requestFocus();
+                      }
+                    },
                     labelText: "Machine No. : ",
                     height: 30,
                     controller: _machineNo_Controller,
@@ -586,6 +623,36 @@ class _MachineBreakDownScanScreenState
               ),
             ),
           )),
+    );
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 

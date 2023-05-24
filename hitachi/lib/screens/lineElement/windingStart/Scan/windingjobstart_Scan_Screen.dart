@@ -109,7 +109,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
               PP_FILM_LOT: ppFilmLotController.text.trim(),
               FOIL_LOT: foilLotController.text.trim(),
               WEIGHT: weight,
-              START_DATE: DateTime.now().toString()),
+              START_DATE:
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
         ),
       );
       print(filmPackNoController.text.trim());
@@ -311,9 +312,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           'PPCore': PP_CORE,
           'FoilCore': FOIL_CORE,
           'BatchStartDate':
-              DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'Status': 'P',
-          'start_end': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+          'start_end': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'checkComplete': '0'
         });
       }
@@ -426,7 +427,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       BlocProvider.of<LineElementBloc>(context).add(
         GetCheckPackNoEvent(result),
       );
-      f6.requestFocus();
     }
   }
 
@@ -493,7 +493,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         EasyLoading.showSuccess(items!.MESSAGE!);
                       } else {
                         _errorDialog(
-                            text: Label("${state.item.MESSAGE}"),
+                            text: Label(
+                                "${state.item.MESSAGE ?? "Check Connection"}"),
                             onpressOk: () {
                               Navigator.pop(context);
                               _showpopUpWeight();
@@ -512,10 +513,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       });
                       if (packNoModel!.RESULT == true) {
                         EasyLoading.dismiss();
+                        f6.requestFocus();
                       } else {
                         _errorDialog(
                             text: Label("${packNoModel?.MESSAGE}"),
-                            onpressOk: () => Navigator.pop(context));
+                            onpressOk: () {
+                              Navigator.pop(context);
+                              f6.requestFocus();
+                            });
 
                         setState(() {
                           bgColor = COLOR_SUCESS;
@@ -523,24 +528,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       }
                     }
                     if (state is GetCheckPackErrorState) {
-                      EasyLoading.showError("Check Connection");
+                      EasyLoading.dismiss();
                     }
-                    // if (state is PostSendWindingStartLoadingState) {
-                    //   EasyLoading.show();
-                    // } else if (state is PostSendWindingStartLoadedState) {
-                    //   EasyLoading.dismiss();
-                    //   if (state.item.RESULT == true) {
-                    //     Navigator.pop(context);
-
-                    //     EasyLoading.showSuccess("Send complete",
-                    //         duration: Duration(seconds: 3));
-                    //   } else {
-                    //     EasyLoading.showError("Please Check Data");
-                    //   }
-                    // } else {
-                    //   EasyLoading.dismiss();
-                    //   EasyLoading.showError("Please Check Connection Internet");
-                    // }
                   })
                 ],
                 child: SingleChildScrollView(
@@ -632,7 +621,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               onEditingComplete: () {
                                 if (filmPackNoController.text.length == 8) {
                                   checkFilmPackNo();
-                                  f6.requestFocus();
                                 }
                               },
                               labelText: "Film Pack No :",

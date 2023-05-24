@@ -19,6 +19,7 @@ import 'package:hitachi/screens/splash_screen.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

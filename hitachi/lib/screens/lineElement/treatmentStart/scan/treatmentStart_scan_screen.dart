@@ -73,16 +73,6 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
         START_DATE: DateTime.now().toString(),
       )),
     );
-
-    print(_machineNoController.text);
-    print(_operatorNameController.text);
-    print(_batch1Controller.text);
-    print(_batch2Controller.text);
-    print(_batch3Controller.text);
-    print(_batch4Controller.text);
-    print(_batch5Controller.text);
-    print(_batch6Controller.text);
-    print(_batch7Controller.text);
   }
 
   void _saveDataToSqlite() async {
@@ -90,19 +80,25 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       'MachineNo': _machineNoController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'Batch1': _batch1Controller.text.trim(),
-      'Batch2':
-          _batch2Controller.text.isEmpty ? "" : _batch2Controller.text.trim(),
-      'Batch3':
-          _batch3Controller.text.isEmpty ? "" : _batch3Controller.text.trim(),
-      'Batch4':
-          _batch4Controller.text.isEmpty ? "" : _batch4Controller.text.trim(),
-      'Batch5':
-          _batch5Controller.text.isEmpty ? "" : _batch5Controller.text.trim(),
-      'Batch6':
-          _batch6Controller.text.isEmpty ? "" : _batch6Controller.text.trim(),
-      'Batch7':
-          _batch7Controller.text.isEmpty ? "" : _batch7Controller.text.trim(),
-      'StartDate': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now()),
+      'Batch2': _batch2Controller.text.isEmpty
+          ? " ".toString()
+          : _batch2Controller.text.trim(),
+      'Batch3': _batch3Controller.text.isEmpty
+          ? " ".toString()
+          : _batch3Controller.text.trim(),
+      'Batch4': _batch4Controller.text.isEmpty
+          ? " ".toString()
+          : _batch4Controller.text.trim(),
+      'Batch5': _batch5Controller.text.isEmpty
+          ? " ".toString()
+          : _batch5Controller.text.trim(),
+      'Batch6': _batch6Controller.text.isEmpty
+          ? " ".toString()
+          : _batch6Controller.text.trim(),
+      'Batch7': _batch7Controller.text.isEmpty
+          ? " ".toString()
+          : _batch7Controller.text.trim(),
+      'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       'FinDate': '',
       'StartEnd': '',
       'CheckComplete': 'S',
@@ -193,9 +189,14 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f3,
-                    onEditingComplete: () => f4.requestFocus(),
+                    onEditingComplete: () {
+                      if (_batch1Controller.text.length == 12) {
+                        f4.requestFocus();
+                      }
+                    },
                     labelText: "Batch 1 : ",
                     height: 35,
+                    maxLength: 12,
                     controller: _batch1Controller,
                     type: TextInputType.number,
                     textInputFormatter: [
@@ -220,9 +221,14 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f4,
-                    onEditingComplete: () => f5.requestFocus(),
+                    onEditingComplete: () {
+                      if (_batch2Controller.text.length == 12) {
+                        f5.requestFocus();
+                      }
+                    },
                     labelText: "Batch 2 : ",
                     height: 35,
+                    maxLength: 12,
                     controller: _batch2Controller,
                     type: TextInputType.number,
                     textInputFormatter: [
@@ -234,9 +240,14 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f5,
-                    onEditingComplete: () => f6.requestFocus(),
+                    onEditingComplete: () {
+                      if (_batch3Controller.text.length == 12) {
+                        f6.requestFocus();
+                      }
+                    },
                     labelText: "Batch 3 : ",
                     height: 35,
+                    maxLength: 12,
                     controller: _batch3Controller,
                     type: TextInputType.number,
                     textInputFormatter: [
@@ -248,9 +259,14 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f6,
-                    onEditingComplete: () => f7.requestFocus(),
+                    onEditingComplete: () {
+                      if (_batch4Controller.text.length == 12) {
+                        f7.requestFocus();
+                      }
+                    },
                     labelText: "Batch 4 : ",
                     height: 35,
+                    maxLength: 12,
                     controller: _batch4Controller,
                     type: TextInputType.number,
                     textInputFormatter: [
@@ -262,7 +278,12 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f7,
-                    onEditingComplete: () => f8.requestFocus(),
+                    maxLength: 12,
+                    onEditingComplete: () {
+                      if (_batch5Controller.text.length == 12) {
+                        f8.requestFocus();
+                      }
+                    },
                     labelText: "Batch 5 : ",
                     height: 35,
                     controller: _batch5Controller,
@@ -274,37 +295,39 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RowBoxInputField(
-                          focusNode: f8,
-                          onEditingComplete: () => f9.requestFocus(),
-                          labelText: "Batch 6 : ",
-                          height: 35,
-                          controller: _batch6Controller,
-                          type: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Expanded(
-                        child: RowBoxInputField(
-                          focusNode: f9,
-                          onEditingComplete: () => _btnSend(),
-                          labelText: "Batch 7 : ",
-                          height: 35,
-                          controller: _batch7Controller,
-                          type: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                          ],
-                        ),
-                      ),
+                  RowBoxInputField(
+                    focusNode: f8,
+                    maxLength: 12,
+                    onEditingComplete: () {
+                      if (_batch6Controller.text.length == 12) {
+                        f9.requestFocus();
+                      }
+                    },
+                    labelText: "Batch 6 : ",
+                    height: 35,
+                    controller: _batch6Controller,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  RowBoxInputField(
+                    focusNode: f9,
+                    maxLength: 12,
+                    onEditingComplete: () {
+                      if (_batch7Controller.text.length == 12) {
+                        _btnSend();
+                      }
+                    },
+                    labelText: "Batch 7 : ",
+                    height: 35,
+                    controller: _batch7Controller,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   SizedBox(

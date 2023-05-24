@@ -14,6 +14,7 @@ import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -24,12 +25,28 @@ class MainMenuScreen extends StatefulWidget {
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  int batch = 100136982104;
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
+
   ReportRouteSheetModel? items;
 
   @override
   void initState() {
+    _initPackageInfo();
     super.initState();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   @override
@@ -98,11 +115,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     height: 15,
                   ),
                   CardButton(
-                    color: COLOR_SUCESS,
+                    color: COLOR_BLUE_DARK,
                     textAlign: TextAlign.center,
                     text: "Setting Web",
-                    colortext: COLOR_BLUE_DARK,
-                    fontWeight: FontWeight.bold,
+                    colortext: COLOR_WHITE,
                     onPress: () =>
                         Navigator.pushNamed(context, RouterList.Setting_web),
                   ),
@@ -114,6 +130,13 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     text: "ExitApp",
                     onPress: () => showExitPopup(context),
                   ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Label(
+                    "Version ${_packageInfo.version} (6)",
+                    fontSize: 20,
+                  )
                 ],
               ),
             ),

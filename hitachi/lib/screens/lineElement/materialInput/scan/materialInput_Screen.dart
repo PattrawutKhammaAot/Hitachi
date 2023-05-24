@@ -73,20 +73,20 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
           OPERATORNAME: int.tryParse(_operatorNameController.text.trim()),
           BATCHNO: _batchOrSerialController.text.trim(),
           LOT: _lotNoController.text.trim(),
-          STARTDATE: _dateTime.toString(),
+          STARTDATE: DateFormat('yyyy MM dd HH:mm').format(DateTime.now()),
         ),
       ),
     );
   }
 
-  void _insertSqlite() async {
+  Future _insertSqlite() async {
     await databaseHelper.insertSqlite('MATERIAL_TRACE_SHEET', {
       'Material': _materialController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'BatchNo': _batchOrSerialController.text.trim(),
       'MachineNo': _machineOrProcessController.text.trim(),
       'LotNo1': _lotNoController.text.trim(),
-      'Date1': DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())
+      'Date1': DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())
     });
   }
 
@@ -98,7 +98,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is MaterialInputLoadingState) {
                 EasyLoading.show(status: "Loading ...");
               } else if (state is MaterialInputLoadedState) {
@@ -112,8 +112,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   setState(() {
                     bgColor = Colors.grey;
                   });
-
-                  _errorDialog(
+                  _SuccesssDialog(
                       text: Label("${_inputMtModel?.MESSAGE}"),
                       onpressOk: () {
                         Navigator.pop(context);
@@ -133,9 +132,15 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       _lotNoController.text.isNotEmpty) {
                     _errorDialog(
                         text: Label("${_inputMtModel?.MESSAGE}"),
-                        onpressOk: () {
+                        onpressOk: () async {
+                          await _insertSqlite();
+                          _materialController.clear();
+                          _operatorNameController.clear();
+                          _batchOrSerialController.clear();
+                          _machineOrProcessController.clear();
+                          _lotNoController.clear();
+                          _materialFoucus.requestFocus();
                           Navigator.pop(context);
-                          _insertSqlite();
                         });
                   } else {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
@@ -146,7 +151,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       _batchOrSerialController.text.isNotEmpty &&
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
-                    _insertSqlite();
+                    await _insertSqlite();
                     EasyLoading.showError(
                         "Please Check Connection Internet & Save Complete");
                   } else {
@@ -242,15 +247,16 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   focusNode: _lotNoFocus,
                   labelText: "Lot No. :",
                   controller: _lotNoController,
+                  maxLength: 255,
                   onEditingComplete: () {
                     if (_lotNoController.text.length != 3) {
                       checkValueController();
-                    }
+                    } else if (_lotNoController.text.length == 3) {}
                   },
                   textInputFormatter: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^(?!.*\d{4})[a-zA-Z0-9]+$'),
-                    ),
+                    // FilteringTextInputFormatter.allow(
+                    //   RegExp(r'^(?!.*\d{4})[a-zA-Z0-9]+$'),
+                    // ),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -319,6 +325,32 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _SuccesssDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
           TextButton(
             onPressed: () => onpressOk?.call(),
             child: const Text('OK'),

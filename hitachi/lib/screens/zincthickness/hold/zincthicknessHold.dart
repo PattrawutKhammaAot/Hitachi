@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,11 +26,9 @@ class ZincThickNessHold extends StatefulWidget {
 class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   ZincDataSource? zincDataSource;
-  List<ZincModelSqlite>? zincList;
+  List<ZincModelSqlite> zincList = [];
   List<ZincModelSqlite> zincSqlite = [];
-  List<ZincModelSqlite> selectAll = [];
-  int? index;
-  int? allRowIndex;
+  List<int> _index = [];
   DataGridRow? datagridRow;
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
@@ -68,24 +68,35 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
     }
   }
 
+  Future _refreshPage() async {
+    _getZincSheet().then((result) {
+      setState(() {
+        zincList = result;
+        zincDataSource = ZincDataSource(process: zincList);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
         BlocListener<ZincThicknessBloc, ZincThicknessState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is ZincThicknessLoadingState) {
               EasyLoading.show(status: "Loading...");
             } else if (state is ZincThicknessLoadedState) {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
-                Navigator.pop(context);
-                deletedInfo();
+                await deletedInfo();
+                await _refreshPage();
                 EasyLoading.showSuccess("Send complete ",
                     duration: Duration(seconds: 3));
               } else if (state.item.RESULT == false) {
-                EasyLoading.showError("Data not found ");
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () => Navigator.pop(context));
               }
             }
             if (state is ZincThicknessErrorState) {
@@ -110,67 +121,70 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
+                            allowPullToRefresh: true,
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
                                 if (selectRow.length ==
-                                    zincDataSource!.effectiveRows.length) {
-                                  if (selectRow.length != 1) {
-                                    print("all");
-                                    setState(() {
-                                      selectRow.forEach((row) {
-                                        allRowIndex = zincDataSource!
-                                            .effectiveRows
-                                            .indexOf(row);
-
-                                        _colorSend = COLOR_SUCESS;
-                                        _colorDelete = COLOR_RED;
-                                      });
-                                    });
-                                  }
-                                } else if (selectRow.length !=
-                                    zincDataSource!.effectiveRows.length) {
+                                        zincDataSource!.effectiveRows.length &&
+                                    selectRow.length > 1) {
                                   setState(() {
-                                    selectRow.forEach((element) {
-                                      index = selectRow.isNotEmpty
-                                          ? zincDataSource!.effectiveRows
-                                              .indexOf(element)
-                                          : null;
-                                      datagridRow = zincDataSource!
-                                          .effectiveRows
-                                          .elementAt(index!);
-                                      zincSqlite = datagridRow!
-                                          .getCells()
-                                          .map(
-                                            (e) => ZincModelSqlite(),
-                                          )
-                                          .toList();
+                                    selectRow.forEach((row) {
+                                      _index.add(int.tryParse(
+                                          row.getCells()[0].value.toString())!);
+
+                                      _colorSend = COLOR_SUCESS;
+                                      _colorDelete = COLOR_RED;
                                     });
-                                    if (!selectAll
-                                        .contains(zincList![index!])) {
-                                      selectAll.add(zincList![index!]);
-                                      print(selectAll.length);
-                                    }
+                                  });
+                                } else {
+                                  setState(() {
+                                    _index.add(int.tryParse(selectRow.first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                    datagridRow = selectRow.first;
+                                    zincSqlite = datagridRow!
+                                        .getCells()
+                                        .map(
+                                          (e) => ZincModelSqlite(),
+                                        )
+                                        .toList();
+                                    print(_index);
                                     _colorSend = COLOR_SUCESS;
                                     _colorDelete = COLOR_RED;
                                   });
                                 }
                               } else {
                                 setState(() {
-                                  if (selectAll.contains(zincList![index!])) {
-                                    selectAll.remove(zincList![index!]);
-                                    print(selectAll.length);
+                                  if (deselectedRows.length > 1) {
+                                    _index.clear();
+                                  } else {
+                                    _index.remove(int.tryParse(deselectedRows
+                                        .first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
                                   }
-                                  if (selectAll.isEmpty) {
-                                    _colorSend = Colors.grey;
-                                    _colorDelete = Colors.grey;
-                                  }
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
                                 });
-
-                                print('No Rows Selected');
                               }
                             },
                             columns: <GridColumn>[
+                              GridColumn(
+                                visible: false,
+                                columnName: 'ID',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'ID',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               GridColumn(
                                 columnName: 'batch',
                                 label: Container(
@@ -279,116 +293,95 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                index != null
+                _index.isNotEmpty
                     ? Expanded(
-                        child: Container(
-                            child: ListView(
-                          children: [
-                            DataTable(
-                                horizontalMargin: 20,
-                                headingRowHeight: 30,
-                                dataRowHeight: 30,
-                                headingRowColor: MaterialStateColor.resolveWith(
-                                    (states) => COLOR_BLUE_DARK),
-                                border: TableBorder.all(
-                                  width: 1.0,
-                                  color: COLOR_BLACK,
-                                ),
-                                columns: [
-                                  DataColumn(
-                                    numeric: true,
-                                    label: Label(
-                                      "",
-                                      color: COLOR_BLUE_DARK,
-                                    ),
-                                  ),
-                                  DataColumn(label: Label(""))
-                                ],
-                                rows: [
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Batch"))),
-                                    DataCell(
-                                        Label("${zincList![index!].Batch}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness1"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness1}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness2"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness2}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness3"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness3}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness4"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness4}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness6"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness6}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness7"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness7}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness8"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness8}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Thickness9"))),
-                                    DataCell(Label(
-                                        "${zincList![index!].Thickness9}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("DateTime"))),
-                                    DataCell(
-                                        Label("${zincList![index!].DateData}"))
-                                  ])
-                                ])
-                          ],
-                        )),
-                      )
-                    : Expanded(
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Label(
-                                "No data",
-                                color: COLOR_RED,
-                                fontSize: 30,
+                        child: ListView.builder(
+                          itemCount: _index.length,
+                          itemBuilder: ((context, index) {
+                            return DataTable(
+                              horizontalMargin: 20,
+                              headingRowHeight: 30,
+                              dataRowHeight: 30,
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => COLOR_BLUE_DARK),
+                              border: TableBorder.all(
+                                width: 1.0,
+                                color: COLOR_BLACK,
                               ),
-                              CircularProgressIndicator()
-                            ],
-                          ),
+                              columns: [
+                                DataColumn(
+                                  numeric: true,
+                                  label: Label(
+                                    "",
+                                    color: COLOR_BLUE_DARK,
+                                  ),
+                                ),
+                                DataColumn(label: Label(""))
+                              ],
+                              rows: [
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Batch"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Batch}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness1"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness2"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness3"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness3}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness4"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness4}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness6"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness6}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness7"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness7}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness8"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness8}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Thickness9"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.Thickness9}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("DateTime"))),
+                                  DataCell(Label(
+                                      "${zincList.where((element) => element.ID == _index.first).first.DateData}"))
+                                ])
+                              ],
+                            );
+                          }),
                         ),
-                      ),
+                      )
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (zincSqlite != null) {
+                        if (_index.isNotEmpty) {
                           _AlertDialog();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -406,7 +399,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        if (zincSqlite != null) {
+                        if (_index.isNotEmpty) {
                           _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -422,11 +415,9 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   }
 
   void _AlertDialog() async {
-    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        // title: const Text('AlertDialog Title'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -435,7 +426,6 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
             ),
           ],
         ),
-
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -444,10 +434,10 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              deletedInfo();
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pop(context);
+              await deletedInfo();
+              await _refreshPage();
               EasyLoading.showSuccess("Delete Complete",
                   duration: Duration(seconds: 3));
             },
@@ -459,60 +449,60 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   }
 
   void _sendDataServer() async {
-    if (index != null) {
-      for (var row in selectAll) {
-        BlocProvider.of<ZincThicknessBloc>(context).add(
-          ZincThickNessSendEvent(ZincThicknessOutputModel(
-// OPERATORNAME:int.tryParse(_)
-              BATCHNO: row.Batch,
-              THICKNESS1: row.Thickness1,
-              THICKNESS2: row.Thickness2,
-              THICKNESS3: row.Thickness3,
-              THICKNESS4: row.Thickness4,
-              THICKNESS6: row.Thickness6,
-              THICKNESS7: row.Thickness7,
-              THICKNESS8: row.Thickness8,
-              THICKNESS9: row.Thickness9,
-              STARTDATE: row.DateData)),
-        );
-        print("Check ${row.ID}");
-      }
-    } else if (allRowIndex != null) {
-      for (var row in zincList!) {
-        BlocProvider.of<ZincThicknessBloc>(context).add(
-          ZincThickNessSendEvent(ZincThicknessOutputModel(
-// OPERATORNAME:int.tryParse(_)
-              BATCHNO: row.Batch,
-              THICKNESS1: row.Thickness1,
-              THICKNESS2: row.Thickness2,
-              THICKNESS3: row.Thickness3,
-              THICKNESS4: row.Thickness4,
-              THICKNESS6: row.Thickness6,
-              THICKNESS7: row.Thickness7,
-              THICKNESS8: row.Thickness8,
-              THICKNESS9: row.Thickness9,
-              STARTDATE: row.DateData)),
-        );
-      }
-    }
+    _index.forEach((element) async {
+      var row = zincList.where((value) => value.ID == element).first;
+      BlocProvider.of<ZincThicknessBloc>(context).add(
+        ZincThickNessSendEvent(ZincThicknessOutputModel(
+            BATCHNO: row.Batch,
+            THICKNESS1: row.Thickness1,
+            THICKNESS2: row.Thickness2,
+            THICKNESS3: row.Thickness3,
+            THICKNESS4: row.Thickness4,
+            THICKNESS6: row.Thickness6,
+            THICKNESS7: row.Thickness7,
+            THICKNESS8: row.Thickness8,
+            THICKNESS9: row.Thickness9,
+            STARTDATE: row.DateData)),
+      );
+    });
   }
 
-  void deletedInfo() async {
-    if (index != null) {
-      for (var row in selectAll) {
+  Future deletedInfo() async {
+    setState(() {
+      _index.forEach((element) async {
         await databaseHelper.deletedRowSqlite(
             tableName: 'ZINCTHICKNESS_SHEET',
             columnName: 'ID',
-            columnValue: row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in zincList!) {
-        await databaseHelper.deletedRowSqlite(
-            tableName: 'ZINCTHICKNESS_SHEET',
-            columnName: 'ID',
-            columnValue: row.ID);
-      }
-    }
+            columnValue: element);
+        _index.clear();
+      });
+    });
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -524,6 +514,7 @@ class ZincDataSource extends DataGridSource {
           _employees.add(
             DataGridRow(
               cells: [
+                DataGridCell<int>(columnName: 'ID', value: _item.ID),
                 DataGridCell<String>(columnName: 'batch', value: _item.Batch),
                 DataGridCell<String>(columnName: 't1', value: _item.Thickness1),
                 DataGridCell<String>(columnName: 't2', value: _item.Thickness2),

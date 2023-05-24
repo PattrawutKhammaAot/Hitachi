@@ -1,4 +1,4 @@
-// ignore_for_file: unrelated_type_equality_checks, unnecessary_null_comparison
+// ignore_for_file: unrelated_type_equality_checks
 
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
@@ -115,6 +115,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               EasyLoading.show(status: "Loaded");
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
+                _clearAllData();
+                bgChange = Colors.grey;
+                f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
@@ -168,6 +171,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           print(MachineController.text);
                           // _enabledCheckMachine = true;
                           _enabledMachineNo = false;
+                          valuetxtinput = MachineController.text.trim();
                         });
                         f2.requestFocus();
                       } else {
@@ -293,6 +297,11 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     labelText: "Batch No :",
                     maxLength: 12,
                     height: 35,
+                    onEditingComplete: () {
+                      if (batchNoController.text.length == 12) {
+                        _btnSend();
+                      }
+                    },
                     controller: batchNoController,
                     type: TextInputType.number,
                     focusNode: f6,
@@ -321,7 +330,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         visible: true,
                         child: Container(
                             child: Label(
-                          valuetxtinput,
+                          "Machine No: ${valuetxtinput}",
                           color: COLOR_RED,
                         )),
                       ),
@@ -408,9 +417,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
       _callAPI();
-      // _clearAllData();
-      _enabledMachineNo = true;
-      // f1.requestFocus();
       // _checkSendSqlite();
       // _saveDataToSqlite();
     } else {
@@ -496,8 +502,6 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
-              DataGridCell<String>(
-                  columnName: 'StartEnd', value: _item.STARTEND.toString()),
             ],
           ),
         );
