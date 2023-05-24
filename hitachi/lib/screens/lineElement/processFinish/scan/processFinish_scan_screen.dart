@@ -116,7 +116,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Machine No : ",
                     maxLength: 3,
                     controller: machineNoController,
-                    type: TextInputType.number,
                     focusNode: f1,
                     onEditingComplete: () {
                       // f2.requestFocus();

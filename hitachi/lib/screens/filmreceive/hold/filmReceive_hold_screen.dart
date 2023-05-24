@@ -78,15 +78,16 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<FilmReceiveBloc, FilmReceiveState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is FilmReceiveLoadingState) {
               EasyLoading.show();
             }
             if (state is FilmReceiveLoadedState) {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
-                deletedInfo();
-                Navigator.pop(context);
+                await deletedInfo();
+                await _refreshPage();
+
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {

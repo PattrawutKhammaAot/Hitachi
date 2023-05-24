@@ -344,6 +344,98 @@ class _MachineBreakDownHoldScreenState
                       ),
                     )
                   : CircularProgressIndicator(),
+              _index.isNotEmpty
+                  ? Expanded(
+                      child: ListView.builder(
+                        itemCount: _index.length,
+                        itemBuilder: ((context, index) {
+                          return DataTable(
+                            horizontalMargin: 20,
+                            headingRowHeight: 30,
+                            dataRowHeight: 30,
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => COLOR_BLUE_DARK),
+                            border: TableBorder.all(
+                              width: 1.0,
+                              color: COLOR_BLACK,
+                            ),
+                            columns: [
+                              DataColumn(
+                                numeric: true,
+                                label: Label(
+                                  "",
+                                  color: COLOR_BLUE_DARK,
+                                ),
+                              ),
+                              DataColumn(label: Label(""))
+                            ],
+                            rows: [
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Machine No"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.MACHINE_NO}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Operator Name"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.OPERATOR_NAME}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Service"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.SERVICE_NO}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("BreakStart"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.BREAK_START_DATE}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Tech 1"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.TECH_1}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Start Tech 1"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.START_TECH_DATE_1}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Tech 2"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.TECH_2}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Start Tech 2"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.START_TECH_DATE_2}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Stop Tech 1"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.STOP_DATE_TECH_1}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Stop Tech 2"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.STOP_DATE_TECH_2}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Accept"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.OPERATOR_ACCEPT}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Break Stop"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.BREAK_STOP_DATE}"))
+                              ]),
+                            ],
+                          );
+                        }),
+                      ),
+                    )
+                  : CircularProgressIndicator(),
               const SizedBox(height: 20),
               Row(
                 children: [

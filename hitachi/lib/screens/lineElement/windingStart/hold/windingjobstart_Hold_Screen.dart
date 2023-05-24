@@ -102,15 +102,14 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is PostSendWindingStartLoadingState) {
                 EasyLoading.show();
               } else if (state is PostSendWindingStartLoadedState) {
                 EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
-                  Navigator.pop(context);
-                  deletedInfo();
-
+                  await deletedInfo();
+                  await _refreshPage();
                   EasyLoading.showSuccess("Send complete",
                       duration: Duration(seconds: 3));
                 } else {

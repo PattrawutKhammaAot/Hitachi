@@ -93,9 +93,9 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
             } else if (state is TreatmentFinishSendLoadedState) {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
                 await deletedInfo();
                 await _refresh();
+                EasyLoading.showSuccess("SendComplete");
               } else {
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),

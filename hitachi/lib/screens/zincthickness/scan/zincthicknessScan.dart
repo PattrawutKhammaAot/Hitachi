@@ -186,7 +186,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
         'Thickness7': th7,
         'Thickness8': th8,
         'Thickness9': th9,
-        'DateData': DateFormat('yyyy-MMM-dd HH:mm:ss').format(DateTime.now()),
+        'DateData': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       });
 
       f1.requestFocus();

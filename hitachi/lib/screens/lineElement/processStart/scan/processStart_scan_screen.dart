@@ -185,6 +185,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           print(MachineController.text);
                           // _enabledCheckMachine = true;
                           _enabledMachineNo = false;
+                          valuetxtinput = MachineController.text.trim();
                         });
                         f2.requestFocus();
                       } else {
@@ -338,7 +339,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         visible: true,
                         child: Container(
                             child: Label(
-                          valuetxtinput,
+                          "Machine No: ${valuetxtinput}",
                           color: COLOR_RED,
                         )),
                       ),

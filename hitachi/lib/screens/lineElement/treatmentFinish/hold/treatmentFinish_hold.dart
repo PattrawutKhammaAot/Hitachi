@@ -100,13 +100,9 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
             } else if (state is TreatmentFinishSendLoadedState) {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
-                _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
-                      Navigator.pop(context);
-                    });
                 await deletedInfo();
                 await _refreshPage();
+                EasyLoading.showSuccess("SendComplete");
               } else {
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),

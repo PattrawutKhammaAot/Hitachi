@@ -24,7 +24,7 @@ class ProcessStartHoldScreen extends StatefulWidget {
 class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   ProcessStartDataSource? matTracDs;
-  int? selectedRowIndex;
+  List<int> _index = [];
   DataGridRow? datagridRow;
 
   List<ProcessModel>? processModelSqlite;
@@ -62,28 +62,25 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     super.initState();
   }
 
-  // void deletedInfo() async {
-  //   await databaseHelper.deletedRowSqlite(
-  //       tableName: 'PROCESS_SHEET',
-  //       columnName: 'ID',
-  //       columnValue: processList![selectedRowIndex!].ID);
-  // }
+  Future _refreshPage() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      _getProcessStart().then((result) {
+        setState(() {
+          processList = result;
+          matTracDs = ProcessStartDataSource(process: processList);
+        });
+      });
+    });
+  }
 
   void deletedInfo() async {
-    if (index != null) {
-      for (var row in selectAll) {
+    setState(() {
+      _index.forEach((element) async {
         await databaseHelper.deletedRowSqlite(
-            tableName: 'PROCESS_SHEET', columnName: 'ID', columnValue: row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in processList!) {
-        await databaseHelper.deletedRowSqlite(
-          tableName: 'PROCESS_SHEET',
-          columnName: 'ID',
-          columnValue: row.ID,
-        );
-      }
-    } else {}
+            tableName: 'PROCESS_SHEET', columnName: 'ID', columnValue: element);
+        _index.clear();
+      });
+    });
   }
 
   @override
@@ -132,60 +129,65 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
                                 if (selectRow.length ==
-                                    matTracDs!.effectiveRows.length) {
-                                  print("all");
+                                        matTracDs!.effectiveRows.length &&
+                                    selectRow.length > 1) {
                                   setState(() {
                                     selectRow.forEach((row) {
-                                      allRowIndex =
-                                          matTracDs!.effectiveRows.indexOf(row);
+                                      _index.add(int.tryParse(
+                                          row.getCells()[0].value.toString())!);
 
                                       _colorSend = COLOR_SUCESS;
                                       _colorDelete = COLOR_RED;
                                     });
                                   });
-                                } else if (selectRow.length !=
-                                    matTracDs!.effectiveRows.length) {
+                                } else {
                                   setState(() {
-                                    index = selectRow.isNotEmpty
-                                        ? matTracDs!.effectiveRows
-                                            .indexOf(selectRow.first)
-                                        : null;
-                                    datagridRow = matTracDs!.effectiveRows
-                                        .elementAt(index!);
+                                    _index.add(int.tryParse(selectRow.first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                    datagridRow = selectRow.first;
                                     processModelSqlite = datagridRow!
                                         .getCells()
                                         .map(
-                                          (e) => ProcessModel(
-                                            MACHINE: e.value.toString(),
-                                          ),
+                                          (e) => ProcessModel(),
                                         )
                                         .toList();
-                                    // selectAll.add(wdsList[index!]);
-                                    if (!selectAll
-                                        .contains(processList[index!])) {
-                                      selectAll.add(processList[index!]);
-                                      print(selectAll.length);
-                                    }
+                                    print(_index);
                                     _colorSend = COLOR_SUCESS;
                                     _colorDelete = COLOR_RED;
                                   });
                                 }
                               } else {
                                 setState(() {
-                                  if (selectAll.contains(processList[index!])) {
-                                    selectAll.remove(processList[index!]);
-                                    print("check ${selectAll.length}");
+                                  if (deselectedRows.length > 1) {
+                                    _index.clear();
+                                  } else {
+                                    _index.remove(int.tryParse(deselectedRows
+                                        .first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
                                   }
-                                  if (selectAll.isEmpty) {
-                                    _colorSend = Colors.grey;
-                                    _colorDelete = Colors.grey;
-                                  }
+                                  _colorSend = Colors.grey;
+                                  _colorDelete = Colors.grey;
                                 });
-
-                                print('No Rows Selected');
                               }
                             },
                             columns: <GridColumn>[
+                              GridColumn(
+                                visible: false,
+                                columnName: 'ID',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'ID',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               GridColumn(
                                 columnName: 'Machine',
                                 label: Container(
@@ -264,99 +266,85 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       )
                     : CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                processModelSqlite != null
+                _index.isNotEmpty
                     ? Expanded(
-                        child: Container(
-                            child: ListView(
-                          children: [
-                            DataTable(
-                                horizontalMargin: 20,
-                                headingRowHeight: 30,
-                                dataRowHeight: 30,
-                                headingRowColor: MaterialStateColor.resolveWith(
-                                    (states) => COLOR_BLUE_DARK),
-                                border: TableBorder.all(
-                                  width: 1.0,
-                                  color: COLOR_BLACK,
-                                ),
-                                columns: [
-                                  DataColumn(
-                                    numeric: true,
-                                    label: Label(
-                                      "",
-                                      color: COLOR_BLUE_DARK,
-                                    ),
-                                  ),
-                                  DataColumn(label: Label(""))
-                                ],
-                                rows: [
-                                  DataRow(cells: [
-                                    DataCell(Center(child: Label("Machine"))),
-                                    DataCell(
-                                        Label("${processList[index!].MACHINE}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name"))),
-                                    DataCell(Label(
-                                        "${processList[index!].OPERATOR_NAME}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name1"))),
-                                    DataCell(Label(
-                                        "${processList[index!].OPERATOR_NAME1}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name2"))),
-                                    DataCell(Label(
-                                        "${processList[index!].OPERATOR_NAME2}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Operator Name3"))),
-                                    DataCell(Label(
-                                        "${processList[index!].OPERATOR_NAME3}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(Center(
-                                        child: Label("Batch/Serial No."))),
-                                    DataCell(Label(
-                                        "${processList[index!].BATCH_NO}"))
-                                  ]),
-                                  DataRow(cells: [
-                                    DataCell(
-                                        Center(child: Label("Start Date."))),
-                                    DataCell(Label(
-                                        "${processList[index!].STARTDATE}"))
-                                  ]),
-                                ])
-                          ],
-                        )),
-                      )
-                    : Expanded(
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Label(
-                                "No data",
-                                color: COLOR_RED,
-                                fontSize: 30,
+                        child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: ((context, index) {
+                            return DataTable(
+                              horizontalMargin: 20,
+                              headingRowHeight: 30,
+                              dataRowHeight: 30,
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => COLOR_BLUE_DARK),
+                              border: TableBorder.all(
+                                width: 1.0,
+                                color: COLOR_BLACK,
                               ),
-                              CircularProgressIndicator()
-                            ],
-                          ),
+                              columns: [
+                                DataColumn(
+                                  numeric: true,
+                                  label: Label(
+                                    "",
+                                    color: COLOR_BLUE_DARK,
+                                  ),
+                                ),
+                                DataColumn(label: Label(""))
+                              ],
+                              rows: [
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Machine No."))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.MACHINE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Operator Name"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.OPERATOR_NAME}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Operator Name1"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.OPERATOR_NAME1}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Operator Name2"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.OPERATOR_NAME2}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Operator Name3"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.OPERATOR_NAME3}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Batch/Serial No."))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.BATCH_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Start Date"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.STARTDATE}"))
+                                ]),
+                              ],
+                            );
+                          }),
                         ),
-                      ),
+                      )
+                    : CircularProgressIndicator(),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                         child: Button(
                       onPress: () {
-                        if (processModelSqlite != null) {
+                        if (_index.isNotEmpty) {
                           _AlertDialog();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
@@ -374,39 +362,11 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       text: Label("Send", color: COLOR_WHITE),
                       bgColor: _colorSend,
                       onPress: () {
-                        _sendDataServer();
-                        // if (processModelSqlite != null) {
-                        //   BlocProvider.of<LineElementBloc>(context).add(
-                        //     ProcessStartEvent(
-                        //       ProcessOutputModel(
-                        //         MACHINE:
-                        //             processList![selectedRowIndex!].MACHINE,
-                        //         OPERATORNAME: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME
-                        //                 .toString()),
-                        //         OPERATORNAME1: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME1
-                        //                 .toString()),
-                        //         OPERATORNAME2: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME2
-                        //                 .toString()),
-                        //         OPERATORNAME3: int.tryParse(
-                        //             processList![selectedRowIndex!]
-                        //                 .OPERATOR_NAME3
-                        //                 .toString()),
-                        //         BATCHNO:
-                        //             processList![selectedRowIndex!].BATCH_NO,
-                        //         STARTDATE:
-                        //             processList![selectedRowIndex!].STARTDATE,
-                        //       ),
-                        //     ),
-                        //   );
-                        // } else {
-                        //   EasyLoading.showInfo("Please Select Data");
-                        // }
+                        if (_index.isNotEmpty) {
+                          _sendDataServer();
+                        } else {
+                          EasyLoading.showInfo("Please Select Data");
+                        }
                       },
                     )),
                   ],
@@ -418,51 +378,28 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   }
 
   void _sendDataServer() async {
-    if (index != null) {
-      for (var row in selectAll) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          ProcessStartEvent(
-            ProcessOutputModel(
-              MACHINE: row.MACHINE,
-              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-              OPERATORNAME1: int.tryParse(
-                row.OPERATOR_NAME1.toString(),
-              ),
-              OPERATORNAME2: int.tryParse(
-                row.OPERATOR_NAME2.toString(),
-              ),
-              OPERATORNAME3: int.tryParse(
-                row.OPERATOR_NAME3.toString(),
-              ),
-              BATCHNO: row.BATCH_NO.toString(),
-              STARTDATE: row.STARTDATE.toString(),
+    _index.forEach((element) async {
+      var row = processList.where((value) => value.ID == element).first;
+      BlocProvider.of<LineElementBloc>(context).add(
+        ProcessStartEvent(
+          ProcessOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            OPERATORNAME1: int.tryParse(
+              row.OPERATOR_NAME1.toString(),
             ),
-          ),
-        );
-      }
-    } else if (allRowIndex != null) {
-      for (var row in processList) {
-        BlocProvider.of<LineElementBloc>(context).add(
-          ProcessStartEvent(
-            ProcessOutputModel(
-              MACHINE: row.MACHINE,
-              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-              OPERATORNAME1: int.tryParse(
-                row.OPERATOR_NAME1.toString(),
-              ),
-              OPERATORNAME2: int.tryParse(
-                row.OPERATOR_NAME2.toString(),
-              ),
-              OPERATORNAME3: int.tryParse(
-                row.OPERATOR_NAME3.toString(),
-              ),
-              BATCHNO: row.BATCH_NO.toString(),
-              STARTDATE: row.STARTDATE.toString(),
+            OPERATORNAME2: int.tryParse(
+              row.OPERATOR_NAME2.toString(),
             ),
+            OPERATORNAME3: int.tryParse(
+              row.OPERATOR_NAME3.toString(),
+            ),
+            BATCHNO: row.BATCH_NO.toString(),
+            STARTDATE: row.STARTDATE.toString(),
           ),
-        );
-      }
-    }
+        ),
+      );
+    });
   }
 
   void _AlertDialog() async {
@@ -511,6 +448,7 @@ class ProcessStartDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
+              DataGridCell<int>(columnName: 'ID', value: _item.ID),
               DataGridCell<String>(columnName: 'Machine', value: _item.MACHINE),
               DataGridCell<String>(
                   columnName: 'Operatorname', value: _item.OPERATOR_NAME),

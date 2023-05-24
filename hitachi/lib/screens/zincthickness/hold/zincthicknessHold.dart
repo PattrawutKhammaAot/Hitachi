@@ -82,14 +82,15 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
     return MultiBlocListener(
       listeners: [
         BlocListener<ZincThicknessBloc, ZincThicknessState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is ZincThicknessLoadingState) {
               EasyLoading.show(status: "Loading...");
             } else if (state is ZincThicknessLoadedState) {
               EasyLoading.dismiss();
 
               if (state.item.RESULT == true) {
-                deletedInfo();
+                await deletedInfo();
+                await _refreshPage();
                 EasyLoading.showSuccess("Send complete ",
                     duration: Duration(seconds: 3));
               } else if (state.item.RESULT == false) {
@@ -495,10 +496,6 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
         ),
 
         actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
           TextButton(
             onPressed: () => onpressOk?.call(),
             child: const Text('OK'),
