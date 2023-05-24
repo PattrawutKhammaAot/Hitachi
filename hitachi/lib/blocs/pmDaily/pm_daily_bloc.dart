@@ -28,6 +28,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
         return client;
       },
     );
+
     on<PmDailyEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -84,6 +85,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
 
       CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
       print(tmp);
+      print(ApiConfig.PM_GETDAILY + "$number");
 
       return tmp;
     } catch (e, s) {
@@ -92,24 +94,23 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
     }
   }
 
-  //Report Route Sheet
-  // Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(
-  //     String number) async {
+  // Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
   //   try {
   //     Response response = await dio.get(
-  //       ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
+  //       ApiConfig.PLAN_WINDING,
   //       options: Options(
-  //           headers: ApiConfig.HEADER(),
+  //         // headers: ApiConfig.HEADER(),
   //           sendTimeout: Duration(seconds: 3),
   //           receiveTimeout: Duration(seconds: 3)),
   //     );
-  //     print(ApiConfig.LE_REPORT_ROUTE_SHEET + "$number");
   //
-  //     CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+  //     PlanWindingOutputModel tmp =
+  //     PlanWindingOutputModel.fromJson(response.data);
   //
   //     return tmp;
-  //   } on Exception {
-  //     throw Exception();
+  //   } catch (e) {
+  //     print(e);
+  //     return PlanWindingOutputModel();
   //   }
   // }
 }

@@ -13,10 +13,8 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/planWinding/PlanWindingOutputModel.dart';
 import 'package:hitachi/models/pmdailyModel/PMDailyCheckpointOutputModel.dart';
-import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
-import 'package:hitachi/services/databaseHelper.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -34,9 +32,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   //PMDailyOutputModelPlan
   PlanWindingDataSource? planwindingDataSource;
   Color? bgChange;
-  bool _ss = true;
 
-  DatabaseHelper databaseHelper = DatabaseHelper();
   final TextEditingController checkpointController = TextEditingController();
   final TextEditingController operatorNameController = TextEditingController();
 
@@ -46,7 +42,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   @override
   void initState() {
     super.initState();
-    f1.requestFocus();
     // BlocProvider.of<LineElementBloc>(context).add(
     //   ReportRouteSheetEvenet(batchNoController.text.trim()),
     // );
@@ -58,6 +53,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        // BlocListener<PlanWindingBloc, PlanWindingState>(
         BlocListener<PmDailyBloc, PmDailyState>(
           listener: (context, state) {
             if (state is PMDailyGetLoadingState) {
@@ -142,8 +138,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       child: Container(
                         child: SfDataGrid(
                           footerHeight: 10,
-                          showCheckboxColumn: true,
-                          selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: planwindingDataSource!,
@@ -151,24 +145,24 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           columns: [
                             GridColumn(
                               width: 120,
-                              columnName: 'no',
+                              columnName: 'data',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                   child: Label(
-                                    'No',
+                                    'Data',
                                     color: COLOR_WHITE,
                                   ),
                                 ),
                               ),
                             ),
                             GridColumn(
-                              columnName: 'status',
+                              columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                   child: Label(
-                                    'Status',
+                                    'No.',
                                     color: COLOR_WHITE,
                                   ),
                                 ),
@@ -190,42 +184,28 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ],
                     ),
+              Container(
+                child: Button(
+                  height: 40,
+                  // bgColor: bgChange ?? Colors.grey,
+                  text: Label(
+                    "Load Plan",
+                    color: COLOR_WHITE,
+                  ),
+                  onPress: () => _loadPlan(),
+                ),
+              ),
               // Container(
-              //   child: Button(
-              //     height: 40,
-              //     // bgColor: bgChange ?? Colors.grey,
-              //     text: Label(
-              //       "Load Plan",
-              //       color: COLOR_WHITE,
-              //     ),
-              //     onPress: () => _loadPlan(),
-              //   ),
-              // ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Button(
-                      onPress: () => _loadPlan(),
-                      text: Label(
-                        "Load Status",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
-                  ),
-                  Expanded(child: Container()),
-                  Expanded(
-                    flex: 3,
-                    child: Button(
-                      onPress: () => _btnSend(),
-                      text: Label(
-                        "Send",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              //         child: Button(
+              //           height: 40,
+              //           // bgColor: bgChange ?? Colors.grey,
+              //           text: Label(
+              //             "Load Plan",
+              //             color: COLOR_WHITE,
+              //           ),
+              //           onPress: () => _loadPlan(),
+              //         ),
+              //       ),
             ],
           ),
         ),
@@ -242,82 +222,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     );
     // widget.onChange!(batchNoController.text.trim());
   }
-
-  void _btnSend() async {
-    if (checkpointController.text.isNotEmpty &&
-        operatorNameController.text.isNotEmpty) {
-      _callAPI();
-      setState(() {
-        _errorDialog(
-            text: Label("Send Complete"),
-            onpressOk: () {
-              Navigator.pop(context);
-            });
-      });
-    } else {
-      setState(() {
-        // _enabledPMDaily = true;
-      });
-      EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
-    }
-  }
-
-  void _callAPI() {
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailySendEvent(PMDailyOutputModel(
-        OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
-        CHECKPOINT: checkpointController.text.trim(),
-        STATUS: checkpointController.text.trim(),
-        STARTDATE: DateTime.now().toString(),
-      )),
-    );
-  }
-
-  void _saveSendSqlite() async {
-    try {
-      if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.insertSqlite('PM_SHEET', {
-          'OperatorName': operatorNameController.text.trim(),
-          'CheckPointPM': checkpointController.text.trim(),
-          'Status': '1',
-          'DatePM': DateTime.now().toString(),
-        });
-        print("ok");
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
-    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        // title: const Text('AlertDialog Title'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: text,
-            ),
-          ],
-        ),
-
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class PlanWindingDataSource extends DataGridSource {
@@ -327,7 +231,7 @@ class PlanWindingDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
+              DataGridCell<String>(columnName: 'data', value: _item.STATUS),
               DataGridCell<String>(columnName: 'no', value: _item.DESCRIPTION),
             ],
           ),

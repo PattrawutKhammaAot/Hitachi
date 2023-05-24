@@ -37,9 +37,31 @@ class PMDailyErrorState extends PmDailyState {
 
 //Get
 
+// class PMDailyGetLoadingState extends PmDailyState {
+//   const PMDailyGetLoadingState();
+//
+//   @override
+//   List<Object> get props => [];
+// }
+//
+// class PMDailyGetLoadedState extends PmDailyState {
+//   const PMDailyGetLoadedState(this.item);
+//   final CPPMDailyOutputModel item;
+//
+//   @override
+//   List<Object> get props => [item];
+// }
+//
+// class PMDailyGetErrorState extends PmDailyState {
+//   const PMDailyGetErrorState(this.error);
+//   final String error;
+//
+//   @override
+//   List<Object> get props => [error];
+// }
+
 class PMDailyGetLoadingState extends PmDailyState {
   const PMDailyGetLoadingState();
-
   @override
   List<Object> get props => [];
 }

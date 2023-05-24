@@ -8,8 +8,8 @@ class CPPMDailyOutputModel {
 
   static CPPMDailyOutputModel fromJson(dynamic json) {
     return CPPMDailyOutputModel(
-      CHECKPOINT: json['Plan'] != null
-          ? json['Plan']
+      CHECKPOINT: json['Status'] != null
+          ? json['Status']
               .map((dynamic item) => PMDailyOutputModelPlan.fromJson(item))
               .cast<PMDailyOutputModelPlan>()
               .toList()
