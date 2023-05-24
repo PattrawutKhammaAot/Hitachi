@@ -155,14 +155,13 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'INCOMING_DATE': _IncomingDateController.text.trim(),
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
-          'STORE_DATE': DateFormat('yyyy-MM-dd HH:mm:ss')
-              .format(DateTime.now())
-              .toString(),
+          'STORE_DATE':
+              DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
           'STATUS': " ",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
-          'MFG_DATE': _mfgDateController.text.trim(),
+          'MFG_DATE': _mfgDateController.text.trim().toString(),
           'THICKNESS1': thickness,
           'THICKNESS2': "",
           'WRAP_GRADE': _wrapGradeController.text.trim(),
@@ -196,7 +195,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           STATUS: 'S',
           WEIGHT1: num.tryParse(_weight1Controller.text.trim()),
           WEIGHT2: num.tryParse(_weight2Controller.text.trim()),
-          MFGDATE: _mfgDateController.text.trim(),
+          MFGDATE: "20" + _mfgDateController.text.trim(),
           THICKNESS: totalWeight!.toString(),
           WRAPGRADE: _wrapGradeController.text.trim(),
           ROLL_NO: _rollNoController.text.trim(),
@@ -208,18 +207,19 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   void _checkMfgDate() {
     if (dataFromBarcode1!.length >= 11) {
       String dateStr = dataFromBarcode1!.substring(4, 6) +
-          "/" +
+          "-" +
           dataFromBarcode1!.substring(6, 8) +
-          "/" +
+          "-" +
           dataFromBarcode1!.substring(8, 10);
-      DateTime selectedDate = DateFormat('dd/MM/yy').parse(dateStr);
+      print(dateStr);
+      DateTime selectedDate = DateFormat('dd-MM-yy').parse(dateStr);
       if (selectedDate != null) {
         setState(() {
           _selectedDateMfg = selectedDate;
-          _mfgDateController.text = DateFormat('dd/MM/yy').format(selectedDate);
+          _mfgDateController.text = DateFormat('dd-MM-yy').format(selectedDate);
           DateTime incomingDate = selectedDate;
           DateTime mfgDate =
-              DateFormat("dd/MM/yy").parse(_mfgDateController.text);
+              DateFormat("dd-MM-yy").parse(_mfgDateController.text);
           Duration difference = incomingDate.difference(mfgDate);
           int differenceInDays = difference.inDays.abs();
 
@@ -419,7 +419,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               setState(() {
                                 _selectedDate = selectedDate;
                                 _IncomingDateController.text =
-                                    DateFormat('dd/MM/yy').format(selectedDate);
+                                    DateFormat('yyyy-MM-dd')
+                                        .format(selectedDate);
                               });
                               f5.requestFocus();
                             }

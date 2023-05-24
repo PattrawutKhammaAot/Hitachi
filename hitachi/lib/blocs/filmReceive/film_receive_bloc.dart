@@ -44,6 +44,20 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
   Future<ResponeDefault> fetchSendFilmReceive(
       FilmReceiveOutputModel item) async {
     try {
+      print(item.PONO);
+      print(item.INVOICE);
+      print(item.FRIEGHT);
+      print(item.DATERECEIVE);
+      print(item.OPERATORNAME);
+      print(item.PACKNO);
+      print(item.STATUS);
+      print(item.WEIGHT1);
+      print(item.WEIGHT2);
+      print(item.MFGDATE);
+      print(item.THICKNESS);
+      print(item.WRAPGRADE);
+      print(item.ROLL_NO);
+
       Response responese = await dio.post(ApiConfig.FILM_RECEIVE,
           options: Options(
               headers: ApiConfig.HEADER(),

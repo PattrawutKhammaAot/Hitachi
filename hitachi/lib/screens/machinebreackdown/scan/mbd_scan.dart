@@ -70,7 +70,6 @@ class _MachineBreakDownScanScreenState
         _start_Technical_1_Controller.text.isNotEmpty &&
         _stop_Technical_1_Controller.text.isNotEmpty &&
         _operator_accept_Controller.text.isNotEmpty) {
-      await _saveMachine();
       _sendData();
     } else if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
@@ -112,20 +111,32 @@ class _MachineBreakDownScanScreenState
         : _operator_accept_Controller.text;
   }
 
-  Future _callBreakDownMachine({bool isCallBdm = false}) async {
+  Future<void> _callBreakDownMachine({bool isCallBdm = false}) async {
     var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
     if (sql.length > 0) {
       setState(() {
-        bdsList = [];
         bdsList = sql
             .map((row) => BreakDownSheetModel.fromMap(
                 row.map((key, value) => MapEntry(key, value))))
             .toList();
       });
     }
-    setState(() {
-      bdsList.insert(0, BreakDownSheetModel(MACHINE_NO: "NEW"));
-    });
+
+    // เช็คว่า "NEW" อยู่ในรายการ bdsList หรือไม่
+    bool isNewExist = false;
+    for (var item in bdsList) {
+      if (item.MACHINE_NO == "NEW") {
+        isNewExist = true;
+        break;
+      }
+    }
+
+    // ถ้า "NEW" ยังไม่อยู่ในรายการ bdsList ให้เพิ่มเข้าไป
+    if (!isNewExist) {
+      setState(() {
+        bdsList.insert(0, BreakDownSheetModel(MACHINE_NO: "NEW"));
+      });
+    }
   }
 
   @override
@@ -192,7 +203,7 @@ class _MachineBreakDownScanScreenState
         _stop_Technical_2_Controller.clear();
         _operator_accept_Controller.clear();
       } else if (found == false) {
-        print("Insert");
+        print("INSERT TESTING DEBUG");
         await databaseHelper.insertSqlite('BREAKDOWN_SHEET', {
           'MachineNo': _machineNo_Controller.text.trim(),
           'CallUser': _operatorname_Controller.text.trim(),
@@ -216,51 +227,6 @@ class _MachineBreakDownScanScreenState
           'CheckComplete': "",
         });
       }
-      // if (sql.length <= 0) {
-      //   print("sql.length <= 0");
-
-      // } else {
-      // var sql_breakdown = await databaseHelper.queryDataSelect(
-      //     select1: 'MT1StartDate',
-      //     select2: 'MT2StartDate',
-      //     select3: 'MT1StopDate',
-      //     select4: 'MT2StopDate',
-      //     formTable: 'BREAKDOWN_SHEET',
-      //     stringValue: _machineNo_Controller.text.trim());
-
-      // if (sql_breakdown.length > 0) {
-      //   var mt = sql_breakdown[0];
-      //   var mt1start, mt2start, mt1stop, mt2stop;
-      //   var mt1StartDate = mt[0]["MT1StartDate"] ?? DateTime.now().toString();
-
-      //   var mt2StartDate = mt[0]["MT2StartDate"] ?? DateTime.now().toString();
-      //   var mt1StopDate =
-      //       mt[0]["MT1StopDate"] ?? _stop_Technical_1_Controller.text.trim();
-      //   var mt2StopDate =
-      //       mt[0]["MT2StopDate"] ?? _stop_Technical_2_Controller.text.trim();
-      //   print("sql_breakdown.length > 0");
-      //   await databaseHelper.updateSqlite(
-      //       'BREAKDOWN_SHEET',
-      //       {
-      //         'MachineNo': _machineNo_Controller.text.trim(),
-      //         'CallUser': _operatorname_Controller.text.trim(),
-      //         'RepairNo': _serviceNo_Controller.text.trim(),
-      //         'BreakStartDate': DateTime.now().toString(),
-      //         'MT1': _start_Technical_1_Controller.text.trim(),
-      //         'MT1StartDate': mt1StartDate,
-      //         'MT2': _start_Technical_2_Controller.text.trim(),
-      //         'MT2StartDate': mt2StartDate,
-      //         'MT1StopDate': mt1StopDate,
-      //         'MT2StopDate': mt2StopDate,
-      //         'CheckUser': _operator_accept_Controller.text.trim(),
-      //         'BreakStopDate': "", //ไม่รู้ว่ามาจากไหน
-      //         'CheckComplete': "",
-      //       },
-      //       'MachineNo = ?',
-      //       [_machineNo_Controller.text.trim()]);
-      // }
-      // }
-      // EasyLoading.showError("Save complete & Can not Call Api");
     } catch (e, s) {
       print("${e}${s}");
       EasyLoading.showError("Can not Save");
@@ -294,10 +260,19 @@ class _MachineBreakDownScanScreenState
   }
 
   Future _delete() async {
+    setState(() {
+      bdsList.clear();
+    });
     await databaseHelper.deletedRowSqlite(
         tableName: 'BREAKDOWN_SHEET',
         columnName: 'MachineNo',
         columnValue: _machineNo_Controller.text);
+
+    // if (bdsList.isEmpty) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   @override
@@ -332,7 +307,7 @@ class _MachineBreakDownScanScreenState
             }
             if (state is PostMachineBreakdownErrorState) {
               EasyLoading.dismiss();
-              _saveMachine();
+              // _saveMachine();
               EasyLoading.showError("Can not send");
             }
           },
@@ -356,103 +331,108 @@ class _MachineBreakDownScanScreenState
                       Expanded(
                         child: SizedBox(
                           height: 40,
-                          child: DropdownButtonFormField2(
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.zero,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            isExpanded: true,
-                            hint: Center(
-                              child: Text(
-                                'New',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            items: bdsList.isNotEmpty
-                                ? bdsList
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item.MACHINE_NO,
-                                          child: Text(
-                                            "${item.MACHINE_NO}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                          child: bdsList.isNotEmpty
+                              ? DropdownButtonFormField2(
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  hint: Center(
+                                    child: Text(
+                                      'New',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  items: bdsList
+                                      .where((item) => item.MACHINE_NO != null)
+                                      .toSet()
+                                      .toList()
+                                      .map((item) => DropdownMenuItem<String>(
+                                            value: item.MACHINE_NO,
+                                            child: Text(
+                                              "${item.MACHINE_NO}",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
                                             ),
-                                          ),
-                                        ))
-                                    .toSet()
-                                    .toList()
-                                : null,
-                            onChanged: (value) {
-                              for (var item in bdsList) {
-                                if (value == item.MACHINE_NO &&
-                                    value != 'NEW') {
-                                  setState(() {
-                                    _machineNo_Controller.text =
-                                        item.MACHINE_NO.toString();
-                                    _operatorname_Controller.text =
-                                        item.OPERATOR_NAME.toString();
-                                    _serviceNo_Controller.text =
-                                        item.SERVICE_NO.toString();
-                                    if (item.TECH_1 != null) {
-                                      _start_Technical_1_Controller.text =
-                                          item.TECH_1.toString();
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    for (var item in bdsList) {
+                                      if (value == item.MACHINE_NO &&
+                                          value != 'NEW') {
+                                        setState(() {
+                                          _machineNo_Controller.text =
+                                              item.MACHINE_NO.toString();
+                                          _operatorname_Controller.text =
+                                              item.OPERATOR_NAME.toString();
+                                          _serviceNo_Controller.text =
+                                              item.SERVICE_NO.toString();
+                                          if (item.TECH_1 != null) {
+                                            _start_Technical_1_Controller.text =
+                                                item.TECH_1.toString();
+                                          }
+                                          if (item.STOP_DATE_TECH_1 != null) {
+                                            _stop_Technical_1_Controller.text =
+                                                item.STOP_DATE_TECH_1
+                                                    .toString();
+                                          }
+                                          if (item.OPERATOR_ACCEPT != null) {
+                                            _operator_accept_Controller.text =
+                                                item.OPERATOR_ACCEPT.toString();
+                                          }
+                                          if (item.TECH_2 != null) {
+                                            _start_Technical_2_Controller.text =
+                                                item.TECH_2.toString();
+                                          }
+                                          if (item.STOP_DATE_TECH_2 != null) {
+                                            _stop_Technical_2_Controller.text =
+                                                item.STOP_DATE_TECH_2
+                                                    .toString();
+                                          }
+                                        });
+                                        break;
+                                      } else if (value == 'NEW') {
+                                        setState(() {
+                                          _machineNo_Controller.clear();
+                                          _operatorname_Controller.clear();
+                                          _serviceNo_Controller.clear();
+                                          _start_Technical_1_Controller.clear();
+                                          _start_Technical_2_Controller.clear();
+                                          _stop_Technical_1_Controller.clear();
+                                          _stop_Technical_2_Controller.clear();
+                                          _operator_accept_Controller.clear();
+                                          f1.requestFocus();
+                                        });
+                                      }
                                     }
-                                    if (item.STOP_DATE_TECH_1 != null) {
-                                      _stop_Technical_1_Controller.text =
-                                          item.STOP_DATE_TECH_1.toString();
-                                    }
-                                    if (item.OPERATOR_ACCEPT != null) {
-                                      _operator_accept_Controller.text =
-                                          item.OPERATOR_ACCEPT.toString();
-                                    }
-                                    if (item.TECH_2 != null) {
-                                      _start_Technical_2_Controller.text =
-                                          item.TECH_2.toString();
-                                    }
-                                    if (item.STOP_DATE_TECH_2 != null) {
-                                      _stop_Technical_2_Controller.text =
-                                          item.STOP_DATE_TECH_2.toString();
-                                    }
-                                  });
-                                  break;
-                                } else if (value == 'NEW') {
-                                  setState(() {
-                                    _machineNo_Controller.clear();
-                                    _operatorname_Controller.clear();
-                                    _serviceNo_Controller.clear();
-                                    _start_Technical_1_Controller.clear();
-                                    _start_Technical_2_Controller.clear();
-                                    _stop_Technical_1_Controller.clear();
-                                    _stop_Technical_2_Controller.clear();
-                                    _operator_accept_Controller.clear();
-                                    f1.requestFocus();
-                                  });
-                                }
-                              }
-                            },
-                            onSaved: (value) {
-                              selectedValue = value.toString();
-                              print(value);
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              height: 50,
-                              padding: EdgeInsets.only(left: 20, right: 10),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 30,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                          ),
+                                  },
+                                  onSaved: (value) {
+                                    selectedValue = value.toString();
+                                    print(value);
+                                  },
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 10),
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black45,
+                                    ),
+                                    iconSize: 30,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(),
                         ),
                       ),
                     ],
