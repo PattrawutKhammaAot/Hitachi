@@ -86,6 +86,9 @@ class ApiConfig {
 
   //POST SEND PM_DAILY
   static String PM_DAILY = "${BASE_API_URL}LineElement/SendPMDaily";
+  //Get PM_DAILY
+  static String PM_GETDAILY =
+      "${BASE_API_URL}LineElement/GetLoadStatus?checkPoint=";
 
   ///---------------------PLAN_WINDING ----------------------///
 

@@ -52,6 +52,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
             if (state is PlanWindingLoadedState) {
               EasyLoading.dismiss();
               setState(() {
+                PlanWindingModel = state.item.PLAN;
                 planwindingDataSource =
                     PlanWindingDataSource(PLAN: PlanWindingModel);
               });
@@ -182,17 +183,40 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                         ),
                       ),
                     )
-                  : Container(
-                      child: Button(
-                        height: 40,
-                        // bgColor: bgChange ?? Colors.grey,
-                        text: Label(
-                          "Load Plan",
-                          color: COLOR_WHITE,
+                  : Row(
+                      children: [
+                        Visibility(
+                          visible: true,
+                          child: Container(
+                              child: Label(
+                            " ",
+                            color: COLOR_RED,
+                          )),
                         ),
-                        onPress: () => _loadPlan(),
-                      ),
+                      ],
                     ),
+              Container(
+                child: Button(
+                  height: 40,
+                  // bgColor: bgChange ?? Colors.grey,
+                  text: Label(
+                    "Load Plan",
+                    color: COLOR_WHITE,
+                  ),
+                  onPress: () => _loadPlan(),
+                ),
+              ),
+              // Container(
+              //         child: Button(
+              //           height: 40,
+              //           // bgColor: bgChange ?? Colors.grey,
+              //           text: Label(
+              //             "Load Plan",
+              //             color: COLOR_WHITE,
+              //           ),
+              //           onPress: () => _loadPlan(),
+              //         ),
+              //       ),
             ],
           ),
         ),

@@ -164,15 +164,18 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                     onEditingComplete: () {
-                      if (operatorNameController.text.length == 12) {
-                        setState(() {
-                          f3.requestFocus();
-                        });
-                      } else {
-                        setState(() {
-                          valuetxtinput = "User INVALID";
-                        });
-                      }
+                      setState(() {
+                        f3.requestFocus();
+                      });
+                      // if (operatorNameController.text.length == 12) {
+                      //   setState(() {
+                      //     f3.requestFocus();
+                      //   });
+                      // } else {
+                      //   setState(() {
+                      //     valuetxtinput = "User INVALID";
+                      //   });
+                      // }
                     },
                   ),
                   SizedBox(
@@ -187,6 +190,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         f4.requestFocus();
+                      } else {
+                        setState(() {
+                          valuetxtinput = "Batch No : INVALID";
+                        });
                       }
                     },
                     textInputFormatter: [
@@ -400,7 +407,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     try {
       await databaseHelper.insertSqlite('PROCESS_SHEET', {
         'Machine': machineNoController.text.trim(),
-        'OperatorName1': rejectQtyController.text.trim(),
+        'OperatorName1': operatorNameController.text.trim(),
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Garbage': rejectQtyController.text.trim(),
         'FinDate': DateTime.now().toString(),

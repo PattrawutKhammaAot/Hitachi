@@ -16,6 +16,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/pmdailyModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
+import 'package:hitachi/models/pmdailyModel/PMDailyCheckpointOutputModel.dart';
 import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
@@ -34,12 +35,16 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   final TextEditingController operatorNameController = TextEditingController();
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+  List<PMDailyOutputModelPlan>? CheckPointSheetModel;
+  EmployeeDataSource? employeeDataSource;
+  // PMDailyOutputModelPlan
 
   //ResponeDefault
   ResponeDefault? items;
   PMDailyDataSource? PMDDs;
   List<PMDailyModel>? processList;
   bool _checkSendSqlite = false;
+  bool loadStatus = true;
   String Focustxt = "";
   String valuetxtinput = "";
   Color? bgChange;
@@ -49,35 +54,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   final f1 = FocusNode();
   final f2 = FocusNode();
 
-  // 'CheckPointPM': checkpointController.text.trim(),
-  // 'Status': checkpointController.text.trim(),
-  // 'StartDate
-
-  // Future<bool> _getProcessStart() async {
-  //   try {
-  //     var sql_pmDailySheet = await databaseHelper.queryDataSelectProcess(
-  //       select1: 'OperatorName'.trim(),
-  //       select2: 'CheckPointPM'.trim(),
-  //       select3: 'Status'.trim(),
-  //       select4: 'StartDate'.trim(),
-  //       formTable: 'PM_SHEET'.trim(),
-  //       where: 'Machine'.trim(),
-  //       stringValue: operatorNameController.text.trim(),
-  //     );
-  //     print(sql_pmDailySheet.length);
-  //
-  //     // if (sql_pmDailySheet[0]['Machine'] != MachineController.text.trim()) {
-  //     if (sql_pmDailySheet.isEmpty) {
-  //       print(operatorNameController.text.trim());
-  //       print(sql_pmDailySheet.length);
-  //       _saveSendSqlite();
-  //     }
-  //     return true;
-  //   } catch (e) {
-  //     print("Catch : ${e}");
-  //     return false;
-  //   }
-  // }
   Future<bool> _getProcessStart() async {
     try {
       var sql_pmDailySheet = await databaseHelper.queryDataSelectPMDaily(
@@ -126,80 +102,65 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<PmDailyBloc, PmDailyState>(
-          listener: (context, state) {
-            if (state is PMDailyLoadingState) {
-              EasyLoading.show();
-              print("loading");
+        BlocListener<PmDailyBloc, PmDailyState>(listener: (context, state) {
+          // if (state is PMDailyGetLoadingState) {
+          //   EasyLoading.show();
+          // }
+          // if (state is PMDailyGetLoadedState) {
+          //   EasyLoading.dismiss();
+          //   setState(() {
+          //     CheckPointSheetModel = state.item.CHECKPOINT;
+          //     employeeDataSource =
+          //         EmployeeDataSource(CHECKPOINT: CheckPointSheetModel);
+          //   });
+          // }
+          // if (state is PMDailyGetErrorState) {
+          //   EasyLoading.dismiss();
+          //   EasyLoading.showError("Check Connection");
+          //   print(state.error);
+          // }
+
+          if (state is PMDailyLoadingState) {
+            EasyLoading.show();
+            print("loading");
+          }
+          if (state is PMDailyLoadedState) {
+            print("Loaded");
+            EasyLoading.show(status: "Loaded");
+            if (state.item.RESULT == true) {
+              EasyLoading.showSuccess("SendComplete");
+              _clearAllData();
+              bgChange = Colors.grey;
+              f1.requestFocus();
+            } else if (state.item.RESULT == false) {
+              // EasyLoading.showError("Can not send & save Data");
+              items = state.item;
+              _errorDialog(
+                  text: Label("${state.item.MESSAGE}"),
+                  onpressOk: () {
+                    Navigator.pop(context);
+                    _getProcessStart();
+                  });
+            } else {
+              // EasyLoading.showError("Can not Call API");
+              _errorDialog(
+                  text: Label("${state.item.MESSAGE}"),
+                  onpressOk: () {
+                    Navigator.pop(context);
+                    _getProcessStart();
+                  });
             }
-            if (state is PMDailyLoadedState) {
-              print("Loaded");
-              EasyLoading.show(status: "Loaded");
-              if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
-              } else if (state.item.RESULT == false) {
-                // EasyLoading.showError("Can not send & save Data");
-                items = state.item;
-                _errorDialog(
-                    text: Label("Can not send & save Data"),
-                    onpressOk: () {
-                      Navigator.pop(context);
-                      _getProcessStart();
-                    });
-              } else {
-                // EasyLoading.showError("Can not Call API");
-                _errorDialog(
-                    text: Label("Can not Call API"),
-                    onpressOk: () {
-                      Navigator.pop(context);
-                      _getProcessStart();
-                    });
-              }
-            }
-            if (state is PMDailyErrorState) {
-              print("ERROR");
-              // EasyLoading.dismiss();
-              // _errorDialog();
-              _getProcessStart();
-              EasyLoading.showError("Please Check Connection Internet");
-            }
-          },
-          // listener: (context, state) {
-          //   if (state is PMDailyLoadingState) {
-          //     EasyLoading.show();
-          //     print("loading");
-          //   }
-          //   if (state is PMDailyLoadedState) {
-          //     print("Loaded");
-          //
-          //     EasyLoading.show(status: "Loaded");
-          //
-          //     if (state.item.RESULT == true) {
-          //       EasyLoading.showSuccess("SendComplete");
-          //       _clearAllData();
-          //     } else if (state.item.RESULT == false) {
-          //       EasyLoading.showError("Can not send & save Data");
-          //       items = state.item;
-          //       // _getProcessStart();
-          //       _saveSendSqlite();
-          //       _clearAllData();
-          //     } else {
-          //       EasyLoading.showError("Can not Call API");
-          //       // _getProcessStart();
-          //       _saveSendSqlite();
-          //       _clearAllData();
-          //     }
-          //   }
-          //   if (state is PMDailyErrorState) {
-          //     print("ERROR");
-          //     EasyLoading.dismiss();
-          //     // _getProcessStart();
-          //     _saveSendSqlite();
-          //     _clearAllData();
-          //     EasyLoading.showError("Please Check Connection Internet");
-          //   }
-          // },
-        )
+          }
+          if (state is PMDailyGetErrorState) {
+            print("ERROR");
+            // EasyLoading.dismiss();
+            // _errorDialog();
+            _getProcessStart();
+            EasyLoading.showError("Please Check Connection Internet");
+          }
+        }
+            // },
+            )
       ],
       child: BgWhite(
           isHideAppBar: true,
@@ -265,7 +226,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[1-3]')),
                     ],
                   ),
-                  PMDDs != null
+                  employeeDataSource != null
                       ? Expanded(
                           flex: 5,
                           child: Container(
@@ -274,29 +235,29 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               gridLinesVisibility: GridLinesVisibility.both,
                               headerGridLinesVisibility:
                                   GridLinesVisibility.both,
-                              source: PMDDs!,
+                              source: employeeDataSource!,
                               columnWidthMode: ColumnWidthMode.fill,
                               columns: [
                                 GridColumn(
                                   width: 120,
-                                  columnName: 'data',
+                                  columnName: 'id',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
                                       child: Label(
-                                        'Data',
+                                        'ID',
                                         color: COLOR_WHITE,
                                       ),
                                     ),
                                   ),
                                 ),
                                 GridColumn(
-                                  columnName: 'no',
+                                  columnName: 'proc',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
                                       child: Label(
-                                        'No.',
+                                        'Proc',
                                         color: COLOR_WHITE,
                                       ),
                                     ),
@@ -306,17 +267,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                             ),
                           ),
                         )
-                      : Row(
-                          children: [
-                            Visibility(
-                              visible: true,
-                              child: Container(
-                                  child: Label(
-                                valuetxtinput,
-                                color: COLOR_RED,
-                              )),
-                            ),
-                          ],
+                      : Container(
+                          child: Label("======"),
                         ),
                   SizedBox(
                     height: 10,
@@ -389,7 +341,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
         await databaseHelper.insertSqlite('PM_SHEET', {
           'OperatorName': operatorNameController.text.trim(),
           'CheckPointPM': checkpointController.text.trim(),
-          'Status': checkpointController.text.trim(),
+          'Status': '1',
           'DatePM': DateTime.now().toString(),
         });
         print("ok");
@@ -430,9 +382,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       _enabledPMDaily = false;
     });
 
-    // BlocProvider.of<PmDailyBloc>(context).add(
-    //   PMDailyGetSendEvent(checkpointController.text.trim()),
-    // );
+    BlocProvider.of<PmDailyBloc>(context).add(
+      PMDailyGetSendEvent(checkpoint),
+    );
     // widget.onChange!(operatorNameController.text.trim());
   }
 
@@ -520,48 +472,44 @@ class PMDailyDataSource extends DataGridSource {
   }
 }
 
-// class PMDailyCheckPointDataSource extends DataGridSource {
-//   PMDailyDataSource({List<PMDailyModel>? process}) {
-//     if (process != null) {
-//       for (var _item in process) {
-//         _employees.add(
-//           DataGridRow(
-//             cells: [
-//               DataGridCell<String>(
-//                   columnName: 'Operatorname', value: _item.OPERATOR_NAME),
-//               DataGridCell<String>(
-//                   columnName: 'Checkpoint', value: _item.CHECKPOINT),
-//               DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
-//               DataGridCell<String>(
-//                   columnName: 'StartDate', value: _item.DATEPM),
-//             ],
-//           ),
-//         );
-//       }
-//     } else {
-//       EasyLoading.showError("Can not request Data");
-//     }
-//   }
-//
-//   List<DataGridRow> _employees = [];
-//
-//   @override
-//   List<DataGridRow> get rows => _employees;
-//
-//   @override
-//   DataGridRowAdapter? buildRow(DataGridRow row) {
-//     return DataGridRowAdapter(
-//       cells: row.getCells().map<Widget>(
-//         (dataGridCell) {
-//           return Container(
-//             alignment: (dataGridCell.columnName == 'id' ||
-//                     dataGridCell.columnName == 'qty')
-//                 ? Alignment.center
-//                 : Alignment.center,
-//             child: Text(dataGridCell.value.toString()),
-//           );
-//         },
-//       ).toList(),
-//     );
-//   }
-// }
+class EmployeeDataSource extends DataGridSource {
+  EmployeeDataSource({List<PMDailyOutputModelPlan>? CHECKPOINT}) {
+    if (CHECKPOINT != null) {
+      for (var _item in CHECKPOINT) {
+        _employees.add(
+          DataGridRow(
+            cells: [
+              DataGridCell<String>(columnName: 'id', value: _item.STATUS),
+              DataGridCell<String>(
+                  columnName: 'proc', value: _item.DESCRIPTION),
+            ],
+          ),
+        );
+      }
+    } else {
+      EasyLoading.showError("Can not Call API");
+    }
+  }
+
+  List<DataGridRow> _employees = [];
+
+  @override
+  List<DataGridRow> get rows => _employees;
+
+  @override
+  DataGridRowAdapter? buildRow(DataGridRow row) {
+    return DataGridRowAdapter(
+      cells: row.getCells().map<Widget>(
+        (dataGridCell) {
+          return Container(
+            alignment: (dataGridCell.columnName == 'id' ||
+                    dataGridCell.columnName == 'qty')
+                ? Alignment.center
+                : Alignment.center,
+            child: Text(dataGridCell.value.toString()),
+          );
+        },
+      ).toList(),
+    );
+  }
+}

@@ -19,7 +19,7 @@ class PMDailySendEvent extends PmDailyEvent {
 class PMDailyGetSendEvent extends PmDailyEvent {
   const PMDailyGetSendEvent(this.items);
 
-  final PMDailyCheckPointOutputModel items;
+  final String items;
 
   @override
   List<Object> get prop => [items];

@@ -46,7 +46,7 @@ class PMDailyGetLoadingState extends PmDailyState {
 
 class PMDailyGetLoadedState extends PmDailyState {
   const PMDailyGetLoadedState(this.item);
-  final ResponeDefault item;
+  final CPPMDailyOutputModel item;
 
   @override
   List<Object> get props => [item];
