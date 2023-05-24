@@ -348,7 +348,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                           }),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [

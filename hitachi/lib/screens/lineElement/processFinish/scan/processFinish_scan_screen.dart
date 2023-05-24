@@ -40,6 +40,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
 
   @override
   void initState() {
+    rejectQtyController.text = "0";
     super.initState();
     f1.requestFocus();
   }
@@ -140,11 +141,12 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Operator Name : ",
                     controller: operatorNameController,
                     focusNode: f2,
+                    maxLength: 12,
                     textInputFormatter: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                     onEditingComplete: () {
-                      if (operatorNameController.text.isNotEmpty) {
+                      if (operatorNameController.text.length == 12) {
                         setState(() {
                           f3.requestFocus();
                         });
@@ -163,8 +165,11 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     controller: batchNoController,
                     type: TextInputType.number,
                     focusNode: f3,
+                    maxLength: 12,
                     onEditingComplete: () {
-                      f4.requestFocus();
+                      if (batchNoController.text.length == 12) {
+                        f4.requestFocus();
+                      }
                     },
                     textInputFormatter: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
@@ -198,6 +203,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Reject Qty : ",
                     controller: rejectQtyController,
                     focusNode: f4,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    onEditingComplete: () {
+                      _btnSend();
+                    },
                     // type: TextInputType.number,
                   ),
                   SizedBox(

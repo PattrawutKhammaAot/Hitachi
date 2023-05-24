@@ -413,7 +413,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                           }),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [

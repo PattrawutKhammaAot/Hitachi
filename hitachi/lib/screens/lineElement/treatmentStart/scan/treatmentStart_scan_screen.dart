@@ -73,16 +73,6 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
         START_DATE: DateTime.now().toString(),
       )),
     );
-
-    print(_machineNoController.text);
-    print(_operatorNameController.text);
-    print(_batch1Controller.text);
-    print(_batch2Controller.text);
-    print(_batch3Controller.text);
-    print(_batch4Controller.text);
-    print(_batch5Controller.text);
-    print(_batch6Controller.text);
-    print(_batch7Controller.text);
   }
 
   void _saveDataToSqlite() async {
@@ -90,18 +80,24 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       'MachineNo': _machineNoController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'Batch1': _batch1Controller.text.trim(),
-      'Batch2':
-          _batch2Controller.text.isEmpty ? "" : _batch2Controller.text.trim(),
-      'Batch3':
-          _batch3Controller.text.isEmpty ? "" : _batch3Controller.text.trim(),
-      'Batch4':
-          _batch4Controller.text.isEmpty ? "" : _batch4Controller.text.trim(),
-      'Batch5':
-          _batch5Controller.text.isEmpty ? "" : _batch5Controller.text.trim(),
-      'Batch6':
-          _batch6Controller.text.isEmpty ? "" : _batch6Controller.text.trim(),
-      'Batch7':
-          _batch7Controller.text.isEmpty ? "" : _batch7Controller.text.trim(),
+      'Batch2': _batch2Controller.text.isEmpty
+          ? " ".toString()
+          : _batch2Controller.text.trim(),
+      'Batch3': _batch3Controller.text.isEmpty
+          ? " ".toString()
+          : _batch3Controller.text.trim(),
+      'Batch4': _batch4Controller.text.isEmpty
+          ? " ".toString()
+          : _batch4Controller.text.trim(),
+      'Batch5': _batch5Controller.text.isEmpty
+          ? " ".toString()
+          : _batch5Controller.text.trim(),
+      'Batch6': _batch6Controller.text.isEmpty
+          ? " ".toString()
+          : _batch6Controller.text.trim(),
+      'Batch7': _batch7Controller.text.isEmpty
+          ? " ".toString()
+          : _batch7Controller.text.trim(),
       'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       'FinDate': '',
       'StartEnd': '',

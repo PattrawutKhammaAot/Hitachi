@@ -39,7 +39,7 @@ class ProcessOutputModel {
 
   @override
   Map toJson() => {
-        'Machine': MACHINE,
+        'MachineNo': MACHINE,
         'OperatorName': OPERATORNAME,
         'OperatorName1': OPERATORNAME1,
         'OperatorName2': OPERATORNAME2,

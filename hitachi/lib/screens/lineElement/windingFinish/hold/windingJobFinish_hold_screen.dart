@@ -307,7 +307,7 @@ class _WindingJobFinishHoldScreenState
                         }),
                       ),
                     )
-                  : CircularProgressIndicator(),
+                  : Container(),
               const SizedBox(height: 20),
               Row(
                 children: [

@@ -294,7 +294,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                           ),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 _index.isNotEmpty
                     ? Expanded(
@@ -378,7 +378,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                           }),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -508,24 +508,12 @@ class TreatMentStartDataSource extends DataGridSource {
                 DataGridCell<String>(
                     columnName: 'operator', value: _item.OPERATOR_NAME),
                 DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
-                DataGridCell<String>(
-                    columnName: 'b2',
-                    value: _item.BATCH2 == null ? '' : _item.BATCH2),
-                DataGridCell<String>(
-                    columnName: 'b3',
-                    value: _item.BATCH3 == null ? '' : _item.BATCH3),
-                DataGridCell<String>(
-                    columnName: 'b4',
-                    value: _item.BATCH4 == null ? '' : _item.BATCH4),
-                DataGridCell<String>(
-                    columnName: 'b5',
-                    value: _item.BATCH5 == null ? '' : _item.BATCH5),
-                DataGridCell<String>(
-                    columnName: 'b6',
-                    value: _item.BATCH6 == null ? '' : _item.BATCH6),
-                DataGridCell<String>(
-                    columnName: 'b7',
-                    value: _item.BATCH7 == null ? '' : _item.BATCH7),
+                DataGridCell<String>(columnName: 'b2', value: _item.BATCH2),
+                DataGridCell<String>(columnName: 'b3', value: _item.BATCH3),
+                DataGridCell<String>(columnName: 'b4', value: _item.BATCH4),
+                DataGridCell<String>(columnName: 'b5', value: _item.BATCH5),
+                DataGridCell<String>(columnName: 'b6', value: _item.BATCH6),
+                DataGridCell<String>(columnName: 'b7', value: _item.BATCH7),
                 DataGridCell<String>(
                     columnName: 'findate', value: _item.FINDATE),
               ],

@@ -35,7 +35,7 @@ class ProcessFinishOutputModel {
 
   @override
   Map toJson() => {
-        'Machine': MACHINE,
+        'MachineNo': MACHINE,
         'OperatorName': OPERATORNAME,
         'RejectQty': REJECTQTY,
         'BatchNo': BATCHNO,

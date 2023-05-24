@@ -63,12 +63,6 @@ class _MachineBreakDownScanScreenState
 //
   final _formKey = GlobalKey<FormState>();
 
-  Future _refreshPage() async {
-    Future.delayed(Duration(seconds: 2), () {
-      _callBreakDownMachine();
-    });
-  }
-
   void _checkValueController() async {
     if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
@@ -76,8 +70,8 @@ class _MachineBreakDownScanScreenState
         _start_Technical_1_Controller.text.isNotEmpty &&
         _stop_Technical_1_Controller.text.isNotEmpty &&
         _operator_accept_Controller.text.isNotEmpty) {
+      await _saveMachine();
       _sendData();
-      _callBreakDownMachine();
     } else if (_machineNo_Controller.text.isNotEmpty &&
         _operatorname_Controller.text.isNotEmpty &&
         _start_Technical_1_Controller.text.isNotEmpty) {
@@ -85,11 +79,10 @@ class _MachineBreakDownScanScreenState
           text: Label("Do you wanna Save ?"),
           onpressOk: () async {
             await _saveMachine();
-            _callBreakDownMachine();
+            await _callBreakDownMachine();
             _checkControllerIsNull();
             f1.requestFocus();
             Navigator.pop(context);
-            _callBreakDownMachine();
             EasyLoading.showSuccess("Save Successs");
           });
     } else {
@@ -98,6 +91,7 @@ class _MachineBreakDownScanScreenState
   }
 
   void _checkControllerIsNull() {
+    _dpbMachineNo_Controller.clear();
     _machineNo_Controller.text.isNotEmpty
         ? _machineNo_Controller.clear()
         : _machineNo_Controller.text;
@@ -118,19 +112,17 @@ class _MachineBreakDownScanScreenState
         : _operator_accept_Controller.text;
   }
 
-  void _callBreakDownMachine() async {
+  Future _callBreakDownMachine({bool isCallBdm = false}) async {
     var sql = await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
     if (sql.length > 0) {
       setState(() {
+        bdsList = [];
         bdsList = sql
             .map((row) => BreakDownSheetModel.fromMap(
                 row.map((key, value) => MapEntry(key, value))))
             .toList();
       });
-    } else {
-      print(bdsList.length);
     }
-
     setState(() {
       bdsList.insert(0, BreakDownSheetModel(MACHINE_NO: "NEW"));
     });
@@ -138,7 +130,7 @@ class _MachineBreakDownScanScreenState
 
   @override
   void initState() {
-    _callBreakDownMachine();
+    _callBreakDownMachine(isCallBdm: true);
     super.initState();
   }
 
@@ -302,10 +294,9 @@ class _MachineBreakDownScanScreenState
   }
 
   Future _delete() async {
-    print("delete");
     await databaseHelper.deletedRowSqlite(
         tableName: 'BREAKDOWN_SHEET',
-        columnName: 'ID',
+        columnName: 'MachineNo',
         columnValue: _machineNo_Controller.text);
   }
 
@@ -324,10 +315,10 @@ class _MachineBreakDownScanScreenState
               });
               if (_respone!.RESULT == true) {
                 await _delete();
+                await _callBreakDownMachine();
+
                 _checkControllerIsNull();
                 f1.requestFocus();
-                _callBreakDownMachine();
-
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
@@ -379,23 +370,20 @@ class _MachineBreakDownScanScreenState
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            items: bdsList
-                                .map((item) => DropdownMenuItem<String>(
-                                      value: item.MACHINE_NO,
-                                      child: Text(
-                                        "${item.MACHINE_NO}",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ))
-                                .toList(),
-                            // validator: (value) {
-                            //   if (value == null) {
-                            //     return 'Please select gender.';
-                            //   }
-                            //   return null;
-                            // },
+                            items: bdsList.isNotEmpty
+                                ? bdsList
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.MACHINE_NO,
+                                          child: Text(
+                                            "${item.MACHINE_NO}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ))
+                                    .toSet()
+                                    .toList()
+                                : null,
                             onChanged: (value) {
                               for (var item in bdsList) {
                                 if (value == item.MACHINE_NO &&
@@ -428,18 +416,17 @@ class _MachineBreakDownScanScreenState
                                           item.STOP_DATE_TECH_2.toString();
                                     }
                                   });
-                                  print(value);
                                   break;
                                 } else if (value == 'NEW') {
                                   setState(() {
-                                    _machineNo_Controller.text = '';
-                                    _operatorname_Controller.text = '';
-                                    _serviceNo_Controller.text = '';
-                                    _start_Technical_1_Controller.text = '';
-                                    _start_Technical_2_Controller.text = '';
-                                    _stop_Technical_1_Controller.text = '';
-                                    _stop_Technical_2_Controller.text = '';
-                                    _operator_accept_Controller.text = '';
+                                    _machineNo_Controller.clear();
+                                    _operatorname_Controller.clear();
+                                    _serviceNo_Controller.clear();
+                                    _start_Technical_1_Controller.clear();
+                                    _start_Technical_2_Controller.clear();
+                                    _stop_Technical_1_Controller.clear();
+                                    _stop_Technical_2_Controller.clear();
+                                    _operator_accept_Controller.clear();
                                     f1.requestFocus();
                                   });
                                 }
@@ -447,6 +434,7 @@ class _MachineBreakDownScanScreenState
                             },
                             onSaved: (value) {
                               selectedValue = value.toString();
+                              print(value);
                             },
                             buttonStyleData: const ButtonStyleData(
                               height: 50,

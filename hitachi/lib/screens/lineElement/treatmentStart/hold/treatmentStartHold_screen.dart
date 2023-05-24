@@ -88,9 +88,9 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
       listeners: [
         BlocListener<TreatmentBloc, TreatmentState>(
           listener: (context, state) async {
-            if (state is TreatmentFinishSendLoadingState) {
+            if (state is TreatmentStartSendLoadingState) {
               EasyLoading.show();
-            } else if (state is TreatmentFinishSendLoadedState) {
+            } else if (state is TreatmentStartSendLoadedState) {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 await deletedInfo();
@@ -103,7 +103,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                       Navigator.pop(context);
                     });
               }
-            } else {
+            } else if (state is TreatmentStartSendErrorState) {
               EasyLoading.dismiss();
 
               EasyLoading.showError("Please Check Connection Internet");
@@ -367,7 +367,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                           }),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [
@@ -453,23 +453,28 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
   }
 
   _sendDataServer() {
-    _index.forEach((element) async {
-      var row = tmList.where((value) => value.ID == element).first;
-      BlocProvider.of<TreatmentBloc>(context).add(
-        TreatmentFinishSendEvent(TreatMentOutputModel(
-          MACHINE_NO: row.MACHINE_NO,
-          OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-          BATCH_NO_1: row.BATCH1,
-          BATCH_NO_2: row.BATCH2,
-          BATCH_NO_3: row.BATCH3,
-          BATCH_NO_4: row.BATCH4,
-          BATCH_NO_5: row.BATCH5,
-          BATCH_NO_6: row.BATCH6,
-          BATCH_NO_7: row.BATCH7,
-          FINISH_DATE: row.FINDATE,
-        )),
-      );
-    });
+    try {
+      _index.forEach((element) async {
+        var row = tmList.where((value) => value.ID == element).first;
+
+        BlocProvider.of<TreatmentBloc>(context).add(
+          TreatmentStartSendEvent(TreatMentOutputModel(
+            MACHINE_NO: row.MACHINE_NO,
+            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            BATCH_NO_1: row.BATCH1,
+            BATCH_NO_2: row.BATCH2,
+            BATCH_NO_3: row.BATCH3,
+            BATCH_NO_4: row.BATCH4,
+            BATCH_NO_5: row.BATCH5,
+            BATCH_NO_6: row.BATCH6,
+            BATCH_NO_7: row.BATCH7,
+            START_DATE: row.STARTDATE,
+          )),
+        );
+      });
+    } on Exception {
+      throw Exception();
+    }
   }
 
   Future deletedInfo() async {
@@ -498,25 +503,20 @@ class TreatMentStartDataSource extends DataGridSource {
                     columnName: 'mac', value: _item.MACHINE_NO),
                 DataGridCell<String>(
                     columnName: 'operator', value: _item.OPERATOR_NAME),
-                DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
                 DataGridCell<String>(
-                    columnName: 'b2',
-                    value: _item.BATCH2 == null ? '' : _item.BATCH2),
+                    columnName: 'b1', value: _item.BATCH1 ?? ""),
                 DataGridCell<String>(
-                    columnName: 'b3',
-                    value: _item.BATCH3 == null ? '' : _item.BATCH3),
+                    columnName: 'b2', value: _item.BATCH2 ?? ""),
                 DataGridCell<String>(
-                    columnName: 'b4',
-                    value: _item.BATCH4 == null ? '' : _item.BATCH4),
+                    columnName: 'b3', value: _item.BATCH3 ?? ""),
                 DataGridCell<String>(
-                    columnName: 'b5',
-                    value: _item.BATCH5 == null ? '' : _item.BATCH5),
+                    columnName: 'b4', value: _item.BATCH4 ?? ""),
                 DataGridCell<String>(
-                    columnName: 'b6',
-                    value: _item.BATCH6 == null ? '' : _item.BATCH6),
+                    columnName: 'b5', value: _item.BATCH5 ?? ""),
                 DataGridCell<String>(
-                    columnName: 'b7',
-                    value: _item.BATCH7 == null ? '' : _item.BATCH7),
+                    columnName: 'b6', value: _item.BATCH6 ?? ""),
+                DataGridCell<String>(
+                    columnName: 'b7', value: _item.BATCH7 ?? ""),
                 DataGridCell<String>(columnName: 'std', value: _item.STARTDATE),
               ],
             ),
@@ -547,4 +547,8 @@ class TreatMentStartDataSource extends DataGridSource {
       ).toList(),
     );
   }
+}
+
+class EmptyObject {
+  // สร้างตัวแปรหรือฟังก์ชันที่คุณต้องการในอ็อบเจ็กต์ว่าง
 }

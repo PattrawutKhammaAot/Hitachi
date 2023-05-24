@@ -115,6 +115,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               if (state.item.RESULT == true) {
                 EasyLoading.showSuccess("SendComplete");
                 _clearAllData();
+                bgChange = Colors.grey;
                 f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 _errorDialog(
@@ -313,7 +314,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     maxLength: 12,
                     height: 35,
                     onEditingComplete: () {
-                      _btnSend();
+                      if (batchNoController.text.length == 12) {
+                        _btnSend();
+                      }
                     },
                     controller: batchNoController,
                     type: TextInputType.number,

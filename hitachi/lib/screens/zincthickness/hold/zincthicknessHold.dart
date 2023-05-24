@@ -374,7 +374,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                           }),
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Container(),
                 const SizedBox(height: 20),
                 Row(
                   children: [

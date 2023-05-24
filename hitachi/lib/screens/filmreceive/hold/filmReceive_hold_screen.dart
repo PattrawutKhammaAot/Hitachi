@@ -458,7 +458,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                         }),
                       ),
                     )
-                  : CircularProgressIndicator(),
+                  : Container(),
               const SizedBox(height: 20),
               Row(
                 children: [
