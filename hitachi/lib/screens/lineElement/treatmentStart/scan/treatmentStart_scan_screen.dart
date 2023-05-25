@@ -63,13 +63,13 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       TreatmentStartSendEvent(TreatMentOutputModel(
         MACHINE_NO: _machineNoController.text.trim(),
         OPERATOR_NAME: int.tryParse(_operatorNameController.text.trim()),
-        BATCH_NO_1: _batch1Controller.text.trim(),
-        BATCH_NO_2: _batch2Controller.text.trim(),
-        BATCH_NO_3: _batch3Controller.text.trim(),
-        BATCH_NO_4: _batch4Controller.text.trim(),
-        BATCH_NO_5: _batch5Controller.text.trim(),
-        BATCH_NO_6: _batch6Controller.text.trim(),
-        BATCH_NO_7: _batch7Controller.text.trim(),
+        BATCH_NO_1: _batch1Controller.text,
+        BATCH_NO_2: _batch2Controller.text,
+        BATCH_NO_3: _batch3Controller.text,
+        BATCH_NO_4: _batch4Controller.text,
+        BATCH_NO_5: _batch5Controller.text,
+        BATCH_NO_6: _batch6Controller.text,
+        BATCH_NO_7: _batch7Controller.text,
         START_DATE: DateTime.now().toString(),
       )),
     );
@@ -86,24 +86,12 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       'MachineNo': _machineNoController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
       'Batch1': _batch1Controller.text.trim(),
-      'Batch2': _batch2Controller.text.isEmpty
-          ? " ".toString()
-          : _batch2Controller.text.trim(),
-      'Batch3': _batch3Controller.text.isEmpty
-          ? " ".toString()
-          : _batch3Controller.text.trim(),
-      'Batch4': _batch4Controller.text.isEmpty
-          ? " ".toString()
-          : _batch4Controller.text.trim(),
-      'Batch5': _batch5Controller.text.isEmpty
-          ? " ".toString()
-          : _batch5Controller.text.trim(),
-      'Batch6': _batch6Controller.text.isEmpty
-          ? " ".toString()
-          : _batch6Controller.text.trim(),
-      'Batch7': _batch7Controller.text.isEmpty
-          ? " ".toString()
-          : _batch7Controller.text.trim(),
+      'Batch2': _batch2Controller.text.trim(),
+      'Batch3': _batch3Controller.text.trim(),
+      'Batch4': _batch4Controller.text.trim(),
+      'Batch5': _batch5Controller.text.trim(),
+      'Batch6': _batch6Controller.text.trim(),
+      'Batch7': _batch7Controller.text.trim(),
       'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       'FinDate': '',
       'StartEnd': '',

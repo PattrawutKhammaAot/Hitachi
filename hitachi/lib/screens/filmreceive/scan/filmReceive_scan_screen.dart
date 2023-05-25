@@ -162,7 +162,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'PACK_NO': _packNoController.text.trim(),
           'STORE_DATE':
               DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
-          'STATUS': " ",
+          'STATUS': "S",
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
@@ -171,7 +171,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'THICKNESS2': "",
           'WRAP_GRADE': _wrapGradeController.text.trim(),
           'ROLL_NO': _rollNoController.text.trim(),
-          'checkComplete': "S"
+          'checkComplete': "S",
         });
       }
     } catch (e, s) {
@@ -548,8 +548,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           maxLength: 27,
                           controller: _barCode1Controller,
                           onEditingComplete: () {
-                            f9.requestFocus();
-                            _checkMfgDate();
+                            if (_barCode1Controller.text.length == 14) {
+                              f9.requestFocus();
+                              _checkMfgDate();
+                            }
                           },
                           onChanged: (value) {
                             if (value.length > 10) {
@@ -573,7 +575,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           focusNode: f9,
                           maxLength: 27,
                           onEditingComplete: () {
-                            if (_barCode2Controller.text.length == 27) {
+                            if (_barCode2Controller.text.length == 14) {
                               f11.requestFocus();
                             }
                           },

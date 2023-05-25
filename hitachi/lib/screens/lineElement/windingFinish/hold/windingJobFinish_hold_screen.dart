@@ -50,6 +50,12 @@ class _WindingJobFinishHoldScreenState
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
 
+  Map<String, double> columnWidths = {
+    'batch': double.nan,
+    'startEnd': double.nan,
+    'element': double.nan
+  };
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
@@ -144,6 +150,15 @@ class _WindingJobFinishHoldScreenState
                   ? Expanded(
                       child: Container(
                         child: SfDataGrid(
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                            });
+                            return true;
+                          },
                           source: WindingDataSource!,
                           showCheckboxColumn: true,
                           selectionMode: SelectionMode.multiple,
@@ -214,42 +229,47 @@ class _WindingJobFinishHoldScreenState
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['batch']!,
                               columnName: 'batch',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Container(
+                                  child: Center(
+                                      child: Label(
+                                    'Batch No.',
+                                    textAlign: TextAlign.center,
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['startEnd']!,
+                              columnName: 'startEnd',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
                                 child: Center(
                                     child: Label(
-                                  'Batch No.',
-                                  textAlign: TextAlign.center,
+                                  'Date End',
                                   fontSize: 14,
                                   color: COLOR_WHITE,
                                 )),
                               ),
                             ),
                             GridColumn(
-                                columnName: 'startEnd',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Date End',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
-                            GridColumn(
-                                columnName: 'element',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Element Qty',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
+                              width: columnWidths['element']!,
+                              columnName: 'element',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'Element Qty',
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                           ],
                         ),
                       ),

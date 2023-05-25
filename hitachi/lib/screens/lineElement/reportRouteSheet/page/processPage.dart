@@ -203,7 +203,7 @@ class _ProcessPageState extends State<ProcessPage> {
                       ),
                     )
                   : Container(
-                      child: Label(" กรุณากรอกข้อมูล"),
+                      child: Label(" Please input BatchNo"),
                     ),
             ],
           ),

@@ -40,6 +40,20 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   List<int> _index = [];
   int? allRowIndex;
   DatabaseHelper databaseHelper = DatabaseHelper();
+
+  late Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'machineno': double.nan,
+    'operatorName': double.nan,
+    'batchno': double.nan,
+    'product': double.nan,
+    'filmpackno': double.nan,
+    'papercodelot': double.nan,
+    'PPfilmlot': double.nan,
+    'foillot': double.nan,
+    'batchstart': double.nan,
+    'status': double.nan,
+  };
   @override
   void initState() {
     super.initState();
@@ -134,6 +148,18 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                     ? Expanded(
                         child: Container(
                           child: SfDataGrid(
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                              });
+                              return true;
+                            },
+
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
+                            allowColumnsResizing: true,
+
                             source: WindingDataSource!,
                             // columnWidthMode: ColumnWidthMode.fill,
                             showCheckboxColumn: true,
@@ -195,6 +221,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
 
                             columns: <GridColumn>[
                               GridColumn(
+                                width: columnWidths['ID']!,
                                 visible: false,
                                 columnName: 'ID',
                                 label: Container(
@@ -209,6 +236,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                  width: columnWidths['machineno']!,
                                   columnName: 'machineno',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
@@ -221,6 +249,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                     // color: COLOR_BLUE_DARK,
                                   )),
                               GridColumn(
+                                width: columnWidths['operatorName']!,
                                 columnName: 'operatorName',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
