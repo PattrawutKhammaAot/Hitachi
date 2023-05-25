@@ -196,9 +196,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                           elementQtyController.clear();
                           f1.requestFocus();
                           setState(() {
+                            target = "0";
                             bgColor = Colors.grey;
                           });
-
                           Navigator.pop(context);
                         });
                   }
@@ -222,8 +222,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                       });
                 }
               } else if (state is CheckWindingFinishErrorState) {
-                EasyLoading.showError("Please Check Connection",
-                    duration: Duration(seconds: 5));
+                EasyLoading.dismiss();
+                f3.requestFocus();
               }
             },
           )
@@ -241,7 +241,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   controller: operatorNameController,
                   type: TextInputType.number,
                   textInputFormatter: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                    ),
                   ],
                 ),
                 BoxInputField(

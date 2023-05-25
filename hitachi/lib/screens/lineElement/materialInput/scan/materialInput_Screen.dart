@@ -61,7 +61,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
         _lotNoController.text.length != 3) {
       _callApi();
     } else {
-      EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+      EasyLoading.showInfo("Please Input Data");
     }
   }
 
@@ -145,7 +145,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                           Navigator.pop(context);
                         });
                   } else {
-                    EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+                    EasyLoading.showInfo("Please Input Data");
                   }
                 } else {
                   EasyLoading.dismiss();
@@ -171,7 +171,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                           Navigator.pop(context);
                         });
                   } else {
-                    EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+                    EasyLoading.showInfo("Please Input Data");
                   }
                 }
               }

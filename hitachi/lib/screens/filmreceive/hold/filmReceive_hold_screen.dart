@@ -224,7 +224,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'Incoing',
+                                    'Incoming',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
@@ -501,17 +501,11 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   }
 
   Future deletedInfo() async {
-    if (_index != null) {
-      for (var row in selectAll) {
-        await databaseHelper.deletedRowSqlite(
-            tableName: 'DATA_SHEET', columnName: 'ID', columnValue: row.ID);
-      }
-    } else if (allRowIndex != null) {
-      for (var row in dstList) {
-        await databaseHelper.deletedRowSqlite(
-            tableName: 'DATA_SHEET', columnName: 'ID', columnValue: row.ID);
-      }
-    }
+    _index.forEach((element) async {
+      await databaseHelper.deletedRowSqlite(
+          tableName: 'DATA_SHEET', columnName: 'ID', columnValue: element);
+      _index.clear();
+    });
   }
 
   void _AlertDialog() async {

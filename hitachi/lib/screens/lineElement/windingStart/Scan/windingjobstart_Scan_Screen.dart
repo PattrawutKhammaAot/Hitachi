@@ -537,7 +537,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       Row(
                         children: [
                           Expanded(
-                            flex: 5,
+                            flex: 6,
                             child: BoxInputField(
                               focusNode: f1,
                               labelText: "Machine No :",
@@ -556,15 +556,16 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             ),
                           ),
                           Expanded(
-                            flex: 8,
+                            flex: 7,
                             child: BoxInputField(
                               focusNode: f2,
-                              labelText: "Operator Name :",
+                              labelText: "Operator :",
                               controller: operatorNameController,
                               type: TextInputType.number,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]')),
+                                  RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                                ),
                               ],
                               onEditingComplete: () => f3.requestFocus(),
                             ),
