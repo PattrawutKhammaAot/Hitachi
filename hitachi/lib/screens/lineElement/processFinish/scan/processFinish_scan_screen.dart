@@ -11,6 +11,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 
 class ProcessFinishScanScreen extends StatefulWidget {
   const ProcessFinishScanScreen({super.key});
@@ -326,7 +327,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
         BATCHNO: int.tryParse(batchNoController.text.trim()),
         REJECTQTY: rejectQtyController.text.trim(),
-        FINISHDATE: DateTime.now().toString(),
+        FINISHDATE:
+            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
       )),
     );
   }
@@ -354,7 +356,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
             key3: 'Garbage',
             yieldKey3: rejectQtyController.text.trim(),
             key4: 'FinDate',
-            yieldKey4: DateTime.now().toString(),
+            yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
+                .format(DateTime.now())
+                .toString(),
             whereKey: 'Machine',
             value: machineNoController.text.trim());
         print("updateSendSqlite");
@@ -439,7 +443,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'OperatorName1': operatorNameController.text.trim(),
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Garbage': rejectQtyController.text.trim(),
-        'FinDate': DateTime.now().toString(),
+        'FinDate':
+            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
         'StartEnd': StartEndValue.toString(),
       });
       print("ok");

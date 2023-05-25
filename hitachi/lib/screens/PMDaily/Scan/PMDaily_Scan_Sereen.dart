@@ -19,6 +19,7 @@ import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -366,7 +367,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
         OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
         CHECKPOINT: checkpointController.text.trim(),
         STATUS: _index.toString().trim(),
-        STARTDATE: DateTime.now().toString(),
+        STARTDATE:
+            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
       )),
     );
   }
@@ -378,7 +380,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           'OperatorName': operatorNameController.text.trim(),
           'CheckPointPM': checkpointController.text.trim(),
           'Status': _index.toString().trim(),
-          'DatePM': DateTime.now().toString(),
+          'DatePM': DateFormat('yyyy MM dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString(),
         });
         print("ok");
       }
