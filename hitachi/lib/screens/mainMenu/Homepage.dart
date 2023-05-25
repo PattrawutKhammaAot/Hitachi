@@ -134,8 +134,13 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     height: 15,
                   ),
                   Label(
-                    "Version ${_packageInfo.version} (6)",
+                    "Version ${_packageInfo.version} (${_packageInfo.buildNumber}) ",
                     fontSize: 20,
+                    color: Colors.grey,
+                  ),
+                  Label(
+                    "Date Modified : 25-05-2023",
+                    color: Colors.grey,
                   )
                 ],
               ),

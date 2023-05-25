@@ -114,14 +114,14 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                       duration: Duration(seconds: 3));
                 } else {
                   _errorDialog(
-                      text: Label("${state.item.MESSAGE}"),
+                      text:
+                          Label("${state.item.MESSAGE ?? "Check Connection"}"),
                       onpressOk: () {
                         Navigator.pop(context);
                       });
                 }
               } else {
                 EasyLoading.dismiss();
-                EasyLoading.showError("Please Check Connection Internet");
               }
             },
           )
@@ -512,20 +512,20 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
   void _sendDataServer() async {
     _index.forEach((element) async {
       var row = wdsList.where((value) => value.ID == element).first;
+
       BlocProvider.of<LineElementBloc>(context).add(
         PostSendWindingStartEvent(
           SendWindingStartModelOutput(
-              MACHINE_NO: row.MACHINE_NO,
-              OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-              PRODUCT: int.tryParse(
-                row.PRODUCT.toString(),
-              ),
-              FILM_PACK_NO: int.tryParse(
-                row.PACK_NO.toString(),
-              ),
-              PAPER_CODE_LOT: row.PAPER_CORE,
-              PP_FILM_LOT: row.PP_CORE,
-              FOIL_LOT: row.FOIL_CORE),
+            MACHINE_NO: row.MACHINE_NO,
+            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            BATCH_NO: row.BATCH_NO,
+            PRODUCT: int.tryParse(row.PRODUCT.toString()),
+            FILM_PACK_NO: int.tryParse(row.PACK_NO.toString()),
+            PAPER_CODE_LOT: row.PAPER_CORE,
+            PP_FILM_LOT: row.PP_CORE,
+            FOIL_LOT: row.FOIL_CORE,
+            START_DATE: row.BATCH_START_DATE,
+          ),
         ),
       );
     });

@@ -98,7 +98,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                 EasyLoading.showSuccess("SendComplete");
               } else {
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label("${state.item.MESSAGE ?? "Check Connection"}"),
                     onpressOk: () {
                       Navigator.pop(context);
                     });
@@ -453,28 +453,24 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
   }
 
   _sendDataServer() {
-    try {
-      _index.forEach((element) async {
-        var row = tmList.where((value) => value.ID == element).first;
+    _index.forEach((element) async {
+      var row = tmList.where((value) => value.ID == element).first;
 
-        BlocProvider.of<TreatmentBloc>(context).add(
-          TreatmentStartSendEvent(TreatMentOutputModel(
-            MACHINE_NO: row.MACHINE_NO,
-            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            BATCH_NO_1: row.BATCH1,
-            BATCH_NO_2: row.BATCH2,
-            BATCH_NO_3: row.BATCH3,
-            BATCH_NO_4: row.BATCH4,
-            BATCH_NO_5: row.BATCH5,
-            BATCH_NO_6: row.BATCH6,
-            BATCH_NO_7: row.BATCH7,
-            START_DATE: row.STARTDATE,
-          )),
-        );
-      });
-    } on Exception {
-      throw Exception();
-    }
+      BlocProvider.of<TreatmentBloc>(context).add(
+        TreatmentStartSendEvent(TreatMentOutputModel(
+          MACHINE_NO: row.MACHINE_NO,
+          OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+          BATCH_NO_1: row.BATCH1,
+          BATCH_NO_2: row.BATCH2,
+          BATCH_NO_3: row.BATCH3,
+          BATCH_NO_4: row.BATCH4,
+          BATCH_NO_5: row.BATCH5,
+          BATCH_NO_6: row.BATCH6,
+          BATCH_NO_7: row.BATCH7,
+          START_DATE: row.STARTDATE,
+        )),
+      );
+    });
   }
 
   Future deletedInfo() async {

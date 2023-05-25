@@ -41,7 +41,6 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
         tmList = result;
         tmsDatasource = TreatMentStartDataSource(process: tmList);
         print(jsonEncode(tmList[0].MACHINE_NO));
-        // print(jsonEncode(tmsDatasource));
       });
     });
 
@@ -105,7 +104,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                 EasyLoading.showSuccess("SendComplete");
               } else {
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label("${state.item.MESSAGE ?? "Check Connection"}"),
                     onpressOk: () {
                       Navigator.pop(context);
                     });
@@ -113,7 +112,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
             } else if (state is TreatmentFinishSendErrorState) {
               EasyLoading.dismiss();
               _errorDialog(
-                  text: Label("${state.error}"),
+                  text: Label("${state.error ?? "Check Connection"}"),
                   onpressOk: () {
                     Navigator.pop(context);
                   });

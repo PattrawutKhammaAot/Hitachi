@@ -46,6 +46,12 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   Color? bgChange;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+  @override
+  void initState() {
+    f1.requestFocus();
+    super.initState();
+  }
+
   void _btnSend() async {
     if (_machineNoController.text.isNotEmpty &&
         _operatorNameController.text.isNotEmpty &&
@@ -74,7 +80,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
     );
   }
 
-  void _saveDataToSqlite() async {
+  Future _saveDataToSqlite() async {
     try {
       await databaseHelper.insertSqlite('TREATMENT_SHEET', {
         'MachineNo': _machineNoController.text.trim(),
@@ -128,17 +134,40 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
               } else if (state.item.RESULT == false) {
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
-                      _saveDataToSqlite();
+                    onpressOk: () async {
+                      await _saveDataToSqlite();
+                      _machineNoController.clear();
+                      _operatorNameController.clear();
+                      _batch1Controller.clear();
+                      _batch2Controller.clear();
+                      _batch3Controller.clear();
+                      _batch4Controller.clear();
+                      _batch5Controller.clear();
+                      _batch6Controller.clear();
+                      _batch7Controller.clear();
+                      f1.requestFocus();
                       Navigator.pop(context);
                     });
               } else {
                 if (_machineNoController.text.isNotEmpty &&
                     _operatorNameController.text.isNotEmpty &&
                     _batch1Controller.text.isNotEmpty) {
-                  _saveDataToSqlite();
-                  EasyLoading.showError(
-                      "Please Check Connection Internet & Save Complete");
+                  _errorDialog(
+                      text: Label("CheckConnection\n Do you want to Save"),
+                      onpressOk: () async {
+                        await _saveDataToSqlite();
+                        _machineNoController.clear();
+                        _operatorNameController.clear();
+                        _batch1Controller.clear();
+                        _batch2Controller.clear();
+                        _batch3Controller.clear();
+                        _batch4Controller.clear();
+                        _batch5Controller.clear();
+                        _batch6Controller.clear();
+                        _batch7Controller.clear();
+                        f1.requestFocus();
+                        Navigator.pop(context);
+                      });
                 } else {
                   EasyLoading.showError("Please Input Info");
                 }
@@ -172,9 +201,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   RowBoxInputField(
                     focusNode: f2,
                     onEditingComplete: () {
-                      if (_operatorNameController.text.length == 12) {
-                        f3.requestFocus();
-                      }
+                      f3.requestFocus();
                     },
                     labelText: "Operator Name : ",
                     height: 35,
@@ -182,7 +209,9 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     type: TextInputType.number,
                     controller: _operatorNameController,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                   ),
                   const SizedBox(

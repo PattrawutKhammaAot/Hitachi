@@ -93,7 +93,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
           await databaseHelper.insertSqlite('WINDING_SHEET', {
         'MachineNo': 'WD',
         'BatchNo': batchNoController.text.trim(),
-        'Element': batchNoController.text.trim(),
+        'Element': elementQtyController.text.trim(),
         'BatchEndDate':
             DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
         'start_end': DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
@@ -174,9 +174,9 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                       operatorNameController.text.trim().isNotEmpty &&
                       elementQtyController.text.trim().isNotEmpty) {
                     _errorDialog(
-                        text: Label("${items!.MESSAGE}"),
-                        onpressOk: () {
-                          _insertSqlite();
+                        text: Label("${items!.MESSAGE ?? "Check Connection"}"),
+                        onpressOk: () async {
+                          await _insertSqlite();
                           Navigator.pop(context);
                         });
                   } else {
@@ -186,9 +186,21 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   if (batchNoController.text.trim().isNotEmpty &&
                       operatorNameController.text.trim().isNotEmpty &&
                       elementQtyController.text.trim().isNotEmpty) {
-                    _insertSqlite();
-                    EasyLoading.showError(
-                        "Please Check Connection Internet & Save Complete");
+                    _errorDialog(
+                        text: Label(
+                            "Please Check Connection Internet \n Do you want to save data"),
+                        onpressOk: () async {
+                          await _insertSqlite();
+                          operatorNameController.clear();
+                          batchNoController.clear();
+                          elementQtyController.clear();
+                          f1.requestFocus();
+                          setState(() {
+                            bgColor = Colors.grey;
+                          });
+
+                          Navigator.pop(context);
+                        });
                   }
                 }
               } else if (state is PostSendWindingFinishErrorState) {
@@ -210,8 +222,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                       });
                 }
               } else if (state is CheckWindingFinishErrorState) {
-                EasyLoading.showError(
-                    "Please Check Connection & Save Complete");
+                EasyLoading.showError("Please Check Connection",
+                    duration: Duration(seconds: 5));
               }
             },
           )
