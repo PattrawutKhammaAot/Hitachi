@@ -199,6 +199,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           columnWidthMode: ColumnWidthMode.fill,
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
+                            _index.clear();
                             if (selectRow.isNotEmpty) {
                               if (selectRow.length ==
                                       PMDailyDataSource!.effectiveRows.length &&
@@ -316,9 +317,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   _loadPlan() {
-    // BlocProvider.of<PlanWindingBloc>(context).add(
-    //   PlanWindingSendEvent(batchNoController.text.trim()),
-    // );
     BlocProvider.of<PmDailyBloc>(context).add(
       PMDailyGetSendEvent(checkpointController.text),
     );

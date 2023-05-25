@@ -74,7 +74,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     });
   }
 
-  void deletedInfo() async {
+  Future deletedInfo() async {
     setState(() {
       _index.forEach((element) async {
         await databaseHelper.deletedRowSqlite(
@@ -83,6 +83,16 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       });
     });
   }
+
+  // void deletedInfo() async {
+  //   setState(() {
+  //     _index.forEach((element) async {
+  //       await databaseHelper.deletedRowSqlite(
+  //           tableName: 'PROCESS_SHEET', columnName: 'ID', columnValue: element);
+  //       _index.clear();
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -412,12 +422,13 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         // title: const Text('AlertDialog Title'),
-        content: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Please Input Password',
-          ),
-          controller: _passwordController,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Label("Do you want Delete"),
+            ),
+          ],
         ),
 
         actions: <Widget>[
@@ -426,16 +437,11 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              if (_passwordController.text.trim().length > 6) {
-                deletedInfo();
-
-                Navigator.pop(context);
-                Navigator.pop(context);
-                EasyLoading.showSuccess("Delete Success");
-              } else {
-                EasyLoading.showError("Please Input Password");
-              }
+            onPressed: () async {
+              Navigator.pop(context);
+              await deletedInfo();
+              await _refreshPage();
+              EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
           ),
@@ -443,6 +449,44 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       ),
     );
   }
+
+  // void _AlertDialog() async {
+  //   // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+  //   showDialog<String>(
+  //     context: context,
+  //     builder: (BuildContext context) => AlertDialog(
+  //       // title: const Text('AlertDialog Title'),
+  //       content: TextFormField(
+  //         decoration: const InputDecoration(
+  //           border: OutlineInputBorder(),
+  //           labelText: 'Please Input Password',
+  //         ),
+  //         controller: _passwordController,
+  //       ),
+  //
+  //       actions: <Widget>[
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Cancel'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             if (_passwordController.text.trim().length > 6) {
+  //               deletedInfo();
+  //
+  //               Navigator.pop(context);
+  //               Navigator.pop(context);
+  //               EasyLoading.showSuccess("Delete Success");
+  //             } else {
+  //               EasyLoading.showError("Please Input Password");
+  //             }
+  //           },
+  //           child: const Text('OK'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class ProcessStartDataSource extends DataGridSource {
