@@ -199,7 +199,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label(
-                                      'Machine',
+                                      'Operator Name',
                                       color: COLOR_WHITE,
                                     ),
                                   ),
@@ -210,7 +210,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Operatorname',
+                                      child: Label('Checkpoint',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
@@ -220,8 +220,8 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Operatorname1',
-                                          color: COLOR_WHITE),
+                                      child:
+                                          Label('Status', color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
@@ -230,7 +230,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Operatorname2',
+                                      child: Label('Start Date',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
@@ -268,25 +268,23 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                               ],
                               rows: [
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Machine No."))),
+                                  DataCell(
+                                      Center(child: Label("Operator Name"))),
                                   DataCell(Label(
                                       "${PMDailyList.where((element) => element.ID == _index.first).first.OPERATOR_NAME}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Operator Name"))),
+                                  DataCell(Center(child: Label("Checkpoint"))),
                                   DataCell(Label(
                                       "${PMDailyList.where((element) => element.ID == _index.first).first.CHECKPOINT}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Operator Name1"))),
+                                  DataCell(Center(child: Label("Status"))),
                                   DataCell(Label(
                                       "${PMDailyList.where((element) => element.ID == _index.first).first.STATUS}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(
-                                      Center(child: Label("Operator Name2"))),
+                                  DataCell(Center(child: Label("Start Date"))),
                                   DataCell(Label(
                                       "${PMDailyList.where((element) => element.ID == _index.first).first.DATEPM}"))
                                 ]),
