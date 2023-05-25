@@ -120,6 +120,10 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                 _batch6Controller.clear();
                 _batch7Controller.clear();
                 f1.requestFocus();
+                setState(() {
+                  bgChange = Colors.grey;
+                });
+
                 EasyLoading.showSuccess("${state.item.MESSAGE}");
               } else if (state.item.RESULT == false) {
                 if (_machineNoController.text.isNotEmpty &&

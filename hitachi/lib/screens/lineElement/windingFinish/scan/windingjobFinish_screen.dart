@@ -44,7 +44,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   SendWdsFinishOutputModel? _outputModel;
 
   ReportRouteSheetModel? itemsReport;
-  String? target = "invaild";
+  String target = "invaild";
   void _btnSend_Click() async {
     if (batchNoController.text.trim().isNotEmpty &&
         operatorNameController.text.trim().isNotEmpty &&
@@ -135,7 +135,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
         checkRow = "N/A";
       }
     } on Exception {
-      target = null;
+      target = "Invaild";
       throw Exception();
     }
   }
@@ -259,10 +259,16 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   maxLength: 12,
                   controller: batchNoController,
                   onChanged: (value) {
-                    setState(() {
-                      checkformtxtBatchNo();
-                      batchNoController.text.trim();
-                    });
+                    if (value.length == 12) {
+                      setState(() {
+                        checkformtxtBatchNo();
+                        batchNoController.text.trim();
+                      });
+                    } else {
+                      setState(() {
+                        target = "Invaild";
+                      });
+                    }
                   },
                 ),
                 BoxInputField(
@@ -300,7 +306,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                           color: COLOR_RED,
                         ),
                         Label(
-                          "Target : ${target}",
+                          "Target : ${double.tryParse(target)?.toStringAsFixed(0) ?? "0"}",
                           color: COLOR_RED,
                         )
                       ],

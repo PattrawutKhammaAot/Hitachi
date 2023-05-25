@@ -213,7 +213,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
       double weight2 = double.tryParse(_weight2Controller.text.trim()) ?? 0;
       totalWeight = weight1 + weight2;
     });
-
+    // callFilmIn();
     BlocProvider.of<FilmReceiveBloc>(context).add(
       FilmReceiveSendEvent(
         FilmReceiveOutputModel(
@@ -545,7 +545,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           focusNode: f8,
                           labelText: "BarCode 1",
                           height: 30,
-                          maxLength: 27,
+                          maxLength: 14,
                           controller: _barCode1Controller,
                           onEditingComplete: () {
                             if (_barCode1Controller.text.length == 14) {
@@ -573,7 +573,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         flex: 4,
                         child: BoxInputField(
                           focusNode: f9,
-                          maxLength: 27,
+                          maxLength: 14,
                           onEditingComplete: () {
                             if (_barCode2Controller.text.length == 14) {
                               f11.requestFocus();

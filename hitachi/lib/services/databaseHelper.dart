@@ -855,7 +855,7 @@ class DatabaseHelper {
   ///
   Future<void> writeTableWindingWeightSheet_ToSqlite({
     String? machineNo,
-    int? batchNo,
+    String? batchNo,
     num? target,
   }) async {
     Database db = await DatabaseHelper().database;
