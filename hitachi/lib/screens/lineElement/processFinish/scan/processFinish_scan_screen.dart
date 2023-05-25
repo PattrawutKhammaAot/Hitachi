@@ -191,7 +191,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     },
                     maxLength: 12,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                     onEditingComplete: () {
                       setState(() {

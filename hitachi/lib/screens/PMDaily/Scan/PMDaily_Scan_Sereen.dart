@@ -40,6 +40,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   ResponeDefault? items;
   List<int> _index = [];
   DataGridRow? datagridRow;
+  String CheckFirst = "";
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   final TextEditingController checkpointController = TextEditingController();
@@ -162,15 +163,20 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 maxLength: 12,
                 focusNode: f1,
                 // enabled: _enabledPMDaily,
+
                 onEditingComplete: () {
                   if (operatorNameController.text.isNotEmpty) {
                     setState(() {
                       f2.requestFocus();
                     });
-                  } else {}
+                  } else {
+                    operatorNameController.clear();
+                  }
                 },
                 textInputFormatter: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                  ),
                 ],
               ),
               SizedBox(
@@ -179,7 +185,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               RowBoxInputField(
                 labelText: "Check Point : ",
                 height: 35,
-                maxLength: 1,
+                maxLength: 10,
                 controller: checkpointController,
                 focusNode: f2,
                 // enabled: _enabledPMDaily,
@@ -196,10 +202,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     });
                   }
                 },
-                // onEditingComplete: () => f4.requestFocus(),
-                textInputFormatter: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[1-3]')),
-                ],
               ),
               SizedBox(
                 height: 5,
@@ -336,9 +338,19 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   _loadPlan() {
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailyGetSendEvent(checkpointController.text),
-    );
+    CheckFirst = checkpointController.text.substring(0, 1);
+
+    if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
+      BlocProvider.of<PmDailyBloc>(context).add(
+        PMDailyGetSendEvent(CheckFirst),
+      );
+    } else {
+      _errorDialog(
+          text: Label("Check Point Not Correct"),
+          onpressOk: () async {
+            Navigator.pop(context);
+          });
+    }
     // widget.onChange!(batchNoController.text.trim());
   }
 

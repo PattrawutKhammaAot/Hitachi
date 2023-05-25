@@ -249,7 +249,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       }
                     },
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                     onChanged: (value) {
                       if (MachineController.text.isNotEmpty &&
@@ -280,7 +282,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f4.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -295,7 +299,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f5.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -310,7 +316,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f6.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(

@@ -130,22 +130,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
-                // if (state is ProcessStartLoadingState) {
-                //   EasyLoading.show();
-                // } else if (state is ProcessStartLoadedState) {
-                //   if (state.item.RESULT == true) {
-                //     deletedInfo();
-                //     Navigator.canPop(context);
-                //     EasyLoading.dismiss();
-                //     EasyLoading.showSuccess("Send complete",
-                //         duration: Duration(seconds: 3));
-                //   } else {
-                //     EasyLoading.showError("Please Check Data");
-                //   }
-                // } else {
-                //   EasyLoading.dismiss();
-                //   EasyLoading.showError("Please Check Connection Internet");
-                // }
                 if (state is ProcessStartLoadingState) {
                   EasyLoading.show();
                 } else if (state is ProcessStartLoadedState) {
