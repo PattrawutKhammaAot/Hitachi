@@ -112,30 +112,59 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             }
             if (state is ProcessStartLoadedState) {
               print("Loaded");
-              EasyLoading.show(status: "Loaded");
+              EasyLoading.dismiss();
+              // EasyLoading.show(status: "Loaded");
               if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
-                _clearAllData();
+                // EasyLoading.showSuccess("SendComplete");
+                EasyLoading.dismiss();
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () async {
+                      Navigator.pop(context);
+                      await _getProcessStart();
+                      MachineController.clear();
+                      operatorNameController.clear();
+                      operatorName1Controller.clear();
+                      operatorName2Controller.clear();
+                      operatorName3Controller.clear();
+                      batchNoController.clear();
+                    });
                 bgChange = Colors.grey;
                 f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 // EasyLoading.showError("Can not send & save Data");
+                EasyLoading.dismiss();
                 items = state.item;
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
+                    onpressOk: () async {
                       Navigator.pop(context);
-                      _getProcessStart();
+
+                      await _getProcessStart();
+                      MachineController.clear();
+                      operatorNameController.clear();
+                      operatorName1Controller.clear();
+                      operatorName2Controller.clear();
+                      operatorName3Controller.clear();
+                      batchNoController.clear();
                     });
               } else {
+                EasyLoading.dismiss();
                 // EasyLoading.showError("Can not Call API");
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
+                    onpressOk: () async {
                       Navigator.pop(context);
-                      _getProcessStart();
+                      await _getProcessStart();
+                      MachineController.clear();
+                      operatorNameController.clear();
+                      operatorName1Controller.clear();
+                      operatorName2Controller.clear();
+                      operatorName3Controller.clear();
+                      batchNoController.clear();
                     });
               }
+              f1.requestFocus();
             }
             if (state is ProcessStartErrorState) {
               print("ERROR");
@@ -162,7 +191,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     controller: MachineController,
                     height: 35,
                     focusNode: f1,
-                    enabled: _enabledMachineNo,
+                    // enabled: _enabledMachineNo,
                     onEditingComplete: () {
                       if (MachineController.text.length > 2) {
                         setState(() {

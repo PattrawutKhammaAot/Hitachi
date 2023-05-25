@@ -94,29 +94,47 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             }
             if (state is PMDailyLoadedState) {
               print("Loaded");
-              EasyLoading.showSuccess("Loaded");
+              EasyLoading.dismiss();
+              // EasyLoading.showSuccess("Loaded");
+
               if (state.item.RESULT == true) {
-                EasyLoading.showSuccess("SendComplete");
+                EasyLoading.dismiss();
+                // EasyLoading.showSuccess("SendComplete");
+                _errorDialog(
+                    text: Label("${state.item.MESSAGE}"),
+                    onpressOk: () async {
+                      Navigator.pop(context);
+                      await _getProcessStart(_index.first);
+                      operatorNameController.clear();
+                      checkpointController.clear();
+                    });
                 bgChange = Colors.grey;
                 f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
+                EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
+                    onpressOk: () async {
                       Navigator.pop(context);
-                      _getProcessStart(_index.first);
+                      await _getProcessStart(_index.first);
+                      operatorNameController.clear();
+                      checkpointController.clear();
                     });
               } else {
                 // EasyLoading.showError("Can not Call API");
+                EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
-                    onpressOk: () {
+                    onpressOk: () async {
                       Navigator.pop(context);
-                      _getProcessStart(_index.first);
+                      await _getProcessStart(_index.first);
+                      operatorNameController.clear();
+                      checkpointController.clear();
                     });
               }
+              f1.requestFocus();
             }
             if (state is PMDailyErrorState) {
               print("ERROR");
