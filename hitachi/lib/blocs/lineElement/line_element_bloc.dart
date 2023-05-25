@@ -168,8 +168,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           ApiConfig.LE_SEND_WINDING_START_WEIGHT,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 120),
+              receiveTimeout: Duration(seconds: 120)),
           data: jsonEncode(item));
       print(responese.data);
       sendWdsReturnWeightInputModel post =
@@ -188,8 +188,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response responese = await dio.post(ApiConfig.LE_SEND_WINDING_START,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(itemOutput));
       print(responese.data);
       SendWindingStartModelInput post =
@@ -211,8 +211,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         ApiConfig.LE_SEND_WINDING_FINISH,
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
         data: jsonEncode(itemOutput),
       );
 
@@ -234,8 +234,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         ApiConfig.LE_CHECK_SEND_WINDING_FINISH + itemOutput,
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
       );
       print(responese.data);
       CheckWdsFinishInputModel post =
@@ -252,8 +252,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)));
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)));
       print(ApiConfig.LE_CHECKPACK_NO + "$number");
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
@@ -271,8 +271,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
       );
       print(ApiConfig.LE_REPORT_ROUTE_SHEET + "$number");
 

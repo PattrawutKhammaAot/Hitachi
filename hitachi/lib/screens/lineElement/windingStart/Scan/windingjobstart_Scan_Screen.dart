@@ -59,7 +59,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   //ModelSqltie
 
   num target = 0.0;
-  num weight = 0.0;
+  num _weight = 0.0;
   DateTime startDate = DateTime.now();
 //HelperDatabase
   DatabaseHelper databaseHelper = DatabaseHelper();
@@ -109,7 +109,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
               PAPER_CODE_LOT: paperCodeLotController.text.trim(),
               PP_FILM_LOT: ppFilmLotController.text.trim(),
               FOIL_LOT: foilLotController.text.trim(),
-              WEIGHT: weight,
+              WEIGHT: _weight,
               START_DATE:
                   DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
         ),
@@ -170,8 +170,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             bomp = double.parse(spec['BomP'].toString());
             bomp = double.parse(bomp.toStringAsFixed(2));
           }
-          target =
-              double.parse(((weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
+          target = double.parse(
+              ((_weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
         } else {
           target = weightValue!;
         }
@@ -179,7 +179,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         ///WriteDataTolocalTable WindingWeightSheet
         await databaseHelper.writeTableWindingWeightSheet_ToSqlite(
             machineNo: machineNoController.text.trim(),
-            batchNo: int.tryParse(batchNoController.text.trim()),
+            batchNo: batchNoController.text,
             target: target);
       } else {
         print("check3");
@@ -214,10 +214,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             bomp = double.parse(spec['BomP'].toString());
             bomp = double.parse(bomp.toStringAsFixed(2));
           }
-          target =
-              double.parse(((weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
+          target = double.parse(
+              ((_weight - sm - s1 - s2) / bomp).toStringAsFixed(2));
         } else {
-          target = weight;
+          target = _weight;
         }
         print("check5");
         await databaseHelper.updateWindingWeight(
@@ -248,9 +248,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         weight2Controller.text.trim().isNotEmpty) {
       ///
       setState(() {
-        weight = num.parse(weight1Controller.text.trim()) +
+        _weight = num.parse(weight1Controller.text.trim()) +
             num.parse(weight2Controller.text.trim());
-        weight = num.parse(weight.toStringAsFixed(2));
+        _weight = num.parse(_weight.toStringAsFixed(2));
       });
 
       ///
@@ -264,9 +264,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           PP_CORE: ppFilmLotController.text.trim(),
           FOIL_CORE: foilLotController.text.trim(),
           BATCH_START_DATE: DateTime.now().toString(),
-          weight: weight);
+          weight: _weight);
 
-      EasyLoading.showSuccess("Save Weight Complete\n Weight = ${weight}",
+      EasyLoading.showSuccess("Save Weight Complete\n Weight = ${_weight}",
           duration: Duration(seconds: 5));
       f5.requestFocus();
       Navigator.pop(context);
@@ -274,6 +274,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       EasyLoading.showError("Please Input  Info");
     }
   }
+
+  // Future _saveTarget() async {
+
+  // }
 
   Future<bool> _SaveWindingStartWithWeight({
     String? MACHINE_NO,
@@ -325,7 +329,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           select2: 'MachineNo',
           formTable: 'WINDING_WEIGHT_SHEET',
           where: 'MachineNo',
-          stringValue: MACHINE_NO);
+          stringValue: machineNoController.text.trim());
 
       //Not Sure
       if (sql_machine.length <= 0) {
@@ -364,8 +368,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         } else {
           target = weight!;
         }
-        await databaseHelper.insertSqlite('WINDING_WEIGHT_SHEET',
-            {'MachineNo': MACHINE_NO, 'BatchNo': BATCH_NO, 'Target': target});
+        await databaseHelper.insertSqlite('WINDING_WEIGHT_SHEET', {
+          'MachineNo': machineNoController.text.trim(),
+          'BatchNo': batchNoController.text.trim(),
+          'Target': items!.TARGET ?? "0"
+        });
       } else {
         var sql_specification = await databaseHelper.queryDataSelect(
             select1: 'SM',
@@ -405,11 +412,11 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         await databaseHelper.updateWindingWeight(
             table: 'WINDING_WEIGHT_SHEET',
             key1: 'BatchNo',
-            yieldKey1: BATCH_NO,
+            yieldKey1: batchNoController.text.trim(),
             key2: 'Target',
-            yieldKey2: target,
+            yieldKey2: items!.TARGET ?? 0,
             whereKey: 'MachineNo',
-            value: MACHINE_NO);
+            value: machineNoController.text.trim());
       }
 
       return true;
@@ -447,9 +454,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             child: MultiBlocListener(
                 listeners: [
                   BlocListener<LineElementBloc, LineElementState>(
-                      listener: (context, state) {
+                      listener: (context, state) async {
                     if (state is PostSendWindingStartReturnWeightLoadingState) {
-                      print(weight);
+                      print(_weight);
                       EasyLoading.show(status: "Loading...");
                     } else if (state
                         is PostSendWindingStartReturnWeightLoadedState) {
@@ -458,12 +465,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         items = state.item;
                       });
                       if (items!.RESULT == true) {
-                        _saveWindingStartOnlyWeight(weightValue: items!.WEIGHT);
+                        // await _saveTarget();
+                        await _saveWindingStartOnlyWeight(
+                            weightValue: items!.TARGET);
                         Alert(
                           context: context,
                           type: AlertType.success,
                           title: "Send Complete",
-                          desc: "Target: ${items!.WEIGHT}.",
+                          desc: "Target: ${items!.TARGET!.toStringAsFixed(0)}",
                           buttons: [
                             DialogButton(
                               child: Text(
