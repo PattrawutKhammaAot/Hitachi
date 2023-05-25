@@ -125,7 +125,8 @@ class _WindingJobFinishHoldScreenState
                       onpressOk: () => Navigator.pop(context));
                 } else {
                   _errorDialog(
-                      text: Label("${state.item.MESSAGE}"),
+                      text:
+                          Label("${state.item.MESSAGE ?? "Check Connection"}"),
                       onpressOk: () => Navigator.pop(context));
                 }
               }

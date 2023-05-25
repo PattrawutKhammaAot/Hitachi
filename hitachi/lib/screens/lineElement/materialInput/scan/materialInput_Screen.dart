@@ -47,6 +47,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
 
   @override
   void initState() {
+    _materialFoucus.requestFocus();
     // _insertSqlite();
     // TODO: implement initState
     super.initState();
@@ -131,7 +132,8 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
                     _errorDialog(
-                        text: Label("${_inputMtModel?.MESSAGE}"),
+                        text: Label(
+                            "${_inputMtModel?.MESSAGE ?? "Check Connection"}"),
                         onpressOk: () async {
                           await _insertSqlite();
                           _materialController.clear();
@@ -146,14 +148,28 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
                   }
                 } else {
+                  EasyLoading.dismiss();
                   if (_machineOrProcessController.text.isNotEmpty &&
                       _operatorNameController.text.isNotEmpty &&
                       _batchOrSerialController.text.isNotEmpty &&
                       _machineOrProcessController.text.isNotEmpty &&
                       _lotNoController.text.isNotEmpty) {
-                    await _insertSqlite();
-                    EasyLoading.showError(
-                        "Please Check Connection Internet & Save Complete");
+                    _errorDialog(
+                        text: Label(
+                            "Please Check Connection Internet\n Do you want to Save Data ?"),
+                        onpressOk: () async {
+                          await _insertSqlite();
+                          _materialController.clear();
+                          _operatorNameController.clear();
+                          _batchOrSerialController.clear();
+                          _machineOrProcessController.clear();
+                          _lotNoController.clear();
+                          setState(() {
+                            bgColor = Colors.grey;
+                          });
+                          _materialFoucus.requestFocus();
+                          Navigator.pop(context);
+                        });
                   } else {
                     EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
                   }
@@ -171,7 +187,8 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   _operatorNameFouc.requestFocus();
                 } else {
                   _errorDialog(
-                      text: Label("${_responeDefault?.MESSAGE}"),
+                      text: Label(
+                          "${_responeDefault?.MESSAGE ?? "Check Connection"}"),
                       onpressOk: () {
                         _operatorNameFouc.requestFocus();
                         Navigator.pop(context);

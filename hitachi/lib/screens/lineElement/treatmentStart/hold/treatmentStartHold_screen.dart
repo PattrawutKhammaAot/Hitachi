@@ -98,7 +98,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
                 EasyLoading.showSuccess("SendComplete");
               } else {
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label("${state.item.MESSAGE ?? "Check Connection"}"),
                     onpressOk: () {
                       Navigator.pop(context);
                     });

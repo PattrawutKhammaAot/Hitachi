@@ -141,6 +141,7 @@ class _MachineBreakDownScanScreenState
 
   @override
   void initState() {
+    f1.requestFocus();
     _callBreakDownMachine(isCallBdm: true);
     super.initState();
   }
@@ -267,12 +268,6 @@ class _MachineBreakDownScanScreenState
         tableName: 'BREAKDOWN_SHEET',
         columnName: 'MachineNo',
         columnValue: _machineNo_Controller.text);
-
-    // if (bdsList.isEmpty) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
   @override
@@ -298,9 +293,12 @@ class _MachineBreakDownScanScreenState
                     duration: Duration(seconds: 3));
               } else {
                 _errorDialog(
-                    text: Label("${_respone?.MESSAGE ?? "Check Connection"}"),
-                    onpressOk: () {
-                      _saveMachine();
+                    text: Label(
+                        "${_respone?.MESSAGE ?? "Check Connection\n Do you want to Save Data"}"),
+                    onpressOk: () async {
+                      await _saveMachine();
+                      _checkControllerIsNull();
+                      f1.requestFocus();
                       Navigator.pop(context);
                     });
               }

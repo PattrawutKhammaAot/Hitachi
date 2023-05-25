@@ -27,8 +27,10 @@ class _ProcessPageState extends State<ProcessPage> {
   String? originalValue;
   String trimmedValue = "";
   String valueCon = "456456";
+  final f1 = FocusNode();
   @override
   void initState() {
+    f1.requestFocus();
     batchNoController.text = widget.receiveValue ?? "";
     super.initState();
   }
@@ -67,6 +69,7 @@ class _ProcessPageState extends State<ProcessPage> {
             children: [
               Container(
                 child: BoxInputField(
+                  focusNode: f1,
                   labelText: "Batch No",
                   type: TextInputType.number,
                   maxLength: 12,

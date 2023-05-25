@@ -75,7 +75,13 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
     );
   }
 
-  void _saveDataToSqlite() async {
+  @override
+  void initState() {
+    f1.requestFocus();
+    super.initState();
+  }
+
+  Future _saveDataToSqlite() async {
     await databaseHelper.insertSqlite('TREATMENT_SHEET', {
       'MachineNo': _machineNoController.text.trim(),
       'OperatorName': _operatorNameController.text.trim(),
@@ -132,10 +138,21 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     _operatorNameController.text.isNotEmpty &&
                     _batch1Controller.text.isNotEmpty) {
                   _errorDialog(
-                      text: Label("${state.item.MESSAGE}"),
-                      onpressOk: () {
+                      text: Label(
+                          "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
+                      onpressOk: () async {
                         Navigator.pop(context);
-                        _saveDataToSqlite();
+                        await _saveDataToSqlite();
+                        _machineNoController.clear();
+                        _operatorNameController.clear();
+                        _batch1Controller.clear();
+                        _batch2Controller.clear();
+                        _batch3Controller.clear();
+                        _batch4Controller.clear();
+                        _batch5Controller.clear();
+                        _batch6Controller.clear();
+                        _batch7Controller.clear();
+                        f1.requestFocus();
                       });
                 } else {
                   EasyLoading.showError("Please Input Info");
@@ -144,8 +161,23 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                 if (_machineNoController.text.isNotEmpty &&
                     _operatorNameController.text.isNotEmpty &&
                     _batch1Controller.text.isNotEmpty) {
-                  EasyLoading.showError("Please Check Internet & save Data");
-                  _saveDataToSqlite();
+                  _errorDialog(
+                      text: Label(
+                          "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
+                      onpressOk: () async {
+                        Navigator.pop(context);
+                        await _saveDataToSqlite();
+                        _machineNoController.clear();
+                        _operatorNameController.clear();
+                        _batch1Controller.clear();
+                        _batch2Controller.clear();
+                        _batch3Controller.clear();
+                        _batch4Controller.clear();
+                        _batch5Controller.clear();
+                        _batch6Controller.clear();
+                        _batch7Controller.clear();
+                        f1.requestFocus();
+                      });
                 } else {
                   EasyLoading.showError("Please Input Info");
                 }
@@ -181,7 +213,9 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                     type: TextInputType.number,
                     controller: _operatorNameController,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                      ),
                     ],
                   ),
                   const SizedBox(

@@ -35,6 +35,9 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   final TextEditingController _weight2Controller = TextEditingController();
   final TextEditingController _mfgDateController = TextEditingController();
   final TextEditingController _wrapGradeController = TextEditingController();
+
+  String _thickness = '';
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   DateTime? _selectedDate;
   DateTime? _selectedDateMfg;
@@ -71,6 +74,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         _weight2Controller.text.isNotEmpty &&
         _mfgDateController.text.isNotEmpty &&
         _wrapGradeController.text.isNotEmpty) {
+      _checkThickness();
       _sendData();
     } else {
       EasyLoading.showError("Please Input Info");
@@ -152,7 +156,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'PO_NO': _poNoController.text.trim(),
           'INVOICE': _InvoiceNoController.text.trim(),
           'FRIEGHT': _freightController.text.trim(),
-          'INCOMING_DATE': _IncomingDateController.text.trim(),
+          'INCOMING_DATE':
+              _IncomingDateController.text.split('-').reversed.join('-'),
           'STORE_BY': _storeByController.text.trim(),
           'PACK_NO': _packNoController.text.trim(),
           'STORE_DATE':
@@ -161,7 +166,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'W1': _weight1Controller.text.trim(),
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
-          'MFG_DATE': _mfgDateController.text.trim().toString(),
+          'MFG_DATE': _mfgDateController.text.split('-').reversed.join('-'),
           'THICKNESS1': thickness,
           'THICKNESS2': "",
           'WRAP_GRADE': _wrapGradeController.text.trim(),
@@ -175,7 +180,33 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
     }
   }
 
+  @override
+  void initState() {
+    f1.requestFocus();
+    super.initState();
+  }
+
+  void _checkThickness() {
+    if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 2) == '10') {
+      setState(() {
+        _thickness = "10";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '605') {
+      setState(() {
+        _thickness = "6.5";
+      });
+    } else {
+      setState(() {
+        _thickness = _packNoController.text.substring(0, 1);
+      });
+    }
+  }
+
   void _sendData() {
+    // print(_IncomingDateController.text);
+    // print(_mfgDateController.text);
     double? totalWeight;
     setState(() {
       double weight1 = double.tryParse(_weight1Controller.text.trim()) ?? 0;
@@ -189,14 +220,15 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           PONO: _poNoController.text.trim(),
           INVOICE: _InvoiceNoController.text.trim(),
           FRIEGHT: _freightController.text.trim(),
-          DATERECEIVE: _IncomingDateController.text.trim(),
+          DATERECEIVE:
+              _IncomingDateController.text.split('-').reversed.join('-'),
           OPERATORNAME: int.tryParse(_storeByController.text.trim()),
           PACKNO: _packNoController.text.trim(),
           STATUS: 'S',
           WEIGHT1: num.tryParse(_weight1Controller.text.trim()),
           WEIGHT2: num.tryParse(_weight2Controller.text.trim()),
-          MFGDATE: "20" + _mfgDateController.text.trim(),
-          THICKNESS: totalWeight!.toString(),
+          MFGDATE: _mfgDateController.text.split('-').reversed.join('-'),
+          THICKNESS: _thickness,
           WRAPGRADE: _wrapGradeController.text.trim(),
           ROLL_NO: _rollNoController.text.trim(),
         ),
@@ -210,18 +242,26 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           "-" +
           dataFromBarcode1!.substring(6, 8) +
           "-" +
+          "20" +
           dataFromBarcode1!.substring(8, 10);
-      print(dateStr);
-      DateTime selectedDate = DateFormat('dd-MM-yy').parse(dateStr);
+
+      DateTime selectedDate = DateFormat('dd-MM-yyyy').parse(dateStr);
+      print(selectedDate);
       if (selectedDate != null) {
         setState(() {
-          _selectedDateMfg = selectedDate;
-          _mfgDateController.text = DateFormat('dd-MM-yy').format(selectedDate);
-          DateTime incomingDate = selectedDate;
-          DateTime mfgDate =
-              DateFormat("dd-MM-yy").parse(_mfgDateController.text);
-          Duration difference = incomingDate.difference(mfgDate);
-          int differenceInDays = difference.inDays.abs();
+          _mfgDateController.text =
+              DateFormat('dd-MM-yyyy').format(selectedDate);
+          String incomingDateStr = _IncomingDateController.text;
+          String mfgDateStr = _mfgDateController.text;
+
+          DateTime incomingDate =
+              DateFormat('dd-MM-yyyy').parse(incomingDateStr);
+          DateTime mfgDate = DateFormat('dd-MM-yyyy').parse(mfgDateStr);
+
+          Duration difference = incomingDate.difference(mfgDate).abs();
+          int differenceInDays = difference.inDays;
+
+          print(differenceInDays);
 
           if (differenceInDays > 120) {
             showDialog<String>(
@@ -295,7 +335,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                 _weight2Controller.clear();
                 _mfgDateController.clear();
                 _wrapGradeController.clear();
-                f1.requestFocus();
+                f6.requestFocus();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
@@ -419,7 +459,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               setState(() {
                                 _selectedDate = selectedDate;
                                 _IncomingDateController.text =
-                                    DateFormat('yyyy-MM-dd')
+                                    DateFormat('dd-MM-yyyy')
                                         .format(selectedDate);
                               });
                               f5.requestFocus();
@@ -466,7 +506,9 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           onEditingComplete: () {
                             if (_packNoController.text.length == 8) {
                               f7.requestFocus();
+                              _checkThickness();
                             }
+                            print(_thickness);
                           },
                           labelText: "Pack No.",
                           height: 30,
@@ -506,9 +548,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           maxLength: 27,
                           controller: _barCode1Controller,
                           onEditingComplete: () {
-                            if (_barCode1Controller.text.length == 27) {
-                              f9.requestFocus();
-                            }
+                            f9.requestFocus();
+                            _checkMfgDate();
                           },
                           onChanged: (value) {
                             if (value.length > 10) {
@@ -522,7 +563,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                                     parsedValue.toStringAsFixed(2);
                               });
                             }
-                            _checkMfgDate();
                           },
                         ),
                       ),
@@ -541,12 +581,14 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           height: 30,
                           controller: _barCode2Controller,
                           onChanged: (value) {
-                            String substringValue =
-                                value.substring(value.length - 3);
-                            double parsedValue =
-                                double.parse(substringValue) / 100;
-                            _weight2Controller.text =
-                                parsedValue.toStringAsFixed(2);
+                            if (value.length > 10) {
+                              String substringValue =
+                                  value.substring(value.length - 3);
+                              double parsedValue =
+                                  double.parse(substringValue) / 100;
+                              _weight2Controller.text =
+                                  parsedValue.toStringAsFixed(2);
+                            }
                           },
                         ),
                       ),

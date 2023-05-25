@@ -19,6 +19,7 @@ import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Mo
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
@@ -242,7 +243,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     }
   }
 
-  void okBtnWeight() async {
+  Future okBtnWeight() async {
     if (weight1Controller.text.trim().isNotEmpty &&
         weight2Controller.text.trim().isNotEmpty) {
       ///
@@ -458,26 +459,24 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       });
                       if (items!.RESULT == true) {
                         _saveWindingStartOnlyWeight(weightValue: items!.WEIGHT);
-                        showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  backgroundColor: COLOR_WHITE,
-                                  content: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Label("Target :${items!.WEIGHT}")
-                                    ],
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Label('OK'),
-                                    ),
-                                  ],
-                                ));
+                        Alert(
+                          context: context,
+                          type: AlertType.success,
+                          title: "Send Complete",
+                          desc: "Target: ${items!.WEIGHT}.",
+                          buttons: [
+                            DialogButton(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                              width: 120,
+                            )
+                          ],
+                        ).show();
+
                         machineNoController.clear();
                         operatorNameController.clear();
                         batchNoController.clear();
@@ -490,11 +489,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         setState(() {
                           bgColor = Colors.grey;
                         });
-                        EasyLoading.showSuccess(items!.MESSAGE!);
                       } else {
                         _errorDialog(
                             text: Label(
-                                "${state.item.MESSAGE ?? "Check Connection"}"),
+                                "${state.item.MESSAGE ?? "Check Connection\n Do you want to save data "}"),
                             onpressOk: () {
                               Navigator.pop(context);
                               _showpopUpWeight();
@@ -528,6 +526,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       }
                     }
                     if (state is GetCheckPackErrorState) {
+                      f6.requestFocus();
                       EasyLoading.dismiss();
                     }
                   })
@@ -535,29 +534,42 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      BoxInputField(
-                        focusNode: f1,
-                        labelText: "Machine No :",
-                        controller: machineNoController,
-                        maxLength: 3,
-                        onEditingComplete: () {
-                          if (machineNoController.text.length == 3) {
-                            f2.requestFocus();
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      BoxInputField(
-                        focusNode: f2,
-                        labelText: "Operator Name :",
-                        controller: operatorNameController,
-                        type: TextInputType.number,
-                        textInputFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: BoxInputField(
+                              focusNode: f1,
+                              labelText: "Machine No :",
+                              controller: machineNoController,
+                              maxLength: 3,
+                              onEditingComplete: () {
+                                if (machineNoController.text.length == 3) {
+                                  f2.requestFocus();
+                                }
+                              },
+                            ),
+                          ),
+                          const Expanded(
+                            child: SizedBox(
+                              height: 5,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: BoxInputField(
+                              focusNode: f2,
+                              labelText: "Operator Name :",
+                              controller: operatorNameController,
+                              type: TextInputType.number,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
+                              onEditingComplete: () => f3.requestFocus(),
+                            ),
+                          ),
                         ],
-                        onEditingComplete: () => f3.requestFocus(),
                       ),
                       SizedBox(
                         height: 5,
@@ -653,45 +665,33 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: BoxInputField(
-                              focusNode: f7,
-                              onEditingComplete: () => f8.requestFocus(),
-                              labelText: "PP Film Lot :",
-                              controller: ppFilmLotController,
-                            ),
-                          ),
-                          Expanded(
-                            child: SizedBox(
-                              height: 5,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 5,
-                            child: BoxInputField(
-                              focusNode: f8,
-                              onEditingComplete: () {
-                                _btnSendClick();
-                              },
-                              labelText: "Foil Lot:",
-                              controller: foilLotController,
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  setState(() {
-                                    bgColor = COLOR_SUCESS;
-                                  });
-                                } else {
-                                  setState(() {
-                                    bgColor = Colors.grey;
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                        ],
+                      BoxInputField(
+                        focusNode: f7,
+                        onEditingComplete: () => f8.requestFocus(),
+                        labelText: "PP Film Lot :",
+                        controller: ppFilmLotController,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      BoxInputField(
+                        focusNode: f8,
+                        onEditingComplete: () {
+                          _btnSendClick();
+                        },
+                        labelText: "Foil Lot:",
+                        controller: foilLotController,
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              bgColor = COLOR_SUCESS;
+                            });
+                          } else {
+                            setState(() {
+                              bgColor = Colors.grey;
+                            });
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 5,
@@ -808,7 +808,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d*\.?\d*$')),
                             ],
-                            onEditingComplete: () {
+                            onEditingComplete: () async {
                               okBtnWeight();
                             },
                             controller: weight2Controller,
@@ -851,8 +851,20 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             "OK",
                             color: COLOR_WHITE,
                           ),
-                          onPress: () {
-                            okBtnWeight();
+                          onPress: () async {
+                            await okBtnWeight();
+                            machineNoController.clear();
+                            operatorNameController.clear();
+                            batchNoController.clear();
+                            productController.clear();
+                            filmPackNoController.clear();
+                            paperCodeLotController.clear();
+                            ppFilmLotController.clear();
+                            foilLotController.clear();
+                            f1.requestFocus();
+                            setState(() {
+                              bgColor = Colors.grey;
+                            });
                           },
                         ),
                       ),
