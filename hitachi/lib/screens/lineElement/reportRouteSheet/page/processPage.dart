@@ -54,7 +54,8 @@ class _ProcessPageState extends State<ProcessPage> {
             }
             if (state is GetReportRuteSheetErrorState) {
               EasyLoading.dismiss();
-              EasyLoading.showError("Check Connection");
+              EasyLoading.showError("Check Connection",
+                  duration: Duration(seconds: 5));
               print(state.error);
             }
           },

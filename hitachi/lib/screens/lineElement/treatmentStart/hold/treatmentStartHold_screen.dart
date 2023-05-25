@@ -455,6 +455,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
   _sendDataServer() {
     _index.forEach((element) async {
       var row = tmList.where((value) => value.ID == element).first;
+
       BlocProvider.of<TreatmentBloc>(context).add(
         TreatmentStartSendEvent(TreatMentOutputModel(
           MACHINE_NO: row.MACHINE_NO,
