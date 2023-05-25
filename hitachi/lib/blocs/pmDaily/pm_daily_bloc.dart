@@ -28,6 +28,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
         return client;
       },
     );
+
     on<PmDailyEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -42,18 +43,19 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
         }
       },
     );
-    // on<PMDailyGetSendEvent>(
-    //   (event, emit) async {
-    //     try {
-    //       emit(PMDailyGetLoadingState());
-    //       final mlist = await fetchPMDailyStatusModel(event.items);
-    //       emit(PMDailyGetLoadedState(mlist));
-    //     } catch (e) {
-    //       emit(PMDailyGetErrorState(e.toString()));
-    //     }
-    //   },
-    // );
+    on<PMDailyGetSendEvent>(
+      (event, emit) async {
+        try {
+          emit(PMDailyGetLoadingState());
+          final mlist = await fetchPMDailyStatusModel(event.items);
+          emit(PMDailyGetLoadedState(mlist));
+        } catch (e) {
+          emit(PMDailyGetErrorState(e.toString()));
+        }
+      },
+    );
   }
+
   Future<ResponeDefault> fetchSendPMDaily(PMDailyOutputModel item) async {
     try {
       Response responese = await dio.post(ApiConfig.PM_DAILY,
@@ -71,22 +73,44 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
     }
   }
 
-  Future<ResponeDefault> fetchPMDailyStatusModel(
-      PMDailyOutputModel item, String number) async {
+  Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
     try {
       Response response = await dio.get(
-        ApiConfig.LE_REPORT_ROUTE_SHEET + "$number",
+        ApiConfig.PM_GETDAILY + "$number",
         options: Options(
             headers: ApiConfig.HEADER(),
             sendTimeout: Duration(seconds: 3),
             receiveTimeout: Duration(seconds: 3)),
       );
 
-      ResponeDefault tmp = ResponeDefault.fromJson(response.data);
+      CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+      print(tmp);
+      print(ApiConfig.PM_GETDAILY + "$number");
 
       return tmp;
-    } on Exception {
-      throw Exception();
+    } catch (e, s) {
+      print("Exception occured: $e StackTrace: $s");
+      return CPPMDailyOutputModel();
     }
   }
+
+  // Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
+  //   try {
+  //     Response response = await dio.get(
+  //       ApiConfig.PLAN_WINDING,
+  //       options: Options(
+  //         // headers: ApiConfig.HEADER(),
+  //           sendTimeout: Duration(seconds: 3),
+  //           receiveTimeout: Duration(seconds: 3)),
+  //     );
+  //
+  //     PlanWindingOutputModel tmp =
+  //     PlanWindingOutputModel.fromJson(response.data);
+  //
+  //     return tmp;
+  //   } catch (e) {
+  //     print(e);
+  //     return PlanWindingOutputModel();
+  //   }
+  // }
 }

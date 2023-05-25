@@ -43,28 +43,9 @@ class PlanWindingBloc extends Bloc<PlanWindingEvent, PlanWindingState> {
     );
   }
 
-  // Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
-  //   try {
-  //     Response response = await dio.get(
-  //       ApiConfig.PLAN_WINDING,
-  //       options: Options(
-  //           headers: ApiConfig.HEADER(),
-  //           sendTimeout: Duration(seconds: 3),
-  //           receiveTimeout: Duration(seconds: 3)),
-  //     );
-  //
-  //     PlanWindingOutputModel tmp =
-  //         PlanWindingOutputModel.fromJson(response.data);
-  //
-  //     return tmp;
-  //   } on Exception {
-  //     print(Exception);
-  //     throw Exception();
-  //   }
-  // }
   Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
     try {
-      Response response = await Dio().get(
+      Response response = await dio.get(
         ApiConfig.PLAN_WINDING,
         options: Options(
             // headers: ApiConfig.HEADER(),

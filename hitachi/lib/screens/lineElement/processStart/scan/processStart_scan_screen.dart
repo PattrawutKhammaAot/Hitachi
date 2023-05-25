@@ -165,19 +165,16 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledMachineNo,
                     onEditingComplete: () {
                       if (MachineController.text.length > 2) {
-                        // FocusScope.of(context).autofocus(f2);
-                        // operatorNameController
                         setState(() {
                           print(MachineController.text);
-                          // _enabledCheckMachine = true;
                           _enabledMachineNo = false;
-                          valuetxtinput = MachineController.text.trim();
+                          // valuetxtinput = MachineController.text.trim();
                         });
                         f2.requestFocus();
                       } else {
                         setState(() {
                           _enabledCheckMachine = false;
-                          valuetxtinput = "Machine No. INVALID";
+                          valuetxtinput = "Machine No : INVALID";
                         });
                       }
                     },
@@ -217,7 +214,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         });
                       } else {
                         setState(() {
-                          valuetxtinput = "User INVALID";
+                          valuetxtinput = "Operator Name : User INVALID";
                         });
                       }
                     },
@@ -300,6 +297,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         _btnSend();
+                      } else {
+                        setState(() {
+                          valuetxtinput = "Batch No : INVALID";
+                        });
                       }
                     },
                     controller: batchNoController,
@@ -309,7 +310,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                     onChanged: (value) {
-                      if (MachineController.text.isNotEmpty &&
+                      if (batchNoController.text.length == 12 &&
                           operatorNameController.text.isNotEmpty) {
                         setState(() {
                           bgChange = COLOR_RED;
@@ -320,6 +321,18 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         });
                       }
                     },
+                    // onChanged: (value) {
+                    //   if (MachineController.text.isNotEmpty &&
+                    //       operatorNameController.text.isNotEmpty) {
+                    //     setState(() {
+                    //       bgChange = COLOR_RED;
+                    //     });
+                    //   } else {
+                    //     setState(() {
+                    //       bgChange = Colors.grey;
+                    //     });
+                    //   }
+                    // },
                   ),
                   SizedBox(
                     height: 10,
@@ -330,7 +343,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         visible: true,
                         child: Container(
                             child: Label(
-                          "Machine No: ${valuetxtinput}",
+                          " ${valuetxtinput}",
                           color: COLOR_RED,
                         )),
                       ),
