@@ -134,6 +134,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       checkpointController.clear();
                     });
               }
+              f1.requestFocus();
             }
             if (state is PMDailyErrorState) {
               print("ERROR");

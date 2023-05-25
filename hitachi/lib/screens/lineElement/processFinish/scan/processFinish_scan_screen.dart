@@ -111,6 +111,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       });
                     });
               }
+              f1.requestFocus();
             }
             if (state is ProcessFinishErrorState) {
               print("ERROR");

@@ -128,7 +128,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
-                      f1.requestFocus();
                     });
                 bgChange = Colors.grey;
                 f1.requestFocus();
@@ -165,6 +164,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       batchNoController.clear();
                     });
               }
+              f1.requestFocus();
             }
             if (state is ProcessStartErrorState) {
               print("ERROR");
@@ -191,7 +191,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     controller: MachineController,
                     height: 35,
                     focusNode: f1,
-                    enabled: _enabledMachineNo,
+                    // enabled: _enabledMachineNo,
                     onEditingComplete: () {
                       if (MachineController.text.length > 2) {
                         setState(() {
