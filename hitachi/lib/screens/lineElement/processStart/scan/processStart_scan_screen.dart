@@ -16,6 +16,7 @@ import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ProcessStartScanScreen extends StatefulWidget {
@@ -350,18 +351,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         });
                       }
                     },
-                    // onChanged: (value) {
-                    //   if (MachineController.text.isNotEmpty &&
-                    //       operatorNameController.text.isNotEmpty) {
-                    //     setState(() {
-                    //       bgChange = COLOR_RED;
-                    //     });
-                    //   } else {
-                    //     setState(() {
-                    //       bgChange = Colors.grey;
-                    //     });
-                    //   }
-                    // },
                   ),
                   SizedBox(
                     height: 10,
@@ -415,7 +404,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               ? ""
               : operatorName3Controller.text.trim(),
           'BatchNo': batchNoController.text.trim(),
-          'StartDate': startDate.toString(),
+          'StartDate': DateFormat('yyyy MM dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString(),
           'StartEnd': StartEndValue.toString(),
         });
         print("saveSendSqlite");
@@ -444,7 +435,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             key5: 'BatchNo',
             yieldKey5: batchNoController.text.trim(),
             key6: 'StartDate',
-            yieldKey6: startDate.toString(),
+            yieldKey6: DateFormat('yyyy MM dd HH:mm:ss')
+                .format(DateTime.now())
+                .toString(),
             whereKey: 'Machine',
             value: MachineController.text.trim());
         print("updateSendSqlite");
@@ -475,7 +468,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
         OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
         BATCHNO: batchNoController.text.trim(),
-        STARTDATE: startDate.toString(),
+        STARTDATE:
+            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
         STARTEND: 'S',
       )),
     );

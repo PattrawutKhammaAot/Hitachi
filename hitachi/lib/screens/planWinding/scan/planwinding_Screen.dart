@@ -11,6 +11,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/planWinding/PlanWindingOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
+import 'package:intl/intl.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -27,7 +28,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   List<PlanWindingOutputModelPlan>? PlanWindingModel;
   PlanWindingDataSource? planwindingDataSource;
   Color? bgChange;
-  String _loadData = "วันเวลาที่ load : ";
+  String _loadData = "Load Date&Time : ";
 
   @override
   void initState() {
@@ -225,7 +226,8 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   }
 
   _loadPlan() {
-    _loadData = "วันเวลาที่ load : " + DateTime.now().toString();
+    _loadData = "Load Date&Time : " +
+        DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString();
     // BlocProvider.of<PlanWindingBloc>(context).add(
     //   PlanWindingSendEvent(batchNoController.text.trim()),
     // );
