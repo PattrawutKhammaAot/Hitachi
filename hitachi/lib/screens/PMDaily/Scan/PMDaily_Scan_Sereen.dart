@@ -75,6 +75,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             }
             if (state is PMDailyGetLoadedState) {
               EasyLoading.dismiss();
+
               setState(() {
                 PMDailyCheckPointModel = state.item.CHECKPOINT;
                 PMDailyDataSource =
@@ -101,12 +102,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
 
               if (state.item.RESULT == true) {
                 EasyLoading.dismiss();
-                // EasyLoading.showSuccess("SendComplete");
+
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       Navigator.pop(context);
-                      await _getProcessStart(_index.first);
                       operatorNameController.clear();
                       checkpointController.clear();
                     });
@@ -175,7 +175,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 },
                 textInputFormatter: [
                   FilteringTextInputFormatter.allow(
-                    RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
+                    RegExp(r'^(?!.*\d{12})[0-9]+$'),
                   ),
                 ],
               ),

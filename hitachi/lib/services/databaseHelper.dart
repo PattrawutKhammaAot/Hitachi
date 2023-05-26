@@ -207,10 +207,36 @@ class DatabaseHelper {
     String? formTable,
     String? where,
     String? stringValue,
+    String? keyAnd,
+    String? value,
   }) async {
     try {
       String sql =
-          "SELECT ${select1}, ${select2}, ${select3}, ${select4}, ${select5}, ${select6} FROM ${formTable} WHERE ${where} = '${stringValue}'"; // แก้ไขตรงนี้;
+          "SELECT ${select1}, ${select2}, ${select3}, ${select4}, ${select5}, ${select6} FROM ${formTable} WHERE ${where} = '${stringValue}'" +
+              " AND (${keyAnd}='${value}') "; // แก้ไขตรงนี้;
+      Database db = await this.database;
+      return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> queryProcessSF({
+    String? select1,
+    String? select2,
+    String? select3,
+    String? select4,
+    String? formTable,
+    String? where,
+    String? stringValue,
+    String? keyAnd,
+    String? value,
+  }) async {
+    try {
+      String sql =
+          "SELECT ${select1}, ${select2}, ${select3}, ${select4} FROM ${formTable} WHERE ${where} = '${stringValue}'" +
+              " AND (${keyAnd}='${value}') "; // แก้ไขตรงนี้;
       Database db = await this.database;
       return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
     } catch (e) {
@@ -288,8 +314,21 @@ class DatabaseHelper {
       String? value}) async {
     final Database db = await database;
     String sql =
-        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2', ${key3}= '$yieldKey3', ${key4}= '$yieldKey4', ${key5}= '$yieldKey5', ${key6}= '$yieldKey6' WHERE ${whereKey}= '$value'";
+        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4', ${key5} = '$yieldKey5', ${key6} = '$yieldKey6' WHERE ${whereKey} = '$value'";
     return await db.rawUpdate(sql);
+  }
+
+  Future<int> updatetest() async {
+    final Database db = await database;
+
+    try {
+      String sql =
+          "UPDATE PROCESS_SHEET SET OperatorName = '2344', BatchNo = '100106554407', Garbage = '0', FinDate = '2023 05 26 12:02:45',StartEnd = 'E' WHERE Machine = 'WD4' AND BatchNo = '100106554407'";
+      // แก้ไขตรงนี้;
+      return await db.rawUpdate(sql);
+    } on Exception {
+      throw Exception();
+    }
   }
 
   //updateProcessFinish
@@ -299,15 +338,20 @@ class DatabaseHelper {
       String? key2,
       String? key3,
       String? key4,
+      String? key5,
       num? yieldKey1,
       String? yieldKey2,
       String? yieldKey3,
       String? yieldKey4,
+      String? yieldKey5, //setE
       String? whereKey,
-      String? value}) async {
+      String? value,
+      String? whereKey2,
+      String? value2}) async {
     final Database db = await database;
     String sql =
-        "UPDATE ${table} SET ${key1}= '$yieldKey1', ${key2}= '$yieldKey2', ${key3}= '$yieldKey3', ${key4}= '$yieldKey4' WHERE ${whereKey}= '$value'";
+        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4' , ${key5} = '$yieldKey5 'WHERE ${whereKey} = '$value'"
+        " AND ${whereKey2} ='${value2}' "; // แก้ไขตรงนี้;
     return await db.rawUpdate(sql);
   }
 
