@@ -350,7 +350,7 @@ class DatabaseHelper {
       String? value2}) async {
     final Database db = await database;
     String sql =
-        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4' , ${key5} = '$yieldKey5 'WHERE ${whereKey} = '$value'"
+        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4' , StartEnd = 'E' WHERE ${whereKey} = '$value'"
         " AND ${whereKey2} ='${value2}' "; // แก้ไขตรงนี้;
     return await db.rawUpdate(sql);
   }

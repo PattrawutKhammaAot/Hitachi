@@ -443,12 +443,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           key4: 'FinDate',
           yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
               .format(DateTime.now())
-              .toString(),
+              .toString()
+              .trim(),
           key5: 'StartEnd'.trim(),
-          yieldKey5: StartEndValue.toString(),
+          yieldKey5: StartEndValue.trim(),
           whereKey: 'Machine',
           value: machineNoController.text.trim(),
-          whereKey2: 'BatchNo'.trim(),
+          whereKey2: 'BatchNo',
           value2: batchNoController.text.trim(),
         );
         print("updateSendSqlite");

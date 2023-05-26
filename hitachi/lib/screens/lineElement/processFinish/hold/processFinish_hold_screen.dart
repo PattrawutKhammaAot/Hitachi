@@ -38,11 +38,12 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   int? index;
   int? allRowIndex;
   List<ProcessModel> selectAll = [];
+  String StartEndValue = 'E';
   ////
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
-      List<Map<String, dynamic>> rows =
-          await databaseHelper.queryAllProcessStartRows('PROCESS_SHEET', 'E');
+      List<Map<String, dynamic>> rows = await databaseHelper
+          .queryAllProcessStartRows('PROCESS_SHEET', StartEndValue);
       // await databaseHelper.queryAllRows('PROCESS_SHEET');
       List<ProcessModel> result =
           rows.map((row) => ProcessModel.fromMap(row)).toList();
