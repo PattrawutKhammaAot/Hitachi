@@ -187,6 +187,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 if (_responeDefault!.RESULT == true) {
                   _operatorNameFouc.requestFocus();
                 } else {
+                  print("Count");
                   _errorDialog(
                       isHideCancle: false,
                       text: Label(
