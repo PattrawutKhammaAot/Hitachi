@@ -84,15 +84,42 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     });
   }
 
-  // void deletedInfo() async {
-  //   setState(() {
-  //     _index.forEach((element) async {
-  //       await databaseHelper.deletedRowSqlite(
-  //           tableName: 'PROCESS_SHEET', columnName: 'ID', columnValue: element);
-  //       _index.clear();
-  //     });
-  //   });
-  // }
+  Future _refresh() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      _getProcessStart().then((result) {
+        setState(() {
+          processList = result;
+          matTracDs = ProcessStartDataSource(process: processList);
+        });
+      });
+    });
+  }
+
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,21 +129,26 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
         body: MultiBlocListener(
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is ProcessStartLoadingState) {
                   EasyLoading.show();
                 } else if (state is ProcessStartLoadedState) {
-                  if (state.item.RESULT == true) {
-                    deletedInfo();
-                    Navigator.canPop(context);
-                    EasyLoading.dismiss();
-                    EasyLoading.showSuccess("Send complete",
-                        duration: Duration(seconds: 3));
-                  } else {
-                    EasyLoading.showError("Please Check Data");
-                  }
-                } else {
                   EasyLoading.dismiss();
+                  if (state.item.RESULT == true) {
+                    await deletedInfo();
+                    await _refresh();
+                    EasyLoading.showSuccess("SendComplete");
+                  } else {
+                    _errorDialog(
+                        text: Label(
+                            "${state.item.MESSAGE ?? "Check Connection"}"),
+                        onpressOk: () {
+                          Navigator.pop(context);
+                        });
+                  }
+                } else if (state is ProcessStartErrorState) {
+                  EasyLoading.dismiss();
+
                   EasyLoading.showError("Please Check Connection Internet");
                 }
               },

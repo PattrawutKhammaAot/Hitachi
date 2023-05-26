@@ -38,11 +38,12 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   int? index;
   int? allRowIndex;
   List<ProcessModel> selectAll = [];
+  String StartEndValue = 'E';
   ////
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
-      List<Map<String, dynamic>> rows =
-          await databaseHelper.queryAllProcessStartRows('PROCESS_SHEET', 'E');
+      List<Map<String, dynamic>> rows = await databaseHelper
+          .queryAllProcessStartRows('PROCESS_SHEET', StartEndValue);
       // await databaseHelper.queryAllRows('PROCESS_SHEET');
       List<ProcessModel> result =
           rows.map((row) => ProcessModel.fromMap(row)).toList();
@@ -85,6 +86,32 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     });
   }
 
+  void _errorDialog(
+      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => onpressOk?.call(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BgWhite(
@@ -93,23 +120,45 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         body: MultiBlocListener(
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is ProcessStartLoadingState) {
                   EasyLoading.show();
                 } else if (state is ProcessStartLoadedState) {
-                  if (state.item.RESULT == true) {
-                    deletedInfo();
-                    Navigator.canPop(context);
-                    EasyLoading.dismiss();
-                    EasyLoading.showSuccess("Send complete",
-                        duration: Duration(seconds: 3));
-                  } else {
-                    EasyLoading.showError("Please Check Data");
-                  }
-                } else {
                   EasyLoading.dismiss();
+                  if (state.item.RESULT == true) {
+                    await deletedInfo();
+                    await _refreshPage();
+                    EasyLoading.showSuccess("SendComplete");
+                  } else {
+                    _errorDialog(
+                        text: Label(
+                            "${state.item.MESSAGE ?? "Check Connection"}"),
+                        onpressOk: () {
+                          Navigator.pop(context);
+                        });
+                  }
+                } else if (state is ProcessStartErrorState) {
+                  EasyLoading.dismiss();
+
                   EasyLoading.showError("Please Check Connection Internet");
                 }
+
+                // if (state is ProcessStartLoadingState) {
+                //   EasyLoading.show();
+                // } else if (state is ProcessStartLoadedState) {
+                //   if (state.item.RESULT == true) {
+                //     deletedInfo();
+                //     Navigator.canPop(context);
+                //     EasyLoading.dismiss();
+                //     EasyLoading.showSuccess("Send complete",
+                //         duration: Duration(seconds: 3));
+                //   } else {
+                //     EasyLoading.showError("Please Check Data");
+                //   }
+                // } else {
+                //   EasyLoading.dismiss();
+                //   EasyLoading.showError("Please Check Connection Internet");
+                // }
               },
             )
           ],

@@ -70,7 +70,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       Navigator.pop(context);
-                      await _getProcessStart();
                       machineNoController.clear();
                       operatorNameController.clear();
                       batchNoController.clear();
@@ -191,7 +190,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     },
                     maxLength: 12,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                      ),
                     ],
                     onEditingComplete: () {
                       setState(() {
@@ -241,7 +242,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       }
                       if (machineNoController.text.isNotEmpty &&
                           operatorNameController.text.isNotEmpty &&
-                          batchNoController.text.isNotEmpty &&
+                          batchNoController.text.length == 12 &&
                           rejectQtyController.text.isNotEmpty) {
                         setState(() {
                           bgChange = COLOR_RED;
@@ -302,6 +303,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       color: COLOR_WHITE,
                     ),
                     onPress: () => _btnSend(),
+
+                    // onPress: () => _updateSendSqlite(),
+                    // _updateSendSqlite()
                   ),
                 ],
               ),
@@ -344,30 +348,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     }
   }
 
-  void _updateSendSqlite() async {
-    try {
-      if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.updateProcessFinish(
-            table: 'PROCESS_SHEET',
-            key1: 'OperatorName',
-            yieldKey1: int.tryParse(operatorNameController.text.trim()),
-            key2: 'BatchNo',
-            yieldKey2: operatorNameController.text.trim(),
-            key3: 'Garbage',
-            yieldKey3: rejectQtyController.text.trim(),
-            key4: 'FinDate',
-            yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
-                .format(DateTime.now())
-                .toString(),
-            whereKey: 'Machine',
-            value: machineNoController.text.trim());
-        print("updateSendSqlite");
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   void _errorDialog(
       {Label? text, Function? onpressOk, Function? onpressCancel}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
@@ -400,7 +380,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
 
   Future<bool> _getProcessStart() async {
     try {
-      var sql_processSheet = await databaseHelper.queryDataSelectProcess(
+      var sql_processSheet = await databaseHelper.queryProcessSF(
         select1: 'Machine'.trim(),
         select2: 'OperatorName'.trim(),
         select3: 'BatchNo'.trim(),
@@ -408,6 +388,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         formTable: 'PROCESS_SHEET'.trim(),
         where: 'Machine'.trim(),
         stringValue: machineNoController.text.trim(),
+        keyAnd: 'BatchNo'.trim(),
+        value: batchNoController.text.trim(),
       );
       print(sql_processSheet.length);
 
@@ -433,6 +415,47 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     } catch (e) {
       print("Catch : ${e}");
       return false;
+    }
+  }
+
+  // void _updateSendSqlite() async {
+  //   try {
+  //     if (operatorNameController.text.isNotEmpty) {
+  //       await databaseHelper.updatetest();
+  //       print("updateSendSqlite");
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  void _updateSendSqlite() async {
+    try {
+      if (operatorNameController.text.isNotEmpty) {
+        await databaseHelper.updateProcessFinish(
+          table: 'PROCESS_SHEET',
+          key1: 'OperatorName',
+          yieldKey1: int.tryParse(operatorNameController.text.trim()),
+          key2: 'BatchNo',
+          yieldKey2: batchNoController.text.trim(),
+          key3: 'Garbage',
+          yieldKey3: rejectQtyController.text.trim(),
+          key4: 'FinDate',
+          yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString()
+              .trim(),
+          key5: 'StartEnd'.trim(),
+          yieldKey5: StartEndValue.trim(),
+          whereKey: 'Machine',
+          value: machineNoController.text.trim(),
+          whereKey2: 'BatchNo',
+          value2: batchNoController.text.trim(),
+        );
+        print("updateSendSqlite");
+      }
+    } catch (e) {
+      print(e);
     }
   }
 

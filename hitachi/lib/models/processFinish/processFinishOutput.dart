@@ -4,7 +4,6 @@ class ProcessFinishOutputModel {
     this.OPERATORNAME,
     this.REJECTQTY,
     this.BATCHNO,
-    this.GARBAGE,
     this.FINISHDATE,
   });
 
@@ -12,7 +11,7 @@ class ProcessFinishOutputModel {
   final int? OPERATORNAME;
   final String? REJECTQTY;
   final int? BATCHNO;
-  final String? GARBAGE;
+
   final String? FINISHDATE;
 
   ProcessFinishOutputModel copyWith({
@@ -20,7 +19,6 @@ class ProcessFinishOutputModel {
     int? OPERATORNAME,
     String? REJECTQTY,
     int? BATCHNO,
-    String? GARBAGE,
     String? FINISHDATE,
   }) {
     return ProcessFinishOutputModel(
@@ -28,7 +26,6 @@ class ProcessFinishOutputModel {
       OPERATORNAME: OPERATORNAME ?? this.OPERATORNAME,
       REJECTQTY: REJECTQTY ?? this.REJECTQTY,
       BATCHNO: BATCHNO ?? this.BATCHNO,
-      GARBAGE: GARBAGE ?? this.GARBAGE,
       FINISHDATE: FINISHDATE ?? this.FINISHDATE,
     );
   }
@@ -39,7 +36,6 @@ class ProcessFinishOutputModel {
         'OperatorName': OPERATORNAME,
         'RejectQty': REJECTQTY,
         'BatchNo': BATCHNO,
-        'GARBAGE': GARBAGE,
         'FinishDate': FINISHDATE,
       };
 }

@@ -67,6 +67,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         formTable: 'PROCESS_SHEET'.trim(),
         where: 'Machine'.trim(),
         stringValue: MachineController.text.trim(),
+        keyAnd: 'BatchNo'.trim(),
+        value: batchNoController.text.trim(),
       );
       print(sql_processSheet.length);
 
@@ -122,7 +124,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       Navigator.pop(context);
-                      await _getProcessStart();
                       MachineController.clear();
                       operatorNameController.clear();
                       operatorName1Controller.clear();
@@ -249,7 +250,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       }
                     },
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                      ),
                     ],
                     onChanged: (value) {
                       if (MachineController.text.isNotEmpty &&
@@ -280,7 +283,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f4.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -295,7 +300,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f5.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -310,7 +317,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     enabled: _enabledOperator,
                     onEditingComplete: () => f6.requestFocus(),
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -470,7 +479,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         BATCHNO: batchNoController.text.trim(),
         STARTDATE:
             DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
-        STARTEND: 'S',
       )),
     );
   }
