@@ -302,9 +302,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       "Send",
                       color: COLOR_WHITE,
                     ),
-                    // onPress: () => _btnSend(),
+                    onPress: () => _btnSend(),
 
-                    onPress: () => _updateSendSqlite(),
+                    // onPress: () => _updateSendSqlite(),
                     // _updateSendSqlite()
                   ),
                 ],
@@ -418,45 +418,45 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     }
   }
 
-  void _updateSendSqlite() async {
-    try {
-      if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.updatetest();
-        print("updateSendSqlite");
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   // void _updateSendSqlite() async {
   //   try {
   //     if (operatorNameController.text.isNotEmpty) {
-  //       await databaseHelper.updateProcessFinish(
-  //         table: 'PROCESS_SHEET',
-  //         key1: 'OperatorName',
-  //         yieldKey1: int.tryParse(operatorNameController.text.trim()),
-  //         key2: 'BatchNo',
-  //         yieldKey2: batchNoController.text.trim(),
-  //         key3: 'Garbage',
-  //         yieldKey3: rejectQtyController.text.trim(),
-  //         key4: 'FinDate',
-  //         yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
-  //             .format(DateTime.now())
-  //             .toString(),
-  //         key5: 'StartEnd',
-  //         yieldKey5: StartEndValue.toString(),
-  //         whereKey: 'Machine',
-  //         value: machineNoController.text.trim(),
-  //         whereKey2: 'BatchNo'.trim(),
-  //         value2: batchNoController.text.trim(),
-  //       );
+  //       await databaseHelper.updatetest();
   //       print("updateSendSqlite");
   //     }
   //   } catch (e) {
   //     print(e);
   //   }
   // }
+
+  void _updateSendSqlite() async {
+    try {
+      if (operatorNameController.text.isNotEmpty) {
+        await databaseHelper.updateProcessFinish(
+          table: 'PROCESS_SHEET',
+          key1: 'OperatorName',
+          yieldKey1: int.tryParse(operatorNameController.text.trim()),
+          key2: 'BatchNo',
+          yieldKey2: batchNoController.text.trim(),
+          key3: 'Garbage',
+          yieldKey3: rejectQtyController.text.trim(),
+          key4: 'FinDate',
+          yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString(),
+          key5: 'StartEnd'.trim(),
+          yieldKey5: StartEndValue.toString(),
+          whereKey: 'Machine',
+          value: machineNoController.text.trim(),
+          whereKey2: 'BatchNo'.trim(),
+          value2: batchNoController.text.trim(),
+        );
+        print("updateSendSqlite");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   void _saveSendSqlite() async {
     try {
