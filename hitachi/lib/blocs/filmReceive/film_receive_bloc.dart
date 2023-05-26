@@ -7,6 +7,7 @@ import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
+import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/filmReceiveModel/filmreceiveOutputModel.dart';
 
 part 'film_receive_event.dart';
@@ -40,29 +41,26 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
         }
       },
     );
+    on<FilmReceiveCheckEvent>(
+      (event, emit) async {
+        try {
+          emit(CheckFilmReceiveLoadingState());
+          final mlist = await fetchCheckFilmReceive(event.items);
+          emit(CheckFilmReceiveLoadedState(mlist));
+        } catch (e) {
+          emit(CheckFilmReceiveErrorState(e.toString()));
+        }
+      },
+    );
   }
   Future<ResponeDefault> fetchSendFilmReceive(
       FilmReceiveOutputModel item) async {
     try {
-      print(item.PONO);
-      print(item.INVOICE);
-      print(item.FRIEGHT);
-      print(item.DATERECEIVE);
-      print(item.OPERATORNAME);
-      print(item.PACKNO);
-      print(item.STATUS);
-      print(item.WEIGHT1);
-      print(item.WEIGHT2);
-      print(item.MFGDATE);
-      print(item.THICKNESS);
-      print(item.WRAPGRADE);
-      print(item.ROLL_NO);
-
       Response responese = await dio.post(ApiConfig.FILM_RECEIVE,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
@@ -70,6 +68,23 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
     } catch (e, s) {
       print("Exception occured: $e StackTrace: $s");
       return ResponeDefault();
+    }
+  }
+
+  Future<CheckPackNoModel> fetchCheckFilmReceive(String item) async {
+    try {
+      Response responese = await dio.get(
+        ApiConfig.CHECK_FILM_RECEIVE + item,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
+      );
+      print(responese.data);
+      CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
+      return post;
+    } on Exception {
+      throw Exception();
     }
   }
 }

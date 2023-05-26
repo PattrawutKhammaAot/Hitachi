@@ -283,7 +283,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   onChanged: (p0) {
                     if (p0.length > 0) {
                       setState(() {
-                        bgColor = COLOR_RED;
+                        bgColor = COLOR_BLUE_DARK;
                       });
                     } else {
                       setState(() {
@@ -335,7 +335,10 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -350,15 +353,35 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

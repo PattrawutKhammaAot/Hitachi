@@ -84,7 +84,10 @@ class _WindingJobFinishHoldScreenState
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -99,11 +102,35 @@ class _WindingJobFinishHoldScreenState
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -175,7 +202,7 @@ class _WindingJobFinishHoldScreenState
                                     _index.add(int.tryParse(
                                         row.getCells()[0].value.toString())!);
 
-                                    _colorSend = COLOR_SUCESS;
+                                    _colorSend = COLOR_BLUE_DARK;
                                     _colorDelete = COLOR_RED;
                                   });
                                 });
@@ -193,7 +220,7 @@ class _WindingJobFinishHoldScreenState
                                       )
                                       .toList();
                                   print(_index);
-                                  _colorSend = COLOR_SUCESS;
+                                  _colorSend = COLOR_BLUE_DARK;
                                   _colorDelete = COLOR_RED;
                                 });
                               }

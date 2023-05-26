@@ -113,7 +113,8 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   setState(() {
                     bgColor = Colors.grey;
                   });
-                  _SuccesssDialog(
+                  _errorDialog(
+                      isHideCancle: false,
                       text: Label("${_inputMtModel?.MESSAGE}"),
                       onpressOk: () {
                         Navigator.pop(context);
@@ -187,10 +188,11 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   _operatorNameFouc.requestFocus();
                 } else {
                   _errorDialog(
+                      isHideCancle: false,
                       text: Label(
                           "${_responeDefault?.MESSAGE ?? "Check Connection"}"),
                       onpressOk: () {
-                        _operatorNameFouc.requestFocus();
+                        _materialController.clear();
                         Navigator.pop(context);
                       });
                 }
@@ -290,7 +292,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                           _operatorNameController.text.isNotEmpty &&
                           _materialController.text.isNotEmpty) {
                         setState(() {
-                          bgColor = COLOR_RED;
+                          bgColor = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {
@@ -322,7 +324,10 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -337,45 +342,40 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
   }
 
-  void _SuccesssDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
-    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        // title: const Text('AlertDialog Title'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: text,
-            ),
-          ],
-        ),
-
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
   // Future<void> _selectedSqliteAndInsert({
   //   String? material,
   //   String? typeMaterial,

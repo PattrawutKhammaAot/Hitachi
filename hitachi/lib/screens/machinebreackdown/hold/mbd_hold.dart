@@ -66,7 +66,10 @@ class _MachineBreakDownHoldScreenState
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -81,11 +84,35 @@ class _MachineBreakDownHoldScreenState
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -109,6 +136,7 @@ class _MachineBreakDownHoldScreenState
                     duration: Duration(seconds: 3));
               } else {
                 _errorDialog(
+                    isHideCancle: false,
                     text: Label("${state.item.MESSAGE ?? "Check Connection"}"),
                     onpressOk: () {
                       Navigator.pop(context);
@@ -149,7 +177,7 @@ class _MachineBreakDownHoldScreenState
                                     _index.add(int.tryParse(
                                         row.getCells()[0].value.toString())!);
 
-                                    _colorSend = COLOR_SUCESS;
+                                    _colorSend = COLOR_BLUE_DARK;
                                     _colorDelete = COLOR_RED;
                                   });
                                 });
@@ -167,7 +195,7 @@ class _MachineBreakDownHoldScreenState
                                       )
                                       .toList();
 
-                                  _colorSend = COLOR_SUCESS;
+                                  _colorSend = COLOR_BLUE_DARK;
                                   _colorDelete = COLOR_RED;
                                 });
                               }
@@ -296,12 +324,34 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                columnName: 'stopname1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Stop Tech1',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
                                 columnName: 'stoptech1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StopTech1',
+                                    'Stop Date \nTech1',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
+                                columnName: 'stopname2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Stop Tech2',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
@@ -312,7 +362,7 @@ class _MachineBreakDownHoldScreenState
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                       child: Label(
-                                    'StopTech2',
+                                    'Stop Date \nTech2',
                                     fontSize: 14,
                                     color: COLOR_WHITE,
                                   )),
@@ -352,7 +402,7 @@ class _MachineBreakDownHoldScreenState
                           return DataTable(
                             horizontalMargin: 20,
                             headingRowHeight: 30,
-                            dataRowHeight: 30,
+                            dataRowHeight: 50,
                             headingRowColor: MaterialStateColor.resolveWith(
                                 (states) => COLOR_BLUE_DARK),
                             border: TableBorder.all(
@@ -413,10 +463,22 @@ class _MachineBreakDownHoldScreenState
                               DataRow(cells: [
                                 DataCell(Center(child: Label("Stop Tech 1"))),
                                 DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.STOPTECH_1}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(
+                                    Center(child: Label("Stop Date Tech 1"))),
+                                DataCell(Label(
                                     "${bdsList.where((element) => element.ID == _index.first).first.STOP_DATE_TECH_1}"))
                               ]),
                               DataRow(cells: [
                                 DataCell(Center(child: Label("Stop Tech 2"))),
+                                DataCell(Label(
+                                    "${bdsList.where((element) => element.ID == _index.first).first.STOPTECH_2}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(
+                                    Center(child: Label("Stop Date Tech 2"))),
                                 DataCell(Label(
                                     "${bdsList.where((element) => element.ID == _index.first).first.STOP_DATE_TECH_2}"))
                               ]),
@@ -535,24 +597,33 @@ class _MachineBreakDownHoldScreenState
   void _sendDataServer() async {
     _index.forEach((element) async {
       var row = bdsList.where((value) => value.ID == element).first;
-      BlocProvider.of<MachineBreakDownBloc>(context).add(
-        MachineBreakDownSendEvent(
-          MachineBreakDownOutputModel(
-            MACHINE_NO: row.MACHINE_NO,
-            OPERATOR_NAME: row.OPERATOR_NAME,
-            SERVICE: row.SERVICE_NO,
-            BREAK_START_DATE: row.BREAK_START_DATE,
-            MT1: row.TECH_1,
-            MT1_START_DATE: row.START_TECH_DATE_1,
-            MT2: row.TECH_2,
-            MT2_START_DATE: row.START_TECH_DATE_2,
-            MT1_STOP: row.STOP_DATE_TECH_1,
-            MT2_STOP: row.STOP_DATE_TECH_2,
-            ACCEPT: row.OPERATOR_ACCEPT,
-            BREAK_STOP_DATE: row.BREAK_STOP_DATE,
+
+      if (row.OPERATOR_ACCEPT!.isEmpty) {
+        EasyLoading.showError("Please Input Operator Accept",
+            duration: Duration(seconds: 3));
+      } else if (row.STOPTECH_1!.isEmpty) {
+        EasyLoading.showError("Please Input Technical Stop",
+            duration: Duration(seconds: 3));
+      } else {
+        BlocProvider.of<MachineBreakDownBloc>(context).add(
+          MachineBreakDownSendEvent(
+            MachineBreakDownOutputModel(
+              MACHINE_NO: row.MACHINE_NO,
+              OPERATOR_NAME: row.OPERATOR_NAME,
+              SERVICE: row.SERVICE_NO,
+              BREAK_START_DATE: row.BREAK_START_DATE,
+              MT1: row.TECH_1,
+              MT1_START_DATE: row.START_TECH_DATE_1,
+              MT2: row.TECH_2,
+              MT2_START_DATE: row.START_TECH_DATE_2,
+              MT1_STOP: row.STOP_DATE_TECH_1,
+              MT2_STOP: row.STOP_DATE_TECH_2,
+              ACCEPT: row.OPERATOR_ACCEPT,
+              BREAK_STOP_DATE: row.BREAK_STOP_DATE,
+            ),
           ),
-        ),
-      );
+        );
+      }
     });
   }
 
@@ -565,6 +636,8 @@ class BreakDownDataSource extends DataGridSource {
   BreakDownDataSource({List<BreakDownSheetModel>? process}) {
     if (process != null) {
       for (var _item in process) {
+        print(_item.STOPTECH_1);
+        print(_item.STOPTECH_2);
         _employees.add(
           DataGridRow(
             cells: [
@@ -584,7 +657,11 @@ class BreakDownDataSource extends DataGridSource {
               DataGridCell<String>(
                   columnName: 'starttech2', value: _item.START_TECH_DATE_2),
               DataGridCell<String>(
+                  columnName: 'stopname1', value: _item.STOPTECH_1),
+              DataGridCell<String>(
                   columnName: 'stoptech1', value: _item.STOP_DATE_TECH_1),
+              DataGridCell<String>(
+                  columnName: 'stopname2', value: _item.STOPTECH_2),
               DataGridCell<String>(
                   columnName: 'stoptech2', value: _item.STOP_DATE_TECH_2),
               DataGridCell<String>(

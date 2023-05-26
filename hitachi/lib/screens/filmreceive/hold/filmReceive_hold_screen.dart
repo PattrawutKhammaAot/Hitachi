@@ -128,7 +128,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                     _index.add(int.tryParse(
                                         row.getCells()[0].value.toString())!);
 
-                                    _colorSend = COLOR_SUCESS;
+                                    _colorSend = COLOR_BLUE_DARK;
                                     _colorDelete = COLOR_RED;
                                   });
                                 });
@@ -146,7 +146,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                       )
                                       .toList();
                                   print(_index);
-                                  _colorSend = COLOR_SUCESS;
+                                  _colorSend = COLOR_BLUE_DARK;
                                   _colorDelete = COLOR_RED;
                                 });
                               }

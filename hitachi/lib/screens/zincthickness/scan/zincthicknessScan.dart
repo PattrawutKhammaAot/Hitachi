@@ -586,7 +586,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                                   _thickness7Controller.text.isNotEmpty &&
                                   _thickness8Controller.text.isNotEmpty &&
                                   _thickness9Controller.text.isNotEmpty) {
-                                bgButton = COLOR_SUCESS;
+                                bgButton = COLOR_BLUE_DARK;
                               } else {
                                 bgButton = Colors.grey;
                               }
@@ -741,7 +741,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
             } else {
               t9 = COLOR_BLACK;
             }
-            bgButton = COLOR_SUCESS;
+            bgButton = COLOR_BLUE_DARK;
           });
 
           // ทำอย่างไรก็ตามเมื่อพบค่าที่ตรงกัน
@@ -804,7 +804,10 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -819,15 +822,35 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

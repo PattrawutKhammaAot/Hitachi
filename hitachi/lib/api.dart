@@ -72,6 +72,9 @@ class ApiConfig {
 
   //POST SEND FILM IN
   static String FILM_RECEIVE = "${BASE_API_URL}LineElement/SendFilmIn";
+  //POST GETCHECK FILM IN
+  static String CHECK_FILM_RECEIVE =
+      "${BASE_API_URL}LineElement/FICheckPackNo?packNo="; //ID
   //POST SEND TreatmentStart
   static String TREAMTMENT_START = "${BASE_API_URL}LineElement/SendTreatStart";
   //POST SEND TreatmentFinish

@@ -82,7 +82,10 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -97,11 +100,35 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -128,6 +155,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                         duration: Duration(seconds: 3));
                   } else {
                     _errorDialog(
+                        isHideCancle: false,
                         text: Label(
                             "${state.item.MESSAGE ?? "Check Connection"}"),
                         onpressOk: () => Navigator.pop(context));
@@ -163,7 +191,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                       _index.add(int.tryParse(
                                           row.getCells()[0].value.toString())!);
 
-                                      _colorSend = COLOR_SUCESS;
+                                      _colorSend = COLOR_BLUE_DARK;
                                       _colorDelete = COLOR_RED;
                                     });
                                   });
@@ -181,7 +209,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                         )
                                         .toList();
                                     print(_index);
-                                    _colorSend = COLOR_SUCESS;
+                                    _colorSend = COLOR_BLUE_DARK;
                                     _colorDelete = COLOR_RED;
                                   });
                                 }

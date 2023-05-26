@@ -530,7 +530,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             });
 
                         setState(() {
-                          bgColor = COLOR_SUCESS;
+                          bgColor = COLOR_BLUE_DARK;
                         });
                       }
                     }
@@ -694,7 +694,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         onChanged: (value) {
                           if (value.isNotEmpty) {
                             setState(() {
-                              bgColor = COLOR_SUCESS;
+                              bgColor = COLOR_BLUE_DARK;
                             });
                           } else {
                             setState(() {
@@ -888,7 +888,10 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -903,15 +906,35 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

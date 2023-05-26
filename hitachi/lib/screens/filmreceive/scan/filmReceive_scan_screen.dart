@@ -9,6 +9,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/filmReceiveModel/filmreceiveOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
@@ -42,6 +43,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   DateTime? _selectedDate;
   DateTime? _selectedDateMfg;
   String? dataFromBarcode1;
+  CheckPackNoModel _itemsPackNo = CheckPackNoModel();
 
   Color bgButton = Colors.grey;
 
@@ -60,7 +62,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   final f11 = FocusNode();
 //
 
-  void _checkValueController() {
+  void _checkValueController() async {
     if (_poNoController.text.isNotEmpty &&
         _InvoiceNoController.text.isNotEmpty &&
         _freightController.text.isNotEmpty &&
@@ -74,7 +76,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         _weight2Controller.text.isNotEmpty &&
         _mfgDateController.text.isNotEmpty &&
         _wrapGradeController.text.isNotEmpty) {
-      _checkThickness();
       _sendData();
     } else {
       EasyLoading.showError("Please Input Info");
@@ -138,7 +139,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         break;
     }
     try {
-      String? thickness;
       var sql = await databaseHelper.queryDataSelect(
           select1: 'PACK_NO',
           formTable: 'DATA_SHEET',
@@ -149,7 +149,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         double weight1 = double.tryParse(_weight1Controller.text.trim()) ?? 0;
         double weight2 = double.tryParse(_weight2Controller.text.trim()) ?? 0;
         totalWeight = weight1 + weight2;
-        thickness = _packNoController.text.substring(0, 2);
       });
       if (sql.length <= 0) {
         await databaseHelper.insertSqlite('DATA_SHEET', {
@@ -167,7 +166,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           'W2': _weight1Controller.text.trim(),
           'WEIGHT': totalWeight.toString(),
           'MFG_DATE': _mfgDateController.text.split('-').reversed.join('-'),
-          'THICKNESS1': thickness,
+          'THICKNESS1': _thickness,
           'THICKNESS2': "",
           'WRAP_GRADE': _wrapGradeController.text.trim(),
           'ROLL_NO': _rollNoController.text.trim(),
@@ -186,7 +185,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
     super.initState();
   }
 
-  void _checkThickness() {
+  Future _checkThickness() async {
     if (_packNoController.text.isNotEmpty &&
         _packNoController.text.substring(0, 2) == '10') {
       setState(() {
@@ -202,18 +201,71 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
         _thickness = _packNoController.text.substring(0, 1);
       });
     }
+    print(_thickness);
   }
 
   void _sendData() {
-    // print(_IncomingDateController.text);
-    // print(_mfgDateController.text);
     double? totalWeight;
     setState(() {
       double weight1 = double.tryParse(_weight1Controller.text.trim()) ?? 0;
       double weight2 = double.tryParse(_weight2Controller.text.trim()) ?? 0;
       totalWeight = weight1 + weight2;
     });
-    // callFilmIn();
+    switch (_wrapGradeController.text.trim()) {
+      case "1":
+        setState(() {
+          _wrapGradeController.text = "A";
+        });
+        break;
+      case "2":
+        setState(() {
+          _wrapGradeController.text = "B";
+        });
+        break;
+      case "3":
+        setState(() {
+          _wrapGradeController.text = "C";
+        });
+        break;
+      case "4":
+        setState(() {
+          _wrapGradeController.text = "D";
+        });
+        break;
+      case "5":
+        setState(() {
+          _wrapGradeController.text = "E";
+        });
+        break;
+      case "6":
+        setState(() {
+          _wrapGradeController.text = "F";
+        });
+        break;
+      case "7":
+        setState(() {
+          _wrapGradeController.text = "G";
+        });
+        break;
+      case "8":
+        setState(() {
+          _wrapGradeController.text = "H";
+        });
+        break;
+      case "9":
+        setState(() {
+          _wrapGradeController.text = "I";
+        });
+        break;
+      case "0":
+        setState(() {
+          _wrapGradeController.text = "J";
+        });
+        break;
+      default:
+        // กรณีไม่ตรงกับ case ใด ๆ ให้ไม่ทำอะไร
+        break;
+    }
     BlocProvider.of<FilmReceiveBloc>(context).add(
       FilmReceiveSendEvent(
         FilmReceiveOutputModel(
@@ -320,7 +372,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<FilmReceiveBloc, FilmReceiveState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is FilmReceiveLoadingState) {
               EasyLoading.show();
             } else if (state is FilmReceiveLoadedState) {
@@ -343,6 +395,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     text: Label(
                         "${state.item.MESSAGE ?? "Check Connection & Save"}"),
                     onpressOk: () async {
+                      await _checkThickness();
                       await callFilmIn();
                       _packNoController.clear();
                       _rollNoController.clear();
@@ -359,8 +412,41 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
             }
             if (state is FilmReceiveErrorState) {
               EasyLoading.dismiss();
-              callFilmIn();
+              await _checkThickness();
+              await callFilmIn();
               EasyLoading.showError("Can not send");
+            }
+            if (state is CheckFilmReceiveLoadingState) {
+              EasyLoading.show(status: "Loading...");
+            }
+            if (state is CheckFilmReceiveLoadedState) {
+              EasyLoading.dismiss();
+              setState(() {
+                _itemsPackNo = state.item;
+              });
+              if (_itemsPackNo.RESULT == false) {
+                _errorDialog(
+                    text: Label("${_itemsPackNo.MESSAGE}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                      f7.requestFocus();
+                    });
+              }
+              if (_itemsPackNo.RESULT == true) {
+                f7.requestFocus();
+              }
+            }
+            if (state is CheckFilmReceiveErrorState) {
+              EasyLoading.dismiss();
+              _errorDialog(
+                  isHideCancle: false,
+                  text: Label(
+                    "Check Connection",
+                    color: COLOR_WHITE,
+                  ),
+                  onpressOk: () {
+                    Navigator.pop(context);
+                  });
             }
           },
         )
@@ -503,10 +589,15 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         flex: 4,
                         child: BoxInputField(
                           focusNode: f6,
-                          onEditingComplete: () {
+                          onEditingComplete: () async {
                             if (_packNoController.text.length == 8) {
-                              f7.requestFocus();
-                              _checkThickness();
+                              await _checkThickness();
+                              BlocProvider.of<FilmReceiveBloc>(context).add(
+                                FilmReceiveCheckEvent(
+                                    _packNoController.text.trim()),
+                              );
+                            } else {
+                              await _checkThickness();
                             }
                             print(_thickness);
                           },
@@ -652,7 +743,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           onChanged: (value) {
                             if (value.isNotEmpty) {
                               setState(() {
-                                bgButton = COLOR_SUCESS;
+                                bgButton = COLOR_BLUE_DARK;
                               });
                             } else {
                               setState(() {
@@ -691,7 +782,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -706,15 +800,35 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
