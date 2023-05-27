@@ -100,7 +100,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
             _batch7Controller.text.isEmpty ? "" : _batch7Controller.text.trim(),
         'StartDate': '',
         'FinDate': DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
-        'StartEnd': '',
+        'StartEnd': 'F',
         'CheckComplete': 'End',
       });
     } catch (e, s) {

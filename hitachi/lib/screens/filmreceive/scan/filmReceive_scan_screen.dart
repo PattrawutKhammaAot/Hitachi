@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -16,8 +17,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class FilmReceiveScanScreen extends StatefulWidget {
-  const FilmReceiveScanScreen({super.key});
-
+  const FilmReceiveScanScreen({super.key, this.onChange});
+  final ValueChanged<List<Map<String, dynamic>>>? onChange;
   @override
   State<FilmReceiveScanScreen> createState() => _FilmReceiveScanScreenState();
 }
@@ -61,6 +62,14 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   final f10 = FocusNode();
   final f11 = FocusNode();
 //
+
+  // Future _getHold() async {
+  //   List<Map<String, dynamic>> sql =
+  //       await databaseHelper.queryAllRows('DATA_SHEET');
+  //   setState(() {
+  //     listHoldFilmReceive = sql;
+  //   });
+  // }
 
   void _checkValueController() async {
     if (_poNoController.text.isNotEmpty &&
@@ -177,11 +186,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
       print("${e}${s}");
       EasyLoading.showError("Data Not Save");
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future _checkThickness() async {
@@ -431,10 +435,12 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               } else {
                 _errorDialog(
                     text: Label(
-                        "${state.item.MESSAGE != null ? state.item.MESSAGE! + " \n Do you want to Save ?" : "Check Connection & Save"}"),
+                        "${state.item.MESSAGE != null ? state.item.MESSAGE! : "Check Connection\n Do you want to save"}"),
                     onpressOk: () async {
                       await _checkThickness();
                       await callFilmIn();
+                      // await _getHold();
+                      print("CheckList${listHoldFilmReceive.length}");
                       _packNoController.clear();
                       _rollNoController.clear();
                       _barCode1Controller.clear();
@@ -454,30 +460,38 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               EasyLoading.showError("Can not send");
             }
             if (state is CheckFilmReceiveLoadingState) {
+              print("Loading");
               EasyLoading.show(status: "Loading...");
             } else if (state is CheckFilmReceiveLoadedState) {
               EasyLoading.dismiss();
               setState(() {
                 _itemsPackNo = state.item;
               });
+              print(state.item.MESSAGE);
               if (_itemsPackNo.RESULT == false) {
+                print("Error");
                 _errorDialog(
-                    text: Label("${_itemsPackNo.MESSAGE}"),
+                    text: Label(
+                      "${_itemsPackNo.MESSAGE ?? "Check Connection"}",
+                      color: COLOR_BLACK,
+                    ),
                     onpressOk: () {
                       Navigator.pop(context);
                       f7.requestFocus();
                     });
               }
               if (_itemsPackNo.RESULT == true) {
+                print("Error");
                 f7.requestFocus();
               }
             } else if (state is CheckFilmReceiveErrorState) {
               EasyLoading.dismiss();
+
               _errorDialog(
                   isHideCancle: false,
                   text: Label(
                     "Check Connection",
-                    color: COLOR_WHITE,
+                    color: COLOR_BLACK,
                   ),
                   onpressOk: () {
                     Navigator.pop(context);

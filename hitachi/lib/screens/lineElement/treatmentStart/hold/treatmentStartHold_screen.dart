@@ -59,8 +59,10 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('TREATMENT_SHEET');
-      List<TreatmentModel> result =
-          rows.map((row) => TreatmentModel.fromMap(row)).toList();
+      List<TreatmentModel> result = rows
+          .where((element) => element['StartEnd'] == 'S')
+          .map((row) => TreatmentModel.fromMap(row))
+          .toList();
       return result;
     } catch (e) {
       print(e);

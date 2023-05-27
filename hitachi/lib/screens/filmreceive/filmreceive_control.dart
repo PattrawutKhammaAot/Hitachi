@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
@@ -15,7 +16,7 @@ class FilmReceiveControlPage extends StatefulWidget {
 
 class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<Map<String, dynamic>> listSql = [];
+
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -23,8 +24,8 @@ class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
       setState(() {
         setState(() {
           _selectedIndex = index;
+          _getHold();
         });
-        _getHold().then((value) => null);
       });
     });
   }
@@ -37,14 +38,14 @@ class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
     List<Map<String, dynamic>> sql =
         await databaseHelper.queryAllRows('DATA_SHEET');
     setState(() {
-      listSql = sql;
+      listHoldFilmReceive = sql;
     });
   }
 
   @override
   void initState() {
+    _getHold().then((value) => null);
     super.initState();
-    _getHold().then((value) => () {});
   }
 
   @override
@@ -61,7 +62,7 @@ class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
               width: 10,
             ),
             Label(
-              "-${listSql.length}-",
+              "-${listHoldFilmReceive.length ?? 0}-",
               color: COLOR_RED,
             )
           ],

@@ -65,7 +65,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('TREATMENT_SHEET');
       List<TreatmentModel> result = rows
-          .where((element) => element['FinDate'] != null)
+          .where((element) => element['StartEnd'] == 'F')
           .map((row) => TreatmentModel.fromMap(row))
           .toList();
       return result;
@@ -557,28 +557,24 @@ class TreatMentStartDataSource extends DataGridSource {
   TreatMentStartDataSource({List<TreatmentModel>? process}) {
     if (process != null) {
       for (var _item in process) {
-        if (_item.CHECK_COMPLETE == 'End') {
-          _employees.add(
-            DataGridRow(
-              cells: [
-                DataGridCell<int>(columnName: 'id', value: _item.ID),
-                DataGridCell<String>(
-                    columnName: 'mac', value: _item.MACHINE_NO),
-                DataGridCell<String>(
-                    columnName: 'operator', value: _item.OPERATOR_NAME),
-                DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
-                DataGridCell<String>(columnName: 'b2', value: _item.BATCH2),
-                DataGridCell<String>(columnName: 'b3', value: _item.BATCH3),
-                DataGridCell<String>(columnName: 'b4', value: _item.BATCH4),
-                DataGridCell<String>(columnName: 'b5', value: _item.BATCH5),
-                DataGridCell<String>(columnName: 'b6', value: _item.BATCH6),
-                DataGridCell<String>(columnName: 'b7', value: _item.BATCH7),
-                DataGridCell<String>(
-                    columnName: 'findate', value: _item.FINDATE),
-              ],
-            ),
-          );
-        }
+        _employees.add(
+          DataGridRow(
+            cells: [
+              DataGridCell<int>(columnName: 'id', value: _item.ID),
+              DataGridCell<String>(columnName: 'mac', value: _item.MACHINE_NO),
+              DataGridCell<String>(
+                  columnName: 'operator', value: _item.OPERATOR_NAME),
+              DataGridCell<String>(columnName: 'b1', value: _item.BATCH1),
+              DataGridCell<String>(columnName: 'b2', value: _item.BATCH2),
+              DataGridCell<String>(columnName: 'b3', value: _item.BATCH3),
+              DataGridCell<String>(columnName: 'b4', value: _item.BATCH4),
+              DataGridCell<String>(columnName: 'b5', value: _item.BATCH5),
+              DataGridCell<String>(columnName: 'b6', value: _item.BATCH6),
+              DataGridCell<String>(columnName: 'b7', value: _item.BATCH7),
+              DataGridCell<String>(columnName: 'findate', value: _item.FINDATE),
+            ],
+          ),
+        );
       }
     }
   }
