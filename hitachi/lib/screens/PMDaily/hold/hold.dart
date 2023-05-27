@@ -94,7 +94,6 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
       ],
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Winding job Start(Hold)",
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(

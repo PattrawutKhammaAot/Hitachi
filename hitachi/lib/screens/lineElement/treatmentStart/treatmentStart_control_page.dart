@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/hold/treatmentStartHold_screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/scan/treatmentStart_scan_screen.dart';
 
@@ -29,7 +30,7 @@ class _TreatmentStartControlPageState extends State<TreatmentStartControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "TreatmentStart",
+      textTitle: Label("TreatmentStart"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

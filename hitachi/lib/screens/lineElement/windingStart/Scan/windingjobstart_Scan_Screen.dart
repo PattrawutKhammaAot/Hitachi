@@ -446,7 +446,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       },
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Winding Job Start",
         body: Form(
           autovalidateMode: AutovalidateMode.always,
           child: Padding(

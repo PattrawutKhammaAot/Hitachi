@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/treatmentFinish/hold/treatmentFinish_hold.dart';
 import 'package:hitachi/screens/lineElement/treatmentFinish/scan/treatmentFinish_scan_screen.dart';
 
@@ -30,7 +31,7 @@ class _TreatmentFinishControlPageState
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "TreatmentFinish",
+      textTitle: Label("TreatmentFinish"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

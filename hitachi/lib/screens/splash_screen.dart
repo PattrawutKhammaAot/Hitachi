@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Label(
-              "Document Control",
+              "Line Element",
               fontSize: 30,
               color: COLOR_WHITE,
             ),

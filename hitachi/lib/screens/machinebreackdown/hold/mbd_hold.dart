@@ -49,6 +49,24 @@ class _MachineBreakDownHoldScreenState
     });
   }
 
+  Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'machineno': double.nan,
+    'operatorName': double.nan,
+    'service': double.nan,
+    'breakstart': double.nan,
+    'tech1': double.nan,
+    'starttech1': double.nan,
+    'tech2': double.nan,
+    'starttech2': double.nan,
+    'stopname1': double.nan,
+    'stoptech1': double.nan,
+    'stopname2': double.nan,
+    'stoptech2': double.nan,
+    'accept': double.nan,
+    'breakstop': double.nan,
+  };
+
   Future<List<BreakDownSheetModel>> _getWindingSheet() async {
     try {
       List<Map<String, dynamic>> rows =
@@ -151,7 +169,6 @@ class _MachineBreakDownHoldScreenState
       ],
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Winding job Start(Hold)",
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
@@ -165,6 +182,17 @@ class _MachineBreakDownHoldScreenState
                           selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             if (selectRow.isNotEmpty) {
@@ -230,6 +258,7 @@ class _MachineBreakDownHoldScreenState
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
+                                width: columnWidths['machineno']!,
                                 columnName: 'machineno',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -242,6 +271,7 @@ class _MachineBreakDownHoldScreenState
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
+                              width: columnWidths['operatorName']!,
                               columnName: 'operatorName',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -255,30 +285,33 @@ class _MachineBreakDownHoldScreenState
                               ),
                             ),
                             GridColumn(
-                                columnName: 'service',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Service',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
+                              width: columnWidths['service']!,
+                              columnName: 'service',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'Service',
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                             GridColumn(
-                                columnName: 'breakstart',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'BreakStart',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
+                              width: columnWidths['breakstart']!,
+                              columnName: 'breakstart',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'BreakStart',
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                             GridColumn(
+                                width: columnWidths['tech1']!,
                                 columnName: 'tech1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -290,6 +323,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['starttech1']!,
                                 columnName: 'starttech1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -302,6 +336,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['tech2']!,
                                 columnName: 'tech2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -313,6 +348,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['starttech2']!,
                                 columnName: 'starttech2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -324,6 +360,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['stopname1']!,
                                 columnName: 'stopname1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -335,6 +372,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['stoptech1']!,
                                 columnName: 'stoptech1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -346,6 +384,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['stopname2']!,
                                 columnName: 'stopname2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -357,6 +396,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['stoptech2']!,
                                 columnName: 'stoptech2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -368,6 +408,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['accept']!,
                                 columnName: 'accept',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -379,6 +420,7 @@ class _MachineBreakDownHoldScreenState
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['breakstop']!,
                                 columnName: 'breakstop',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/processStart/hold/precessStart_hold_screen.dart';
 import 'package:hitachi/screens/lineElement/processStart/scan/processStart_scan_screen.dart';
 
@@ -29,7 +30,7 @@ class _ProcessStartControlPageState extends State<ProcessStartControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "ProcessStart",
+      textTitle: Label("ProcessStart"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

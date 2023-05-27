@@ -181,7 +181,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          textTitle: "Process Start",
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),

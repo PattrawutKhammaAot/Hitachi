@@ -95,7 +95,6 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
       isHideAppBar: true,
-      textTitle: "MaterialInput",
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(

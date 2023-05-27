@@ -33,6 +33,16 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   Color _colorDelete = COLOR_GREY;
   List<MaterialTraceModel> selectAll = [];
 
+  Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'mat': double.nan,
+    'operator': double.nan,
+    'batch': double.nan,
+    'Mat1': double.nan,
+    'lotNo1': double.nan,
+    'Date': double.nan,
+  };
+
   ////
   Future<List<MaterialTraceModel>> _getMaterialSheet() async {
     try {
@@ -138,7 +148,6 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
         isHideAppBar: true,
-        textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
@@ -180,6 +189,17 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
+                            allowColumnsResizing: true,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                                print(details.width);
+                              });
+                              return true;
+                            },
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -244,37 +264,41 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'mat',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('Material', color: COLOR_WHITE),
-                                    ),
+                                columnName: 'mat',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Material', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['mat']!,
+                              ),
                               GridColumn(
-                                  columnName: 'operator',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('Operator', color: COLOR_WHITE),
-                                    ),
+                                columnName: 'operator',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Operator', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['operator']!,
+                              ),
                               GridColumn(
-                                  columnName: 'batch',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Batch/Serial',
-                                          color: COLOR_WHITE),
-                                    ),
+                                columnName: 'batch',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Batch/Serial',
+                                        color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['batch']!,
+                              ),
                               GridColumn(
-                                columnName: 'Machine',
+                                width: columnWidths['Mat1']!,
+                                columnName: 'Mat1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
@@ -283,6 +307,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['lotNo1']!,
                                 columnName: 'lotNo1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -292,6 +317,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['Date']!,
                                 columnName: 'Date',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -482,13 +508,14 @@ class MaterialTraceDataSource extends DataGridSource {
               DataGridCell<String>(
                   columnName: 'operator', value: _item.BATCH_NO),
               DataGridCell<String>(columnName: 'batch', value: _item.BATCH_NO),
-              // DataGridCell<String>(
-              //     columnName: 'Machine', value: _item.MACHINE_NO),
+
               DataGridCell<String>(columnName: 'Mat1', value: _item.MACHINE_NO),
               DataGridCell<String>(columnName: 'lotNo1', value: _item.LOTNO_1),
               DataGridCell<String>(columnName: 'Date', value: _item.DATE_1),
               // DataGridCell<String>(columnName: 'Mat2', value: _item.MATERIAL_2),
               // DataGridCell<String>(columnName: 'lotNo2', value: _item.LOT_NO_2),
+              // DataGridCell<String>(
+              //     columnName: 'Machine', value: _item.MACHINE_NO),
             ],
           ),
         );

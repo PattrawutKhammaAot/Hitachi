@@ -125,7 +125,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
         isHideAppBar: true,
-        textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(

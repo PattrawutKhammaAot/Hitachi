@@ -40,12 +40,25 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       setState(() {
         tmList = result;
         tmsDatasource = TreatMentStartDataSource(process: tmList);
-        print(jsonEncode(tmList[0].MACHINE_NO));
       });
     });
 
     super.initState();
   }
+
+  Map<String, double> columnWidths = {
+    'id': double.nan,
+    'mac': double.nan,
+    'operator': double.nan,
+    'b1': double.nan,
+    'b2': double.nan,
+    'b3': double.nan,
+    'b4': double.nan,
+    'b5': double.nan,
+    'b6': double.nan,
+    'b7': double.nan,
+    'findate': double.nan,
+  };
 
   Future<List<TreatmentModel>> _getTreatMentSheet() async {
     try {
@@ -151,7 +164,6 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          textTitle: "Material Input",
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -166,6 +178,17 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
                             allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                                print(details.width);
+                              });
+                              return true;
+                            },
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -225,36 +248,39 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'mac',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Machine No',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['mac']!,
+                                columnName: 'mac',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Machine No', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'operator',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('Operator', color: COLOR_WHITE),
-                                    ),
+                                columnName: 'operator',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Operator', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['operator']!,
+                              ),
                               GridColumn(
-                                  columnName: 'b1',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('Batch1', color: COLOR_WHITE),
-                                    ),
+                                columnName: 'b1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Batch1', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['b1']!,
+                              ),
                               GridColumn(
+                                width: columnWidths['b2']!,
                                 columnName: 'b2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -264,6 +290,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['b3']!,
                                 columnName: 'b3',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -273,6 +300,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['b4']!,
                                 columnName: 'b4',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -282,6 +310,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['b5']!,
                                 columnName: 'b5',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -291,6 +320,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['b6']!,
                                 columnName: 'b6',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -300,6 +330,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['b7']!,
                                 columnName: 'b7',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,

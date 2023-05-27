@@ -181,27 +181,65 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
 
   @override
   void initState() {
-    f1.requestFocus();
     super.initState();
   }
 
   Future _checkThickness() async {
     if (_packNoController.text.isNotEmpty &&
-        _packNoController.text.substring(0, 2) == '10') {
+        _packNoController.text.substring(0, 1) == '1') {
       setState(() {
         _thickness = "10";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '601') {
+      setState(() {
+        _thickness = "6.1";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '602') {
+      setState(() {
+        _thickness = "6.2";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '603') {
+      setState(() {
+        _thickness = "6.3";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '604') {
+      setState(() {
+        _thickness = "6.4";
       });
     } else if (_packNoController.text.isNotEmpty &&
         _packNoController.text.substring(0, 3) == '605') {
       setState(() {
         _thickness = "6.5";
       });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '606') {
+      setState(() {
+        _thickness = "6.6";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '607') {
+      setState(() {
+        _thickness = "6.7";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '608') {
+      setState(() {
+        _thickness = "6.8";
+      });
+    } else if (_packNoController.text.isNotEmpty &&
+        _packNoController.text.substring(0, 3) == '609') {
+      setState(() {
+        _thickness = "6.9";
+      });
     } else {
       setState(() {
         _thickness = _packNoController.text.substring(0, 1);
       });
     }
-    print(_thickness);
   }
 
   void _sendData() {
@@ -393,7 +431,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               } else {
                 _errorDialog(
                     text: Label(
-                        "${state.item.MESSAGE ?? "Check Connection & Save"}"),
+                        "${state.item.MESSAGE != null ? state.item.MESSAGE! + " \n Do you want to Save ?" : "Check Connection & Save"}"),
                     onpressOk: () async {
                       await _checkThickness();
                       await callFilmIn();
@@ -409,8 +447,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                       Navigator.pop(context);
                     });
               }
-            }
-            if (state is FilmReceiveErrorState) {
+            } else if (state is FilmReceiveErrorState) {
               EasyLoading.dismiss();
               await _checkThickness();
               await callFilmIn();
@@ -418,8 +455,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
             }
             if (state is CheckFilmReceiveLoadingState) {
               EasyLoading.show(status: "Loading...");
-            }
-            if (state is CheckFilmReceiveLoadedState) {
+            } else if (state is CheckFilmReceiveLoadedState) {
               EasyLoading.dismiss();
               setState(() {
                 _itemsPackNo = state.item;
@@ -435,8 +471,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               if (_itemsPackNo.RESULT == true) {
                 f7.requestFocus();
               }
-            }
-            if (state is CheckFilmReceiveErrorState) {
+            } else if (state is CheckFilmReceiveErrorState) {
               EasyLoading.dismiss();
               _errorDialog(
                   isHideCancle: false,
@@ -558,9 +593,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               type: TextInputType.datetime,
                               focusNode: f4,
                               height: 30,
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {}
-                              },
+                              onChanged: (value) {},
                               maxLength: 6,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
@@ -577,8 +610,12 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           focusNode: f5,
                           labelText: "Store By",
                           height: 30,
+                          type: TextInputType.number,
                           controller: _storeByController,
                           onEditingComplete: () => f6.requestFocus(),
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                     ],

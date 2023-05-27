@@ -150,7 +150,6 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
       isHideAppBar: true,
-      textTitle: "Winding job finish",
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
@@ -386,18 +385,20 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
       ),
     );
   }
-  // void _testSendSqlite() async {
-  //   try {
-  //     await databaseHelper.insertSqlite('WINDING_SHEET', {
-  //       'BatchNo': batchNoController.text.trim(),
-  //       'Element': elementQtyController.text.trim(),
-  //       'BatchEndDate': batchNoController.text.trim(),
-  //       'start_end': 'E',
-  //       'checkComplete': '0',
-  //       'value': 'WD'
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+
+  void _testSendSqlite() async {
+    try {
+      await databaseHelper.insertSqlite('WINDING_SHEET', {
+        'BatchNo': batchNoController.text.trim(),
+        'Element': elementQtyController.text.trim(),
+        'BatchEndDate': batchNoController.text.trim(),
+        'start_end':
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()).toString(),
+        'checkComplete': 'E',
+        'value': 'WD'
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 }

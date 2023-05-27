@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/hold/windingJobFinish_hold_screen.dart';
 import 'package:hitachi/screens/lineElement/windingFinish/scan/windingjobFinish_screen.dart';
 
@@ -29,7 +30,7 @@ class _WindingFinishControlPageState extends State<WindingFinishControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "WindingFinish",
+      textTitle: Label("WindingFinish"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

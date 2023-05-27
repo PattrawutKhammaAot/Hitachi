@@ -226,6 +226,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     },
                     labelText: "Batch 1 : ",
                     height: 35,
+                    maxLength: 12,
                     controller: _batch1Controller,
                     type: TextInputType.number,
                     textInputFormatter: [
@@ -250,6 +251,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f4,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch2Controller.text.length == 12) {
                         f5.requestFocus();
@@ -268,6 +270,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f5,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch3Controller.text.length == 12) {
                         f6.requestFocus();
@@ -286,6 +289,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f6,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch4Controller.text.length == 12) {
                         f7.requestFocus();
@@ -304,6 +308,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f7,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch5Controller.text.length == 12) {
                         f8.requestFocus();
@@ -322,6 +327,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f8,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch6Controller.text.length == 12) {
                         f9.requestFocus();
@@ -340,6 +346,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                   ),
                   RowBoxInputField(
                     focusNode: f9,
+                    maxLength: 12,
                     onEditingComplete: () {
                       if (_batch7Controller.text.length == 12) {
                         _btnSend();

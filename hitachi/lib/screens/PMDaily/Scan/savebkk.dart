@@ -164,7 +164,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          textTitle: "Process Start",
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),

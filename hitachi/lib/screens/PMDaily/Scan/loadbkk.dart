@@ -77,7 +77,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       ],
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Report Route Sheet",
         body: Container(
           padding: EdgeInsets.all(15),
           child: Column(

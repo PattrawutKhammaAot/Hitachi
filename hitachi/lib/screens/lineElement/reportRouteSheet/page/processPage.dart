@@ -35,6 +35,16 @@ class _ProcessPageState extends State<ProcessPage> {
     super.initState();
   }
 
+  Map<String, double> columnWidths = {
+    'id': double.nan,
+    'proc': double.nan,
+    'qty': double.nan,
+    'startDate': double.nan,
+    'startTime': double.nan,
+    'EndDate': double.nan,
+    'EndTime': double.nan,
+  };
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -63,7 +73,6 @@ class _ProcessPageState extends State<ProcessPage> {
       ],
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Report Route Sheet",
         body: Container(
           padding: EdgeInsets.all(15),
           child: Column(
@@ -108,9 +117,20 @@ class _ProcessPageState extends State<ProcessPage> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: employeeDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['id']!,
                               columnName: 'id',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -123,6 +143,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['proc']!,
                               columnName: 'proc',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -135,6 +156,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['qty']!,
                               columnName: 'qty',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -147,7 +169,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['startDate']!,
                               columnName: 'startDate',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -160,7 +182,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['startTime']!,
                               columnName: 'startTime',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -173,7 +195,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['EndDate']!,
                               columnName: 'EndDate',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -186,7 +208,7 @@ class _ProcessPageState extends State<ProcessPage> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['EndTime']!,
                               columnName: 'EndTime',
                               label: Container(
                                 color: COLOR_BLUE_DARK,

@@ -17,7 +17,7 @@ class BgWhite extends StatelessWidget {
   final Widget? appbar;
   final bool isHideAppBar;
   final bool isHideTitle;
-  final String? textTitle;
+  final Widget? textTitle;
   final bool isHidePreviour;
   final Widget? bottomNavigationBar;
   final Function? onPressedBack;
@@ -34,7 +34,7 @@ class BgWhite extends StatelessWidget {
                 elevation: 0,
                 backgroundColor: COLOR_TRANSPARENT,
                 centerTitle: true,
-                title: isHideTitle ? null : Label(textTitle ?? ""),
+                title: isHideTitle ? null : textTitle,
                 automaticallyImplyLeading: false,
                 leading: isHidePreviour
                     ? null

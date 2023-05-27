@@ -57,7 +57,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       },
       child: BgWhite(
         isHidePreviour: true,
-        textTitle: "Element : Main Menu",
+        textTitle: Label("Element : Main Menu"),
         body: Padding(
           padding:
               const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),

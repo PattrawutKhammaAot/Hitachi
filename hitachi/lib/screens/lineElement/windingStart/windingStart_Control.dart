@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
 import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
 
@@ -29,7 +30,7 @@ class _WindingJobStartControlPageState
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "WindingStart",
+      textTitle: Label("WindingStart"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),
