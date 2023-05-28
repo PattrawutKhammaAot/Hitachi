@@ -124,7 +124,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       ],
       child: BgWhite(
           isHideAppBar: true,
-          textTitle: "ProcessFinish",
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(

@@ -94,7 +94,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
       'Batch7': _batch7Controller.text.trim(),
       'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       'FinDate': '',
-      'StartEnd': '',
+      'StartEnd': 'S',
       'CheckComplete': 'S',
     });
   }

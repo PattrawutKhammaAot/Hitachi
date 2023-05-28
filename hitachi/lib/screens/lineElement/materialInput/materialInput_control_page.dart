@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/materialInput/scan/materialInput_Screen.dart';
 import 'package:hitachi/screens/lineElement/materialInput/hold/materialInput_hold_Screen.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 class MaterialInputControlPage extends StatefulWidget {
   const MaterialInputControlPage({super.key});
@@ -13,12 +16,28 @@ class MaterialInputControlPage extends StatefulWidget {
 }
 
 class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _getHold();
     });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('MATERIAL_TRACE_SHEET');
+    setState(() {
+      listHoldMaterialInput = sql;
+    });
+  }
+
+  @override
+  void initState() {
+    _getHold().then((value) => null);
+    super.initState();
   }
 
   List<Widget> widgetOptions = [
@@ -29,7 +48,23 @@ class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "MaterialInput",
+      textTitle: Padding(
+        padding: const EdgeInsets.only(right: 45),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Label("MaterialInput"),
+            SizedBox(
+              width: 10,
+            ),
+            Label(
+              "-${listHoldMaterialInput.length ?? 0}-",
+              color: COLOR_RED,
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

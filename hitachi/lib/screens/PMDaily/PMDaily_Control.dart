@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/zincthickness/hold/zincthicknessHold.dart';
 import 'package:hitachi/screens/PMDaily/Scan/PMDaily_Scan_Sereen.dart';
 import 'package:hitachi/screens/PMDaily/hold/PMDaily_Hold_Screen.dart';
@@ -30,7 +31,7 @@ class _PMDailyControlState extends State<PMDailyControl> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "PM Daily",
+      textTitle: Label("PM Daily"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

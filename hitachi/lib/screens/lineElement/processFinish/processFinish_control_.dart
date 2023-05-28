@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/processFinish/hold/processFinish_hold_screen.dart';
 import 'package:hitachi/screens/lineElement/processFinish/scan/processFinish_scan_screen.dart';
 
@@ -29,7 +30,7 @@ class _ProcessFinishControlPageState extends State<ProcessFinishControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "ProcessFinish",
+      textTitle: Label("ProcessFinish"),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

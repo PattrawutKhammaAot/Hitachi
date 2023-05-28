@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/machinebreackdown/hold/mbd_hold.dart';
 import 'package:hitachi/screens/machinebreackdown/scan/mbd_scan.dart';
+
+import '../../config.dart';
+import '../../services/databaseHelper.dart';
 
 class MachineBreackDownControl extends StatefulWidget {
   const MachineBreackDownControl({super.key});
@@ -13,6 +17,7 @@ class MachineBreackDownControl extends StatefulWidget {
 }
 
 class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -20,6 +25,7 @@ class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
       setState(() {
         setState(() {
           _selectedIndex = index;
+          _getHold();
         });
       });
     });
@@ -29,11 +35,40 @@ class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
     MachineBreakDownScanScreen(),
     MachineBreakDownHoldScreen()
   ];
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
+    setState(() {
+      listHoldMachineBreakdown = sql;
+    });
+  }
+
+  @override
+  void initState() {
+    _getHold().then((value) => null);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "Machine BreakDown",
+      textTitle: Padding(
+        padding: const EdgeInsets.only(right: 45),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Label("Machine BreakDown"),
+            SizedBox(
+              width: 10,
+            ),
+            Label(
+              "-${listHoldMachineBreakdown.length ?? 0}-",
+              color: COLOR_RED,
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

@@ -140,7 +140,6 @@ class _WindingJobFinishHoldScreenState
   Widget build(BuildContext context) {
     return BgWhite(
       isHideAppBar: true,
-      textTitle: "Winding job Finish(Hold)",
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
@@ -158,6 +157,7 @@ class _WindingJobFinishHoldScreenState
                       onpressOk: () => Navigator.pop(context));
                 } else {
                   _errorDialog(
+                      isHideCancle: false,
                       text:
                           Label("${state.item.MESSAGE ?? "Check Connection"}"),
                       onpressOk: () => Navigator.pop(context));
@@ -183,9 +183,11 @@ class _WindingJobFinishHoldScreenState
                             setState(() {
                               columnWidths[details.column.columnName] =
                                   details.width;
+                              print(details.width);
                             });
                             return true;
                           },
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           source: WindingDataSource!,
                           showCheckboxColumn: true,
                           selectionMode: SelectionMode.multiple,
@@ -476,20 +478,23 @@ class WindingsDataSource extends DataGridSource {
     try {
       if (process != null) {
         for (var _item in process) {
-          _employees.add(
-            DataGridRow(
-              cells: [
-                DataGridCell<int>(
-                    columnName: 'ID', value: int.tryParse(_item.ID.toString())),
-                DataGridCell<String>(
-                    columnName: 'batch', value: _item.BATCH_NO),
-                DataGridCell<String>(
-                    columnName: 'startEnd', value: _item.START_END),
-                DataGridCell<String>(
-                    columnName: 'element', value: _item.ELEMENT),
-              ],
-            ),
-          );
+          if (_item.CHECK_COMPLETE == "E") {
+            _employees.add(
+              DataGridRow(
+                cells: [
+                  DataGridCell<int>(
+                      columnName: 'ID',
+                      value: int.tryParse(_item.ID.toString())),
+                  DataGridCell<String>(
+                      columnName: 'batch', value: _item.BATCH_NO),
+                  DataGridCell<String>(
+                      columnName: 'startEnd', value: _item.START_END),
+                  DataGridCell<String>(
+                      columnName: 'element', value: _item.ELEMENT),
+                ],
+              ),
+            );
+          }
         }
       }
     } catch (e) {

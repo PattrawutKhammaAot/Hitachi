@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/hold/treatmentStartHold_screen.dart';
 import 'package:hitachi/screens/lineElement/treatmentStart/scan/treatmentStart_scan_screen.dart';
+
+import '../../../config.dart';
+import '../../../services/databaseHelper.dart';
 
 class TreatmentStartControlPage extends StatefulWidget {
   const TreatmentStartControlPage({super.key});
@@ -15,10 +19,27 @@ class TreatmentStartControlPage extends StatefulWidget {
 class _TreatmentStartControlPageState extends State<TreatmentStartControlPage> {
   @override
   int _selectedIndex = 0;
+  DatabaseHelper databaseHelper = DatabaseHelper();
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _getHold();
     });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('TREATMENT_SHEET');
+    setState(() {
+      listHoldTreatmentStart =
+          sql.where((element) => element['StartEnd'] == 'S').toList();
+    });
+  }
+
+  @override
+  void initState() {
+    _getHold().then((value) => null);
+    super.initState();
   }
 
   List<Widget> widgetOptions = [
@@ -29,7 +50,23 @@ class _TreatmentStartControlPageState extends State<TreatmentStartControlPage> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "TreatmentStart",
+      textTitle: Padding(
+        padding: const EdgeInsets.only(right: 45),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Label("Treatment Start"),
+            SizedBox(
+              width: 10,
+            ),
+            Label(
+              "-${listHoldTreatmentStart.length ?? 0}-",
+              color: COLOR_RED,
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

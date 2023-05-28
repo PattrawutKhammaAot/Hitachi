@@ -329,7 +329,7 @@ class _MachineBreakDownScanScreenState
             MT1_STOP: _stopTech1Date.toString(),
             MT2: _start_Technical_2_Controller.text.trim(),
             MT2_START_DATE: _startTech2Date.toString(),
-            MT2_STOP: _stopTech1Date.toString(),
+            MT2_STOP: _stopTech2Date.toString(),
             ACCEPT: _operator_accept_Controller.text.trim(),
             BREAK_STOP_DATE: _operator_accept_Controller.text.isEmpty
                 ? ""

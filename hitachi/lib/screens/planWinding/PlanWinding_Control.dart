@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
+import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/screens/planWinding/scan/planwinding_Screen.dart';
 import 'package:hitachi/screens/zincthickness/hold/zincthicknessHold.dart';
 import 'package:hitachi/screens/PMDaily/Scan/PMDaily_Scan_Sereen.dart';
@@ -31,7 +32,9 @@ class _PlanWindingControlState extends State<PlanWindingControl> {
   @override
   Widget build(BuildContext context) {
     return BgWhite(
-      textTitle: "PlanWinding",
+      textTitle: Label(
+        "PlanWinding",
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

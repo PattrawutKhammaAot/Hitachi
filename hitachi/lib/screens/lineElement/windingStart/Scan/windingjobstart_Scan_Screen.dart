@@ -99,7 +99,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
               FILM_PACK_NO: int.tryParse(
                 filmPackNoController.text.trim(),
               ),
-              MACHINE_NO: machineNoController.text.trim(),
+              MACHINE_NO: machineNoController.text.trim().toUpperCase(),
               OPERATOR_NAME: int.tryParse(
                 operatorNameController.text.trim(),
               ),
@@ -179,7 +179,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         ///WriteDataTolocalTable WindingWeightSheet
         await databaseHelper.writeTableWindingWeightSheet_ToSqlite(
             machineNo: machineNoController.text.trim(),
-            batchNo: batchNoController.text,
+            batchNo: batchNoController.text.toUpperCase(),
             target: target);
       } else {
         print("check3");
@@ -446,7 +446,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
       },
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Winding Job Start",
         body: Form(
           autovalidateMode: AutovalidateMode.always,
           child: Padding(

@@ -32,6 +32,19 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
   DataGridRow? datagridRow;
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
+  Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'batch': double.nan,
+    't1': double.nan,
+    't2': double.nan,
+    't3': double.nan,
+    't4': double.nan,
+    't6': double.nan,
+    't7': double.nan,
+    't8': double.nan,
+    't9': double.nan,
+    'date': double.nan,
+  };
 
   @override
   void initState() {
@@ -123,6 +136,16 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                             gridLinesVisibility: GridLinesVisibility.both,
                             selectionMode: SelectionMode.multiple,
                             allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                              });
+                              return true;
+                            },
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -187,6 +210,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['batch']!,
                                 columnName: 'batch',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -199,36 +223,40 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 't1',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Thickness1',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['t1']!,
+                                columnName: 't1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness1', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 't2',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Thickness2',
-                                          color: COLOR_WHITE),
-                                    ),
+                                columnName: 't2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness2', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['t2']!,
+                              ),
                               GridColumn(
-                                  columnName: 't3',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Thickness3',
-                                          color: COLOR_WHITE),
-                                    ),
+                                columnName: 't3',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Thickness3', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                                width: columnWidths['t3']!,
+                              ),
                               GridColumn(
+                                width: columnWidths['t4']!,
                                 columnName: 't4',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -239,6 +267,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['t6']!,
                                 columnName: 't6',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -249,6 +278,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['t7']!,
                                 columnName: 't7',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -259,6 +289,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['t8']!,
                                 columnName: 't8',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -269,6 +300,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['t9']!,
                                 columnName: 't9',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -279,6 +311,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['date']!,
                                 columnName: 'date',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,

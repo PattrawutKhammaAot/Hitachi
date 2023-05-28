@@ -35,6 +35,25 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
   bool isHidewidget = false;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+
+  Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'pono': double.nan,
+    'ivno': double.nan,
+    'fi': double.nan,
+    'ic': double.nan,
+    'sb': double.nan,
+    'packno': double.nan,
+    'sd': double.nan,
+    'status': double.nan,
+    'w1': double.nan,
+    'w2': double.nan,
+    'Weight': double.nan,
+    'md': double.nan,
+    'tn': double.nan,
+    'wg': double.nan,
+    'rn': double.nan,
+  };
   @override
   void initState() {
     super.initState();
@@ -80,7 +99,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
         BlocListener<FilmReceiveBloc, FilmReceiveState>(
           listener: (context, state) async {
             if (state is FilmReceiveLoadingState) {
-              EasyLoading.show();
+              EasyLoading.show(status: "Loading ...");
             }
             if (state is FilmReceiveLoadedState) {
               EasyLoading.dismiss();
@@ -91,7 +110,12 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
               } else {
-                EasyLoading.showError("Please Check Data");
+                _errorDialog(
+                    isHideCancle: false,
+                    text: Label("${state.item.MESSAGE ?? "Check Connection"}"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                    });
               }
             }
             if (state is FilmReceiveErrorState) {
@@ -102,7 +126,6 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
       ],
       child: BgWhite(
         isHideAppBar: true,
-        textTitle: "Winding job Start(Hold)",
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
@@ -117,6 +140,16 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                           selectionMode: SelectionMode.multiple,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           gridLinesVisibility: GridLinesVisibility.both,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                            });
+                            return true;
+                          },
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             if (selectRow.isNotEmpty) {
@@ -182,6 +215,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
+                                width: columnWidths['pono']!,
                                 columnName: 'pono',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -194,6 +228,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   // color: COLOR_BLUE_DARK,
                                 )),
                             GridColumn(
+                              width: columnWidths['ivno']!,
                               columnName: 'ivno',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -207,30 +242,33 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                               ),
                             ),
                             GridColumn(
-                                columnName: 'fi',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Freight',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
+                              width: columnWidths['fi']!,
+                              columnName: 'fi',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'Freight',
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                             GridColumn(
-                                columnName: 'ic',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                      child: Label(
-                                    'Incoming',
-                                    fontSize: 14,
-                                    color: COLOR_WHITE,
-                                  )),
-                                ),
-                                width: 100),
+                              width: columnWidths['ic']!,
+                              columnName: 'ic',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                    child: Label(
+                                  'Incoming',
+                                  fontSize: 14,
+                                  color: COLOR_WHITE,
+                                )),
+                              ),
+                            ),
                             GridColumn(
+                                width: columnWidths['sb']!,
                                 columnName: 'sb',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -242,6 +280,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['packno']!,
                                 columnName: 'packno',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -254,6 +293,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['sd']!,
                                 columnName: 'sd',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -265,6 +305,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['status']!,
                                 columnName: 'status',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -276,6 +317,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['w1']!,
                                 columnName: 'w1',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -287,6 +329,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['w2']!,
                                 columnName: 'w2',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -298,6 +341,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['Weight']!,
                                 columnName: 'Weight',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -309,6 +353,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['md']!,
                                 columnName: 'md',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -320,6 +365,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['tn']!,
                                 columnName: 'tn',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -331,6 +377,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['wg']!,
                                 columnName: 'wg',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -342,6 +389,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['rn']!,
                                 columnName: 'rn',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -570,6 +618,59 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
 
   void _selectData() {
     EasyLoading.showInfo("Please Select Data", duration: Duration(seconds: 2));
+  }
+
+  void _errorDialog(
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
 

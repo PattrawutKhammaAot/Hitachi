@@ -91,7 +91,6 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
   Widget build(BuildContext context) {
     return BgWhite(
         isHideAppBar: true,
-        textTitle: "Material Input",
         body: MultiBlocListener(
           listeners: [
             BlocListener<PmDailyBloc, PmDailyState>(

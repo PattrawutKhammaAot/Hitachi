@@ -55,7 +55,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
-  void _deleteSave() async {
+  Future _deleteSave() async {
     await databaseHelper.deleteSave(
         tableName: 'WINDING_SHEET',
         where: 'BatchNo',
@@ -140,6 +140,13 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
+  Future _deleteWeightInSqlite() async {
+    await databaseHelper.deleteDataFromSQLite(
+        tableName: 'WINDING_WEIGHT_SHEET',
+        where: 'BatchNo',
+        id: batchNoController.text.trim());
+  }
+
   @override
   void initState() {
     f1.requestFocus();
@@ -150,11 +157,10 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   Widget build(BuildContext context) {
     return BgWhite(
       isHideAppBar: true,
-      textTitle: "Winding job finish",
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is PostSendWindingFinishLoadingState) {
                 EasyLoading.show(status: "Loading...");
               } else if (state is PostSendWindingFinishLoadedState) {
@@ -163,7 +169,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   items = state.item;
                 });
                 if (items!.RESULT == true) {
-                  _deleteSave();
+                  await _deleteSave();
+                  await _deleteWeightInSqlite();
                   operatorNameController.clear();
                   batchNoController.clear();
                   elementQtyController.clear();
@@ -386,18 +393,20 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
       ),
     );
   }
-  // void _testSendSqlite() async {
-  //   try {
-  //     await databaseHelper.insertSqlite('WINDING_SHEET', {
-  //       'BatchNo': batchNoController.text.trim(),
-  //       'Element': elementQtyController.text.trim(),
-  //       'BatchEndDate': batchNoController.text.trim(),
-  //       'start_end': 'E',
-  //       'checkComplete': '0',
-  //       'value': 'WD'
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+
+  void _testSendSqlite() async {
+    try {
+      await databaseHelper.insertSqlite('WINDING_SHEET', {
+        'BatchNo': batchNoController.text.trim(),
+        'Element': elementQtyController.text.trim(),
+        'BatchEndDate': batchNoController.text.trim(),
+        'start_end':
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()).toString(),
+        'checkComplete': 'E',
+        'value': 'WD'
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 }
