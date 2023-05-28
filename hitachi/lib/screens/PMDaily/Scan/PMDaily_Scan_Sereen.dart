@@ -71,49 +71,29 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
         BlocListener<PmDailyBloc, PmDailyState>(
           listener: (context, state) {
             //=======================Status====================================
-            // if (state is PMDailyGetLoadingState) {
-            //   EasyLoading.show();
-            //   print("(EasyLoading2)");
-            // } else {
-            //   EasyLoading.dismiss();
-            //   print("(EasyLoadings)");
-            // }
-            // if (state is PMDailyGetLoadedState) {
-            //   EasyLoading.dismiss();
-            //   if (state.item.CHECKPOINT!.isEmpty) {
-            //     _errorDialog(
-            //         text: Label("Load PM Not Complete"),
-            //         isHideCancle: false,
-            //         onpressOk: () async {
-            //           Navigator.pop(context);
-            //           checkpointController.clear();
-            //         });
-            //   } else if (state.item.CHECKPOINT!.isNotEmpty) {
-            //     _enabledOperator = false;
-            //     setState(() {
-            //       bgChange = COLOR_RED;
-            //       PMDailyCheckPointModel = state.item.CHECKPOINT;
-            //       PMDailyDataSource =
-            //           PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
-            //     });
-            //   }
-            // }
-            //
-            // if (state is PMDailyGetErrorState) {
-            //   EasyLoading.dismiss();
-            //   EasyLoading.showError("Can not Call API");
-            //   // print(state.error);
-            // }
             if (state is PMDailyGetLoadingState) {
               EasyLoading.show();
+              print("(EasyLoading)");
             }
             if (state is PMDailyGetLoadedState) {
               EasyLoading.dismiss();
-              setState(() {
-                PMDailyCheckPointModel = state.item.CHECKPOINT;
-                PMDailyDataSource =
-                    PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
-              });
+              if (state.item.CHECKPOINT!.isEmpty) {
+                _errorDialog(
+                    text: Label("Load PM Not Complete"),
+                    isHideCancle: false,
+                    onpressOk: () async {
+                      Navigator.pop(context);
+                      checkpointController.clear();
+                    });
+              } else if (state.item.CHECKPOINT!.isNotEmpty) {
+                _enabledOperator = false;
+                setState(() {
+                  bgChange = COLOR_RED;
+                  PMDailyCheckPointModel = state.item.CHECKPOINT;
+                  PMDailyDataSource =
+                      PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
+                });
+              }
             }
             if (state is PMDailyGetErrorState) {
               EasyLoading.dismiss();
@@ -121,14 +101,29 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                   duration: Duration(seconds: 5));
               print(state.error);
             }
+
+            // if (state is PMDailyGetLoadingState) {
+            //   EasyLoading.show();
+            // }
+            // if (state is PMDailyGetLoadedState) {
+            //   EasyLoading.dismiss();
+            //   setState(() {
+            //     PMDailyCheckPointModel = state.item.CHECKPOINT;
+            //     PMDailyDataSource =
+            //         PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
+            //   });
+            // }
+            // if (state is PMDailyGetErrorState) {
+            //   EasyLoading.dismiss();
+            //   EasyLoading.showError("Check Connection",
+            //       duration: Duration(seconds: 5));
+            //   print(state.error);
+            // }
             //===========================send================================
             if (state is PMDailyLoadingState) {
               EasyLoading.show();
               print("loading");
             }
-            // else {
-            //   EasyLoading.dismiss();
-            // }
             if (state is PMDailyLoadedState) {
               print("Loaded");
               EasyLoading.dismiss();
