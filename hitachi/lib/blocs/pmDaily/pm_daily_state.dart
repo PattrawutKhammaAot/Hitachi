@@ -34,7 +34,7 @@ class PMDailyErrorState extends PmDailyState {
   @override
   List<Object> get props => [error];
 }
-//Get
+//Get Status
 
 class PMDailyGetLoadingState extends PmDailyState {
   const PMDailyGetLoadingState();

@@ -238,8 +238,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                         .value
                                         .toString())!);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  // _colorSend = Colors.grey;
+                                  // _colorDelete = Colors.grey;
                                 });
 
                                 print('No Rows Selected');

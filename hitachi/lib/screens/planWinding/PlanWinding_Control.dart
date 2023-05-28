@@ -38,23 +38,6 @@ class _PlanWindingControlState extends State<PlanWindingControl> {
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: const <BottomNavigationBarItem>[
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.aod),
-      //       label: 'Scan',
-      //       backgroundColor: Colors.red,
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.work),
-      //       label: 'Hold',
-      //       backgroundColor: Colors.green,
-      //     ),
-      //   ],
-      //   currentIndex: _selectedIndex,
-      //   selectedItemColor: COLOR_BLUE_DARK,
-      //   onTap: _onItemTapped,
-      // ),
     );
   }
 }

@@ -73,44 +73,43 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
     }
   }
 
+  // Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
+  //   try {
+  //     Response response = await dio.get(
+  //       ApiConfig.PM_GETDAILY + "$number",
+  //       options: Options(
+  //           headers: ApiConfig.HEADER(),
+  //           sendTimeout: Duration(seconds: 60),
+  //           receiveTimeout: Duration(seconds: 60)),
+  //     );
+  //
+  //     CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+  //     print(tmp);
+  //     print(ApiConfig.PM_GETDAILY + "$number");
+  //
+  //     return tmp;
+  //   } catch (e, s) {
+  //     print("Exception occured: $e StackTrace: $s");
+  //     return CPPMDailyOutputModel();
+  //   }
+  // }
+
   Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
     try {
       Response response = await dio.get(
         ApiConfig.PM_GETDAILY + "$number",
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
       );
-
-      CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
-      print(tmp);
       print(ApiConfig.PM_GETDAILY + "$number");
 
+      CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+
       return tmp;
-    } catch (e, s) {
-      print("Exception occured: $e StackTrace: $s");
-      return CPPMDailyOutputModel();
+    } on Exception {
+      throw Exception();
     }
   }
-
-  // Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
-  //   try {
-  //     Response response = await dio.get(
-  //       ApiConfig.PLAN_WINDING,
-  //       options: Options(
-  //         // headers: ApiConfig.HEADER(),
-  //           sendTimeout: Duration(seconds: 3),
-  //           receiveTimeout: Duration(seconds: 3)),
-  //     );
-  //
-  //     PlanWindingOutputModel tmp =
-  //     PlanWindingOutputModel.fromJson(response.data);
-  //
-  //     return tmp;
-  //   } catch (e) {
-  //     print(e);
-  //     return PlanWindingOutputModel();
-  //   }
-  // }
 }

@@ -177,8 +177,8 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                         .value
                                         .toString())!);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  // _colorSend = Colors.grey;
+                                  // _colorDelete = Colors.grey;
                                 });
 
                                 print('No Rows Selected');

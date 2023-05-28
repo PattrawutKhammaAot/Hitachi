@@ -9,6 +9,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
 import 'package:hitachi/services/databaseHelper.dart';
@@ -40,6 +41,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   List<ProcessModel> selectAll = [];
   String StartEndValue = 'E';
   ////
+
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
       List<Map<String, dynamic>> rows = await databaseHelper
@@ -147,9 +149,31 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
-                if (state is ProcessStartLoadingState) {
+                // if (state is ProcessStartLoadingState) {
+                //   EasyLoading.show();
+                // } else if (state is ProcessStartLoadedState) {
+                //   EasyLoading.dismiss();
+                //   if (state.item.RESULT == true) {
+                //     await deletedInfo();
+                //     await _refreshPage();
+                //     EasyLoading.showSuccess("SendComplete");
+                //   } else {
+                //     _errorDialog(
+                //         text: Label(
+                //             "${state.item.MESSAGE ?? "Check Connection"}"),
+                //         onpressOk: () {
+                //           Navigator.pop(context);
+                //         });
+                //   }
+                // } else if (state is ProcessStartErrorState) {
+                //   EasyLoading.dismiss();
+                //
+                //   EasyLoading.showError("Please Check Connection Internet");
+                // }
+
+                if (state is ProcessFinishLoadingState) {
                   EasyLoading.show();
-                } else if (state is ProcessStartLoadedState) {
+                } else if (state is ProcessFinishLoadedState) {
                   EasyLoading.dismiss();
                   if (state.item.RESULT == true) {
                     await deletedInfo();
@@ -163,28 +187,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                           Navigator.pop(context);
                         });
                   }
-                } else if (state is ProcessStartErrorState) {
+                } else if (state is ProcessFinishErrorState) {
                   EasyLoading.dismiss();
 
                   EasyLoading.showError("Please Check Connection Internet");
                 }
-
-                // if (state is ProcessStartLoadingState) {
-                //   EasyLoading.show();
-                // } else if (state is ProcessStartLoadedState) {
-                //   if (state.item.RESULT == true) {
-                //     deletedInfo();
-                //     Navigator.canPop(context);
-                //     EasyLoading.dismiss();
-                //     EasyLoading.showSuccess("Send complete",
-                //         duration: Duration(seconds: 3));
-                //   } else {
-                //     EasyLoading.showError("Please Check Data");
-                //   }
-                // } else {
-                //   EasyLoading.dismiss();
-                //   EasyLoading.showError("Please Check Connection Internet");
-                // }
               },
             )
           ],
@@ -246,8 +253,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                         .value
                                         .toString())!);
                                   }
-                                  _colorSend = Colors.grey;
-                                  _colorDelete = Colors.grey;
+                                  // _colorSend = Colors.grey;
+                                  // _colorDelete = Colors.grey;
                                 });
 
                                 print('No Rows Selected');
@@ -424,30 +431,38 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         ));
   }
 
-  void _sendDataServer() async {
+  _sendDataServer() {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
+
       BlocProvider.of<LineElementBloc>(context).add(
-        ProcessStartEvent(
-          ProcessOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            OPERATORNAME1: int.tryParse(
-              row.OPERATOR_NAME1.toString(),
-            ),
-            OPERATORNAME2: int.tryParse(
-              row.OPERATOR_NAME2.toString(),
-            ),
-            OPERATORNAME3: int.tryParse(
-              row.OPERATOR_NAME3.toString(),
-            ),
-            BATCHNO: row.BATCH_NO.toString(),
-            STARTDATE: row.STARTDATE.toString(),
-          ),
-        ),
+        ProcessFinishInputEvent(ProcessFinishOutputModel(
+          MACHINE: row.MACHINE,
+          OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+          REJECTQTY: row.GARBAGE.toString(),
+          BATCHNO: int.tryParse(row.BATCH_NO.toString()),
+          FINISHDATE: row.FINDATE.toString(),
+        )),
       );
     });
   }
+
+  // void _sendDataServer() async {
+  //   _index.forEach((element) async {
+  //     var row = processList.where((value) => value.ID == element).first;
+  //     BlocProvider.of<LineElementBloc>(context).add(
+  //       ProcessFinishInputEvent(
+  //         ProcessFinishOutputModel(
+  //           MACHINE: row.MACHINE,
+  //           OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+  //           REJECTQTY: row.GARBAGE.toString(),
+  //           BATCHNO: int.tryParse(row.BATCH_NO.toString()),
+  //           FINISHDATE: row.STARTDATE.toString(),
+  //         ),
+  //       ),
+  //     );
+  //   });
+  // }
 
   void _AlertDialog() async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
