@@ -41,6 +41,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   List<int> _index = [];
   DataGridRow? datagridRow;
   String CheckFirst = "";
+  String valuetxtinput = "";
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   final TextEditingController checkpointController = TextEditingController();
@@ -49,6 +50,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   final f1 = FocusNode();
   final f2 = FocusNode();
 
+  bool _enabledOperator = true;
   List<PMDailyModel>? processModelSqlite;
 
   @override
@@ -68,19 +70,33 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       listeners: [
         BlocListener<PmDailyBloc, PmDailyState>(
           listener: (context, state) {
+            //=======================Status====================================
             if (state is PMDailyGetLoadingState) {
               EasyLoading.show();
+              print("(EasyLoading2)");
             } else {
               EasyLoading.dismiss();
+              print("(EasyLoadings)");
             }
             if (state is PMDailyGetLoadedState) {
               EasyLoading.dismiss();
-
-              setState(() {
-                PMDailyCheckPointModel = state.item.CHECKPOINT;
-                PMDailyDataSource =
-                    PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
-              });
+              if (state.item.CHECKPOINT!.isEmpty) {
+                _errorDialog(
+                    text: Label("Load PM Not Complete"),
+                    isHideCancle: false,
+                    onpressOk: () async {
+                      Navigator.pop(context);
+                      checkpointController.clear();
+                    });
+              } else if (state.item.CHECKPOINT!.isNotEmpty) {
+                _enabledOperator = false;
+                setState(() {
+                  bgChange = COLOR_RED;
+                  PMDailyCheckPointModel = state.item.CHECKPOINT;
+                  PMDailyDataSource =
+                      PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
+                });
+              }
             }
 
             if (state is PMDailyGetErrorState) {
@@ -88,7 +104,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               EasyLoading.showError("Can not Call Api");
               // print(state.error);
             }
-            //===========================================================
+            //===========================send================================
             if (state is PMDailyLoadingState) {
               EasyLoading.show();
               print("loading");
@@ -107,10 +123,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       Navigator.pop(context);
-                      operatorNameController.clear();
-                      checkpointController.clear();
+                      // operatorNameController.clear();
+                      // checkpointController.clear();
                     });
-                bgChange = Colors.grey;
+                // _index.clear();
+                // bgChange = Colors.grey;
                 f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 // EasyLoading.showError("Can not send & save Data");
@@ -121,8 +138,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
-                      operatorNameController.clear();
-                      checkpointController.clear();
+                      // operatorNameController.clear();
+                      // checkpointController.clear();
                     });
               } else {
                 // EasyLoading.showError("Can not Call API");
@@ -132,8 +149,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
-                      operatorNameController.clear();
-                      checkpointController.clear();
+                      // operatorNameController.clear();
+                      // checkpointController.clear();
+                      print("checkpointController");
                     });
               }
               f1.requestFocus();
@@ -162,14 +180,19 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 controller: operatorNameController,
                 maxLength: 12,
                 focusNode: f1,
+                enabled: _enabledOperator,
                 // enabled: _enabledPMDaily,
 
                 onEditingComplete: () {
                   if (operatorNameController.text.isNotEmpty) {
                     setState(() {
                       f2.requestFocus();
+                      valuetxtinput = " ";
                     });
                   } else {
+                    setState(() {
+                      valuetxtinput = "Operator Name : User INVALID";
+                    });
                     operatorNameController.clear();
                   }
                 },
@@ -188,18 +211,32 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 maxLength: 10,
                 controller: checkpointController,
                 focusNode: f2,
+                enabled: _enabledOperator,
                 // enabled: _enabledPMDaily,
+                onEditingComplete: () {
+                  if (checkpointController.text.isNotEmpty) {
+                    setState(() {
+                      f2.requestFocus();
+                      valuetxtinput = " ";
+                    });
+                  } else {
+                    setState(() {
+                      valuetxtinput = "Check Point : Check Point INVALID";
+                    });
+                    checkpointController.clear();
+                  }
+                },
 
                 onChanged: (value) {
                   if (operatorNameController.text.isNotEmpty &&
                       checkpointController.text.isNotEmpty) {
-                    setState(() {
-                      bgChange = COLOR_RED;
-                    });
+                    // setState(() {
+                    //   bgChange = COLOR_RED;
+                    // });
                   } else {
-                    setState(() {
-                      bgChange = Colors.grey;
-                    });
+                    // setState(() {
+                    //   bgChange = Colors.grey;
+                    // });
                   }
                 },
               ),
@@ -299,7 +336,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           visible: true,
                           child: Container(
                               child: Label(
-                            " ",
+                            " ${valuetxtinput}",
                             color: COLOR_RED,
                           )),
                         ),
@@ -321,6 +358,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                   Expanded(
                     flex: 3,
                     child: Button(
+                      bgColor: bgChange ?? Colors.grey,
                       onPress: () => _btnSend(_index.first),
                       text: Label(
                         "Send",
@@ -338,19 +376,18 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   _loadPlan() {
-    CheckFirst = checkpointController.text.substring(0, 1);
-
-    if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
-      BlocProvider.of<PmDailyBloc>(context).add(
-        PMDailyGetSendEvent(CheckFirst),
-      );
-    } else {
-      _errorDialog(
-          text: Label("Check Point Not Correct"),
-          onpressOk: () async {
-            Navigator.pop(context);
-          });
-    }
+    // CheckFirst = checkpointController.text.substring(0, 1);
+    // if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
+    BlocProvider.of<PmDailyBloc>(context).add(
+      PMDailyGetSendEvent(checkpointController.text),
+    );
+    // } else {
+    //   _errorDialog(
+    //       text: Label("Check Point Not Correct"),
+    //       onpressOk: () async {
+    //         Navigator.pop(context);
+    //       });
+    // }
     // widget.onChange!(batchNoController.text.trim());
   }
 
@@ -358,13 +395,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     if (checkpointController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty) {
       _callAPI(_index);
-      // setState(() {
-      //   _errorDialog(
-      //       text: Label("Send Complete"),
-      //       onpressOk: () {
-      //         Navigator.pop(context);
-      //       });
-      // });
     } else {
       setState(() {
         // _enabledPMDaily = true;
@@ -440,7 +470,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -455,15 +488,35 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

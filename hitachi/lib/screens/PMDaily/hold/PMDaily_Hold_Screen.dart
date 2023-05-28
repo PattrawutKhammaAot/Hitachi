@@ -11,6 +11,7 @@ import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/pmdailyModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
 import 'package:hitachi/services/databaseHelper.dart';
@@ -94,21 +95,26 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
         body: MultiBlocListener(
           listeners: [
             BlocListener<PmDailyBloc, PmDailyState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is PMDailyLoadingState) {
                   EasyLoading.show();
                 } else if (state is PMDailyLoadedState) {
+                  EasyLoading.dismiss();
                   if (state.item.RESULT == true) {
-                    deletedInfo();
-                    Navigator.canPop(context);
-                    EasyLoading.dismiss();
-                    EasyLoading.showSuccess("Send complete",
-                        duration: Duration(seconds: 3));
+                    await deletedInfo();
+                    await _refreshPage();
+                    EasyLoading.showSuccess("SendComplete");
                   } else {
-                    EasyLoading.showError("Please Check Data");
+                    _errorDialog(
+                        text: Label(
+                            "${state.item.MESSAGE ?? "Check Connection"}"),
+                        onpressOk: () {
+                          Navigator.pop(context);
+                        });
                   }
                 } else if (state is PMDailyErrorState) {
                   EasyLoading.dismiss();
+
                   EasyLoading.showError("Please Check Connection Internet");
                 }
               },
@@ -194,7 +200,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 ),
                               ),
                               GridColumn(
-                                columnName: 'Machine',
+                                columnName: 'Operatorname',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
@@ -206,17 +212,17 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'Operatorname',
+                                  columnName: 'CheckPoint',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
-                                      child: Label('Checkpoint',
+                                      child: Label('CheckPoint',
                                           color: COLOR_WHITE),
                                     ),
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'Operatorname1',
+                                  columnName: 'Status',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
@@ -226,7 +232,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                   ),
                                   width: 100),
                               GridColumn(
-                                  columnName: 'Operatorname2',
+                                  columnName: 'DatePM',
                                   label: Container(
                                     color: COLOR_BLUE_DARK,
                                     child: Center(
@@ -320,7 +326,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                       bgColor: _colorSend,
                       onPress: () {
                         if (_index.isNotEmpty) {
-                          // _sendDataServer();
+                          _sendDataServer();
                         } else {
                           EasyLoading.showInfo("Please Select Data");
                         }
@@ -334,30 +340,82 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
         ));
   }
 
-  // void _sendDataServer() async {
-  //   _index.forEach((element) async {
-  //     var row = processList.where((value) => value.ID == element).first;
-  //     BlocProvider.of<LineElementBloc>(context).add(
-  //       ProcessStartEvent(
-  //         ProcessOutputModel(
-  //           MACHINE: row.MACHINE,
-  //           OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-  //           OPERATORNAME1: int.tryParse(
-  //             row.OPERATOR_NAME1.toString(),
-  //           ),
-  //           OPERATORNAME2: int.tryParse(
-  //             row.OPERATOR_NAME2.toString(),
-  //           ),
-  //           OPERATORNAME3: int.tryParse(
-  //             row.OPERATOR_NAME3.toString(),
-  //           ),
-  //           BATCHNO: row.BATCH_NO.toString(),
-  //           STARTDATE: row.STARTDATE.toString(),
-  //         ),
-  //       ),
-  //     );
-  //   });
-  // }
+  // DataGridCell<int>(columnName: 'ID', value: _item.ID),
+  // DataGridCell<String>(
+  // columnName: 'Operatorname', value: _item.OPERATOR_NAME),
+  // DataGridCell<String>(
+  // columnName: 'CheckPoint', value: _item.CHECKPOINT),
+  // DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
+  // DataGridCell<String>(columnName: 'DatePM', value: _item.DATEPM),
+
+  void _sendDataServer() async {
+    _index.forEach((element) async {
+      var row = PMDailyList.where((value) => value.ID == element).first;
+      BlocProvider.of<PmDailyBloc>(context).add(
+        PMDailySendEvent(
+          PMDailyOutputModel(
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            CHECKPOINT: row.CHECKPOINT.toString(),
+            STATUS: row.STATUS.toString(),
+            STARTDATE: row.DATEPM.toString(),
+          ),
+        ),
+      );
+    });
+  }
+
+  void _errorDialog(
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   void _AlertDialog() async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
@@ -403,13 +461,11 @@ class ProcessStartDataSource extends DataGridSource {
             cells: [
               DataGridCell<int>(columnName: 'ID', value: _item.ID),
               DataGridCell<String>(
-                  columnName: 'Machine', value: _item.OPERATOR_NAME),
+                  columnName: 'Operatorname', value: _item.OPERATOR_NAME),
               DataGridCell<String>(
-                  columnName: 'Operatorname', value: _item.CHECKPOINT),
-              DataGridCell<String>(
-                  columnName: 'Operatorname1', value: _item.STATUS),
-              DataGridCell<String>(
-                  columnName: 'Operatorname2', value: _item.DATEPM),
+                  columnName: 'CheckPoint', value: _item.CHECKPOINT),
+              DataGridCell<String>(columnName: 'Status', value: _item.STATUS),
+              DataGridCell<String>(columnName: 'DatePM', value: _item.DATEPM),
             ],
           ),
         );

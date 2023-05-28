@@ -200,6 +200,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           print(MachineController.text);
                           _enabledMachineNo = false;
                           // valuetxtinput = MachineController.text.trim();
+                          valuetxtinput = "";
                         });
                         f2.requestFocus();
                       } else {
@@ -242,6 +243,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           } else {
                             f6.requestFocus();
                           }
+                          valuetxtinput = "";
                         });
                       } else {
                         setState(() {
@@ -336,6 +338,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         _btnSend();
+                        valuetxtinput = "";
                       } else {
                         setState(() {
                           valuetxtinput = "Batch No : INVALID";
@@ -497,7 +500,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -512,15 +518,35 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

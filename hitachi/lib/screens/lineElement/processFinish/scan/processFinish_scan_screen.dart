@@ -158,6 +158,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           // _enabledMachineNo = false;
                         });
                         f2.requestFocus();
+                        valuetxtinput = " ";
                       } else {
                         setState(() {
                           // _enabledCheckMachine = false;
@@ -195,18 +196,16 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       ),
                     ],
                     onEditingComplete: () {
-                      setState(() {
-                        f3.requestFocus();
-                      });
-                      // if (operatorNameController.text.length == 12) {
-                      //   setState(() {
-                      //     f3.requestFocus();
-                      //   });
-                      // } else {
-                      //   setState(() {
-                      //     valuetxtinput = "User INVALID";
-                      //   });
-                      // }
+                      if (operatorNameController.text.isNotEmpty) {
+                        setState(() {
+                          f3.requestFocus();
+                          valuetxtinput = " ";
+                        });
+                      } else {
+                        setState(() {
+                          valuetxtinput = "Operator Name : User INVALID";
+                        });
+                      }
                     },
                   ),
                   SizedBox(
@@ -236,7 +235,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           setState(() {
                             _clearAllData();
                             valuetxtinput =
-                                "จะต้องไม่ขึ้นต้นด้วย WD เพราะผ่านการ Winding มาแล้ว";
+                                "Must not start with WD because it has been through Winding.";
                           });
                         }
                       }
@@ -349,7 +348,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -364,15 +366,35 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );

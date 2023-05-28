@@ -96,7 +96,10 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   }
 
   void _errorDialog(
-      {Label? text, Function? onpressOk, Function? onpressCancel}) async {
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
       context: context,
@@ -111,11 +114,35 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
           ],
         ),
 
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => onpressOk?.call(),
-            child: const Text('OK'),
-          ),
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -481,44 +508,6 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       ),
     );
   }
-
-  // void _AlertDialog() async {
-  //   // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
-  //   showDialog<String>(
-  //     context: context,
-  //     builder: (BuildContext context) => AlertDialog(
-  //       // title: const Text('AlertDialog Title'),
-  //       content: TextFormField(
-  //         decoration: const InputDecoration(
-  //           border: OutlineInputBorder(),
-  //           labelText: 'Please Input Password',
-  //         ),
-  //         controller: _passwordController,
-  //       ),
-  //
-  //       actions: <Widget>[
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: const Text('Cancel'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () {
-  //             if (_passwordController.text.trim().length > 6) {
-  //               deletedInfo();
-  //
-  //               Navigator.pop(context);
-  //               Navigator.pop(context);
-  //               EasyLoading.showSuccess("Delete Success");
-  //             } else {
-  //               EasyLoading.showError("Please Input Password");
-  //             }
-  //           },
-  //           child: const Text('OK'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class ProcessStartDataSource extends DataGridSource {
