@@ -486,16 +486,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               }
             } else if (state is CheckFilmReceiveErrorState) {
               EasyLoading.dismiss();
-
-              _errorDialog(
-                  isHideCancle: false,
-                  text: Label(
-                    "Check Connection",
-                    color: COLOR_BLACK,
-                  ),
-                  onpressOk: () {
-                    Navigator.pop(context);
-                  });
+              f7.requestFocus();
             }
           },
         )

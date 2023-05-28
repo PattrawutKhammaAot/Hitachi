@@ -55,7 +55,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
-  void _deleteSave() async {
+  Future _deleteSave() async {
     await databaseHelper.deleteSave(
         tableName: 'WINDING_SHEET',
         where: 'BatchNo',
@@ -140,6 +140,13 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     }
   }
 
+  Future _deleteWeightInSqlite() async {
+    await databaseHelper.deleteDataFromSQLite(
+        tableName: 'WINDING_WEIGHT_SHEET',
+        where: 'BatchNo',
+        id: batchNoController.text.trim());
+  }
+
   @override
   void initState() {
     f1.requestFocus();
@@ -153,7 +160,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<LineElementBloc, LineElementState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is PostSendWindingFinishLoadingState) {
                 EasyLoading.show(status: "Loading...");
               } else if (state is PostSendWindingFinishLoadedState) {
@@ -162,7 +169,8 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   items = state.item;
                 });
                 if (items!.RESULT == true) {
-                  _deleteSave();
+                  await _deleteSave();
+                  await _deleteWeightInSqlite();
                   operatorNameController.clear();
                   batchNoController.clear();
                   elementQtyController.clear();
