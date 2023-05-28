@@ -99,7 +99,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                 // EasyLoading.showError("Can not Call API");
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label("Can not Call API"),
+                    isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart();
@@ -484,7 +485,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     try {
       await databaseHelper.insertSqlite('PROCESS_SHEET', {
         'Machine': machineNoController.text.trim(),
-        'OperatorName1': operatorNameController.text.trim(),
+        'OperatorName': operatorNameController.text.trim(),
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Garbage': rejectQtyController.text.trim(),
         'FinDate':

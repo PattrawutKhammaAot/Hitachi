@@ -213,7 +213,7 @@ class DatabaseHelper {
     try {
       String sql =
           "SELECT ${select1}, ${select2}, ${select3}, ${select4}, ${select5}, ${select6} FROM ${formTable} WHERE ${where} = '${stringValue}'" +
-              " AND (${keyAnd}='${value}') "; // แก้ไขตรงนี้;
+              " AND (${keyAnd}='${value}') AND StartEnd = 'S' "; // แก้ไขตรงนี้;
       Database db = await this.database;
       return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
     } catch (e) {
@@ -236,7 +236,7 @@ class DatabaseHelper {
     try {
       String sql =
           "SELECT ${select1}, ${select2}, ${select3}, ${select4} FROM ${formTable} WHERE ${where} = '${stringValue}'" +
-              " AND (${keyAnd}='${value}') "; // แก้ไขตรงนี้;
+              " AND (${keyAnd}='${value}') AND StartEnd = 'E' "; // แก้ไขตรงนี้;
       Database db = await this.database;
       return await db.rawQuery(sql); // ปิดวงเล็บตรงนี้
     } catch (e) {
@@ -311,10 +311,13 @@ class DatabaseHelper {
       String? yieldKey5,
       String? yieldKey6,
       String? whereKey,
-      String? value}) async {
+      String? value,
+      String? whereKey2,
+      String? value2}) async {
     final Database db = await database;
     String sql =
-        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4', ${key5} = '$yieldKey5', ${key6} = '$yieldKey6' WHERE ${whereKey} = '$value'";
+        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4', ${key5} = '$yieldKey5', ${key6} = '$yieldKey6' WHERE ${whereKey} = '$value'"
+        " AND ${whereKey2} ='${value2}'  AND StartEnd = 'S'";
     return await db.rawUpdate(sql);
   }
 
@@ -351,7 +354,7 @@ class DatabaseHelper {
     final Database db = await database;
     String sql =
         "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4' , StartEnd = 'E' WHERE ${whereKey} = '$value'"
-        " AND ${whereKey2} ='${value2}' "; // แก้ไขตรงนี้;
+        " AND ${whereKey2} ='${value2}' AND StartEnd = 'E' "; // แก้ไขตรงนี้;
     return await db.rawUpdate(sql);
   }
 

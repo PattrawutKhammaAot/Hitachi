@@ -173,8 +173,11 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               // EasyLoading.dismiss();
               // _errorDialog();
               _getProcessStart();
-              _enabledMachineNo = true;
+              setState(() {
+                _enabledMachineNo = true;
+              });
               EasyLoading.showError("Please Check Connection Internet");
+              f1.requestFocus();
             }
           },
         )
@@ -434,23 +437,26 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     try {
       if (operatorNameController.text.isNotEmpty) {
         await databaseHelper.updateProcessStart(
-            table: 'PROCESS_SHEET',
-            key1: 'OperatorName',
-            yieldKey1: int.tryParse(operatorNameController.text.trim()),
-            key2: 'OperatorName1',
-            yieldKey2: int.tryParse(operatorName1Controller.text.trim() ?? ""),
-            key3: 'OperatorName2',
-            yieldKey3: int.tryParse(operatorName2Controller.text.trim() ?? ""),
-            key4: 'OperatorName3',
-            yieldKey4: int.tryParse(operatorName3Controller.text.trim() ?? ""),
-            key5: 'BatchNo',
-            yieldKey5: batchNoController.text.trim(),
-            key6: 'StartDate',
-            yieldKey6: DateFormat('yyyy MM dd HH:mm:ss')
-                .format(DateTime.now())
-                .toString(),
-            whereKey: 'Machine',
-            value: MachineController.text.trim());
+          table: 'PROCESS_SHEET',
+          key1: 'OperatorName',
+          yieldKey1: int.tryParse(operatorNameController.text.trim()),
+          key2: 'OperatorName1',
+          yieldKey2: int.tryParse(operatorName1Controller.text.trim() ?? ""),
+          key3: 'OperatorName2',
+          yieldKey3: int.tryParse(operatorName2Controller.text.trim() ?? ""),
+          key4: 'OperatorName3',
+          yieldKey4: int.tryParse(operatorName3Controller.text.trim() ?? ""),
+          key5: 'BatchNo',
+          yieldKey5: batchNoController.text.trim(),
+          key6: 'StartDate',
+          yieldKey6: DateFormat('yyyy MM dd HH:mm:ss')
+              .format(DateTime.now())
+              .toString(),
+          whereKey: 'Machine',
+          value: MachineController.text.trim(),
+          whereKey2: 'BatchNo',
+          value2: batchNoController.text.trim(),
+        );
         print("updateSendSqlite");
       }
     } catch (e) {

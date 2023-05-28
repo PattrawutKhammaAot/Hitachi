@@ -495,11 +495,11 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'Machine', value: _item.MACHINE),
               DataGridCell<String>(
                   columnName: 'Operatorname', value: _item.OPERATOR_NAME),
+              DataGridCell<String>(
+                  columnName: 'RejectQTY', value: _item.GARBAGE),
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
-              DataGridCell<String>(
-                  columnName: 'RejectQTY', value: _item.GARBAGE),
               DataGridCell<String>(
                   columnName: 'FinDate', value: _item.FINDATE.toString()),
             ],
