@@ -76,6 +76,8 @@ class DatabaseHelper {
     _createDateWindingPlan(db, newVersion);
     _createBarcodePrinting(db, newVersion);
     _createZincThickness(db, newVersion);
+    _createPlanWinding(db, newVersion);
+    _createPMDaily(db, newVersion);
   }
 
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
@@ -1007,6 +1009,25 @@ class DatabaseHelper {
         'Thickness8 TEXT, '
         'Thickness9 TEXT, '
         'DateData TEXT)');
+  }
+
+  void _createPlanWinding(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE PLAN_WINDING_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'PlanDate TEXT, '
+        'OrderPlan TEXT, '
+        'OrderNo TEXT, '
+        'Batch TEXT, '
+        'IPE TEXT, '
+        'Qty TEXT, '
+        'Note TEXT) ');
+  }
+
+  void _createPMDaily(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE PM_DAILY_SHEET ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'Status TEXT, '
+        'Description TEXT) ');
   }
 
   Future<List<Map<String, dynamic>>> fetchZincThickness({String? batch}) async {

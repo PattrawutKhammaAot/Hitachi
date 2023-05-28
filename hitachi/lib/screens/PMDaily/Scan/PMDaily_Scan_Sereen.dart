@@ -11,6 +11,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/pmdailyCheckPointModel.dart';
 import 'package:hitachi/models-Sqlite/pmdailyModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/planWinding/PlanWindingOutputModel.dart';
@@ -57,9 +58,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   void initState() {
     super.initState();
     f1.requestFocus();
-    // BlocProvider.of<LineElementBloc>(context).add(
-    //   ReportRouteSheetEvenet(batchNoController.text.trim()),
-    // );
   }
 
   // PlanWindingBloc
@@ -158,7 +156,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 // EasyLoading.showError("Can not Call API");
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label("Can Not Call API"),
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
@@ -387,6 +385,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     );
   }
 
+  getcheckpoint() {
+    return checkpointController.text;
+  }
+
   _loadPlan() {
     // CheckFirst = checkpointController.text.substring(0, 1);
     // if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
@@ -552,13 +554,20 @@ class PlanWindingDataSource extends DataGridSource {
             ],
           ),
         );
+        databaseHelper.insertSqlite('PM_DAILY_SHEET', {
+          'Status': _item.STATUS,
+          'Description': _item.DESCRIPTION,
+        });
       }
     } else {
       EasyLoading.showError("Can not Call API");
+      _getPMDailySheet();
     }
   }
 
   List<DataGridRow> _employees = [];
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  PMDaily_Screen? PMDailyScreen;
 
   @override
   List<DataGridRow> get rows => _employees;
@@ -578,5 +587,32 @@ class PlanWindingDataSource extends DataGridSource {
         },
       ).toList(),
     );
+  }
+
+  Future<List<PMDailyCheckPointSQLiteModel>> _getPMDailySheet() async {
+    try {
+      List<Map<String, dynamic>> rows =
+          await databaseHelper.queryAllRows('PM_DAILY_SHEET');
+      List<PMDailyCheckPointSQLiteModel> result = rows
+          // .where((row) => row['Status'] == 'P')
+          .map((row) => PMDailyCheckPointSQLiteModel.fromMap(row))
+          .toList();
+
+      for (var _item in result) {
+        _employees.add(
+          DataGridRow(
+            cells: [
+              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
+              DataGridCell<String>(columnName: 'no', value: _item.DESCRIPTION),
+            ],
+          ),
+        );
+      }
+
+      return result;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }

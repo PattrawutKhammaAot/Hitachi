@@ -8,9 +8,11 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models-Sqlite/planWindingModel.dart';
 import 'package:hitachi/models/planWinding/PlanWindingOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -29,6 +31,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   PlanWindingDataSource? planwindingDataSource;
   Color? bgChange;
   String _loadData = "Load Date&Time : ";
+  DatabaseHelper databaseHelper = DatabaseHelper();
 
   @override
   void initState() {
@@ -216,9 +219,6 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   _loadPlan() {
     _loadData = "Load Date&Time : " +
         DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString();
-    // BlocProvider.of<PlanWindingBloc>(context).add(
-    //   PlanWindingSendEvent(batchNoController.text.trim()),
-    // );
     BlocProvider.of<PlanWindingBloc>(context).add(
       PlanWindingSendEvent(),
     );
@@ -244,13 +244,44 @@ class PlanWindingDataSource extends DataGridSource {
             ],
           ),
         );
+        databaseHelper.insertSqlite('PLAN_WINDING_SHEET', {
+          'PlanDate': _item.WDGDATEPLANS,
+          'OrderPlan': _item.ORDER,
+          'OrderNo': _item.ORDERNO,
+          'Batch': _item.BATCH,
+          'IPE': _item.IPECODE,
+          'Qty': _item.WDGQTYPLAN,
+          'Note': _item.NOTE,
+        });
       }
     } else {
       EasyLoading.showError("Can not Call API");
+
+      _getPlanWindingSheet();
+      // rows = databaseHelper.queryAllRows('PLAN_WINDING_SHEET');
+      //
+      // for (var _item in PLAN) {
+      //   _employees.add(
+      //     DataGridRow(
+      //       cells: [
+      //         DataGridCell<String>(
+      //             columnName: 'data', value: _item.WDGDATEPLANS),
+      //         DataGridCell<int>(columnName: 'no', value: _item.ORDER),
+      //         DataGridCell<String>(columnName: 'order', value: _item.ORDERNO),
+      //         DataGridCell<String>(columnName: 'b', value: _item.BATCH),
+      //         DataGridCell<int>(columnName: 'ipe', value: _item.IPECODE),
+      //         DataGridCell<int>(columnName: 'qty', value: _item.WDGQTYPLAN),
+      //         DataGridCell<String>(columnName: 'remark', value: _item.NOTE),
+      //       ],
+      //     ),
+      //   );
+      //
+      // }
     }
   }
 
   List<DataGridRow> _employees = [];
+  DatabaseHelper databaseHelper = DatabaseHelper();
 
   @override
   List<DataGridRow> get rows => _employees;
@@ -270,5 +301,37 @@ class PlanWindingDataSource extends DataGridSource {
         },
       ).toList(),
     );
+  }
+
+  Future<List<PlanWindingSQLiteModel>> _getPlanWindingSheet() async {
+    try {
+      List<Map<String, dynamic>> rows =
+          await databaseHelper.queryAllRows('PLAN_WINDING_SHEET');
+      List<PlanWindingSQLiteModel> result = rows
+          // .where((row) => row['Status'] == 'P')
+          .map((row) => PlanWindingSQLiteModel.fromMap(row))
+          .toList();
+
+      for (var _item in result) {
+        _employees.add(
+          DataGridRow(
+            cells: [
+              DataGridCell<String>(columnName: 'data', value: _item.PLANDATE),
+              DataGridCell<String>(columnName: 'no', value: _item.ORDERNO),
+              DataGridCell<String>(columnName: 'order', value: _item.ORDERNO),
+              DataGridCell<String>(columnName: 'b', value: _item.BATCH),
+              DataGridCell<String>(columnName: 'ipe', value: _item.IPE),
+              DataGridCell<String>(columnName: 'qty', value: _item.QTY),
+              DataGridCell<String>(columnName: 'remark', value: _item.NOTE),
+            ],
+          ),
+        );
+      }
+
+      return result;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }
