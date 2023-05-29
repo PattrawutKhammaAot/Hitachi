@@ -157,7 +157,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
                 if (state is ProcessStartLoadingState) {
-                  EasyLoading.show();
+                  EasyLoading.show(status: "Loading...");
                 } else if (state is ProcessStartLoadedState) {
                   EasyLoading.dismiss();
                   if (state.item.RESULT == true) {

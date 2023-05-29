@@ -50,6 +50,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
           final mlist = await fetchPMDailyStatusModel(event.items);
           emit(PMDailyGetLoadedState(mlist));
         } catch (e) {
+          // emit(PMDailyGetErrorState(e.toString()));
           emit(PMDailyGetErrorState(e.toString()));
         }
       },
@@ -73,27 +74,6 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
     }
   }
 
-  // Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
-  //   try {
-  //     Response response = await dio.get(
-  //       ApiConfig.PM_GETDAILY + "$number",
-  //       options: Options(
-  //           headers: ApiConfig.HEADER(),
-  //           sendTimeout: Duration(seconds: 60),
-  //           receiveTimeout: Duration(seconds: 60)),
-  //     );
-  //
-  //     CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
-  //     print(tmp);
-  //     print(ApiConfig.PM_GETDAILY + "$number");
-  //
-  //     return tmp;
-  //   } catch (e, s) {
-  //     print("Exception occured: $e StackTrace: $s");
-  //     return CPPMDailyOutputModel();
-  //   }
-  // }
-
   Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
     try {
       Response response = await dio.get(
@@ -103,13 +83,34 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(ApiConfig.PM_GETDAILY + "$number");
 
       CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+      print(tmp);
+      print(ApiConfig.PM_GETDAILY + "$number");
 
       return tmp;
-    } on Exception {
-      throw Exception();
+    } catch (e, s) {
+      print("Exception occured: $e StackTrace: $s");
+      return CPPMDailyOutputModel();
     }
   }
+
+  // Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
+  //   try {
+  //     Response response = await dio.get(
+  //       ApiConfig.PM_GETDAILY + "$number",
+  //       options: Options(
+  //           headers: ApiConfig.HEADER(),
+  //           sendTimeout: Duration(seconds: 60),
+  //           receiveTimeout: Duration(seconds: 60)),
+  //     );
+  //     print(ApiConfig.PM_GETDAILY + "$number");
+  //
+  //     CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
+  //
+  //     return tmp;
+  //   } on Exception {
+  //     throw Exception();
+  //   }
+  // }
 }

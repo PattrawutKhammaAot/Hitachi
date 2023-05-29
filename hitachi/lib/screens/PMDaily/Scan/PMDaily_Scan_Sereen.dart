@@ -70,11 +70,19 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           listener: (context, state) {
             //=======================Status====================================
             if (state is PMDailyGetLoadingState) {
-              EasyLoading.show();
-              print("(EasyLoading)");
+              // EasyLoading.show();
+              EasyLoading.show(status: "Loading...");
             }
             if (state is PMDailyGetLoadedState) {
               EasyLoading.dismiss();
+
+              PMDailyCheckPointModel = state.item.CHECKPOINT;
+              setState(() {
+                PMDailyDataSource = PlanWindingDataSource(
+                    CHECKPOINT: PMDailyCheckPointModel,
+                    CPT: checkpointController.text.trim());
+              });
+
               if (state.item.CHECKPOINT!.isEmpty) {
                 _errorDialog(
                     text: Label("Load PM Not Complete"),
@@ -87,40 +95,26 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 _enabledOperator = false;
                 setState(() {
                   bgChange = COLOR_RED;
-                  PMDailyCheckPointModel = state.item.CHECKPOINT;
-                  PMDailyDataSource =
-                      PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
+                  // PMDailyCheckPointModel = state.item.CHECKPOINT;
+                  PMDailyDataSource = PlanWindingDataSource(
+                      CHECKPOINT: PMDailyCheckPointModel,
+                      CPT: checkpointController.text.trim());
                 });
               }
             }
             if (state is PMDailyGetErrorState) {
+              PMDailyDataSource = PlanWindingDataSource(
+                  CHECKPOINT: PMDailyCheckPointModel,
+                  CPT: checkpointController.text.trim());
               EasyLoading.dismiss();
               EasyLoading.showError("Check Connection",
                   duration: Duration(seconds: 5));
               print(state.error);
             }
 
-            // if (state is PMDailyGetLoadingState) {
-            //   EasyLoading.show();
-            // }
-            // if (state is PMDailyGetLoadedState) {
-            //   EasyLoading.dismiss();
-            //   setState(() {
-            //     PMDailyCheckPointModel = state.item.CHECKPOINT;
-            //     PMDailyDataSource =
-            //         PlanWindingDataSource(CHECKPOINT: PMDailyCheckPointModel);
-            //   });
-            // }
-            // if (state is PMDailyGetErrorState) {
-            //   EasyLoading.dismiss();
-            //   EasyLoading.showError("Check Connection",
-            //       duration: Duration(seconds: 5));
-            //   print(state.error);
-            // }
             //===========================send================================
             if (state is PMDailyLoadingState) {
-              EasyLoading.show();
-              print("loading");
+              EasyLoading.show(status: "Loading...");
             }
             if (state is PMDailyLoadedState) {
               print("Loaded");
@@ -134,11 +128,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       Navigator.pop(context);
-                      // operatorNameController.clear();
-                      // checkpointController.clear();
                     });
-                // _index.clear();
-                // bgChange = Colors.grey;
+
                 f1.requestFocus();
               } else if (state.item.RESULT == false) {
                 // EasyLoading.showError("Can not send & save Data");
@@ -169,8 +160,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             }
             if (state is PMDailyErrorState) {
               print("ERROR");
-              // EasyLoading.dismiss();
-              // _errorDialog();
+              EasyLoading.dismiss();
               _getProcessStart(_index.first);
               EasyLoading.showError("Please Check Connection Internet");
             }
@@ -385,10 +375,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     );
   }
 
-  getcheckpoint() {
-    return checkpointController.text;
-  }
-
   _loadPlan() {
     // CheckFirst = checkpointController.text.substring(0, 1);
     // if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
@@ -399,15 +385,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     BlocProvider.of<PlanWindingBloc>(context).add(
       PlanWindingSendEvent(),
     );
-
-    // } else {
-    //   _errorDialog(
-    //       text: Label("Check Point Not Correct"),
-    //       onpressOk: () async {
-    //         Navigator.pop(context);
-    //       });
-    // }
-    // widget.onChange!(batchNoController.text.trim());
   }
 
   void _btnSend(int _index) async {
@@ -543,7 +520,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
 }
 
 class PlanWindingDataSource extends DataGridSource {
-  PlanWindingDataSource({List<PMDailyOutputModelPlan>? CHECKPOINT}) {
+  PlanWindingDataSource(
+      {List<PMDailyOutputModelPlan>? CHECKPOINT, String? CPT}) {
+    String NumberCPT = CPT!.substring(0, 1);
     if (CHECKPOINT != null) {
       for (var _item in CHECKPOINT) {
         _employees.add(
@@ -555,13 +534,14 @@ class PlanWindingDataSource extends DataGridSource {
           ),
         );
         databaseHelper.insertSqlite('PM_DAILY_SHEET', {
+          'CTType': NumberCPT.toString().trim(),
           'Status': _item.STATUS,
           'Description': _item.DESCRIPTION,
         });
       }
     } else {
       EasyLoading.showError("Can not Call API");
-      _getPMDailySheet();
+      _getPMDailySheet(NumberCPT ?? "");
     }
   }
 
@@ -589,16 +569,19 @@ class PlanWindingDataSource extends DataGridSource {
     );
   }
 
-  Future<List<PMDailyCheckPointSQLiteModel>> _getPMDailySheet() async {
+  Future<List<PMDailyCheckPointSQLiteModel>> _getPMDailySheet(
+      String NumberCPT) async {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('PM_DAILY_SHEET');
-      List<PMDailyCheckPointSQLiteModel> result = rows
-          // .where((row) => row['Status'] == 'P')
+      List<PMDailyCheckPointSQLiteModel> CHECKPOINT = rows
+          .where((row) => row['CTType'] == '${NumberCPT}')
           .map((row) => PMDailyCheckPointSQLiteModel.fromMap(row))
           .toList();
 
-      for (var _item in result) {
+      // result
+
+      for (var _item in CHECKPOINT) {
         _employees.add(
           DataGridRow(
             cells: [
@@ -609,7 +592,7 @@ class PlanWindingDataSource extends DataGridSource {
         );
       }
 
-      return result;
+      return CHECKPOINT;
     } catch (e) {
       print(e);
       return [];
