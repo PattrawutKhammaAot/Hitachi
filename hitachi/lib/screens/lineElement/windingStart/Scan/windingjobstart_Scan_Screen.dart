@@ -23,7 +23,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
-  const WindingJobStartScanScreen({super.key});
+  WindingJobStartScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<WindingJobStartScanScreen> createState() =>
@@ -69,6 +70,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   @override
   void initState() {
     f1.requestFocus();
+    _getHold();
     super.initState();
   }
 
@@ -268,6 +270,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
 
       EasyLoading.showSuccess("Save Weight Complete\n Weight = ${_weight}",
           duration: Duration(seconds: 5));
+      await _getHold();
       f5.requestFocus();
       Navigator.pop(context);
     } else {
@@ -436,6 +439,15 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         GetCheckPackNoEvent(result),
       );
     }
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('WINDING_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['Status'] == 'P').toList());
+    });
   }
 
   @override
@@ -818,7 +830,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                                   RegExp(r'^\d*\.?\d*$')),
                             ],
                             onEditingComplete: () async {
-                              okBtnWeight();
+                              await okBtnWeight();
+                              await _getHold();
                             },
                             controller: weight2Controller,
                             decoration:

@@ -18,8 +18,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 class MachineBreakDownScanScreen extends StatefulWidget {
-  const MachineBreakDownScanScreen({super.key});
-
+  MachineBreakDownScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
   @override
   State<MachineBreakDownScanScreen> createState() =>
       _MachineBreakDownScanScreenState();
@@ -87,6 +87,7 @@ class _MachineBreakDownScanScreenState
           onpressOk: () async {
             await _saveMachine();
             await _callBreakDownMachine();
+            await _getHold();
             _checkControllerIsNull();
             f1.requestFocus();
             Navigator.pop(context);
@@ -157,7 +158,16 @@ class _MachineBreakDownScanScreenState
   void initState() {
     f1.requestFocus();
     _callBreakDownMachine(isCallBdm: true);
+    _getHold();
     super.initState();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
   }
 
   Future _saveMachine() async {
@@ -323,13 +333,21 @@ class _MachineBreakDownScanScreenState
             MACHINE_NO: _machineNo_Controller.text.trim(),
             OPERATOR_NAME: _operatorname_Controller.text.trim(),
             SERVICE: _serviceNo_Controller.text.trim(),
-            BREAK_START_DATE: _breakStartDate.toString(),
+            BREAK_START_DATE: _breakStartDate,
             MT1: _start_Technical_1_Controller.text.trim(),
             MT1_START_DATE: _startTech1Date.toString(),
-            MT1_STOP: _stopTech1Date.toString(),
+            MT1_STOP: _stop_Technical_1_Controller.text.isNotEmpty
+                ? _stopTech1Date == ""
+                    ? DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+                    : _stopTech1Date
+                : "",
             MT2: _start_Technical_2_Controller.text.trim(),
             MT2_START_DATE: _startTech2Date.toString(),
-            MT2_STOP: _stopTech2Date.toString(),
+            MT2_STOP: _stop_Technical_2_Controller.text.isNotEmpty
+                ? _stopTech2Date == ""
+                    ? DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+                    : _stopTech2Date.toString()
+                : "",
             ACCEPT: _operator_accept_Controller.text.trim(),
             BREAK_STOP_DATE: _operator_accept_Controller.text.isEmpty
                 ? ""
@@ -364,6 +382,7 @@ class _MachineBreakDownScanScreenState
               if (_respone!.RESULT == true) {
                 await _delete();
                 await _callBreakDownMachine();
+                await _getHold();
 
                 _checkControllerIsNull();
                 f1.requestFocus();
@@ -375,6 +394,7 @@ class _MachineBreakDownScanScreenState
                         "${_respone?.MESSAGE ?? "Check Connection\n Do you want to Save Data"}"),
                     onpressOk: () async {
                       await _saveMachine();
+                      await _getHold();
                       _checkControllerIsNull();
                       f1.requestFocus();
                       Navigator.pop(context);

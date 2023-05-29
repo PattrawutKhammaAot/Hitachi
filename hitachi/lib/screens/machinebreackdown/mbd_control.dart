@@ -18,6 +18,7 @@ class MachineBreackDownControl extends StatefulWidget {
 
 class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
   DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Map<String, dynamic>> listHoldMachineBreakdown = [];
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -31,10 +32,6 @@ class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
     });
   }
 
-  List<Widget> widgetOptions = [
-    MachineBreakDownScanScreen(),
-    MachineBreakDownHoldScreen()
-  ];
   Future _getHold() async {
     List<Map<String, dynamic>> sql =
         await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
@@ -51,6 +48,22 @@ class _MachineBreackDownControlState extends State<MachineBreackDownControl> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      MachineBreakDownScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldMachineBreakdown = value;
+          });
+        },
+      ),
+      MachineBreakDownHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldMachineBreakdown = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

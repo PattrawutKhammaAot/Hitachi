@@ -16,8 +16,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
 
 class WindingJobFinishHoldScreen extends StatefulWidget {
-  const WindingJobFinishHoldScreen({Key? key}) : super(key: key);
-
+  WindingJobFinishHoldScreen({Key? key, this.onChange}) : super(key: key);
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
   @override
   State<WindingJobFinishHoldScreen> createState() =>
       _WindingJobFinishHoldScreenState();
@@ -26,18 +26,6 @@ class WindingJobFinishHoldScreen extends StatefulWidget {
 class _WindingJobFinishHoldScreenState
     extends State<WindingJobFinishHoldScreen> {
   final _formKey = GlobalKey<FormState>();
-  // final TextEditingController machineNo = TextEditingController();
-  // final TextEditingController operatorName = TextEditingController();
-  // final TextEditingController batchNo = TextEditingController();
-  // final TextEditingController product = TextEditingController();
-  // final TextEditingController filmPackNo = TextEditingController();
-  // final TextEditingController paperCodeLot = TextEditingController();
-  // final TextEditingController ppFilmLot = TextEditingController();
-  // final TextEditingController foilLot = TextEditingController();
-  // final TextEditingController batchstartdate = TextEditingController();
-  // final TextEditingController batchenddate = TextEditingController();
-  // final TextEditingController element = TextEditingController();
-  // final TextEditingController status = TextEditingController();
   final TextEditingController password = TextEditingController();
   WindingsDataSource? WindingDataSource;
   List<WindingSheetModel>? wdsSqliteModel;
@@ -66,6 +54,15 @@ class _WindingJobFinishHoldScreenState
         wdsList = result;
         WindingDataSource = WindingsDataSource(process: wdsList);
       });
+    });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('WINDING_SHEET');
+    setState(() {
+      widget.onChange?.call(
+          sql.where((element) => element['checkComplete'] == 'E').toList());
     });
   }
 
@@ -151,6 +148,7 @@ class _WindingJobFinishHoldScreenState
                 EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
                   await deletedInfo();
+                  await _getHold();
                   await _refreshPage();
                   _errorDialog(
                       text: Label("Success"),
@@ -423,6 +421,7 @@ class _WindingJobFinishHoldScreenState
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refreshPage();
               EasyLoading.showSuccess("Delete Success");
             },

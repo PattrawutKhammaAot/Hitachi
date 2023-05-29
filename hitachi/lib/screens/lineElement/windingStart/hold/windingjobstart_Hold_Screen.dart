@@ -16,7 +16,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
 
 class WindingJobStartHoldScreen extends StatefulWidget {
-  const WindingJobStartHoldScreen({Key? key}) : super(key: key);
+  WindingJobStartHoldScreen({Key? key, this.onChange}) : super(key: key);
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<WindingJobStartHoldScreen> createState() =>
@@ -63,6 +64,15 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
         wdsList = result;
         WindingDataSource = WindingsDataSource(process: wdsList);
       });
+    });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('WINDING_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['Status'] == 'P').toList());
     });
   }
 
@@ -149,6 +159,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                 EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
                   await deletedInfo();
+                  await _getHold();
                   await _refreshPage();
                   EasyLoading.showSuccess("Send complete",
                       duration: Duration(seconds: 3));
@@ -538,6 +549,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refreshPage();
               EasyLoading.showSuccess("Delete Success");
             },

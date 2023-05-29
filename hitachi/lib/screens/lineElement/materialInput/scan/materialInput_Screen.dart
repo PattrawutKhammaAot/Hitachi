@@ -17,7 +17,8 @@ import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class MaterialInputScreen extends StatefulWidget {
-  const MaterialInputScreen({super.key});
+  MaterialInputScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<MaterialInputScreen> createState() => _MaterialInputScreenState();
@@ -51,6 +52,14 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
     // _insertSqlite();
     // TODO: implement initState
     super.initState();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('MATERIAL_TRACE_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
   }
 
   void checkValueController() {
@@ -136,6 +145,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                             "${_inputMtModel?.MESSAGE ?? "Check Connection"}"),
                         onpressOk: () async {
                           await _insertSqlite();
+                          await _getHold();
                           _materialController.clear();
                           _operatorNameController.clear();
                           _batchOrSerialController.clear();
@@ -159,6 +169,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                             "Please Check Connection Internet\n Do you want to Save Data ?"),
                         onpressOk: () async {
                           await _insertSqlite();
+                          await _getHold();
                           _materialController.clear();
                           _operatorNameController.clear();
                           _batchOrSerialController.clear();

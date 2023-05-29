@@ -17,7 +17,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ZincThickNessHold extends StatefulWidget {
-  const ZincThickNessHold({super.key});
+  ZincThickNessHold({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ZincThickNessHold> createState() => _ZincThickNessHoldState();
@@ -56,6 +57,14 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
       });
     });
     super.initState();
+  }
+
+  Future<void> _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
   }
 
   void _checkExpiresData() async {
@@ -104,6 +113,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
               if (state.item.RESULT == true) {
                 await deletedInfo();
                 await _refreshPage();
+                await _getHold();
                 EasyLoading.showSuccess("Send complete ",
                     duration: Duration(seconds: 3));
               } else if (state.item.RESULT == false) {
@@ -472,6 +482,7 @@ class _ZincThickNessHoldState extends State<ZincThickNessHold> {
               Navigator.pop(context);
               await deletedInfo();
               await _refreshPage();
+              await _getHold();
               EasyLoading.showSuccess("Delete Complete",
                   duration: Duration(seconds: 3));
             },

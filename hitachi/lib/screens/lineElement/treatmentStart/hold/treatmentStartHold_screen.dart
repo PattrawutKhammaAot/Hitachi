@@ -12,7 +12,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class TreatmentStartHoldScreen extends StatefulWidget {
-  const TreatmentStartHoldScreen({super.key});
+  TreatmentStartHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<TreatmentStartHoldScreen> createState() =>
@@ -68,6 +69,15 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
       print(e);
       return [];
     }
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('TREATMENT_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+    });
   }
 
   void _errorDialog(
@@ -135,6 +145,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 await deletedInfo();
+                await _getHold();
                 await _refresh();
                 EasyLoading.showSuccess("SendComplete");
               } else {
@@ -492,6 +503,7 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refresh();
               EasyLoading.showSuccess("Delete Success");
             },
