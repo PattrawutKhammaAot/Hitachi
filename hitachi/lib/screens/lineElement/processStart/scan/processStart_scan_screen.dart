@@ -110,7 +110,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         BlocListener<LineElementBloc, LineElementState>(
           listener: (context, state) {
             if (state is ProcessStartLoadingState) {
-              EasyLoading.show();
+              EasyLoading.show(status: "Loading...");
               print("loading");
             }
             if (state is ProcessStartLoadedState) {
@@ -171,7 +171,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             if (state is ProcessStartErrorState) {
               print("ERROR");
               // EasyLoading.dismiss();
-              // _errorDialog();
               _getProcessStart();
               setState(() {
                 _enabledMachineNo = true;

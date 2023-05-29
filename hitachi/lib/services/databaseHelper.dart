@@ -1026,6 +1026,7 @@ class DatabaseHelper {
   void _createPMDaily(Database db, int newVersion) async {
     await db.execute('CREATE TABLE PM_DAILY_SHEET ('
         'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'CTType TEXT, '
         'Status TEXT, '
         'Description TEXT) ');
   }

@@ -55,7 +55,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         BlocListener<LineElementBloc, LineElementState>(
           listener: (context, state) {
             if (state is ProcessFinishLoadingState) {
-              EasyLoading.show();
+              EasyLoading.show(status: "Loading...");
               print("loading");
             }
             if (state is ProcessFinishLoadedState) {

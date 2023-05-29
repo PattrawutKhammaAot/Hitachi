@@ -172,7 +172,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                 // }
 
                 if (state is ProcessFinishLoadingState) {
-                  EasyLoading.show();
+                  EasyLoading.show(status: "Loading...");
                 } else if (state is ProcessFinishLoadedState) {
                   EasyLoading.dismiss();
                   if (state.item.RESULT == true) {
@@ -253,8 +253,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                         .value
                                         .toString())!);
                                   }
-                                  // _colorSend = Colors.grey;
-                                  // _colorDelete = Colors.grey;
                                 });
 
                                 print('No Rows Selected');
