@@ -8,3 +8,5 @@ List<Map<String, dynamic>> listHoldWindingFinish = [];
 List<Map<String, dynamic>> listHoldTreatmentFinish = [];
 List<Map<String, dynamic>> listHoldTreatmentStart = [];
 List<Map<String, dynamic>> listHoldMaterialInput = [];
+List<Map<String, dynamic>> listHoldProcessStart = [];
+List<Map<String, dynamic>> listHoldProcessFinish = [];

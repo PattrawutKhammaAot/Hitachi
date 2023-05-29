@@ -178,28 +178,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           padding: EdgeInsets.all(15),
           child: Column(
             children: [
-              Row(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 40,
-                    width: 100,
-                    child: Expanded(
-                      child: Button(
-                        onPress: () => _loadPlan(),
-                        text: Label(
-                          "Load Status",
-                          color: COLOR_WHITE,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5,
-              ),
               RowBoxInputField(
                 labelText: "Operator Name : ",
                 height: 35,
@@ -416,6 +394,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     } else {
       _BoolCheck = true;
     }
+  }
+
+  void _ClearCheckPoint() async {
+    checkpointController.clear();
   }
 
   void _btnSend(int _index) async {
