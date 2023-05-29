@@ -16,37 +16,39 @@ class MaterialInputControlPage extends StatefulWidget {
 }
 
 class _MaterialInputControlPageState extends State<MaterialInputControlPage> {
+  List<Map<String, dynamic>> listHoldMaterialInput = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _getHold();
-    });
-  }
-
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('MATERIAL_TRACE_SHEET');
-    setState(() {
-      listHoldMaterialInput = sql;
     });
   }
 
   @override
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
   }
 
-  List<Widget> widgetOptions = [
-    MaterialInputScreen(),
-    MaterialInputHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      MaterialInputScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldMaterialInput = value;
+          });
+        },
+      ),
+      MaterialInputHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldMaterialInput = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

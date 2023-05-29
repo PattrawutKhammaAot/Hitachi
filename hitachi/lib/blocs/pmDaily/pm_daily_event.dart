@@ -17,10 +17,10 @@ class PMDailySendEvent extends PmDailyEvent {
 }
 
 class PMDailyGetSendEvent extends PmDailyEvent {
-  const PMDailyGetSendEvent(this.items);
+  const PMDailyGetSendEvent();
 
-  final String items;
+  // final String items;
 
   @override
-  List<Object> get prop => [items];
+  List<Object> get prop => [];
 }

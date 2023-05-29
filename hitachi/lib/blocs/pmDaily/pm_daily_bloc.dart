@@ -47,7 +47,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
       (event, emit) async {
         try {
           emit(PMDailyGetLoadingState());
-          final mlist = await fetchPMDailyStatusModel(event.items);
+          final mlist = await fetchPMDailyStatusModel();
           emit(PMDailyGetLoadedState(mlist));
         } catch (e) {
           // emit(PMDailyGetErrorState(e.toString()));
@@ -74,10 +74,10 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
     }
   }
 
-  Future<CPPMDailyOutputModel> fetchPMDailyStatusModel(String number) async {
+  Future<CPPMDailyOutputModel> fetchPMDailyStatusModel() async {
     try {
       Response response = await dio.get(
-        ApiConfig.PM_GETDAILY + "$number",
+        ApiConfig.PM_GETDAILY,
         options: Options(
             headers: ApiConfig.HEADER(),
             sendTimeout: Duration(seconds: 60),
@@ -86,7 +86,7 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
 
       CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
       print(tmp);
-      print(ApiConfig.PM_GETDAILY + "$number");
+      print(ApiConfig.PM_GETDAILY);
 
       return tmp;
     } catch (e, s) {

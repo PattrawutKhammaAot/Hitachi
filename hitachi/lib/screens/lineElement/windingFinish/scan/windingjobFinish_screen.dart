@@ -21,7 +21,8 @@ import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobFinishScreen extends StatefulWidget {
-  const WindingJobFinishScreen({super.key});
+  WindingJobFinishScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<WindingJobFinishScreen> createState() => _WindingJobFinishScreenState();
@@ -53,6 +54,15 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
     } else {
       EasyLoading.showError("Data incomplete", duration: Duration(seconds: 2));
     }
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('WINDING_SHEET');
+    setState(() {
+      widget.onChange?.call(
+          sql.where((element) => element['checkComplete'] == 'E').toList());
+    });
   }
 
   Future _deleteSave() async {
@@ -150,6 +160,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
   @override
   void initState() {
     f1.requestFocus();
+    _getHold();
     super.initState();
   }
 
@@ -171,6 +182,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                 if (items!.RESULT == true) {
                   await _deleteSave();
                   await _deleteWeightInSqlite();
+                  await _getHold();
                   operatorNameController.clear();
                   batchNoController.clear();
                   elementQtyController.clear();
@@ -198,6 +210,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                             "Please Check Connection Internet \n Do you want to save data"),
                         onpressOk: () async {
                           await _insertSqlite();
+                          await _getHold();
                           operatorNameController.clear();
                           batchNoController.clear();
                           elementQtyController.clear();

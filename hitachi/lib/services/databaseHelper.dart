@@ -378,18 +378,18 @@ class DatabaseHelper {
     }
   }
 
-  // Future<void> findSqliteFile() async {
-  //   Directory appDocDir = await getApplicationDocumentsDirectory();
-  //   String sqliteFilePath = '${appDocDir.path}/my_database.db';
-  //   print(sqliteFilePath);
-  //   // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
-  //   if (await File(sqliteFilePath).exists()) {
-  //     print('Found SQLite file at $sqliteFilePath');
-  //   } else {
-  //     print('SQLite file not found!');
-  //   }
-  // }
-  //
+  Future<void> deleteDataAllFromSQLite({
+    String? tableName,
+  }) async {
+    try {
+      Database db = await DatabaseHelper().database;
+      int count = await db.delete('${tableName!}');
+      print('Data deleted from SQLite with count: $count');
+    } catch (e) {
+      print('Error deleting from SQLite: $e');
+    }
+  }
+
   //TableDataSheetTable---------------------------------------------------------------------------------------------------------------------------------
   //
   Future<void> writeTableDataSheet_ToSQLite(

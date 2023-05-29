@@ -15,6 +15,7 @@ class ZincThicknessControl extends StatefulWidget {
 }
 
 class _ZincThicknessControlState extends State<ZincThicknessControl> {
+  List<Map<String, dynamic>> listHoldZincThickness = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   int _selectedIndex = 0;
@@ -23,7 +24,6 @@ class _ZincThicknessControlState extends State<ZincThicknessControl> {
       setState(() {
         setState(() {
           _selectedIndex = index;
-          _getHold();
         });
       });
     });
@@ -31,21 +31,27 @@ class _ZincThicknessControlState extends State<ZincThicknessControl> {
 
   @override
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
-  }
-
-  List<Widget> widgetOptions = [ZincThickNessScanScreen(), ZincThickNessHold()];
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
-    setState(() {
-      listHoldZincThickness = sql;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      ZincThickNessScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldZincThickness = value;
+          });
+        },
+      ),
+      ZincThickNessHold(
+        onChange: (value) {
+          setState(() {
+            listHoldZincThickness = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

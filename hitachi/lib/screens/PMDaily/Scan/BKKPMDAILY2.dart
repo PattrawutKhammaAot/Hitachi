@@ -37,7 +37,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   List<PMDailyOutputModelPlan>? PMDailyCheckPointModel;
   //PMDailyOutputModelPlan
   PlanWindingDataSource? PMDailyDataSource;
-
   Color? bgChange;
   Color? bgChangeStatus;
   ResponeDefault? items;
@@ -86,7 +85,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               setState(() {
                 PMDailyDataSource = PlanWindingDataSource(
                   CHECKPOINT: PMDailyCheckPointModel,
-                  // CPT: checkpointController.text.trim(),
                 );
               });
 
@@ -413,7 +411,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Future<void> _loadAllPlan() async {
     bgChange = Colors.grey;
     _BoolCheckbox = false;
-    _enabledOperator = true;
     databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
     BlocProvider.of<PmDailyBloc>(context).add(
       PMDailyGetSendEvent(),
@@ -523,13 +520,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       print("if");
       setState(() {
         bgChangeStatus = Colors.grey;
-        _enabledOperator = false;
       });
     } else {
       print("else");
       setState(() {
         bgChangeStatus = COLOR_BLUE_DARK;
-        _enabledOperator = true;
       });
     }
   }
@@ -589,9 +584,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
 }
 
 class PlanWindingDataSource extends DataGridSource {
-  PlanWindingDataSource({
-    List<PMDailyOutputModelPlan>? CHECKPOINT,
-  }) {
+  PlanWindingDataSource({List<PMDailyOutputModelPlan>? CHECKPOINT}) {
     if (CHECKPOINT != null) {
       for (var _item in CHECKPOINT) {
         _employees.add(
@@ -611,7 +604,6 @@ class PlanWindingDataSource extends DataGridSource {
     } else {
       EasyLoading.showError("Can not Call API");
     }
-    // }
   }
 
   List<DataGridRow> _employees = [];
@@ -639,12 +631,9 @@ class PlanWindingDataSource extends DataGridSource {
   }
 }
 
-class PMDailyDataSource extends DataGridSource {
-  PMDailyDataSource({List<PMDailyOutputModelPlan>? CHECKPOINT, String? CPT}) {
-    String NumberCPT = CPT!.substring(0, 1);
+class PlanWindingDataSource2 extends DataGridSource {
+  PlanWindingDataSource2({List<PMDailyOutputModelPlan>? CHECKPOINT}) {
     if (CHECKPOINT != null) {
-      _gettest(NumberCPT);
-
       for (var _item in CHECKPOINT) {
         _employees.add(
           DataGridRow(
@@ -654,11 +643,16 @@ class PMDailyDataSource extends DataGridSource {
             ],
           ),
         );
+        databaseHelper.insertSqlite('PM_DAILY_SHEET', {
+          'CTType': _item.CTTYPE,
+          'Status': _item.STATUS,
+          'Description': _item.DESCRIPTION,
+        });
       }
     } else {
       EasyLoading.showError("Can not Call API");
+      // _getPMDailySheet(NumberCPT ?? "");
     }
-    // }
   }
 
   List<DataGridRow> _employees = [];
@@ -684,14 +678,34 @@ class PMDailyDataSource extends DataGridSource {
       ).toList(),
     );
   }
-
-  _gettest(String NumberCPT) async {
-    List<Map<String, dynamic>> rows =
-        await databaseHelper.queryAllRows('PM_DAILY_SHEET');
-    List<PMDailyCheckPointSQLiteModel> CHECKPOINT = rows
-        .where((row) => row['CTType'] == '${NumberCPT}')
-        .map((row) => PMDailyCheckPointSQLiteModel.fromMap(row))
-        .toList();
-    return CHECKPOINT;
-  }
 }
+
+// Future<List<PMDailyCheckPointSQLiteModel>> _getPMDailySheet(
+//     String NumberCPT) async {
+//   try {
+//     List<Map<String, dynamic>> rows =
+//         await databaseHelper.queryAllRows('PM_DAILY_SHEET');
+//     List<PMDailyCheckPointSQLiteModel> CHECKPOINT = rows
+//         .where((row) => row['CTType'] == '${NumberCPT}')
+//         .map((row) => PMDailyCheckPointSQLiteModel.fromMap(row))
+//         .toList();
+//
+//     // result
+//
+//     for (var _item in CHECKPOINT) {
+//       _employees.add(
+//         DataGridRow(
+//           cells: [
+//             DataGridCell<String>(columnName: 'status', value: _item.STATUS),
+//             DataGridCell<String>(columnName: 'no', value: _item.DESCRIPTION),
+//           ],
+//         ),
+//       );
+//     }
+//
+//     return CHECKPOINT;
+//   } catch (e) {
+//     print(e);
+//     return [];
+//   }
+// }

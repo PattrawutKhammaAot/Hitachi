@@ -14,7 +14,8 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../models/machineBreakdown/machinebreakdownOutputMode.dart';
 
 class MachineBreakDownHoldScreen extends StatefulWidget {
-  const MachineBreakDownHoldScreen({super.key});
+  MachineBreakDownHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<MachineBreakDownHoldScreen> createState() =>
@@ -66,6 +67,14 @@ class _MachineBreakDownHoldScreenState
     'accept': double.nan,
     'breakstop': double.nan,
   };
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('BREAKDOWN_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
 
   Future<List<BreakDownSheetModel>> _getWindingSheet() async {
     try {
@@ -149,6 +158,7 @@ class _MachineBreakDownHoldScreenState
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 await deletedInfo();
+                await _getHold();
                 await _refresh();
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
@@ -603,6 +613,7 @@ class _MachineBreakDownHoldScreenState
               Navigator.pop(context);
               await deletedInfo();
               await _refresh();
+              await _getHold();
 
               EasyLoading.showSuccess("Delete Success");
             },

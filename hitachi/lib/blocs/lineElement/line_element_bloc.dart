@@ -171,7 +171,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
               sendTimeout: Duration(seconds: 120),
               receiveTimeout: Duration(seconds: 120)),
           data: jsonEncode(item));
-      print(responese.data);
+
       sendWdsReturnWeightInputModel post =
           sendWdsReturnWeightInputModel.fromJson(responese.data);
       return post;
@@ -191,10 +191,10 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
               sendTimeout: Duration(seconds: 60),
               receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(itemOutput));
-      print(responese.data);
+
       SendWindingStartModelInput post =
           SendWindingStartModelInput.fromJson(responese.data);
-      print(post.PACK_NO);
+
       return post;
     } catch (e, s) {
       print("Exception occured: $e StackTrace: $s");
@@ -237,7 +237,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(responese.data);
+
       CheckWdsFinishInputModel post =
           CheckWdsFinishInputModel.fromJson(responese.data);
       return post;

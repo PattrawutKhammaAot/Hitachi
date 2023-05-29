@@ -13,7 +13,8 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../services/databaseHelper.dart';
 
 class FilmReceiveHoldScreen extends StatefulWidget {
-  const FilmReceiveHoldScreen({super.key});
+  FilmReceiveHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<FilmReceiveHoldScreen> createState() => _FilmReceiveHoldScreenState();
@@ -66,6 +67,14 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
     });
   }
 
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('DATA_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
+
   Future<List<DataSheetTableModel>> _getFilmReceive() async {
     try {
       List<Map<String, dynamic>> rows =
@@ -106,6 +115,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
               if (state.item.RESULT == true) {
                 await deletedInfo();
                 await _refreshPage();
+                await _getHold();
 
                 EasyLoading.showSuccess("Send complete",
                     duration: Duration(seconds: 3));
@@ -580,6 +590,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refreshPage();
 
               EasyLoading.showSuccess("Delete Success");

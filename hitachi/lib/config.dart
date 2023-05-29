@@ -1,12 +1,2 @@
 String BASE_API_URL = "";
 String TEMP_API_URL = "";
-List<Map<String, dynamic>> listHoldFilmReceive = [];
-List<Map<String, dynamic>> listHoldMachineBreakdown = [];
-List<Map<String, dynamic>> listHoldZincThickness = [];
-List<Map<String, dynamic>> listHoldWindingStart = [];
-List<Map<String, dynamic>> listHoldWindingFinish = [];
-List<Map<String, dynamic>> listHoldTreatmentFinish = [];
-List<Map<String, dynamic>> listHoldTreatmentStart = [];
-List<Map<String, dynamic>> listHoldMaterialInput = [];
-List<Map<String, dynamic>> listHoldProcessStart = [];
-List<Map<String, dynamic>> listHoldProcessFinish = [];

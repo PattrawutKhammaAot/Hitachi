@@ -20,7 +20,8 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ProcessStartScanScreen extends StatefulWidget {
-  const ProcessStartScanScreen({super.key});
+  ProcessStartScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ProcessStartScanScreen> createState() => _ProcessStartScanScreenState();
@@ -97,10 +98,20 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     }
   }
 
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('PROCESS_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     f1.requestFocus();
+    _getHold();
   }
 
   @override
@@ -149,6 +160,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+                      await _getHold();
                     });
               } else {
                 EasyLoading.dismiss();

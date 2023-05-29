@@ -15,6 +15,7 @@ class FilmReceiveControlPage extends StatefulWidget {
 }
 
 class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
+  List<Map<String, dynamic>> listHoldFilmReceive = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
 
   @override
@@ -24,32 +25,34 @@ class _FilmReceiveControlPageState extends State<FilmReceiveControlPage> {
       setState(() {
         setState(() {
           _selectedIndex = index;
-          _getHold();
         });
       });
     });
   }
 
-  List<Widget> widgetOptions = [
-    FilmReceiveScanScreen(),
-    FilmReceiveHoldScreen()
-  ];
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('DATA_SHEET');
-    setState(() {
-      listHoldFilmReceive = sql;
-    });
-  }
-
   @override
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      FilmReceiveScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldFilmReceive = value;
+          });
+        },
+      ),
+      FilmReceiveHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldFilmReceive = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

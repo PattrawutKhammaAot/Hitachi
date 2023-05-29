@@ -18,38 +18,40 @@ class TreatmentFinishControlPage extends StatefulWidget {
 
 class _TreatmentFinishControlPageState
     extends State<TreatmentFinishControlPage> {
+  List<Map<String, dynamic>> listHoldTreatmentFinish = [];
   @override
   int _selectedIndex = 0;
   DatabaseHelper databaseHelper = DatabaseHelper();
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _getHold();
-    });
-  }
-
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('TREATMENT_SHEET');
-    setState(() {
-      listHoldTreatmentFinish =
-          sql.where((element) => element['StartEnd'] == 'F').toList();
     });
   }
 
   @override
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
   }
 
-  List<Widget> widgetOptions = [
-    TreatmentFinishScanScreen(),
-    TreatmentFinishHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      TreatmentFinishScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldTreatmentFinish = value;
+          });
+        },
+      ),
+      TreatmentFinishHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldTreatmentFinish = value;
+          });
+        },
+      )
+    ];
+
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

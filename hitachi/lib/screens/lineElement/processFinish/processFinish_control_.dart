@@ -15,6 +15,7 @@ class ProcessFinishControlPage extends StatefulWidget {
 
 class _ProcessFinishControlPageState extends State<ProcessFinishControlPage> {
   @override
+  List<Map<String, dynamic>> listHoldProcessEnd = [];
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
@@ -22,15 +23,42 @@ class _ProcessFinishControlPageState extends State<ProcessFinishControlPage> {
     });
   }
 
-  List<Widget> widgetOptions = [
-    ProcessFinishScanScreen(),
-    ProcessFinishHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      ProcessFinishScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      ),
+      ProcessFinishHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
-      textTitle: Label("ProcessFinish"),
+      textTitle: Padding(
+        padding: const EdgeInsets.only(right: 45),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Label("Process Finish"),
+            SizedBox(
+              width: 10,
+            ),
+            Label(
+              "-${listHoldProcessEnd.length ?? 0}-",
+              color: COLOR_RED,
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),

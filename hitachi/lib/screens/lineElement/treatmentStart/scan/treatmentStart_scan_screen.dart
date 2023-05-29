@@ -13,7 +13,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 class TreatMentStartScanScreen extends StatefulWidget {
-  const TreatMentStartScanScreen({super.key});
+  TreatMentStartScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<TreatMentStartScanScreen> createState() =>
@@ -78,7 +79,17 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
   @override
   void initState() {
     f1.requestFocus();
+    _getHold();
     super.initState();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('TREATMENT_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+    });
   }
 
   Future _saveDataToSqlite() async {
@@ -135,6 +146,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                       onpressOk: () async {
                         Navigator.pop(context);
                         await _saveDataToSqlite();
+                        await _getHold();
                         _machineNoController.clear();
                         _operatorNameController.clear();
                         _batch1Controller.clear();
@@ -159,6 +171,7 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                       onpressOk: () async {
                         Navigator.pop(context);
                         await _saveDataToSqlite();
+                        await _getHold();
                         _machineNoController.clear();
                         _operatorNameController.clear();
                         _batch1Controller.clear();

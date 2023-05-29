@@ -18,6 +18,7 @@ class ProcessStartControlPage extends StatefulWidget {
 class _ProcessStartControlPageState extends State<ProcessStartControlPage> {
   @override
   int _selectedIndex = 0;
+  List<Map<String, dynamic>> listHoldProcessStart = [];
   DatabaseHelper databaseHelper = DatabaseHelper();
   void _onItemTapped(int index) {
     setState(() {
@@ -25,29 +26,32 @@ class _ProcessStartControlPageState extends State<ProcessStartControlPage> {
     });
   }
 
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('PROCESS_SHEET');
-    //.queryAllRows('WINDING_SHEET');
-    setState(() {
-      listHoldProcessStart =
-          sql.where((element) => element['StartEnd'] == 'S').toList();
-    });
-  }
-
   @override
   void initState() {
-    _getHold().then((value) => null);
+    // _getHold().then((value) => null);
     super.initState();
   }
 
-  List<Widget> widgetOptions = [
-    ProcessStartScanScreen(),
-    ProcessStartHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      ProcessStartScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessStart = value;
+          });
+        },
+      ),
+      ProcessStartHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessStart = value;
+          });
+        },
+      )
+      // ProcessStartScanScreen(),
+      // ProcessStartHoldScreen()
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

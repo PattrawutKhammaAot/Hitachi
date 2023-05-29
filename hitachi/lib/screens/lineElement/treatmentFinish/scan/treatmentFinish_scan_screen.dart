@@ -13,7 +13,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 class TreatmentFinishScanScreen extends StatefulWidget {
-  const TreatmentFinishScanScreen({super.key});
+  TreatmentFinishScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<TreatmentFinishScanScreen> createState() =>
@@ -49,6 +50,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   @override
   void initState() {
     f1.requestFocus();
+    _getHold();
     super.initState();
   }
 
@@ -61,6 +63,15 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
     } else {
       EasyLoading.showError("Please Input Info");
     }
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('TREATMENT_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'F').toList());
+    });
   }
 
   void _callApi() {
@@ -136,6 +147,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
                       await _saveDataToSqlite();
+                      await _getHold();
                       _machineNoController.clear();
                       _operatorNameController.clear();
                       _batch1Controller.clear();
@@ -156,6 +168,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                       text: Label("CheckConnection\n Do you want to Save"),
                       onpressOk: () async {
                         await _saveDataToSqlite();
+                        await _getHold();
                         _machineNoController.clear();
                         _operatorNameController.clear();
                         _batch1Controller.clear();

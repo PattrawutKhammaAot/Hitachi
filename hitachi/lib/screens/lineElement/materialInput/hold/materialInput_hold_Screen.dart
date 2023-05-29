@@ -13,7 +13,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class MaterialInputHoldScreen extends StatefulWidget {
-  const MaterialInputHoldScreen({super.key});
+  MaterialInputHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<MaterialInputHoldScreen> createState() =>
@@ -42,6 +43,13 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
     'lotNo1': double.nan,
     'Date': double.nan,
   };
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('MATERIAL_TRACE_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
 
   ////
   Future<List<MaterialTraceModel>> _getMaterialSheet() async {
@@ -158,6 +166,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                   EasyLoading.dismiss();
                   if (state.item.RESULT == true) {
                     await deletedInfo();
+                    await _getHold();
                     await _refresh();
 
                     EasyLoading.showSuccess("Send complete",
@@ -484,6 +493,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refresh();
 
               EasyLoading.showSuccess("Delete Success");

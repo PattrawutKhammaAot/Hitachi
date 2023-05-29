@@ -16,6 +16,7 @@ class PMDailyControl extends StatefulWidget {
 class _PMDailyControlState extends State<PMDailyControl> {
   @override
   int _selectedIndex = 0;
+  List<Map<String, dynamic>> listHoldPMDaily = [];
   void _onItemTapped(int index) {
     Future.delayed(Duration(microseconds: 10), () {
       setState(() {
@@ -26,12 +27,44 @@ class _PMDailyControlState extends State<PMDailyControl> {
     });
   }
 
-  List<Widget> widgetOptions = [PMDaily_Screen(), PMdailyHold_Screen()];
+  // List<Widget> widgetOptions = [PMDaily_Screen(), PMdailyHold_Screen()];
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      PMDaily_Screen(
+        onChange: (value) {
+          setState(() {
+            listHoldPMDaily = value;
+          });
+        },
+      ),
+      PMdailyHold_Screen(
+        onChange: (value) {
+          setState(() {
+            listHoldPMDaily = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
-      textTitle: Label("PM Daily"),
+      textTitle: Padding(
+        padding: const EdgeInsets.only(right: 45),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Label("PM Daily"),
+            SizedBox(
+              width: 10,
+            ),
+            Label(
+              "-${listHoldPMDaily.length ?? 0}-",
+              color: COLOR_RED,
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: widgetOptions.elementAt(_selectedIndex),
       ),
@@ -53,5 +86,29 @@ class _PMDailyControlState extends State<PMDailyControl> {
         onTap: _onItemTapped,
       ),
     );
+
+    //   BgWhite(
+    //   textTitle: Label("PM Daily"),
+    //   body: Center(
+    //     child: widgetOptions.elementAt(_selectedIndex),
+    //   ),
+    //   bottomNavigationBar: BottomNavigationBar(
+    //     items: const <BottomNavigationBarItem>[
+    //       BottomNavigationBarItem(
+    //         icon: Icon(Icons.aod),
+    //         label: 'Scan',
+    //         backgroundColor: Colors.red,
+    //       ),
+    //       BottomNavigationBarItem(
+    //         icon: Icon(Icons.work),
+    //         label: 'Hold',
+    //         backgroundColor: Colors.green,
+    //       ),
+    //     ],
+    //     currentIndex: _selectedIndex,
+    //     selectedItemColor: COLOR_BLUE_DARK,
+    //     onTap: _onItemTapped,
+    //   ),
+    // );
   }
 }

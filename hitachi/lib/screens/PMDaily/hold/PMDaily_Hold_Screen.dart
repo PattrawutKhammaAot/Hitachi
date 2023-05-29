@@ -18,7 +18,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class PMdailyHold_Screen extends StatefulWidget {
-  const PMdailyHold_Screen({super.key});
+  PMdailyHold_Screen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<PMdailyHold_Screen> createState() => _PMdailyHold_ScreenState();
@@ -63,6 +64,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
         matTracDs = ProcessStartDataSource(process: PMDailyList);
       });
     });
+    _getHold();
     super.initState();
   }
 
@@ -74,6 +76,14 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
           matTracDs = ProcessStartDataSource(process: PMDailyList);
         });
       });
+    });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('PM_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
     });
   }
 
@@ -102,6 +112,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                   if (state.item.RESULT == true) {
                     await deletedInfo();
                     await _refreshPage();
+                    await _getHold();
                     EasyLoading.showSuccess("SendComplete");
                   } else {
                     _errorDialog(
@@ -441,6 +452,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
               Navigator.pop(context);
               await deletedInfo();
               await _refreshPage();
+              await _getHold();
               EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),

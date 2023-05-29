@@ -379,25 +379,17 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   }
 
   Future<void> _loadPlan() async {
-    // CheckFirst = checkpointController.text.substring(0, 1);
-    // if (CheckFirst == "1" || CheckFirst == "2" || CheckFirst == "3") {
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailyGetSendEvent(checkpointController.text.trim()),
-    );
-
-    BlocProvider.of<PlanWindingBloc>(context).add(
-      PlanWindingSendEvent(),
-    );
+    //=========================
+    // BlocProvider.of<PmDailyBloc>(context).add(
+    //   PMDailyGetSendEvent(checkpointController.text.trim()),
+    // );
+//=========================
     if (_BoolCheck == false) {
       checkpointController.clear();
       _BoolCheck = true;
     } else {
       _BoolCheck = true;
     }
-  }
-
-  void _ClearCheckPoint() async {
-    checkpointController.clear();
   }
 
   void _btnSend(int _index) async {

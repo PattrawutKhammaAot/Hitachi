@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/zincthickness/zinc_thickness_bloc.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -13,7 +14,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 class ZincThickNessScanScreen extends StatefulWidget {
-  const ZincThickNessScanScreen({super.key});
+  ZincThickNessScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ZincThickNessScanScreen> createState() =>
@@ -59,6 +61,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
 
   void initState() {
     batchFocus.requestFocus();
+    _getHold().then((value) => null);
     super.initState();
   }
 
@@ -210,6 +213,14 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
     _callApi();
   }
 
+  Future<void> _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('ZINCTHICKNESS_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -243,6 +254,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _insertSqlite();
+                      await _getHold();
                       _thickness1Controller.clear();
                       _thickness2Controller.clear();
                       _thickness3Controller.clear();
@@ -261,6 +273,7 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                   onpressOk: () async {
                     Navigator.pop(context);
                     await _insertSqlite();
+                    await _getHold();
                     _thickness1Controller.clear();
                     _thickness2Controller.clear();
                     _thickness3Controller.clear();

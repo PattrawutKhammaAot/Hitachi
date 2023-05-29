@@ -16,7 +16,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ProcessFinishHoldScreen extends StatefulWidget {
-  const ProcessFinishHoldScreen({super.key});
+  ProcessFinishHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ProcessFinishHoldScreen> createState() =>
@@ -58,6 +59,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
 
   @override
   void initState() {
+    _getHold();
     _getProcessStart().then((result) {
       setState(() {
         processList = result;
@@ -85,6 +87,15 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
             tableName: 'PROCESS_SHEET', columnName: 'ID', columnValue: element);
         _index.clear();
       });
+    });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('PROCESS_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
     });
   }
 
@@ -149,28 +160,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
           listeners: [
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
-                // if (state is ProcessStartLoadingState) {
-                //   EasyLoading.show();
-                // } else if (state is ProcessStartLoadedState) {
-                //   EasyLoading.dismiss();
-                //   if (state.item.RESULT == true) {
-                //     await deletedInfo();
-                //     await _refreshPage();
-                //     EasyLoading.showSuccess("SendComplete");
-                //   } else {
-                //     _errorDialog(
-                //         text: Label(
-                //             "${state.item.MESSAGE ?? "Check Connection"}"),
-                //         onpressOk: () {
-                //           Navigator.pop(context);
-                //         });
-                //   }
-                // } else if (state is ProcessStartErrorState) {
-                //   EasyLoading.dismiss();
-                //
-                //   EasyLoading.showError("Please Check Connection Internet");
-                // }
-
                 if (state is ProcessFinishLoadingState) {
                   EasyLoading.show(status: "Loading...");
                 } else if (state is ProcessFinishLoadedState) {
@@ -178,6 +167,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                   if (state.item.RESULT == true) {
                     await deletedInfo();
                     await _refreshPage();
+                    await _getHold();
                     EasyLoading.showSuccess("SendComplete");
                   } else {
                     _errorDialog(
@@ -487,6 +477,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
               Navigator.pop(context);
               await deletedInfo();
               await _refreshPage();
+              await _getHold();
               EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),

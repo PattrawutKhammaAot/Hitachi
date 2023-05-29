@@ -15,7 +15,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ProcessStartHoldScreen extends StatefulWidget {
-  const ProcessStartHoldScreen({super.key});
+  ProcessStartHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ProcessStartHoldScreen> createState() => _ProcessStartHoldScreenState();
@@ -54,6 +55,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
 
   @override
   void initState() {
+    _getHold();
     _getProcessStart().then((result) {
       setState(() {
         processList = result;
@@ -61,6 +63,15 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       });
     });
     super.initState();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('PROCESS_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+    });
   }
 
   Future _refreshPage() async {
@@ -163,6 +174,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                   if (state.item.RESULT == true) {
                     await deletedInfo();
                     await _refresh();
+                    await _getHold();
                     EasyLoading.showSuccess("SendComplete");
                   } else {
                     _errorDialog(
@@ -499,6 +511,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
               Navigator.pop(context);
               await deletedInfo();
               await _refreshPage();
+              await _getHold();
               EasyLoading.showSuccess("Delete Success");
             },
             child: const Text('OK'),
@@ -510,7 +523,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
 }
 
 class ProcessStartDataSource extends DataGridSource {
-  ProcessStartDataSource({List<ProcessModel>? process}) {
+  ProcessStartDataSource({List<ProcessModel>? process, String? test}) {
     if (process != null) {
       for (var _item in process) {
         _employees.add(

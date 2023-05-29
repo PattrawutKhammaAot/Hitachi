@@ -17,37 +17,39 @@ class WindingFinishControlPage extends StatefulWidget {
 }
 
 class _WindingFinishControlPageState extends State<WindingFinishControlPage> {
+  List<Map<String, dynamic>> listHoldWindingFinish = [];
   int _selectedIndex = 0;
   DatabaseHelper databaseHelper = DatabaseHelper();
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('WINDING_SHEET');
-    setState(() {
-      listHoldWindingFinish =
-          sql.where((element) => element['checkComplete'] == 'E').toList();
-    });
-  }
 
   @override
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _getHold();
     });
   }
 
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
   }
 
-  List<Widget> widgetOptions = [
-    WindingJobFinishScreen(),
-    WindingJobFinishHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      WindingJobFinishScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldWindingFinish = value;
+          });
+        },
+      ),
+      WindingJobFinishHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldWindingFinish = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

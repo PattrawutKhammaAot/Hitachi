@@ -17,37 +17,38 @@ class WindingJobStartControlPage extends StatefulWidget {
 
 class _WindingJobStartControlPageState
     extends State<WindingJobStartControlPage> {
+  List<Map<String, dynamic>> listHoldWindingStart = [];
   int _selectedIndex = 0;
   DatabaseHelper databaseHelper = DatabaseHelper();
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _getHold();
-    });
-  }
-
-  Future _getHold() async {
-    List<Map<String, dynamic>> sql =
-        await databaseHelper.queryAllRows('WINDING_SHEET');
-    setState(() {
-      listHoldWindingStart =
-          sql.where((element) => element['Status'] == 'P').toList();
     });
   }
 
   @override
   void initState() {
-    _getHold().then((value) => null);
     super.initState();
   }
 
-  List<Widget> widgetOptions = [
-    WindingJobStartScanScreen(),
-    WindingJobStartHoldScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      WindingJobStartScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldWindingStart = value;
+          });
+        },
+      ),
+      WindingJobStartHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldWindingStart = value;
+          });
+        },
+      )
+    ];
     return BgWhite(
       textTitle: Padding(
         padding: const EdgeInsets.only(right: 45),

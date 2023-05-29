@@ -17,8 +17,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class FilmReceiveScanScreen extends StatefulWidget {
-  const FilmReceiveScanScreen({super.key, this.onChange});
-  final ValueChanged<List<Map<String, dynamic>>>? onChange;
+  FilmReceiveScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
   @override
   State<FilmReceiveScanScreen> createState() => _FilmReceiveScanScreenState();
 }
@@ -63,13 +63,19 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   final f11 = FocusNode();
 //
 
-  // Future _getHold() async {
-  //   List<Map<String, dynamic>> sql =
-  //       await databaseHelper.queryAllRows('DATA_SHEET');
-  //   setState(() {
-  //     listHoldFilmReceive = sql;
-  //   });
-  // }
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('DATA_SHEET');
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
+
+  @override
+  void initState() {
+    _getHold();
+    super.initState();
+  }
 
   void _checkValueController() async {
     if (_poNoController.text.isNotEmpty &&
@@ -439,8 +445,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     onpressOk: () async {
                       await _checkThickness();
                       await callFilmIn();
-                      // await _getHold();
-                      print("CheckList${listHoldFilmReceive.length}");
+                      await _getHold();
+
                       _packNoController.clear();
                       _rollNoController.clear();
                       _barCode1Controller.clear();

@@ -15,7 +15,8 @@ import '../../../../helper/text/label.dart';
 import '../../../../models/treatmentModel/treatmentOutputModel.dart';
 
 class TreatmentFinishHoldScreen extends StatefulWidget {
-  const TreatmentFinishHoldScreen({super.key});
+  TreatmentFinishHoldScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<TreatmentFinishHoldScreen> createState() =>
@@ -44,6 +45,15 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
     });
 
     super.initState();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('TREATMENT_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'F').toList());
+    });
   }
 
   Map<String, double> columnWidths = {
@@ -140,6 +150,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 await deletedInfo();
+                await _getHold();
                 await _refreshPage();
                 EasyLoading.showSuccess("SendComplete");
               } else {
@@ -518,6 +529,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
             onPressed: () async {
               Navigator.pop(context);
               await deletedInfo();
+              await _getHold();
               await _refreshPage();
 
               EasyLoading.showSuccess("Delete Success");

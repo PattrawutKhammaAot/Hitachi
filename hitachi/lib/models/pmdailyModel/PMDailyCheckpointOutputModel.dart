@@ -20,9 +20,11 @@ class CPPMDailyOutputModel {
 
 class PMDailyOutputModelPlan {
   const PMDailyOutputModelPlan({
+    this.CTTYPE,
     this.STATUS,
     this.DESCRIPTION,
   });
+  final String? CTTYPE;
   final String? STATUS;
   final String? DESCRIPTION;
   List<Object> get props => [
@@ -32,6 +34,7 @@ class PMDailyOutputModelPlan {
 
   static PMDailyOutputModelPlan fromJson(dynamic json) {
     return PMDailyOutputModelPlan(
+      CTTYPE: json['CP_Type'],
       STATUS: json['Status'],
       DESCRIPTION: json['Description'],
     );

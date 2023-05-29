@@ -14,7 +14,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 
 class ProcessFinishScanScreen extends StatefulWidget {
-  const ProcessFinishScanScreen({super.key});
+  ProcessFinishScanScreen({super.key, this.onChange});
+  ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<ProcessFinishScanScreen> createState() =>
@@ -46,6 +47,16 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     rejectQtyController.text = "0";
     super.initState();
     f1.requestFocus();
+    _getHold();
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await databaseHelper.queryAllRows('PROCESS_SHEET');
+    setState(() {
+      widget.onChange
+          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+    });
   }
 
   @override
@@ -90,6 +101,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       machineNoController.clear();
                       operatorNameController.clear();
                       batchNoController.clear();
+                      await _getHold();
                       setState(() {
                         rejectQtyController.text = '0';
                       });
