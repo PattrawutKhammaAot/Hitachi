@@ -61,6 +61,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   bool _checkAPI = false;
   List<PMDailyModel>? processModelSqlite;
 
+  late Map<String, double> columnWidths = {
+    'status': double.nan,
+    'no': double.nan,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -185,7 +190,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           child: Column(
             children: [
               Row(
-                // crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
@@ -278,6 +282,17 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: PMDailyDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowPullToRefresh: true,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             setState(() {
@@ -329,7 +344,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           },
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['no']!,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -342,6 +357,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['status']!,
                               columnName: 'status',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -381,6 +397,17 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: pmDailyLoadStatusDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowPullToRefresh: true,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             setState(() {
@@ -431,7 +458,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           },
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['no']!,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -444,6 +471,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['status']!,
                               columnName: 'status',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -485,6 +513,17 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: PMDailyDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowPullToRefresh: true,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             setState(() {
@@ -534,7 +573,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           },
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['no']!,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -547,6 +586,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['status']!,
                               columnName: 'status',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -588,6 +628,17 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: pmDailyLoadStatusDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowPullToRefresh: true,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             _index.clear();
@@ -635,7 +686,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           },
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['no']!,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -648,6 +699,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['status']!,
                               columnName: 'status',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -929,8 +981,9 @@ class PlanWindingDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
-              DataGridCell<String>(columnName: 'no', value: _item.DESCRIPTION),
+              DataGridCell<String>(columnName: 'no', value: _item.STATUS),
+              DataGridCell<String>(
+                  columnName: 'status', value: _item.DESCRIPTION),
             ],
           ),
         );
@@ -982,8 +1035,9 @@ class PlanWindingLoadStatusDataSource extends DataGridSource {
         _employees.add(
           DataGridRow(
             cells: [
-              DataGridCell<String>(columnName: 'status', value: _item.STATUS),
-              DataGridCell<String>(columnName: 'no', value: _item.DESCRIPTION),
+              DataGridCell<String>(columnName: 'no', value: _item.STATUS),
+              DataGridCell<String>(
+                  columnName: 'status', value: _item.DESCRIPTION),
             ],
           ),
         );

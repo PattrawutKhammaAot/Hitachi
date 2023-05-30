@@ -41,7 +41,15 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   int? allRowIndex;
   List<ProcessModel> selectAll = [];
   String StartEndValue = 'E';
-  ////
+
+  late Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'Machine': double.nan,
+    'Operatorname': double.nan,
+    'RejectQTY': double.nan,
+    'BatchNO': double.nan,
+    'FinDate': double.nan,
+  };
 
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
@@ -209,6 +217,17 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                                print(details.width);
+                              });
+                              return true;
+                            },
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -261,6 +280,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                             columns: <GridColumn>[
                               GridColumn(
                                 visible: false,
+                                width: columnWidths['ID']!,
                                 columnName: 'ID',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -273,6 +293,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['Machine']!,
                                 columnName: 'Machine',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -285,36 +306,39 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'Operatorname',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Operatorname',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['Operatorname']!,
+                                columnName: 'Operatorname',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Operatorname',
+                                        color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'RejectQTY',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('RejectQTY',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['RejectQTY']!,
+                                columnName: 'RejectQTY',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('RejectQTY', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'BatchNO',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('BatchNO', color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['BatchNO']!,
+                                columnName: 'BatchNO',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('BatchNO', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
+                                width: columnWidths['FinDate']!,
                                 columnName: 'FinDate',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,

@@ -38,7 +38,18 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   int? index;
   int? allRowIndex;
   List<ProcessModel> selectAll = [];
-  ////
+
+  late Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'Machine': double.nan,
+    'Operatorname': double.nan,
+    'Operatorname1': double.nan,
+    'Operatorname2': double.nan,
+    'Operatorname3': double.nan,
+    'BatchNO': double.nan,
+    'StartDate': double.nan,
+  };
+
   Future<List<ProcessModel>> _getProcessStart() async {
     try {
       List<Map<String, dynamic>> rows =
@@ -216,6 +227,17 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                                print(details.width);
+                              });
+                              return true;
+                            },
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -270,6 +292,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                             columns: <GridColumn>[
                               GridColumn(
                                 visible: false,
+                                width: columnWidths['ID']!,
                                 columnName: 'ID',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -282,6 +305,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['Machine']!,
                                 columnName: 'Machine',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -294,36 +318,40 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'Operatorname',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Operatorname',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['Operatorname']!,
+                                columnName: 'Operatorname',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Operatorname',
+                                        color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'Operatorname1',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Operatorname1',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['Operatorname1']!,
+                                columnName: 'Operatorname1',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Operatorname1',
+                                        color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'Operatorname2',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Operatorname2',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['Operatorname2']!,
+                                columnName: 'Operatorname2',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Operatorname2',
+                                        color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
+                                width: columnWidths['Operatorname3']!,
                                 columnName: 'Operatorname3',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -334,6 +362,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['BatchNO']!,
                                 columnName: 'BatchNO',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -344,6 +373,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['StartDate']!,
                                 columnName: 'StartDate',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,

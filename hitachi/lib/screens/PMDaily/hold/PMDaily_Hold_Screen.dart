@@ -41,7 +41,15 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
   int? index;
   int? allRowIndex;
   List<PMDailyModel> selectAll = [];
-  ////
+
+  late Map<String, double> columnWidths = {
+    'ID': double.nan,
+    'Operatorname': double.nan,
+    'CheckPoint': double.nan,
+    'Status': double.nan,
+    'DatePM': double.nan,
+  };
+
   Future<List<PMDailyModel>> _getProcessStart() async {
     try {
       List<Map<String, dynamic>> rows =
@@ -155,6 +163,16 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                             headerGridLinesVisibility: GridLinesVisibility.both,
                             gridLinesVisibility: GridLinesVisibility.both,
                             allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                                print(details.width);
+                              });
+                              return true;
+                            },
                             onSelectionChanged:
                                 (selectRow, deselectedRows) async {
                               if (selectRow.isNotEmpty) {
@@ -209,6 +227,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                             columns: <GridColumn>[
                               GridColumn(
                                 visible: false,
+                                width: columnWidths['ID']!,
                                 columnName: 'ID',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -221,6 +240,7 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['Operatorname']!,
                                 columnName: 'Operatorname',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
@@ -233,35 +253,37 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                                 ),
                               ),
                               GridColumn(
-                                  columnName: 'CheckPoint',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('CheckPoint',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['CheckPoint']!,
+                                columnName: 'CheckPoint',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('CheckPoint', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'Status',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child:
-                                          Label('Status', color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['Status']!,
+                                columnName: 'Status',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Status', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                               GridColumn(
-                                  columnName: 'DatePM',
-                                  label: Container(
-                                    color: COLOR_BLUE_DARK,
-                                    child: Center(
-                                      child: Label('Start Date',
-                                          color: COLOR_WHITE),
-                                    ),
+                                width: columnWidths['DatePM']!,
+                                columnName: 'DatePM',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Start Date', color: COLOR_WHITE),
                                   ),
-                                  width: 100),
+                                ),
+                              ),
                             ],
                           ),
                         ),
