@@ -75,7 +75,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               // EasyLoading.show(status: "Loaded");
 
               if (state.item.RESULT == true) {
-                // EasyLoading.showSuccess("SendComplete");
                 EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
@@ -89,8 +88,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       });
                     });
               } else if (state.item.RESULT == false) {
-                // EasyLoading.dismiss();
-                // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
                 EasyLoading.dismiss();
                 _errorDialog(
@@ -107,8 +104,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       });
                     });
               } else {
-                // EasyLoading.dismiss();
-                // EasyLoading.showError("Can not Call API");
                 EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("Check Connection"),

@@ -182,7 +182,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             }
             if (state is ProcessStartErrorState) {
               print("ERROR");
-              // EasyLoading.dismiss();
+              EasyLoading.dismiss();
               _getProcessStart();
               setState(() {
                 _enabledMachineNo = true;

@@ -129,11 +129,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             if (state is PMDailyLoadedState) {
               print("Loaded");
               EasyLoading.dismiss();
-              // EasyLoading.showSuccess("Loaded");
 
               if (state.item.RESULT == true) {
-                EasyLoading.dismiss();
-
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
@@ -146,7 +143,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     });
               } else if (state.item.RESULT == false) {
                 items = state.item;
-                EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
                     onpressOk: () async {
@@ -157,7 +153,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     });
               } else {
                 // EasyLoading.showError("Can not Call API");
-                EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("Check Connection"),
                     isHideCancle: false,
