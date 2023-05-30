@@ -187,7 +187,13 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               setState(() {
                 _enabledMachineNo = true;
               });
-              EasyLoading.showError("Please Check Connection Internet");
+              _errorDialog(
+                  text: Label("Check Connection"),
+                  isHideCancle: false,
+                  onpressOk: () async {
+                    Navigator.pop(context);
+                  });
+
               f1.requestFocus();
             }
           },
@@ -273,7 +279,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       if (MachineController.text.isNotEmpty &&
                           batchNoController.text.isNotEmpty) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {
@@ -368,7 +374,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       if (batchNoController.text.length == 12 &&
                           operatorNameController.text.isNotEmpty) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {

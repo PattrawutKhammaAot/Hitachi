@@ -111,7 +111,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                 // EasyLoading.showError("Can not Call API");
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("Can not Call API"),
+                    text: Label("Check Connection"),
                     isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
@@ -130,7 +130,12 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               print("ERROR");
               // EasyLoading.dismiss();
               _getProcessStart();
-              EasyLoading.showError("Please Check Connection Internet");
+              _errorDialog(
+                  text: Label("Check Connection"),
+                  isHideCancle: false,
+                  onpressOk: () async {
+                    Navigator.pop(context);
+                  });
             }
           },
         )
@@ -154,7 +159,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           batchNoController.text.isNotEmpty &&
                           rejectQtyController.text.isNotEmpty) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {
@@ -193,7 +198,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           rejectQtyController.text.isNotEmpty &&
                           batchNoController.text.length == 12) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {

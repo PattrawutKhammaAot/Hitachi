@@ -85,13 +85,10 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
       );
 
       CPPMDailyOutputModel tmp = CPPMDailyOutputModel.fromJson(response.data);
-      print(tmp);
-      print(ApiConfig.PM_GETDAILY);
 
       return tmp;
-    } catch (e, s) {
-      print("Exception occured: $e StackTrace: $s");
-      return CPPMDailyOutputModel();
+    } on Exception {
+      throw Exception();
     }
   }
 

@@ -113,8 +113,14 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                     await deletedInfo();
                     await _refreshPage();
                     await _getHold();
-                    EasyLoading.showSuccess("SendComplete");
+                    _errorDialog(
+                        text: Label("SendComplete"),
+                        isHideCancle: false,
+                        onpressOk: () async {
+                          Navigator.pop(context);
+                        });
                   } else {
+                    await _getHold();
                     _errorDialog(
                         text: Label(
                             "${state.item.MESSAGE ?? "Check Connection"}"),
@@ -125,7 +131,12 @@ class _PMdailyHold_ScreenState extends State<PMdailyHold_Screen> {
                 } else if (state is PMDailyErrorState) {
                   EasyLoading.dismiss();
 
-                  EasyLoading.showError("Please Check Connection Internet");
+                  _errorDialog(
+                      text: Label("Check Connection"),
+                      isHideCancle: false,
+                      onpressOk: () async {
+                        Navigator.pop(context);
+                      });
                 }
               },
             )

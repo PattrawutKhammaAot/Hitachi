@@ -35,8 +35,8 @@ class PMDaily_Screen extends StatefulWidget {
 class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   final TextEditingController batchNoController = TextEditingController();
   List<PMDailyOutputModelPlan>? PMDailyCheckPointModel;
-  //PMDailyOutputModelPlan
   PlanWindingDataSource? PMDailyDataSource;
+  PlanWindingLoadStatusDataSource? pmDailyLoadStatusDataSource;
 
   Color? bgChange;
   Color? bgChangeStatus;
@@ -53,9 +53,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   final f1 = FocusNode();
   final f2 = FocusNode();
 
+  bool _checkLoadAllStatus = true;
   bool _btnloadSta = false;
   bool _BoolCheckbox = true;
   bool _enabledOperator = true;
+  bool _date = true;
+  bool _checkAPI = false;
   List<PMDailyModel>? processModelSqlite;
 
   @override
@@ -73,7 +76,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<PmDailyBloc, PmDailyState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             //=======================Status====================================
             if (state is PMDailyGetLoadingState) {
               // EasyLoading.show();
@@ -82,12 +85,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
             if (state is PMDailyGetLoadedState) {
               EasyLoading.dismiss();
 
-              PMDailyCheckPointModel = state.item.CHECKPOINT;
               setState(() {
-                PMDailyDataSource = PlanWindingDataSource(
-                  CHECKPOINT: PMDailyCheckPointModel,
-                  // CPT: checkpointController.text.trim(),
-                );
+                PMDailyCheckPointModel = state.item.CHECKPOINT;
               });
 
               if (state.item.CHECKPOINT!.isEmpty) {
@@ -97,26 +96,30 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     onpressOk: () async {
                       Navigator.pop(context);
                       checkpointController.clear();
+                      setState(() {
+                        _checkAPI = false;
+                      });
                     });
               } else if (state.item.CHECKPOINT!.isNotEmpty) {
-                // _enabledOperator = false;
                 setState(() {
                   bgChangeStatus = COLOR_BLUE_DARK;
-                  // PMDailyCheckPointModel = state.item.CHECKPOINT;
-                  PMDailyDataSource = PlanWindingDataSource(
-                    CHECKPOINT: PMDailyCheckPointModel,
-                  );
+                  if (_date == true) {
+                    PMDailyDataSource = PlanWindingDataSource(
+                      CHECKPOINT: PMDailyCheckPointModel,
+                    );
+                  }
+                  _checkAPI = true;
                 });
               }
             }
             if (state is PMDailyGetErrorState) {
-              PMDailyDataSource = PlanWindingDataSource(
-                CHECKPOINT: PMDailyCheckPointModel,
-              );
               EasyLoading.dismiss();
               EasyLoading.showError("Check Connection",
                   duration: Duration(seconds: 5));
               print(state.error);
+              setState(() {
+                _checkAPI = false;
+              });
             }
 
             //===========================send================================
@@ -141,10 +144,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       checkpointController.clear();
                       await _getHold();
                     });
-
-                // checkpointController.clear();
               } else if (state.item.RESULT == false) {
-                // EasyLoading.showError("Can not send & save Data");
                 items = state.item;
                 EasyLoading.dismiss();
                 _errorDialog(
@@ -159,13 +159,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 // EasyLoading.showError("Can not Call API");
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("Can Not Call API"),
+                    text: Label("Check Connection"),
+                    isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
-                      // operatorNameController.clear();
-                      // checkpointController.clear();
-                      print("checkpointController");
                     });
               }
             }
@@ -173,7 +171,13 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               print("ERROR");
               EasyLoading.dismiss();
               _getProcessStart(_index.first);
-              EasyLoading.showError("Please Check Connection Internet");
+              _errorDialog(
+                  text: Label("Check Connection"),
+                  isHideCancle: false,
+                  onpressOk: () async {
+                    Navigator.pop(context);
+                    await _getProcessStart(_index.first);
+                  });
             }
             //===========================================================
           },
@@ -192,13 +196,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                   Container(
                     height: 40,
                     width: 130,
-                    child: Expanded(
-                      child: Button(
-                        onPress: () => _loadAllPlan(),
-                        text: Label(
-                          "Load All Status",
-                          color: COLOR_WHITE,
-                        ),
+                    child: Button(
+                      onPress: () => _loadAllPlan(),
+                      text: Label(
+                        "Load All Status",
+                        color: COLOR_WHITE,
                       ),
                     ),
                   ),
@@ -260,24 +262,16 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     checkpointController.clear();
                   }
                 },
-
                 onChanged: (value) {
                   if (operatorNameController.text.isNotEmpty &&
                       checkpointController.text.isNotEmpty) {
-                    // setState(() {
-                    //   bgChange = COLOR_RED;
-                    // });
-                  } else {
-                    // setState(() {
-                    //   bgChange = Colors.grey;
-                    // });
-                  }
+                  } else {}
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-              PMDailyDataSource != null
+              PMDailyDataSource != null && pmDailyLoadStatusDataSource == null
                   ? Expanded(
                       flex: 5,
                       child: Container(
@@ -291,6 +285,216 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           columnWidthMode: ColumnWidthMode.fill,
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
+                            setState(() {
+                              _index.clear();
+                            });
+
+                            if (selectRow.isNotEmpty) {
+                              // bgChange = COLOR_BLUE_DARK;
+                              if (selectRow.length ==
+                                      PMDailyDataSource!.effectiveRows.length &&
+                                  selectRow.length > 1) {
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    _index.add(int.tryParse(
+                                        row.getCells()[0].value.toString())!);
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  _index.add(int.tryParse(selectRow.first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                  datagridRow = selectRow.first;
+                                  processModelSqlite = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => PMDailyModel(),
+                                      )
+                                      .toList();
+                                });
+                              }
+                            } else {
+                              // bgChange = Colors.grey;
+                              setState(() {
+                                if (deselectedRows.length > 1) {
+                                  _index.clear();
+                                } else {
+                                  _index.remove(int.tryParse(deselectedRows
+                                      .first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                }
+                              });
+
+                              print('No Rows Selected');
+                            }
+                          },
+                          columns: [
+                            GridColumn(
+                              width: 120,
+                              columnName: 'no',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'No',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              columnName: 'status',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Status',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Visibility(
+                          visible: true,
+                          child: Container(
+                              child: Label(
+                            " ${valuetxtinput}",
+                            color: COLOR_RED,
+                          )),
+                        ),
+                      ],
+                    ),
+              pmDailyLoadStatusDataSource != null && PMDailyDataSource == null
+                  ? Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: SfDataGrid(
+                          footerHeight: 10,
+                          showCheckboxColumn: _BoolCheckbox,
+                          selectionMode: SelectionMode.single,
+                          gridLinesVisibility: GridLinesVisibility.both,
+                          headerGridLinesVisibility: GridLinesVisibility.both,
+                          source: pmDailyLoadStatusDataSource!,
+                          columnWidthMode: ColumnWidthMode.fill,
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            setState(() {
+                              bgChange = COLOR_BLUE_DARK;
+                            });
+                            _index.clear();
+                            if (selectRow.isNotEmpty) {
+                              if (selectRow.length ==
+                                      pmDailyLoadStatusDataSource!
+                                          .effectiveRows.length &&
+                                  selectRow.length > 1) {
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    _index.add(int.tryParse(
+                                        row.getCells()[0].value.toString())!);
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  _index.add(int.tryParse(selectRow.first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                  datagridRow = selectRow.first;
+                                  processModelSqlite = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => PMDailyModel(),
+                                      )
+                                      .toList();
+                                });
+                              }
+                            } else {
+                              setState(() {
+                                if (deselectedRows.length > 1) {
+                                  _index.clear();
+                                } else {
+                                  _index.remove(int.tryParse(deselectedRows
+                                      .first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                }
+                              });
+
+                              print('No Rows Selected');
+                            }
+                          },
+                          columns: [
+                            GridColumn(
+                              width: 120,
+                              columnName: 'no',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'No',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              columnName: 'status',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Status',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Visibility(
+                          visible: true,
+                          child: Container(
+                              child: Label(
+                            " ${valuetxtinput}",
+                            color: COLOR_RED,
+                          )),
+                        ),
+                      ],
+                    ),
+              pmDailyLoadStatusDataSource != null &&
+                      PMDailyDataSource != null &&
+                      _checkLoadAllStatus == true
+                  ? Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: SfDataGrid(
+                          footerHeight: 10,
+                          showCheckboxColumn: _BoolCheckbox,
+                          selectionMode: SelectionMode.single,
+                          gridLinesVisibility: GridLinesVisibility.both,
+                          headerGridLinesVisibility: GridLinesVisibility.both,
+                          source: PMDailyDataSource!,
+                          columnWidthMode: ColumnWidthMode.fill,
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            setState(() {
+                              bgChange = COLOR_BLUE_DARK;
+                            });
                             _index.clear();
                             if (selectRow.isNotEmpty) {
                               if (selectRow.length ==
@@ -315,7 +519,107 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                                         (e) => PMDailyModel(),
                                       )
                                       .toList();
-                                  print(_index);
+                                });
+                              }
+                            } else {
+                              setState(() {
+                                if (deselectedRows.length > 1) {
+                                  _index.clear();
+                                } else {
+                                  _index.remove(int.tryParse(deselectedRows
+                                      .first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                }
+                              });
+
+                              print('No Rows Selected');
+                            }
+                          },
+                          columns: [
+                            GridColumn(
+                              width: 120,
+                              columnName: 'no',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'No',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              columnName: 'status',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label(
+                                    'Status',
+                                    color: COLOR_WHITE,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Visibility(
+                          visible: true,
+                          child: Container(
+                              child: Label(
+                            " ${valuetxtinput}",
+                            color: COLOR_RED,
+                          )),
+                        ),
+                      ],
+                    ),
+              pmDailyLoadStatusDataSource != null &&
+                      PMDailyDataSource != null &&
+                      _checkLoadAllStatus == false
+                  ? Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: SfDataGrid(
+                          footerHeight: 10,
+                          showCheckboxColumn: _BoolCheckbox,
+                          selectionMode: SelectionMode.single,
+                          gridLinesVisibility: GridLinesVisibility.both,
+                          headerGridLinesVisibility: GridLinesVisibility.both,
+                          source: pmDailyLoadStatusDataSource!,
+                          columnWidthMode: ColumnWidthMode.fill,
+                          onSelectionChanged:
+                              (selectRow, deselectedRows) async {
+                            _index.clear();
+                            if (selectRow.isNotEmpty) {
+                              if (selectRow.length ==
+                                      pmDailyLoadStatusDataSource!
+                                          .effectiveRows.length &&
+                                  selectRow.length > 1) {
+                                setState(() {
+                                  selectRow.forEach((row) {
+                                    _index.add(int.tryParse(
+                                        row.getCells()[0].value.toString())!);
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  _index.add(int.tryParse(selectRow.first
+                                      .getCells()[0]
+                                      .value
+                                      .toString())!);
+                                  datagridRow = selectRow.first;
+                                  processModelSqlite = datagridRow!
+                                      .getCells()
+                                      .map(
+                                        (e) => PMDailyModel(),
+                                      )
+                                      .toList();
                                 });
                               }
                             } else {
@@ -410,35 +714,69 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     );
   }
 
+  Future _QueryLoadStatus(String NumberCPT) async {
+    var sql = await databaseHelper.queryAllRows('PM_DAILY_SHEET');
+    List<PMDailyCheckPointSQLiteModel> query = sql
+        .where((element) => element['CTType'] == NumberCPT)
+        .map((item) => PMDailyCheckPointSQLiteModel.fromMap(
+            item.map((key, value) => MapEntry(key, value))))
+        .toList();
+    print("NumberCPT ${NumberCPT}");
+    print(query[0].DESCRIPTION);
+    //
+    setState(() {
+      pmDailyLoadStatusDataSource =
+          PlanWindingLoadStatusDataSource(CHECKPOINT: query);
+    });
+  }
+
   Future<void> _loadAllPlan() async {
-    bgChange = Colors.grey;
-    _BoolCheckbox = false;
-    _enabledOperator = true;
-    databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
     BlocProvider.of<PmDailyBloc>(context).add(
       PMDailyGetSendEvent(),
     );
+
+    if (_checkAPI == true) {
+      setState(() {
+        bgChange = Colors.grey;
+        _BoolCheckbox = false;
+        _enabledOperator = true;
+        _checkLoadAllStatus = true;
+      });
+      databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
+      BlocProvider.of<PmDailyBloc>(context).add(
+        PMDailyGetSendEvent(),
+      );
+    } else {
+      setState(() {
+        bgChange = Colors.grey;
+        _BoolCheckbox = false;
+        _enabledOperator = true;
+        _checkLoadAllStatus = true;
+      });
+    }
   }
 
   Future<void> _loadPlan() async {
-    _BoolCheckbox = true;
-    String NumberCPT = checkpointController.text.substring(0, 1);
-    bgChange = COLOR_BLUE_DARK;
-
-    BlocProvider.of<PmDailyBloc>(context).add(
-      PMDailyGetSendEvent(),
-    );
+    setState(() {
+      _index.clear();
+      _checkLoadAllStatus = false;
+      _BoolCheckbox = true;
+      bgChange = Colors.grey;
+      String NumberCPT = checkpointController.text.substring(0, 1);
+      _QueryLoadStatus(NumberCPT);
+    });
   }
 
   void _btnSend(int _index) async {
     if (checkpointController.text.isNotEmpty &&
-        operatorNameController.text.isNotEmpty) {
+        operatorNameController.text.isNotEmpty &&
+        _index != 0) {
       _callAPI(_index);
     } else {
       setState(() {
         // _enabledPMDaily = true;
       });
-      EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+      // EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
   }
 
@@ -473,7 +811,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               .format(DateTime.now())
               .toString(),
         });
-        print("ok");
       }
     } catch (e) {
       print(e);
@@ -497,7 +834,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       print(operatorNameController.text.trim());
       print(sql_pmDailySheet.length);
       if (sql_pmDailySheet.isEmpty) {
-        print("if");
         // setState(() {
         print("_checkSendSqlite = true;");
         _saveSendSqlite(_index);
@@ -520,13 +856,11 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Future<void> _checkloadStatus() async {
     var sql_PMDSheet = await databaseHelper.queryAllRows('PM_DAILY_SHEET');
     if (sql_PMDSheet.isEmpty) {
-      print("if");
       setState(() {
         bgChangeStatus = Colors.grey;
-        _enabledOperator = false;
+        _enabledOperator = true;
       });
     } else {
-      print("else");
       setState(() {
         bgChangeStatus = COLOR_BLUE_DARK;
         _enabledOperator = true;
@@ -592,8 +926,11 @@ class PlanWindingDataSource extends DataGridSource {
   PlanWindingDataSource({
     List<PMDailyOutputModelPlan>? CHECKPOINT,
   }) {
+    int countloop = 0;
     if (CHECKPOINT != null) {
+      databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
       for (var _item in CHECKPOINT) {
+        countloop++;
         _employees.add(
           DataGridRow(
             cells: [
@@ -639,13 +976,14 @@ class PlanWindingDataSource extends DataGridSource {
   }
 }
 
-class PMDailyDataSource extends DataGridSource {
-  PMDailyDataSource({List<PMDailyOutputModelPlan>? CHECKPOINT, String? CPT}) {
-    String NumberCPT = CPT!.substring(0, 1);
+class PlanWindingLoadStatusDataSource extends DataGridSource {
+  PlanWindingLoadStatusDataSource({
+    List<PMDailyCheckPointSQLiteModel>? CHECKPOINT,
+  }) {
+    int countloop = 0;
     if (CHECKPOINT != null) {
-      _gettest(NumberCPT);
-
       for (var _item in CHECKPOINT) {
+        countloop++;
         _employees.add(
           DataGridRow(
             cells: [
@@ -683,15 +1021,5 @@ class PMDailyDataSource extends DataGridSource {
         },
       ).toList(),
     );
-  }
-
-  _gettest(String NumberCPT) async {
-    List<Map<String, dynamic>> rows =
-        await databaseHelper.queryAllRows('PM_DAILY_SHEET');
-    List<PMDailyCheckPointSQLiteModel> CHECKPOINT = rows
-        .where((row) => row['CTType'] == '${NumberCPT}')
-        .map((row) => PMDailyCheckPointSQLiteModel.fromMap(row))
-        .toList();
-    return CHECKPOINT;
   }
 }
