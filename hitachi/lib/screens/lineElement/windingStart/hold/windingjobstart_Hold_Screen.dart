@@ -161,7 +161,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                   await deletedInfo();
                   await _getHold();
                   await _refreshPage();
-                  EasyLoading.showSuccess("Send complete",
+                  EasyLoading.showSuccess("Send Complete",
                       duration: Duration(seconds: 3));
                 } else {
                   _errorDialog(

@@ -144,7 +144,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       f2.requestFocus();
                       _loadPlan();
                       checkpointController.clear();
-                      await _getHold();
                     });
               } else if (state.item.RESULT == false) {
                 items = state.item;
@@ -153,17 +152,23 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
-
-                      // checkpointController.clear();
+                      await _getHold();
+                      f2.requestFocus();
+                      _loadPlan();
+                      checkpointController.clear();
                     });
               } else {
                 // EasyLoading.showError("Can not Call API");
                 _errorDialog(
-                    text: Label("Check Connection"),
-                    isHideCancle: false,
+                    text: Label(
+                        "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart(_index.first);
+                      await _getHold();
+                      f2.requestFocus();
+                      _loadPlan();
+                      checkpointController.clear();
                     });
               }
             }
@@ -177,6 +182,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                   onpressOk: () async {
                     Navigator.pop(context);
                     await _getProcessStart(_index.first);
+                    await _getHold();
                   });
             }
             //===========================================================
@@ -297,6 +303,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               (selectRow, deselectedRows) async {
                             setState(() {
                               _index.clear();
+                              bgChange = COLOR_BLUE_DARK;
                             });
 
                             if (selectRow.isNotEmpty) {
@@ -642,6 +649,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                           onSelectionChanged:
                               (selectRow, deselectedRows) async {
                             _index.clear();
+                            setState(() {
+                              bgChange = COLOR_BLUE_DARK;
+                            });
+
                             if (selectRow.isNotEmpty) {
                               if (selectRow.length ==
                                       pmDailyLoadStatusDataSource!

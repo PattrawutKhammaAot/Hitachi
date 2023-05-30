@@ -186,16 +186,13 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                     await deletedInfo();
                     await _refresh();
                     await _getHold();
-                    _errorDialog(
-                        text: Label("SendComplete"),
-                        isHideCancle: false,
-                        onpressOk: () async {
-                          Navigator.pop(context);
-                        });
+                    EasyLoading.showSuccess("Send Complete",
+                        duration: Duration(seconds: 3));
                   } else {
                     _errorDialog(
                         text: Label(
                             "${state.item.MESSAGE ?? "Check Connection"}"),
+                        isHideCancle: false,
                         onpressOk: () {
                           Navigator.pop(context);
                         });

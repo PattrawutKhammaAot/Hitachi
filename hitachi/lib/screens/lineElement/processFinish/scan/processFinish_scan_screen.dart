@@ -55,7 +55,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         await databaseHelper.queryAllRows('PROCESS_SHEET');
     setState(() {
       widget.onChange
-          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+          ?.call(sql.where((element) => element['StartEnd'] == 'E').toList());
     });
   }
 
@@ -91,7 +91,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                 items = state.item;
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label(
+                        "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart();
@@ -106,14 +107,15 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               } else {
                 EasyLoading.dismiss();
                 _errorDialog(
-                    text: Label("Check Connection"),
-                    isHideCancle: false,
+                    text: Label(
+                        "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart();
                       machineNoController.clear();
                       operatorNameController.clear();
                       batchNoController.clear();
+                      await _getHold();
                       setState(() {
                         rejectQtyController.text = '0';
                       });
@@ -124,12 +126,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
             if (state is ProcessFinishErrorState) {
               print("ERROR");
               // EasyLoading.dismiss();
-              _getProcessStart();
+
               _errorDialog(
-                  text: Label("Check Connection"),
-                  isHideCancle: false,
+                  text: Label("CheckConnection\n Do you want to Save"),
                   onpressOk: () async {
                     Navigator.pop(context);
+                    await _getProcessStart();
+                    await _getHold();
                   });
             }
           },
@@ -256,7 +259,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           batchNoController.text.length == 12 &&
                           rejectQtyController.text.isNotEmpty) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {
@@ -278,7 +281,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           batchNoController.text.isNotEmpty &&
                           rejectQtyController.text.isNotEmpty) {
                         setState(() {
-                          bgChange = COLOR_RED;
+                          bgChange = COLOR_BLUE_DARK;
                         });
                       } else {
                         setState(() {

@@ -149,7 +149,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 EasyLoading.dismiss();
                 items = state.item;
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label(
+                        "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
                     onpressOk: () async {
                       Navigator.pop(context);
 
@@ -166,7 +167,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 EasyLoading.dismiss();
                 // EasyLoading.showError("Can not Call API");
                 _errorDialog(
-                    text: Label("${state.item.MESSAGE}"),
+                    text: Label(
+                        "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
                     onpressOk: () async {
                       Navigator.pop(context);
                       await _getProcessStart();
@@ -176,6 +178,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+                      await _getHold();
                     });
               }
               f1.requestFocus();
@@ -183,15 +186,16 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             if (state is ProcessStartErrorState) {
               print("ERROR");
               EasyLoading.dismiss();
-              _getProcessStart();
               setState(() {
                 _enabledMachineNo = true;
               });
               _errorDialog(
-                  text: Label("Check Connection"),
-                  isHideCancle: false,
+                  text: Label("CheckConnection\n Do you want to Save"),
+                  // isHideCancle: false,
                   onpressOk: () async {
                     Navigator.pop(context);
+                    await _getProcessStart();
+                    await _getHold();
                   });
 
               f1.requestFocus();

@@ -103,7 +103,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         await databaseHelper.queryAllRows('PROCESS_SHEET');
     setState(() {
       widget.onChange
-          ?.call(sql.where((element) => element['StartEnd'] == 'S').toList());
+          ?.call(sql.where((element) => element['StartEnd'] == 'E').toList());
     });
   }
 
@@ -176,12 +176,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                     await deletedInfo();
                     await _refreshPage();
                     await _getHold();
-                    _errorDialog(
-                        text: Label("SendComplete"),
-                        isHideCancle: false,
-                        onpressOk: () async {
-                          Navigator.pop(context);
-                        });
+                    EasyLoading.showSuccess("Send complete",
+                        duration: Duration(seconds: 3));
                   } else {
                     _errorDialog(
                         text: Label(
