@@ -142,8 +142,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       Navigator.pop(context);
                       _BoolCheckbox = false;
                       f2.requestFocus();
-                      _loadPlan();
+                      // _loadPlan();
                       checkpointController.clear();
+                      setState(() {
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                      });
                     });
               } else if (state.item.RESULT == false) {
                 items = state.item;
@@ -154,8 +158,13 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getProcessStart(_index.first);
                       await _getHold();
                       f2.requestFocus();
-                      _loadPlan();
+                      // _loadPlan();
                       checkpointController.clear();
+
+                      setState(() {
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                      });
                     });
               } else {
                 // EasyLoading.showError("Can not Call API");
@@ -167,8 +176,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getProcessStart(_index.first);
                       await _getHold();
                       f2.requestFocus();
-                      _loadPlan();
+                      // _loadPlan();
                       checkpointController.clear();
+                      setState(() {
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                      });
                     });
               }
             }
@@ -195,51 +208,75 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           padding: EdgeInsets.all(15),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 40,
-                    width: 130,
-                    child: Button(
-                      onPress: () => _loadAllPlan(),
-                      text: Label(
-                        "Load All Status",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Container(
+              //       height: 40,
+              //       width: 130,
+              //       child: Button(
+              //         onPress: () => _loadAllPlan(),
+              //         text: Label(
+              //           "Load All Status",
+              //           color: COLOR_WHITE,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
               SizedBox(
                 height: 5,
               ),
-              RowBoxInputField(
-                labelText: "Operator Name : ",
-                height: 35,
-                controller: operatorNameController,
-                maxLength: 12,
-                focusNode: f1,
-                enabled: _enabledOperator,
-                // enabled: _enabledPMDaily,
+              Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      child: RowBoxInputField(
+                        labelText: "Operator  :      ",
+                        height: 35,
+                        controller: operatorNameController,
+                        maxLength: 12,
+                        focusNode: f1,
+                        enabled: _enabledOperator,
+                        // enabled: _enabledPMDaily,
 
-                onEditingComplete: () {
-                  if (operatorNameController.text.isNotEmpty) {
-                    setState(() {
-                      f2.requestFocus();
-                      valuetxtinput = " ";
-                      _enabledOperator = false;
-                    });
-                  } else {
-                    setState(() {
-                      valuetxtinput = "Operator Name : User INVALID";
-                    });
-                    operatorNameController.clear();
-                  }
-                },
-                textInputFormatter: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                        onEditingComplete: () {
+                          if (operatorNameController.text.isNotEmpty) {
+                            setState(() {
+                              f2.requestFocus();
+                              valuetxtinput = " ";
+                              _enabledOperator = false;
+                            });
+                          } else {
+                            setState(() {
+                              valuetxtinput = "Operator Name : User INVALID";
+                            });
+                            operatorNameController.clear();
+                          }
+                        },
+                        textInputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Container()),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      height: 40,
+                      width: 130,
+                      child: Button(
+                        onPress: () => _loadAllPlan(),
+                        text: Label(
+                          "Load All Status",
+                          color: COLOR_WHITE,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -281,7 +318,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 7,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -380,24 +417,13 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null && PMDailyDataSource == null
                   ? Expanded(
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 7,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -494,18 +520,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null &&
                       PMDailyDataSource != null &&
                       _checkLoadAllStatus == true
@@ -513,7 +528,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 7,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -609,18 +624,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null &&
                       PMDailyDataSource != null &&
                       _checkLoadAllStatus == false
@@ -628,7 +632,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 7,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -727,33 +731,36 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       ),
                     )
                   : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
+                      children: [],
                     ),
               Row(
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Button(
-                      bgColor: bgChangeStatus ?? Colors.grey,
-                      onPress: () => _loadPlan(),
-                      text: Label(
-                        "Load Status",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
+                  Visibility(
+                    visible: true,
+                    child: Container(
+                        child: Label(
+                      " ${valuetxtinput}",
+                      color: COLOR_RED,
+                    )),
                   ),
+                ],
+              ),
+              Row(
+                children: [
+                  // Expanded(
+                  //   flex: 3,
+                  //   child: Button(
+                  //     bgColor: bgChangeStatus ?? Colors.grey,
+                  //     onPress: () => _loadPlan(),
+                  //     text: Label(
+                  //       "Load Status",
+                  //       color: COLOR_WHITE,
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(child: Container()),
                   Expanded(
-                    flex: 3,
+                    flex: 1,
                     child: Button(
                       bgColor: bgChange ?? Colors.grey,
                       onPress: () => _btnSend(_index.first),

@@ -101,7 +101,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: planwindingDataSource!,
-                          columnWidthMode: ColumnWidthMode.fill,
+                          // columnWidthMode: ColumnWidthMode.fill,
                           allowPullToRefresh: true,
                           allowColumnsResizing: true,
                           onColumnResizeUpdate:
@@ -113,6 +113,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                             });
                             return true;
                           },
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           columns: [
                             GridColumn(
                               width: columnWidths['data']!,
