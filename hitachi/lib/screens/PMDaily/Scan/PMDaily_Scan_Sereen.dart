@@ -167,7 +167,6 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       });
                     });
               } else {
-                // EasyLoading.showError("Can not Call API");
                 _errorDialog(
                     text: Label(
                         "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
@@ -895,20 +894,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       );
       print(sql_pmDailySheet.length);
 
-      // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
       print(operatorNameController.text.trim());
       print(sql_pmDailySheet.length);
       if (sql_pmDailySheet.isEmpty) {
-        // setState(() {
-        print("_checkSendSqlite = true;");
         _saveSendSqlite(_index);
-        // });
-      } else {
-        // setState(() {
-        print("_checkSendSqlite = false;");
-        // _updateSendSqlite();//
-        // });
-        print("else");
       }
 
       return true;
