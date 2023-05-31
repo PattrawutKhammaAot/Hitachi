@@ -41,7 +41,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Color? bgChange;
   Color? bgChangeStatus;
   ResponeDefault? items;
-  List<int> _index = [];
+  List<int> _index = [0];
   DataGridRow? datagridRow;
   String CheckFirst = "";
   String valuetxtinput = "";
@@ -143,10 +143,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       _BoolCheckbox = false;
                       f2.requestFocus();
                       // _loadPlan();
-                      checkpointController.clear();
+                      _index = [0];
                       setState(() {
+                        checkpointController.clear();
                         pmDailyLoadStatusDataSource = null;
                         PMDailyDataSource = null;
+                        bgChange = Colors.grey;
                       });
                     });
               } else if (state.item.RESULT == false) {
@@ -159,11 +161,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getHold();
                       f2.requestFocus();
                       // _loadPlan();
-                      checkpointController.clear();
-
+                      _index = [0];
                       setState(() {
+                        checkpointController.clear();
                         pmDailyLoadStatusDataSource = null;
                         PMDailyDataSource = null;
+                        bgChange = Colors.grey;
                       });
                     });
               } else {
@@ -176,10 +179,12 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getHold();
                       f2.requestFocus();
                       // _loadPlan();
-                      checkpointController.clear();
+                      _index = [0];
                       setState(() {
+                        checkpointController.clear();
                         pmDailyLoadStatusDataSource = null;
                         PMDailyDataSource = null;
+                        bgChange = Colors.grey;
                       });
                     });
               }
@@ -271,7 +276,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       child: Button(
                         onPress: () => _loadAllPlan(),
                         text: Label(
-                          "Load All Status",
+                          "Load Status",
                           color: COLOR_WHITE,
                         ),
                       ),
@@ -317,7 +322,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 7,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -422,7 +428,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 7,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -527,7 +534,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 7,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -631,7 +639,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 7,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -762,7 +771,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                     flex: 1,
                     child: Button(
                       bgColor: bgChange ?? Colors.grey,
-                      onPress: () => _btnSend(_index.first),
+                      onPress: () => _btnSend(_index.first ?? 0),
                       text: Label(
                         "Send",
                         color: COLOR_WHITE,
@@ -840,7 +849,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       setState(() {
         // _enabledPMDaily = true;
       });
-      // EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+      EasyLoading.showError("Please Input Info",
+          duration: Duration(seconds: 5));
     }
   }
 
