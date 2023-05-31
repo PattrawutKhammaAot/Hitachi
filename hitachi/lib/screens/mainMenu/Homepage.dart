@@ -14,6 +14,7 @@ import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/utils/build_info.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MainMenuScreen extends StatefulWidget {
@@ -139,7 +140,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     color: Colors.grey,
                   ),
                   Label(
-                    "Date Modified : 29-05-2023",
+                    "Date Modified : 31-May-2023",
                     color: Colors.grey,
                   )
                 ],
