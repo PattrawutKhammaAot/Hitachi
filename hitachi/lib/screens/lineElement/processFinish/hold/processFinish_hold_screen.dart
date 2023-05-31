@@ -180,6 +180,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                         duration: Duration(seconds: 3));
                   } else {
                     _errorDialog(
+                        isHideCancle: false,
                         text: Label(
                             "${state.item.MESSAGE ?? "Check Connection"}"),
                         onpressOk: () {

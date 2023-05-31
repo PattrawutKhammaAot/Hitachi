@@ -33,6 +33,16 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   String _loadData = "Load Date&Time : ";
   DatabaseHelper databaseHelper = DatabaseHelper();
 
+  late Map<String, double> columnWidths = {
+    'data': double.nan,
+    'no': double.nan,
+    'order': double.nan,
+    'b': double.nan,
+    'ipe': double.nan,
+    'qty': double.nan,
+    'remark': double.nan,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +73,8 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
             }
             if (state is PlanWindingErrorState) {
               EasyLoading.dismiss();
-              EasyLoading.showError("Can not Call Api");
+              EasyLoading.showError("Check Connection",
+                  duration: Duration(seconds: 5));
               // print(state.error);
             }
           },
@@ -91,9 +102,20 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: planwindingDataSource!,
                           columnWidthMode: ColumnWidthMode.fill,
+                          allowPullToRefresh: true,
+                          allowColumnsResizing: true,
+                          onColumnResizeUpdate:
+                              (ColumnResizeUpdateDetails details) {
+                            setState(() {
+                              columnWidths[details.column.columnName] =
+                                  details.width;
+                              print(details.width);
+                            });
+                            return true;
+                          },
                           columns: [
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['data']!,
                               columnName: 'data',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -106,6 +128,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['no']!,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -118,7 +141,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['order']!,
                               columnName: 'order',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -131,7 +154,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['b']!,
                               columnName: 'b',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -144,7 +167,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['ipe']!,
                               columnName: 'ipe',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -157,7 +180,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['qty']!,
                               columnName: 'qty',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -170,7 +193,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                               ),
                             ),
                             GridColumn(
-                              width: 120,
+                              width: columnWidths['remark']!,
                               columnName: 'remark',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
@@ -229,6 +252,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
 class PlanWindingDataSource extends DataGridSource {
   PlanWindingDataSource({List<PlanWindingOutputModelPlan>? PLAN}) {
     if (PLAN != null) {
+      databaseHelper.deleteDataAllFromSQLite(tableName: 'PLAN_WINDING_SHEET');
       for (var _item in PLAN) {
         _employees.add(
           DataGridRow(
@@ -240,7 +264,8 @@ class PlanWindingDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'b', value: _item.BATCH),
               DataGridCell<int>(columnName: 'ipe', value: _item.IPECODE),
               DataGridCell<int>(columnName: 'qty', value: _item.WDGQTYPLAN),
-              DataGridCell<String>(columnName: 'remark', value: _item.NOTE),
+              DataGridCell<String>(
+                  columnName: 'remark', value: _item.NOTE ?? ""),
             ],
           ),
         );
