@@ -116,7 +116,6 @@ class _ProcessPageState extends State<ProcessPage> {
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: employeeDataSource!,
-                          columnWidthMode: ColumnWidthMode.fill,
                           allowColumnsResizing: true,
                           onColumnResizeUpdate:
                               (ColumnResizeUpdateDetails details) {
@@ -130,6 +129,7 @@ class _ProcessPageState extends State<ProcessPage> {
                           columnResizeMode: ColumnResizeMode.onResizeEnd,
                           columns: [
                             GridColumn(
+                              visible: false,
                               width: columnWidths['id']!,
                               columnName: 'id',
                               label: Container(

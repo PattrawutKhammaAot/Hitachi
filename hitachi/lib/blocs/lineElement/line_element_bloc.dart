@@ -25,6 +25,8 @@ import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
 
+import '../../models/materialInput/loadMaterialInput/materialLoadModel.dart';
+
 part 'line_element_event.dart';
 part 'line_element_state.dart';
 
@@ -135,6 +137,18 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         }
       },
     );
+    on<MaterialLoadEvent>(
+      (event, emit) async {
+        try {
+          emit(MaterialLoadDataLoadingState());
+          final mlist = await fetchLoadMaterial();
+          emit(MaterialLoadDataLoadedState(mlist));
+        } catch (e) {
+          emit(MaterialLoadDataErrorState(e.toString()));
+        }
+      },
+    );
+
 //ProcessStart
     on<ProcessStartEvent>(
       (event, emit) async {
@@ -318,9 +332,31 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ResponeDefault tmp = ResponeDefault.fromJson(response.data);
 
       return tmp;
-    } catch (e) {
+    } on Exception {
+      throw Exception();
+    }
+  }
+
+  //LoadMaterialInput
+  Future<MaterialInputLoadModel> fetchLoadMaterial() async {
+    try {
+      Response response = await dio.get(
+        ApiConfig.LE_LOAD_MATERIAL_INPUT,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
+      );
+      print(response.data);
+
+      MaterialInputLoadModel tmp =
+          MaterialInputLoadModel.fromJson(response.data);
+
+      return tmp;
+    } on Exception catch (e, s) {
       print(e);
-      return ResponeDefault();
+      print(s);
+      throw Exception();
     }
   }
 

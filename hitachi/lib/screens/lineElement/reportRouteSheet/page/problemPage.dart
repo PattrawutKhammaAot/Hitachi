@@ -81,7 +81,6 @@ class _ProblemPageState extends State<ProblemPage> {
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: employeeDataSource!,
-                          columnWidthMode: ColumnWidthMode.fill,
                           allowColumnsResizing: true,
                           onColumnResizeUpdate:
                               (ColumnResizeUpdateDetails details) {

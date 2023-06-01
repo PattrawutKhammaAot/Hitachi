@@ -100,6 +100,12 @@ class CheckMaterialInputEvent extends LineElementEvent {
   List<Object> get prop => [items];
 }
 
+class MaterialLoadEvent extends LineElementEvent {
+  const MaterialLoadEvent();
+
+  @override
+  List<Object> get prop => [];
+}
 // //////////////////------------MaterialEvent-----------///////////////
 // class PMDailySendEvent extends LineElementEvent {
 //   const PMDailySendEvent(this.items);
