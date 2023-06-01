@@ -95,7 +95,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     onPress: () => Navigator.pushNamed(
                         context, RouterList.PMDaily_control_Screen),
                   ),
-                  // PMDaily_control_Screen
                   SizedBox(
                     height: 15,
                   ),
@@ -140,7 +139,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     color: Colors.grey,
                   ),
                   Label(
-                    "Date Modified : 31-May-2023",
+                    "Date Modified : 1-June-2023",
                     color: Colors.grey,
                   )
                 ],
