@@ -346,7 +346,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         BATCHNO: int.tryParse(batchNoController.text.trim()),
         REJECTQTY: rejectQtyController.text.trim(),
         FINISHDATE:
-            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
+            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
       )),
     );
   }
@@ -478,7 +478,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           key3: 'Garbage',
           yieldKey3: rejectQtyController.text.trim(),
           key4: 'FinDate',
-          yieldKey4: DateFormat('yyyy MM dd HH:mm:ss')
+          yieldKey4: DateFormat('dd MM yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString()
               .trim(),
@@ -504,7 +504,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Garbage': rejectQtyController.text.trim(),
         'FinDate':
-            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
+            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
         'StartEnd': StartEndValue.toString(),
       });
       print("ok");
