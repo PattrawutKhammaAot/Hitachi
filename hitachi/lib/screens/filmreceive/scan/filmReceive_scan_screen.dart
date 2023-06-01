@@ -415,6 +415,32 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
     }
   }
 
+  Future _checkPackFilmOnSqlite() async {
+    var sql = await databaseHelper.queryAllRows('DATA_SHEET');
+    bool isFound = false;
+    if (sql.isNotEmpty) {
+      for (var items in sql) {
+        if (_packNoController.text.trim() == items['PACK_NO'].trim()) {
+          isFound = true;
+          break;
+        }
+      }
+    }
+    if (isFound == true) {
+      _errorDialog(
+          isHideCancle: false,
+          text: Label("Pack No Duplicate"),
+          onpressOk: () {
+            _packNoController.clear();
+            f6.requestFocus();
+            Navigator.pop(context);
+          });
+    } else {
+      print("No Duplicate");
+      f7.requestFocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -466,33 +492,32 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
               EasyLoading.showError("Can not send");
             }
             if (state is CheckFilmReceiveLoadingState) {
-              print("Loading");
               EasyLoading.show(status: "Loading...");
             } else if (state is CheckFilmReceiveLoadedState) {
               EasyLoading.dismiss();
               setState(() {
                 _itemsPackNo = state.item;
               });
-              print(state.item.MESSAGE);
+
               if (_itemsPackNo.RESULT == false) {
-                print("Error");
                 _errorDialog(
+                    isHideCancle: false,
                     text: Label(
                       "${_itemsPackNo.MESSAGE ?? "Check Connection"}",
                       color: COLOR_BLACK,
                     ),
                     onpressOk: () {
+                      _packNoController.clear();
                       Navigator.pop(context);
-                      f7.requestFocus();
+                      f6.requestFocus();
                     });
-              }
-              if (_itemsPackNo.RESULT == true) {
-                print("Error");
+              } else if (_itemsPackNo.RESULT == true) {
                 f7.requestFocus();
               }
             } else if (state is CheckFilmReceiveErrorState) {
+              //Do something When Failed Connection
+              await _checkPackFilmOnSqlite();
               EasyLoading.dismiss();
-              f7.requestFocus();
             }
           },
         )
@@ -647,7 +672,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                             } else {
                               await _checkThickness();
                             }
-                            print(_thickness);
+                            ;
                           },
                           labelText: "Pack No.",
                           height: 30,
