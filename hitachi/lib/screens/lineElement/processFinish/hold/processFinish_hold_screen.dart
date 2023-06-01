@@ -466,23 +466,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     });
   }
 
-  // void _sendDataServer() async {
-  //   _index.forEach((element) async {
-  //     var row = processList.where((value) => value.ID == element).first;
-  //     BlocProvider.of<LineElementBloc>(context).add(
-  //       ProcessFinishInputEvent(
-  //         ProcessFinishOutputModel(
-  //           MACHINE: row.MACHINE,
-  //           OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-  //           REJECTQTY: row.GARBAGE.toString(),
-  //           BATCHNO: int.tryParse(row.BATCH_NO.toString()),
-  //           FINISHDATE: row.STARTDATE.toString(),
-  //         ),
-  //       ),
-  //     );
-  //   });
-  // }
-
   void _AlertDialog() async {
     // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
     showDialog<String>(
