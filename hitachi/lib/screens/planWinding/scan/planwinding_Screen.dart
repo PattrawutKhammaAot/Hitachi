@@ -97,13 +97,12 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
                           gridLinesVisibility: GridLinesVisibility.both,
                           headerGridLinesVisibility: GridLinesVisibility.both,
                           source: planwindingDataSource!,
-                          columnWidthMode: ColumnWidthMode.fill,
                           allowPullToRefresh: true,
                           allowColumnsResizing: true,
+                          columnResizeMode: ColumnResizeMode.onResizeEnd,
                           onColumnResizeUpdate:
                               (ColumnResizeUpdateDetails details) {
                             setState(() {
