@@ -41,7 +41,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
   Color? bgChange;
   Color? bgChangeStatus;
   ResponeDefault? items;
-  List<int> _index = [];
+  List<int> _index = [0];
   DataGridRow? datagridRow;
   String CheckFirst = "";
   String valuetxtinput = "";
@@ -142,8 +142,14 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       Navigator.pop(context);
                       _BoolCheckbox = false;
                       f2.requestFocus();
-                      _loadPlan();
-                      checkpointController.clear();
+                      // _loadPlan();
+                      _index = [0];
+                      setState(() {
+                        checkpointController.clear();
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                        bgChange = Colors.grey;
+                      });
                     });
               } else if (state.item.RESULT == false) {
                 items = state.item;
@@ -154,11 +160,16 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getProcessStart(_index.first);
                       await _getHold();
                       f2.requestFocus();
-                      _loadPlan();
-                      checkpointController.clear();
+                      // _loadPlan();
+                      _index = [0];
+                      setState(() {
+                        checkpointController.clear();
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                        bgChange = Colors.grey;
+                      });
                     });
               } else {
-                // EasyLoading.showError("Can not Call API");
                 _errorDialog(
                     text: Label(
                         "${state.item.MESSAGE ?? "CheckConnection\n Do you want to Save"}"),
@@ -167,8 +178,14 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       await _getProcessStart(_index.first);
                       await _getHold();
                       f2.requestFocus();
-                      _loadPlan();
-                      checkpointController.clear();
+                      // _loadPlan();
+                      _index = [0];
+                      setState(() {
+                        checkpointController.clear();
+                        pmDailyLoadStatusDataSource = null;
+                        PMDailyDataSource = null;
+                        bgChange = Colors.grey;
+                      });
                     });
               }
             }
@@ -195,51 +212,75 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           padding: EdgeInsets.all(15),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 40,
-                    width: 130,
-                    child: Button(
-                      onPress: () => _loadAllPlan(),
-                      text: Label(
-                        "Load All Status",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Container(
+              //       height: 40,
+              //       width: 130,
+              //       child: Button(
+              //         onPress: () => _loadAllPlan(),
+              //         text: Label(
+              //           "Load All Status",
+              //           color: COLOR_WHITE,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
               SizedBox(
                 height: 5,
               ),
-              RowBoxInputField(
-                labelText: "Operator Name : ",
-                height: 35,
-                controller: operatorNameController,
-                maxLength: 12,
-                focusNode: f1,
-                enabled: _enabledOperator,
-                // enabled: _enabledPMDaily,
+              Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      child: RowBoxInputField(
+                        labelText: "Operator  :      ",
+                        height: 35,
+                        controller: operatorNameController,
+                        maxLength: 12,
+                        focusNode: f1,
+                        enabled: _enabledOperator,
+                        // enabled: _enabledPMDaily,
 
-                onEditingComplete: () {
-                  if (operatorNameController.text.isNotEmpty) {
-                    setState(() {
-                      f2.requestFocus();
-                      valuetxtinput = " ";
-                      _enabledOperator = false;
-                    });
-                  } else {
-                    setState(() {
-                      valuetxtinput = "Operator Name : User INVALID";
-                    });
-                    operatorNameController.clear();
-                  }
-                },
-                textInputFormatter: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                        onEditingComplete: () {
+                          if (operatorNameController.text.isNotEmpty) {
+                            setState(() {
+                              f2.requestFocus();
+                              valuetxtinput = " ";
+                              _enabledOperator = false;
+                            });
+                          } else {
+                            setState(() {
+                              valuetxtinput = "Operator Name : User INVALID";
+                            });
+                            operatorNameController.clear();
+                          }
+                        },
+                        textInputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Container()),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      height: 40,
+                      width: 130,
+                      child: Button(
+                        onPress: () => _loadAllPlan(),
+                        text: Label(
+                          "Load Status",
+                          color: COLOR_WHITE,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -281,7 +322,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -380,24 +422,14 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null && PMDailyDataSource == null
                   ? Expanded(
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -494,18 +526,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null &&
                       PMDailyDataSource != null &&
                       _checkLoadAllStatus == true
@@ -513,7 +534,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -609,18 +631,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                         ),
                       ),
                     )
-                  : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
-                    ),
+                  : Row(),
               pmDailyLoadStatusDataSource != null &&
                       PMDailyDataSource != null &&
                       _checkLoadAllStatus == false
@@ -628,7 +639,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       flex: 5,
                       child: Container(
                         child: SfDataGrid(
-                          footerHeight: 10,
+                          footerHeight: 6,
+                          headerRowHeight: 40,
                           showCheckboxColumn: _BoolCheckbox,
                           selectionMode: SelectionMode.single,
                           gridLinesVisibility: GridLinesVisibility.both,
@@ -727,36 +739,39 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                       ),
                     )
                   : Row(
-                      children: [
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                              child: Label(
-                            " ${valuetxtinput}",
-                            color: COLOR_RED,
-                          )),
-                        ),
-                      ],
+                      children: [],
                     ),
               Row(
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Button(
-                      bgColor: bgChangeStatus ?? Colors.grey,
-                      onPress: () => _loadPlan(),
-                      text: Label(
-                        "Load Status",
-                        color: COLOR_WHITE,
-                      ),
-                    ),
+                  Visibility(
+                    visible: true,
+                    child: Container(
+                        child: Label(
+                      " ${valuetxtinput}",
+                      color: COLOR_RED,
+                    )),
                   ),
+                ],
+              ),
+              Row(
+                children: [
+                  // Expanded(
+                  //   flex: 3,
+                  //   child: Button(
+                  //     bgColor: bgChangeStatus ?? Colors.grey,
+                  //     onPress: () => _loadPlan(),
+                  //     text: Label(
+                  //       "Load Status",
+                  //       color: COLOR_WHITE,
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(child: Container()),
                   Expanded(
-                    flex: 3,
+                    flex: 1,
                     child: Button(
                       bgColor: bgChange ?? Colors.grey,
-                      onPress: () => _btnSend(_index.first),
+                      onPress: () => _btnSend(_index.first ?? 0),
                       text: Label(
                         "Send",
                         color: COLOR_WHITE,
@@ -834,7 +849,8 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       setState(() {
         // _enabledPMDaily = true;
       });
-      // EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
+      EasyLoading.showError("Please Input Info",
+          duration: Duration(seconds: 5));
     }
   }
 
@@ -888,20 +904,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       );
       print(sql_pmDailySheet.length);
 
-      // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
       print(operatorNameController.text.trim());
       print(sql_pmDailySheet.length);
       if (sql_pmDailySheet.isEmpty) {
-        // setState(() {
-        print("_checkSendSqlite = true;");
         _saveSendSqlite(_index);
-        // });
-      } else {
-        // setState(() {
-        print("_checkSendSqlite = false;");
-        // _updateSendSqlite();//
-        // });
-        print("else");
       }
 
       return true;
