@@ -441,6 +441,32 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     }
   }
 
+  Future _checkPackFilmOnSqlite() async {
+    var sql = await databaseHelper.queryAllRows('WINDING_SHEET');
+    bool isFound = false;
+    if (sql.isNotEmpty) {
+      for (var items in sql) {
+        if (filmPackNoController.text.trim() == items['PackNo'].trim()) {
+          isFound = true;
+          break;
+        }
+      }
+    }
+    if (isFound == true) {
+      _errorDialog(
+          isHideCancle: false,
+          text: Label("Pack No Duplicate"),
+          onpressOk: () {
+            filmPackNoController.clear();
+            f5.requestFocus();
+            Navigator.pop(context);
+          });
+    } else {
+      print("No Duplicate");
+      f6.requestFocus();
+    }
+  }
+
   Future _getHold() async {
     List<Map<String, dynamic>> sql =
         await databaseHelper.queryAllRows('WINDING_SHEET');
@@ -536,8 +562,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         _errorDialog(
                             text: Label("${packNoModel?.MESSAGE}"),
                             onpressOk: () {
+                              filmPackNoController.clear();
                               Navigator.pop(context);
-                              f6.requestFocus();
                             });
 
                         setState(() {
@@ -546,7 +572,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       }
                     }
                     if (state is GetCheckPackErrorState) {
-                      f6.requestFocus();
+                      await _checkPackFilmOnSqlite();
                       EasyLoading.dismiss();
                     }
                   })
