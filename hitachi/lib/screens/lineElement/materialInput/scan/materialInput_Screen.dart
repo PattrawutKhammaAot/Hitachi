@@ -16,6 +16,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
+import '../../../../models/materialInput/loadMaterialInput/materialLoadModel.dart';
+
 class MaterialInputScreen extends StatefulWidget {
   MaterialInputScreen({super.key, this.onChange});
   ValueChanged<List<Map<String, dynamic>>>? onChange;
@@ -45,6 +47,8 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
   MaterialInputModel? _inputMtModel;
   DatabaseHelper databaseHelper = DatabaseHelper();
   ResponeDefault? _responeDefault;
+
+  List<MaterialModel> _loadMaterialModel = [];
 
   @override
   void initState() {
@@ -98,6 +102,65 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
       'LotNo1': _lotNoController.text.trim(),
       'Date1': DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())
     });
+  }
+
+  Future _loadMaterialInSqlite() async {
+    var sql = await databaseHelper.queryAllRows('MATERIALLOAD_SHEET');
+    // await databaseHelper.deleteDataAllFromSQLite(
+    //     tableName: 'MATERIALLOAD_SHEET');
+    if (sql.isEmpty) {
+      BlocProvider.of<LineElementBloc>(context).add(
+        MaterialLoadEvent(),
+      );
+    }
+    if (sql.isNotEmpty) {
+      _errorDialog(
+          text: Label("Do you want to load Material again ?"),
+          onpressOk: () async {
+            await databaseHelper.deleteDataAllFromSQLite(
+                tableName: 'MATERIALLOAD_SHEET');
+            BlocProvider.of<LineElementBloc>(context).add(
+              MaterialLoadEvent(),
+            );
+
+            Navigator.pop(context);
+          });
+    }
+  }
+
+  Future _checkMaterialOffline() async {
+    var sql = await databaseHelper.queryAllRows('MATERIALLOAD_SHEET');
+    bool isFound = false;
+
+    if (sql.isNotEmpty) {
+      for (var items in sql) {
+        if (_materialController.text.trim() == items['Itemcode'].trim()) {
+          isFound = true;
+          break;
+        }
+      }
+    } else {
+      _errorDialog(
+          isHideCancle: false,
+          text: Label("Connection Failed \n  Please Load Material"),
+          onpressOk: () {
+            Navigator.pop(context);
+          });
+    }
+
+    if (isFound == true) {
+      _operatorNameFouc.requestFocus();
+    } else {
+      sql.isNotEmpty
+          ? _errorDialog(
+              isHideCancle: false,
+              text: Label("Material Not Found"),
+              onpressOk: () {
+                _materialController.clear();
+                Navigator.pop(context);
+              })
+          : Container();
+    }
   }
 
   @override
@@ -197,7 +260,6 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 if (_responeDefault!.RESULT == true) {
                   _operatorNameFouc.requestFocus();
                 } else {
-                  print("Count");
                   _errorDialog(
                       isHideCancle: false,
                       text: Label("${_responeDefault?.MESSAGE}"),
@@ -207,14 +269,32 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                       });
                 }
               } else if (state is CheckMaterialInputErrorState) {
+                EasyLoading.dismiss();
+                print("Offline");
+                _checkMaterialOffline();
+              }
+              if (state is MaterialLoadDataLoadingState) {
+                EasyLoading.show(status: "Loading ...");
+              }
+              if (state is MaterialLoadDataLoadedState) {
+                EasyLoading.dismiss();
+                setState(() {
+                  _loadMaterialModel = state.item.MATERIAL_MODEL!;
+                });
+                if (_loadMaterialModel.isNotEmpty) {
+                  for (var _item in _loadMaterialModel) {
+                    await databaseHelper.insertSqlite('MATERIALLOAD_SHEET',
+                        {'Itemcode': _item.ITEM_CODE, 'Type': _item.TYPE});
+                  }
+                }
+              } else if (state is MaterialLoadDataErrorState) {
+                EasyLoading.dismiss();
                 _errorDialog(
                     isHideCancle: false,
                     text: Label("Check Connection"),
                     onpressOk: () {
                       Navigator.pop(context);
                     });
-
-                EasyLoading.showError("Please Check Connection");
               }
             },
           ),
@@ -320,15 +400,38 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 const SizedBox(
                   height: 5,
                 ),
-                Button(
-                  bgColor: bgColor,
-                  text: Label(
-                    "Send",
-                    color: COLOR_WHITE,
-                  ),
-                  onPress: () {
-                    checkValueController();
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Button(
+                        bgColor: COLOR_BLUE_DARK,
+                        text: Label(
+                          "Load Material",
+                          color: COLOR_WHITE,
+                        ),
+                        onPress: () => _errorDialog(
+                            text: Label("Do you want to load material ?"),
+                            onpressOk: () {
+                              _loadMaterialInSqlite();
+                              Navigator.pop(context);
+                            }),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Expanded(
+                        flex: 3,
+                        child: Button(
+                          bgColor: bgColor,
+                          text: Label(
+                            "Send",
+                            color: COLOR_WHITE,
+                          ),
+                          onPress: () {
+                            checkValueController();
+                          },
+                        ))
+                  ],
                 )
               ],
             ),

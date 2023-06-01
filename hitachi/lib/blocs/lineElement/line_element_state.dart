@@ -237,3 +237,26 @@ class CheckMaterialInputErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  MaterialLoad State
+class MaterialLoadDataLoadingState extends LineElementState {
+  const MaterialLoadDataLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class MaterialLoadDataLoadedState extends LineElementState {
+  const MaterialLoadDataLoadedState(this.item);
+  final MaterialInputLoadModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class MaterialLoadDataErrorState extends LineElementState {
+  const MaterialLoadDataErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
