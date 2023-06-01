@@ -816,10 +816,10 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
         _enabledOperator = true;
         _checkLoadAllStatus = true;
       });
-      databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
-      BlocProvider.of<PmDailyBloc>(context).add(
-        PMDailyGetSendEvent(),
-      );
+      // databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
+      // BlocProvider.of<PmDailyBloc>(context).add(
+      //   PMDailyGetSendEvent(),
+      // );
     } else {
       setState(() {
         bgChange = Colors.grey;
