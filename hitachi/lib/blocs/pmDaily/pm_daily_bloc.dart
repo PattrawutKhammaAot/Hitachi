@@ -62,8 +62,8 @@ class PmDailyBloc extends Bloc<PmDailyEvent, PmDailyState> {
       Response responese = await dio.post(ApiConfig.PM_DAILY,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);

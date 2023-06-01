@@ -138,6 +138,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
               if (state.item.RESULT == true) {
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
+                    isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
                       _BoolCheckbox = false;
@@ -836,7 +837,13 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       _BoolCheckbox = true;
       bgChange = Colors.grey;
       String NumberCPT = checkpointController.text.substring(0, 1);
-      _QueryLoadStatus(NumberCPT);
+      if (NumberCPT == "1" || NumberCPT == "2" || NumberCPT == "3") {
+        _QueryLoadStatus(NumberCPT);
+      } else {
+        EasyLoading.showError("Checkpoint incorrect",
+            duration: Duration(seconds: 5));
+        checkpointController.clear();
+      }
     });
   }
 
@@ -992,7 +999,8 @@ class PlanWindingDataSource extends DataGridSource {
   }) {
     int countloop = 0;
     if (CHECKPOINT != null) {
-      databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
+      _deleteDataAllFromSQLite();
+      // databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
       for (var _item in CHECKPOINT) {
         countloop++;
         _employees.add(
@@ -1004,11 +1012,12 @@ class PlanWindingDataSource extends DataGridSource {
             ],
           ),
         );
-        databaseHelper.insertSqlite('PM_DAILY_SHEET', {
-          'CTType': _item.CTTYPE,
-          'Status': _item.STATUS,
-          'Description': _item.DESCRIPTION,
-        });
+        _insertSqlite(_item);
+        // databaseHelper.insertSqlite('PM_DAILY_SHEET', {
+        //   'CTType': _item.CTTYPE,
+        //   'Status': _item.STATUS,
+        //   'Description': _item.DESCRIPTION,
+        // });
       }
     } else {
       EasyLoading.showError("Can not Call API");
@@ -1038,6 +1047,28 @@ class PlanWindingDataSource extends DataGridSource {
         },
       ).toList(),
     );
+  }
+
+  _deleteDataAllFromSQLite() async {
+    try {
+      await databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
+    } catch (e) {
+      print("catch DataAll : ");
+      print(e);
+    }
+  }
+
+  _insertSqlite(_item) async {
+    try {
+      await databaseHelper.insertSqlite('PM_DAILY_SHEET', {
+        'CTType': _item.CTTYPE,
+        'Status': _item.STATUS,
+        'Description': _item.DESCRIPTION,
+      });
+    } catch (e) {
+      print("catch insertSqlite: ");
+      print(e);
+    }
   }
 }
 

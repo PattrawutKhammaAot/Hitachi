@@ -78,6 +78,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                 EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
+                    isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
                       machineNoController.clear();

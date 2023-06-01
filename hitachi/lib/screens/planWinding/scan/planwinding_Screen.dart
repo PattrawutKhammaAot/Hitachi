@@ -46,9 +46,6 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<LineElementBloc>(context).add(
-    //   ReportRouteSheetEvenet(batchNoController.text.trim()),
-    // );
   }
 
   // PlanWindingBloc
@@ -253,38 +250,38 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
 
 class PlanWindingDataSource extends DataGridSource {
   PlanWindingDataSource({List<PlanWindingOutputModelPlan>? PLAN}) {
-    if (PLAN != null) {
-      databaseHelper.deleteDataAllFromSQLite(tableName: 'PLAN_WINDING_SHEET');
-      for (var _item in PLAN) {
-        _employees.add(
-          DataGridRow(
-            cells: [
-              DataGridCell<String>(
-                  columnName: 'data', value: _item.WDGDATEPLANS),
-              DataGridCell<int>(columnName: 'no', value: _item.ORDER),
-              DataGridCell<String>(columnName: 'order', value: _item.ORDERNO),
-              DataGridCell<String>(columnName: 'b', value: _item.BATCH),
-              DataGridCell<int>(columnName: 'ipe', value: _item.IPECODE),
-              DataGridCell<int>(columnName: 'qty', value: _item.WDGQTYPLAN),
-              DataGridCell<String>(
-                  columnName: 'remark', value: _item.NOTE ?? ""),
-            ],
-          ),
-        );
-        databaseHelper.insertSqlite('PLAN_WINDING_SHEET', {
-          'PlanDate': _item.WDGDATEPLANS,
-          'OrderPlan': _item.ORDER,
-          'OrderNo': _item.ORDERNO,
-          'Batch': _item.BATCH,
-          'IPE': _item.IPECODE,
-          'Qty': _item.WDGQTYPLAN,
-          'Note': _item.NOTE,
-        });
-      }
-    } else {
-      EasyLoading.showError("Can not Call API");
+    int countloop = 0;
+    try {
+      if (PLAN != null) {
+        _deleteDataAllFromSQLite();
+        for (var _item in PLAN) {
+          countloop++;
+          _employees.add(
+            DataGridRow(
+              cells: [
+                DataGridCell<String>(
+                    columnName: 'data', value: _item.WDGDATEPLANS),
+                DataGridCell<int>(columnName: 'no', value: _item.ORDER),
+                DataGridCell<String>(columnName: 'order', value: _item.ORDERNO),
+                DataGridCell<String>(columnName: 'b', value: _item.BATCH),
+                DataGridCell<int>(columnName: 'ipe', value: _item.IPECODE),
+                DataGridCell<int>(columnName: 'qty', value: _item.WDGQTYPLAN),
+                DataGridCell<String>(
+                    columnName: 'remark', value: _item.NOTE ?? ""),
+              ],
+            ),
+          );
+          _insertSqlite(_item);
+        }
+        print(countloop);
+      } else {
+        EasyLoading.showError("Can not Call API");
 
-      _getPlanWindingSheet();
+        _getPlanWindingSheet();
+      }
+    } catch (e) {
+      print("ErrorLoop :");
+      print(e);
     }
   }
 
@@ -309,6 +306,33 @@ class PlanWindingDataSource extends DataGridSource {
         },
       ).toList(),
     );
+  }
+
+  _deleteDataAllFromSQLite() async {
+    try {
+      await databaseHelper.deleteDataAllFromSQLite(
+          tableName: 'PLAN_WINDING_SHEET');
+    } catch (e) {
+      print("catch DataAll : ");
+      print(e);
+    }
+  }
+
+  _insertSqlite(_item) async {
+    try {
+      await databaseHelper.insertSqlite('PLAN_WINDING_SHEET', {
+        'PlanDate': _item.WDGDATEPLANS,
+        'OrderPlan': _item.ORDER,
+        'OrderNo': _item.ORDERNO,
+        'Batch': _item.BATCH,
+        'IPE': _item.IPECODE,
+        'Qty': _item.WDGQTYPLAN,
+        'Note': _item.NOTE,
+      });
+    } catch (e) {
+      print("catch insertSqlite : ");
+      print(e);
+    }
   }
 
   Future<List<PlanWindingSQLiteModel>> _getPlanWindingSheet() async {

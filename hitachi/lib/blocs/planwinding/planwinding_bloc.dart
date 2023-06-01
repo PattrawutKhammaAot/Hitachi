@@ -48,9 +48,9 @@ class PlanWindingBloc extends Bloc<PlanWindingEvent, PlanWindingState> {
       Response response = await dio.get(
         ApiConfig.PLAN_WINDING,
         options: Options(
-            // headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
       );
 
       PlanWindingOutputModel tmp =

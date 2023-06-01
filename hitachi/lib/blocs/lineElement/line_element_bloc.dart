@@ -290,8 +290,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response response = await dio.post(ApiConfig.LE_MATERIALINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(items));
 
       MaterialInputModel tmp = MaterialInputModel.fromJson(response.data);
@@ -310,8 +310,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         ApiConfig.LE_CHECK_MATERIAL_INPUT + "${items}",
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
       );
       print(response.data);
 
@@ -330,8 +330,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response response = await dio.post(ApiConfig.LE_PROCESSSTARTINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(items));
 
       ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
@@ -350,8 +350,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response response = await dio.post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(items));
 
       ProcessFinishInputModel tmp =

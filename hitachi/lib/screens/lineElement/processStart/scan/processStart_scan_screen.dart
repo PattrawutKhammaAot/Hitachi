@@ -133,6 +133,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 EasyLoading.dismiss();
                 _errorDialog(
                     text: Label("${state.item.MESSAGE}"),
+                    isHideCancle: false,
                     onpressOk: () async {
                       Navigator.pop(context);
                       MachineController.clear();
