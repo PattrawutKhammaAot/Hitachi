@@ -200,15 +200,19 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   print("Count");
                   _errorDialog(
                       isHideCancle: false,
-                      text: Label(
-                          "${_responeDefault?.MESSAGE ?? "Check Connection"}"),
+                      text: Label("${_responeDefault?.MESSAGE}"),
                       onpressOk: () {
                         _materialController.clear();
                         Navigator.pop(context);
                       });
                 }
               } else if (state is CheckMaterialInputErrorState) {
-                EasyLoading.dismiss();
+                _errorDialog(
+                    isHideCancle: false,
+                    text: Label("Check Connection"),
+                    onpressOk: () {
+                      Navigator.pop(context);
+                    });
 
                 EasyLoading.showError("Please Check Connection");
               }

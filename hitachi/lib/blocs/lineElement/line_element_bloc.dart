@@ -318,9 +318,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ResponeDefault tmp = ResponeDefault.fromJson(response.data);
 
       return tmp;
-    } catch (e) {
-      print(e);
-      return ResponeDefault();
+    } on Exception {
+      throw Exception();
     }
   }
 

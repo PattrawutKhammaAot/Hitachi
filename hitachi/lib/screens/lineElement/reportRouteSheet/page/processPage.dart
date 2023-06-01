@@ -129,6 +129,7 @@ class _ProcessPageState extends State<ProcessPage> {
                           columnResizeMode: ColumnResizeMode.onResizeEnd,
                           columns: [
                             GridColumn(
+                              visible: false,
                               width: columnWidths['id']!,
                               columnName: 'id',
                               label: Container(
