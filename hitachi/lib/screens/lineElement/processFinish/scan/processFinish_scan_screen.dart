@@ -479,7 +479,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           key3: 'Garbage',
           yieldKey3: rejectQtyController.text.trim(),
           key4: 'FinDate',
-          yieldKey4: DateFormat('dd MM yyyy HH:mm:ss')
+          yieldKey4: DateFormat('dd/MM/yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString()
               .trim(),

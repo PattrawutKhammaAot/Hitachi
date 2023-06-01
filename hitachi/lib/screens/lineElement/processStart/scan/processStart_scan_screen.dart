@@ -440,7 +440,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               ? ""
               : operatorName3Controller.text.trim(),
           'BatchNo': batchNoController.text.trim(),
-          'StartDate': DateFormat('dd MM yyyy HH:mm:ss')
+          'StartDate': DateFormat('dd/MM/yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString(),
           'StartEnd': StartEndValue.toString(),

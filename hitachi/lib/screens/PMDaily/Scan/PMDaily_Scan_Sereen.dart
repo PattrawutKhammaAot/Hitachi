@@ -236,41 +236,44 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                 children: [
                   Expanded(
                     flex: 4,
-                    child: Container(
-                      child: RowBoxInputField(
-                        labelText: "Operator  :      ",
-                        height: 35,
-                        controller: operatorNameController,
-                        maxLength: 12,
-                        focusNode: f1,
-                        enabled: _enabledOperator,
-                        // enabled: _enabledPMDaily,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Container(
+                        child: RowBoxInputField(
+                          labelText: "Operator  :      ",
+                          height: 35,
+                          controller: operatorNameController,
+                          maxLength: 12,
+                          focusNode: f1,
+                          enabled: _enabledOperator,
+                          // enabled: _enabledPMDaily,
 
-                        onEditingComplete: () {
-                          if (operatorNameController.text.isNotEmpty) {
-                            setState(() {
-                              f2.requestFocus();
-                              valuetxtinput = " ";
-                              _enabledOperator = false;
-                            });
-                          } else {
-                            setState(() {
-                              valuetxtinput = "Operator Name : User INVALID";
-                            });
-                            operatorNameController.clear();
-                          }
-                        },
-                        textInputFormatter: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                          ),
-                        ],
+                          onEditingComplete: () {
+                            if (operatorNameController.text.isNotEmpty) {
+                              setState(() {
+                                f2.requestFocus();
+                                valuetxtinput = " ";
+                                _enabledOperator = false;
+                              });
+                            } else {
+                              setState(() {
+                                valuetxtinput = "Operator Name : User INVALID";
+                              });
+                              operatorNameController.clear();
+                            }
+                          },
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^(?!.*\d{12})[0-9]+$'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  Expanded(child: Container()),
+                  // Expanded(flex: 1, child: Container()),
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Container(
                       height: 40,
                       width: 130,
@@ -808,26 +811,16 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
     BlocProvider.of<PmDailyBloc>(context).add(
       PMDailyGetSendEvent(),
     );
-
-    if (_checkAPI == true) {
-      setState(() {
-        bgChange = Colors.grey;
-        _BoolCheckbox = false;
-        _enabledOperator = true;
-        _checkLoadAllStatus = true;
-      });
-      // databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
-      // BlocProvider.of<PmDailyBloc>(context).add(
-      //   PMDailyGetSendEvent(),
-      // );
-    } else {
-      setState(() {
-        bgChange = Colors.grey;
-        _BoolCheckbox = false;
-        _enabledOperator = true;
-        _checkLoadAllStatus = true;
-      });
-    }
+    setState(() {
+      bgChange = Colors.grey;
+      _BoolCheckbox = false;
+      _enabledOperator = true;
+      _checkLoadAllStatus = true;
+    });
+    // databaseHelper.deleteDataAllFromSQLite(tableName: 'PM_DAILY_SHEET');
+    // BlocProvider.of<PmDailyBloc>(context).add(
+    //   PMDailyGetSendEvent(),
+    // );
   }
 
   Future<void> _loadPlan() async {
@@ -840,7 +833,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
       if (NumberCPT == "1" || NumberCPT == "2" || NumberCPT == "3") {
         _QueryLoadStatus(NumberCPT);
       } else {
-        EasyLoading.showError("Checkpoint incorrect",
+        EasyLoading.showError("Check Point INVALID",
             duration: Duration(seconds: 5));
         checkpointController.clear();
       }
@@ -888,7 +881,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           'OperatorName': operatorNameController.text.trim(),
           'CheckPointPM': checkpointController.text.trim(),
           'Status': _index.toString().trim(),
-          'DatePM': DateFormat('dd MM yyyy HH:mm:ss')
+          'DatePM': DateFormat('dd/MM/yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString(),
         });
