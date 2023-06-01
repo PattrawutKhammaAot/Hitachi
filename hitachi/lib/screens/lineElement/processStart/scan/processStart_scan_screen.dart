@@ -439,7 +439,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               ? ""
               : operatorName3Controller.text.trim(),
           'BatchNo': batchNoController.text.trim(),
-          'StartDate': DateFormat('yyyy MM dd HH:mm:ss')
+          'StartDate': DateFormat('dd MM yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString(),
           'StartEnd': StartEndValue.toString(),
@@ -470,7 +470,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           key5: 'BatchNo',
           yieldKey5: batchNoController.text.trim(),
           key6: 'StartDate',
-          yieldKey6: DateFormat('yyyy MM dd HH:mm:ss')
+          yieldKey6: DateFormat('dd MM yyyy HH:mm:ss')
               .format(DateTime.now())
               .toString(),
           whereKey: 'Machine',
@@ -507,7 +507,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
         BATCHNO: batchNoController.text.trim(),
         STARTDATE:
-            DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString(),
+            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
       )),
     );
   }

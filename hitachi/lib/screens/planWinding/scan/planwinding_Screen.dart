@@ -242,7 +242,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
 
   _loadPlan() {
     _loadData = "Load Date&Time : " +
-        DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()).toString();
+        DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString();
     BlocProvider.of<PlanWindingBloc>(context).add(
       PlanWindingSendEvent(),
     );
