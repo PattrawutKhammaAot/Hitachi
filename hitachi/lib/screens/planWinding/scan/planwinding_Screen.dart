@@ -35,11 +35,11 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
 
   late Map<String, double> columnWidths = {
     'data': double.nan,
-    'no': double.nan,
+    'no': 40,
     'order': double.nan,
-    'b': double.nan,
-    'ipe': double.nan,
-    'qty': double.nan,
+    'b': 40,
+    'ipe': 60,
+    'qty': 70,
     'remark': double.nan,
   };
 
@@ -130,6 +130,7 @@ class _PlanWinding_ScreenState extends State<PlanWinding_Screen> {
                             ),
                             GridColumn(
                               width: columnWidths['no']!,
+                              maximumWidth: double.nan,
                               columnName: 'no',
                               label: Container(
                                 color: COLOR_BLUE_DARK,
