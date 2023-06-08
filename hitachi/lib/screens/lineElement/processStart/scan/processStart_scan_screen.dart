@@ -275,10 +275,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         });
                       }
                     },
+                    type: TextInputType.number,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                     onChanged: (value) {
                       if (MachineController.text.isNotEmpty &&
@@ -308,10 +307,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     focusNode: f3,
                     enabled: _enabledOperator,
                     onEditingComplete: () => f4.requestFocus(),
+                    type: TextInputType.number,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   SizedBox(
@@ -325,10 +323,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     focusNode: f4,
                     enabled: _enabledOperator,
                     onEditingComplete: () => f5.requestFocus(),
+                    type: TextInputType.number,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   SizedBox(
@@ -342,10 +339,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     focusNode: f5,
                     enabled: _enabledOperator,
                     onEditingComplete: () => f6.requestFocus(),
+                    type: TextInputType.number,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   SizedBox(

@@ -262,10 +262,9 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
                               operatorNameController.clear();
                             }
                           },
+                          type: TextInputType.number,
                           textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^(?!.*\d{12})[0-9]+$'),
-                            ),
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           ],
                         ),
                       ),
