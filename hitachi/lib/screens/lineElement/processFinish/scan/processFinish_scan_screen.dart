@@ -289,7 +289,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                         });
                       }
                     },
-                    // type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    type: TextInputType.number,
                   ),
                   SizedBox(
                     height: 10,
