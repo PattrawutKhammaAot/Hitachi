@@ -278,6 +278,10 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
                   labelText: "Batch No :",
                   maxLength: 12,
                   controller: batchNoController,
+                  type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                   onChanged: (value) {
                     if (value.length == 12) {
                       setState(() {

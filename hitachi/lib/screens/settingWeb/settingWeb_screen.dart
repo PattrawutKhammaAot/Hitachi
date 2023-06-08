@@ -39,6 +39,14 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
     });
   }
 
+  void _sendApi() {
+    setState(() {
+      TEMP_API_URL = _urlController.text.trim();
+    });
+    BlocProvider.of<TestconnectionBloc>(context).add(Test_ConnectionEvent());
+    print(TEMP_API_URL);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -82,6 +90,9 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                     controller: _urlController,
                     maxLines: 5,
                     decoration: InputDecoration(border: OutlineInputBorder()),
+                    onEditingComplete: () {
+                      _sendApi();
+                    },
                   ),
                   SizedBox(
                     height: 10,
@@ -99,12 +110,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                       color: COLOR_WHITE,
                     ),
                     onPress: () {
-                      setState(() {
-                        TEMP_API_URL = _urlController.text.trim();
-                      });
-                      BlocProvider.of<TestconnectionBloc>(context)
-                          .add(Test_ConnectionEvent());
-                      print(TEMP_API_URL);
+                      _sendApi();
                     },
                   ),
                   SizedBox(

@@ -222,9 +222,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     type: TextInputType.number,
                     controller: _operatorNameController,
                     textInputFormatter: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
                   const SizedBox(

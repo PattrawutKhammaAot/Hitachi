@@ -300,6 +300,10 @@ class _ZincThickNessScanScreenState extends State<ZincThickNessScanScreen> {
                     controller: _batchController,
                     maxLength: 12,
                     focusNode: batchFocus,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
                     onEditingComplete: () {
                       if (_batchController.text.length == 12) {
                         _getZincthicknessInSqlite();

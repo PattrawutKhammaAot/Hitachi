@@ -610,8 +610,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               type: TextInputType.number,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
-                                  RegExp(r'^(?!.*\d{12})[a-zA-Z0-9]+$'),
-                                ),
+                                    RegExp(r'[0-9]')),
                               ],
                               onEditingComplete: () => f3.requestFocus(),
                             ),

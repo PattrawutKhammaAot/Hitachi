@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
@@ -84,6 +85,9 @@ class _ProcessPageState extends State<ProcessPage> {
                   type: TextInputType.number,
                   maxLength: 12,
                   controller: batchNoController,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                   onEditingComplete: () {
                     if (batchNoController.text.length == 12) {
                       BlocProvider.of<LineElementBloc>(context).add(
