@@ -150,7 +150,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Machine No : ",
                     maxLength: 3,
                     controller: machineNoController,
-                    type: TextInputType.number,
+                    // type: TextInputType.number,
                     focusNode: f1,
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
