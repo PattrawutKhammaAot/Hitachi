@@ -491,8 +491,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
       _callAPI();
-      // _checkSendSqlite();
-      // _saveDataToSqlite();
+      setState(() {
+        _enabledOperator = false;
+      });
     } else {
       EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
