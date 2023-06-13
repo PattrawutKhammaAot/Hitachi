@@ -74,6 +74,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
   @override
   void initState() {
     _getHold();
+    f1.requestFocus();
     super.initState();
   }
 
@@ -536,6 +537,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                     controller: _poNoController,
                     focusNode: f1,
                     onEditingComplete: () => f2.requestFocus(),
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
                   ),
                   Row(
                     children: [
@@ -547,6 +552,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           height: 30,
                           controller: _InvoiceNoController,
                           onEditingComplete: () => f3.requestFocus(),
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                       Expanded(child: Container()),
@@ -678,6 +687,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           height: 30,
                           controller: _packNoController,
                           maxLength: 8,
+                          type: TextInputType.number,
                           textInputFormatter: [
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           ],
@@ -710,6 +720,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "BarCode 1",
                           height: 30,
                           maxLength: 14,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                           controller: _barCode1Controller,
                           onEditingComplete: () {
                             if (_barCode1Controller.text.length == 14) {
@@ -738,6 +752,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                         child: BoxInputField(
                           focusNode: f9,
                           maxLength: 14,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                           onEditingComplete: () {
                             if (_barCode2Controller.text.length == 14) {
                               f11.requestFocus();
@@ -768,6 +786,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Weight 1",
                           height: 30,
                           controller: _weight1Controller,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                       Expanded(child: Container()),
@@ -777,6 +799,10 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Weight 2",
                           height: 30,
                           controller: _weight2Controller,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                     ],

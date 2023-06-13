@@ -235,7 +235,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         f4.requestFocus();
-                        valuetxtinput = "";
+                        setState(() {
+                          valuetxtinput = "";
+                        });
                       } else {
                         setState(() {
                           valuetxtinput = "Batch No : INVALID";
@@ -276,6 +278,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Reject Qty : ",
                     controller: rejectQtyController,
                     focusNode: f4,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
                           operatorNameController.text.isNotEmpty &&
@@ -290,10 +296,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                         });
                       }
                     },
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                    type: TextInputType.number,
                   ),
                   SizedBox(
                     height: 10,
