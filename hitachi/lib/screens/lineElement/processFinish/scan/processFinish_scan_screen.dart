@@ -150,6 +150,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Machine No : ",
                     maxLength: 3,
                     controller: machineNoController,
+                    // type: TextInputType.number,
                     focusNode: f1,
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
@@ -295,7 +296,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                         });
                       }
                     },
-                    // type: TextInputType.number,
                   ),
                   SizedBox(
                     height: 10,
