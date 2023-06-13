@@ -436,9 +436,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               ? ""
               : operatorName3Controller.text.trim(),
           'BatchNo': batchNoController.text.trim(),
-          'StartDate': DateFormat('dd/MM/yyyy HH:mm:ss')
-              .format(DateTime.now())
-              .toString(),
+          'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'StartEnd': StartEndValue.toString(),
         });
         print("saveSendSqlite");
@@ -467,9 +465,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           key5: 'BatchNo',
           yieldKey5: batchNoController.text.trim(),
           key6: 'StartDate',
-          yieldKey6: DateFormat('dd MM yyyy HH:mm:ss')
-              .format(DateTime.now())
-              .toString(),
+          yieldKey6: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           whereKey: 'Machine',
           value: MachineController.text.trim(),
           whereKey2: 'BatchNo',
@@ -504,8 +500,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
         OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
         BATCHNO: batchNoController.text.trim(),
-        STARTDATE:
-            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
+        STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )),
     );
   }

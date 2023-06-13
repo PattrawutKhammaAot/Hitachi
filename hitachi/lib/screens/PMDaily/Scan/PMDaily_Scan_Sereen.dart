@@ -867,8 +867,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
         OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
         CHECKPOINT: checkpointController.text.trim(),
         STATUS: _index.toString().trim(),
-        STARTDATE:
-            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
+        STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )),
     );
   }
@@ -880,9 +879,7 @@ class _PMDaily_ScreenState extends State<PMDaily_Screen> {
           'OperatorName': operatorNameController.text.trim(),
           'CheckPointPM': checkpointController.text.trim(),
           'Status': _index.toString().trim(),
-          'DatePM': DateFormat('dd/MM/yyyy HH:mm:ss')
-              .format(DateTime.now())
-              .toString(),
+          'DatePM': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         });
       }
     } catch (e) {

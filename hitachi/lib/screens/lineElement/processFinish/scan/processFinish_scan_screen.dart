@@ -235,6 +235,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         f4.requestFocus();
+                        valuetxtinput = "";
                       } else {
                         setState(() {
                           valuetxtinput = "Batch No : INVALID";
@@ -348,8 +349,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
         BATCHNO: int.tryParse(batchNoController.text.trim()),
         REJECTQTY: rejectQtyController.text.trim(),
-        FINISHDATE:
-            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
+        FINISHDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )),
     );
   }
@@ -481,10 +481,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           key3: 'Garbage',
           yieldKey3: rejectQtyController.text.trim(),
           key4: 'FinDate',
-          yieldKey4: DateFormat('dd/MM/yyyy HH:mm:ss')
-              .format(DateTime.now())
-              .toString()
-              .trim(),
+          yieldKey4: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           key5: 'StartEnd'.trim(),
           yieldKey5: StartEndValue.trim(),
           whereKey: 'Machine',
@@ -506,8 +503,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'OperatorName': operatorNameController.text.trim(),
         'BatchNo': int.tryParse(batchNoController.text.trim()),
         'Garbage': rejectQtyController.text.trim(),
-        'FinDate':
-            DateFormat('dd MM yyyy HH:mm:ss').format(DateTime.now()).toString(),
+        'FinDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         'StartEnd': StartEndValue.toString(),
       });
       print("ok");
