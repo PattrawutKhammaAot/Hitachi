@@ -150,7 +150,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Machine No : ",
                     maxLength: 3,
                     controller: machineNoController,
-                    type: TextInputType.number,
                     focusNode: f1,
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
@@ -235,6 +234,9 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     onEditingComplete: () {
                       if (batchNoController.text.length == 12) {
                         f4.requestFocus();
+                        setState(() {
+                          valuetxtinput = "";
+                        });
                       } else {
                         setState(() {
                           valuetxtinput = "Batch No : INVALID";
@@ -275,6 +277,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     labelText: "Reject Qty : ",
                     controller: rejectQtyController,
                     focusNode: f4,
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
                           operatorNameController.text.isNotEmpty &&

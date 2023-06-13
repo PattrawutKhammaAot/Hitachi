@@ -337,6 +337,10 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                   labelText: "Batch/Serial",
                   controller: _batchOrSerialController,
                   maxLength: 12,
+                  type: TextInputType.number,
+                  textInputFormatter: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
                   onEditingComplete: () {
                     if (_batchOrSerialController.text.length == 7 ||
                         _batchOrSerialController.text.length == 12) {

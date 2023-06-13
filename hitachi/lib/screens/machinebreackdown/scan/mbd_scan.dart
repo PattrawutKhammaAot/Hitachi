@@ -614,6 +614,10 @@ class _MachineBreakDownScanScreenState
                           onEditingComplete: () {
                             f6.requestFocus();
                           },
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                           labelText: "Start Technical 1 : ",
                           controller: _start_Technical_1_Controller,
                           height: 30,
@@ -667,6 +671,10 @@ class _MachineBreakDownScanScreenState
                           height: 30,
                           enabled:
                               _start_Technical_1_Controller.text.isNotEmpty,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                     ],
@@ -693,6 +701,10 @@ class _MachineBreakDownScanScreenState
                               }
                             });
                           },
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                       Expanded(child: Container()),
@@ -715,6 +727,10 @@ class _MachineBreakDownScanScreenState
                           },
                           enabled:
                               _start_Technical_2_Controller.text.isNotEmpty,
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
                         ),
                       ),
                     ],
@@ -737,6 +753,10 @@ class _MachineBreakDownScanScreenState
                         }
                       });
                     },
+                    type: TextInputType.number,
+                    textInputFormatter: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,
