@@ -458,8 +458,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         ProcessFinishInputEvent(ProcessFinishOutputModel(
           MACHINE: row.MACHINE,
           OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-          REJECTQTY: row.GARBAGE.toString(),
-          BATCHNO: int.tryParse(row.BATCH_NO.toString()),
+          REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+          BATCHNO: row.BATCH_NO.toString(),
           FINISHDATE: row.FINDATE.toString(),
         )),
       );

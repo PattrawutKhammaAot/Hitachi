@@ -9,16 +9,16 @@ class ProcessFinishOutputModel {
 
   final String? MACHINE;
   final int? OPERATORNAME;
-  final String? REJECTQTY;
-  final int? BATCHNO;
+  final int? REJECTQTY;
+  final String? BATCHNO;
 
   final String? FINISHDATE;
 
   ProcessFinishOutputModel copyWith({
     String? MACHINE,
     int? OPERATORNAME,
-    String? REJECTQTY,
-    int? BATCHNO,
+    int? REJECTQTY,
+    String? BATCHNO,
     String? FINISHDATE,
   }) {
     return ProcessFinishOutputModel(

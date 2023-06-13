@@ -347,8 +347,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       ProcessFinishInputEvent(ProcessFinishOutputModel(
         MACHINE: machineNoController.text.trim(),
         OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
-        BATCHNO: int.tryParse(batchNoController.text.trim()),
-        REJECTQTY: rejectQtyController.text.trim(),
+        BATCHNO: batchNoController.text.trim(),
+        REJECTQTY: int.tryParse(rejectQtyController.text.trim()),
         FINISHDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )),
     );
