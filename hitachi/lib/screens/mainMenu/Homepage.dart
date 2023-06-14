@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
@@ -25,6 +26,7 @@ class MainMenuScreen extends StatefulWidget {
 }
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
+ FocusNode _node = FocusNode();
   DatabaseHelper databaseHelper = DatabaseHelper();
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -41,6 +43,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   void initState() {
     _initPackageInfo();
     super.initState();
+ _node.requestFocus();
+   
   }
 
   Future<void> _initPackageInfo() async {
@@ -52,97 +56,142 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
+    return RawKeyboardListener(
+      focusNode: _node,
+autofocus: true,
+      onKey: (event) {
+    
+       if (event is RawKeyDownEvent) {
+     
+      String keyLabel = event.logicalKey.keyLabel;
+   
+ switch (keyLabel) {
+        case '1':
+          Navigator.pushNamed(context, RouterList.LINE_ELEMENT_SCREEN);
+              SystemChannels.textInput.invokeMethod('TextInput.hide');
+          break;
+        case '2':
+          Navigator.pushNamed(context, RouterList.Planwinding_control_Screen);
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          break;
+        case '3':
+          Navigator.pushNamed(context, RouterList.MachineBreakDown_control_Screen);
+          break;
+        case '4':
+          Navigator.pushNamed(context, RouterList.PMDaily_control_Screen);
+          break;
+        case '5':
+          Navigator.pushNamed(context, RouterList.FilmReceive_control_Screen);
+          break;
+        case '6':
+          Navigator.pushNamed(context, RouterList.ZincThickness_control);
+          break;
+        case '7':
+          Navigator.pushNamed(context, RouterList.Setting_web);
+          break;
+        case '0':
+          showExitPopup(context);
+          break;
+      }
+ 
+      
+     
+    }
+   
+    // }
       },
-      child: BgWhite(
-        isHidePreviour: true,
-        textTitle: Label("Element : Main Menu"),
-        body: Padding(
-          padding:
-              const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),
-          child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  CardButton(
-                    text: "1.Line Element",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.LINE_ELEMENT_SCREEN),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    text: "2.Plan Winding",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.Planwinding_control_Screen),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    text: "3.Machine Breakdown",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.MachineBreakDown_control_Screen),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    text: "4.PM Daily",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.PMDaily_control_Screen),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    text: "5.Film Receive",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.FilmReceive_control_Screen),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    text: "6.Zinc Thickness",
-                    onPress: () => Navigator.pushNamed(
-                        context, RouterList.ZincThickness_control),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    color: COLOR_BLUE_DARK,
-                    textAlign: TextAlign.center,
-                    text: "Setting Web",
-                    colortext: COLOR_WHITE,
-                    onPress: () =>
-                        Navigator.pushNamed(context, RouterList.Setting_web),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CardButton(
-                    color: COLOR_RED,
-                    text: "ExitApp",
-                    onPress: () => showExitPopup(context),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Label(
-                    "Version ${_packageInfo.version} (${_packageInfo.buildNumber}) ",
-                    fontSize: 20,
-                    color: Colors.grey,
-                  ),
-                  Label(
-                    "Date Modified : 14-June-2023",
-                    color: Colors.grey,
-                  )
-                ],
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: BgWhite(
+          isHidePreviour: true,
+          textTitle: Label("Element : Main Menu"),
+          body: Padding(
+            padding:
+                const EdgeInsets.only(top: 0, bottom: 10, right: 10, left: 10),
+            child: SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    CardButton(
+                      text: "1.Line Element",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.LINE_ELEMENT_SCREEN),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      text: "2.Plan Winding",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.Planwinding_control_Screen),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      text: "3.Machine Breakdown",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.MachineBreakDown_control_Screen),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      text: "4.PM Daily",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.PMDaily_control_Screen),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      text: "5.Film Receive",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.FilmReceive_control_Screen),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      text: "6.Zinc Thickness",
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.ZincThickness_control),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      color: COLOR_BLUE_DARK,
+                      textAlign: TextAlign.center,
+                      text: "Setting Web",
+                      colortext: COLOR_WHITE,
+                      onPress: () =>
+                          Navigator.pushNamed(context, RouterList.Setting_web),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      color: COLOR_RED,
+                      text: "ExitApp",
+                      onPress: () => showExitPopup(context),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Label(
+                      "Version ${_packageInfo.version} (${_packageInfo.buildNumber}) ",
+                      fontSize: 20,
+                      color: Colors.grey,
+                    ),
+                    Label(
+                      "Date Modified : 14-June-2023",
+                      color: Colors.grey,
+                    )
+                  ],
+                ),
               ),
             ),
           ),
