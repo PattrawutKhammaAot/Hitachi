@@ -720,10 +720,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "BarCode 1",
                           height: 30,
                           maxLength: 14,
-                          type: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                          ],
                           controller: _barCode1Controller,
                           onEditingComplete: () {
                             if (_barCode1Controller.text.length == 14) {
@@ -732,7 +728,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                             }
                           },
                           onChanged: (value) {
-                            if (value.length > 10) {
+                            if (value.length >= 13) {
                               setState(() {
                                 dataFromBarcode1 = value;
                                 String substringValue =
@@ -744,6 +740,11 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                               });
                             }
                           },
+                          type: TextInputType.number,
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9-]')),
+                          ],
                         ),
                       ),
                       Expanded(child: Container()),
@@ -754,7 +755,8 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           maxLength: 14,
                           type: TextInputType.number,
                           textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9-]')),
                           ],
                           onEditingComplete: () {
                             if (_barCode2Controller.text.length == 14) {
@@ -765,7 +767,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           height: 30,
                           controller: _barCode2Controller,
                           onChanged: (value) {
-                            if (value.length > 10) {
+                            if (value.length >= 13) {
                               String substringValue =
                                   value.substring(value.length - 3);
                               double parsedValue =
