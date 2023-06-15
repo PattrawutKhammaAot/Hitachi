@@ -653,7 +653,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               maxLength: 5,
                               onEditingComplete: () {
                                 if (productController.text.length == 5 &&
-                                    productController.text.startsWith('8', 0)) {
+                                    productController.text !=
+                                        batchNoController.text
+                                            .substring(0, 5)) {
                                   f5.requestFocus();
                                 } else {
                                   _errorDialog(
