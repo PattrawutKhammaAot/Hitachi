@@ -650,14 +650,25 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             flex: 5,
                             child: BoxInputField(
                               focusNode: f4,
+                              maxLength: 5,
                               onEditingComplete: () {
-                                if (productController.text.length == 5) {
+                                if (productController.text.length == 5 &&
+                                    productController.text.startsWith('8', 0)) {
                                   f5.requestFocus();
+                                } else {
+                                  _errorDialog(
+                                      onpressOk: () {
+                                        productController.clear();
+                                        Navigator.pop(context);
+                                      },
+                                      isHideCancle: false,
+                                      text: Label(
+                                        "Product Invalid format",
+                                      ));
                                 }
                               },
                               labelText: "Product",
                               controller: productController,
-                              maxLength: 5,
                               type: TextInputType.number,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
