@@ -8,9 +8,11 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/dataSheetModel.dart';
 import 'package:hitachi/models/filmReceiveModel/filmreceiveOutputModel.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../services/databaseHelper.dart';
+import '../../../widget/alertSnackBar.dart';
 
 class FilmReceiveHoldScreen extends StatefulWidget {
   FilmReceiveHoldScreen({super.key, this.onChange});
@@ -714,7 +716,11 @@ class FilmReceiveDataSource extends DataGridSource {
         );
       }
     } else {
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

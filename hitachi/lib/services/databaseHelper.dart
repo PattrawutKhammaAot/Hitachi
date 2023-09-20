@@ -82,7 +82,7 @@ class DatabaseHelper {
 
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
-
+     
     print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.insert(tableName, row);
   }
@@ -384,7 +384,7 @@ class DatabaseHelper {
     try {
       Database db = await DatabaseHelper().database;
       int count = await db.delete('${tableName!}');
-      print('Data deleted from SQLite with count: $count');
+     
     } catch (e) {
       print('Error deleting from SQLite: $e');
     }

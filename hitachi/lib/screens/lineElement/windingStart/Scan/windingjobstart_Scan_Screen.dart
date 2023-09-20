@@ -575,7 +575,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       await _checkPackFilmOnSqlite();
                       EasyLoading.dismiss();
                     }
-                  })
+                  }),
                 ],
                 child: SingleChildScrollView(
                   child: Column(

@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // สร้างฐานข้อมูล SQLite และตาราง my_table
     try {
       Timer(Duration(seconds: 5), () {
-        Navigator.pushNamed(context, RouterList.MAIN_MENU);
+        Navigator.of(context).pushNamed(RouterList.MAIN_MENU);
       });
       await databaseHelper.initializeDatabase();
     } catch (e, s) {

@@ -53,7 +53,9 @@ class TestconnectionBloc
 
       ResponeDefault items = ResponeDefault.fromJson(responese.data);
       return items;
-    } on Exception {
+    } catch (e, s) {
+      print(e);
+      print(s);
       throw Exception();
     }
   }

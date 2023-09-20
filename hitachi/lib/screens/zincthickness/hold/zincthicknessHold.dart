@@ -15,6 +15,8 @@ import 'package:hitachi/models-Sqlite/zincModelSqlite.dart';
 import 'package:hitachi/models/zincthickness/zincOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import '../../../../widget/alertSnackBar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ZincThickNessHold extends StatefulWidget {
   ZincThickNessHold({super.key, this.onChange});
@@ -604,7 +606,11 @@ class ZincDataSource extends DataGridSource {
       }
     } catch (e) {
       print(e);
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

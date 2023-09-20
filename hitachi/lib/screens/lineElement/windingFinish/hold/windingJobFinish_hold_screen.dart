@@ -11,10 +11,12 @@ import 'package:hitachi/models-Sqlite/windingSheetModel.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/route/router_list.dart';
+
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
-
+import '../../../../widget/alertSnackBar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 class WindingJobFinishHoldScreen extends StatefulWidget {
   WindingJobFinishHoldScreen({Key? key, this.onChange}) : super(key: key);
   ValueChanged<List<Map<String, dynamic>>>? onChange;
@@ -498,7 +500,11 @@ class WindingsDataSource extends DataGridSource {
       }
     } catch (e) {
       print(e);
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

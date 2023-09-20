@@ -5,10 +5,13 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hitachi/api.dart';
+import 'package:get/get_utils/get_utils.dart';
+
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/planWinding/PlanWindingOutputModel.dart';
 import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
+
+import '../../api.dart';
 
 part 'planwinding_event.dart';
 part 'planwinding_state.dart';
@@ -44,6 +47,7 @@ class PlanWindingBloc extends Bloc<PlanWindingEvent, PlanWindingState> {
   }
 
   Future<PlanWindingOutputModel> fetchSendPlanWinding() async {
+    printInfo(info: "${ApiConfig.PLAN_WINDING}");
     try {
       Response response = await dio.get(
         ApiConfig.PLAN_WINDING,
@@ -58,6 +62,7 @@ class PlanWindingBloc extends Bloc<PlanWindingEvent, PlanWindingState> {
 
       return tmp;
     } catch (e) {
+      print("Exception");
       print(e);
       return PlanWindingOutputModel();
     }

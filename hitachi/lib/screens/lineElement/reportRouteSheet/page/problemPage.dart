@@ -9,7 +9,10 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/processPage.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../../../../widget/alertSnackBar.dart';
 
 class ProblemPage extends StatefulWidget {
   const ProblemPage({super.key, this.valueString});
@@ -60,7 +63,11 @@ class _ProblemPageState extends State<ProblemPage> {
             }
             if (state is GetReportRuteSheetErrorState) {
               EasyLoading.dismiss();
-              EasyLoading.showError("Can not Call Api");
+              AlertSnackBar.show(
+                  title: 'Connection Failed',
+                  message: 'Check your internet connection and try again ',
+                  type: AlertType.error,
+                  duration: const Duration(seconds: 10));
               print(state.error);
             }
           },
@@ -146,7 +153,11 @@ class EmployeeDataSource extends DataGridSource {
         );
       }
     } else {
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

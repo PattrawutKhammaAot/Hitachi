@@ -12,7 +12,8 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../models/machineBreakdown/machinebreakdownOutputMode.dart';
-
+import '../../../../widget/alertSnackBar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 class MachineBreakDownHoldScreen extends StatefulWidget {
   MachineBreakDownHoldScreen({super.key, this.onChange});
   ValueChanged<List<Map<String, dynamic>>>? onChange;
@@ -726,7 +727,11 @@ class BreakDownDataSource extends DataGridSource {
         );
       }
     } else {
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

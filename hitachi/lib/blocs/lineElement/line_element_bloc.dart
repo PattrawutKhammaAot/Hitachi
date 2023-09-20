@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/SendWdFinish/checkWdsFinishModel.dart';
@@ -262,6 +263,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
   //Check packNO
   Future<CheckPackNoModel> fetchCheckPackNo(int number) async {
+    printInfo(info: "${ApiConfig.LE_CHECKPACK_NO}");
     try {
       Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(

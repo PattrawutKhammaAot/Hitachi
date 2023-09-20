@@ -9,8 +9,11 @@ import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/screens/lineElement/reportRouteSheet/page/problemPage.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../../../../widget/alertSnackBar.dart';
 
 class ProcessPage extends StatefulWidget {
   const ProcessPage({super.key, this.onChange, this.receiveValue});
@@ -262,7 +265,11 @@ class EmployeeDataSource extends DataGridSource {
         );
       }
     } else {
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 

@@ -14,6 +14,8 @@ import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.da
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 // import 'package:hitachi/models/SendWds/HoldWdsMoel.dart';
+import '../../../../widget/alertSnackBar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class WindingJobStartHoldScreen extends StatefulWidget {
   WindingJobStartHoldScreen({Key? key, this.onChange}) : super(key: key);
@@ -639,7 +641,11 @@ class WindingsDataSource extends DataGridSource {
         );
       }
     } else {
-      EasyLoading.showError("Can not Call API");
+      AlertSnackBar.show(
+          title: 'Connection Failed',
+          message: 'Check your internet connection and try again ',
+          type: AlertType.error,
+          duration: const Duration(seconds: 10));
     }
   }
 
