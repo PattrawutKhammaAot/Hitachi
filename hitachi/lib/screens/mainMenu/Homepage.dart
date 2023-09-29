@@ -89,6 +89,9 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             case '7':
               Navigator.pushNamed(context, RouterList.Setting_web);
               break;
+            case '8':
+              Navigator.pushNamed(context, RouterList.Setting_web);
+              break;
             case '0':
               showExitPopup(context);
               break;
@@ -162,7 +165,18 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     CardButton(
                       color: COLOR_BLUE_DARK,
                       textAlign: TextAlign.center,
-                      text: "7.Setting Web",
+                      text: "7.Download Master",
+                      colortext: COLOR_WHITE,
+                      onPress: () =>
+                          Navigator.pushNamed(context, RouterList.Setting_web),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CardButton(
+                      color: COLOR_BLUE_DARK,
+                      textAlign: TextAlign.center,
+                      text: "8.Setting Web",
                       colortext: COLOR_WHITE,
                       onPress: () =>
                           Navigator.pushNamed(context, RouterList.Setting_web),

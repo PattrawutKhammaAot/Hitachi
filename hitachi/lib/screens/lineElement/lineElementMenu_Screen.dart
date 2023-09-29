@@ -13,57 +13,51 @@ class LineElementScreen extends StatefulWidget {
 }
 
 class _LineElementScreenState extends State<LineElementScreen> {
-FocusNode _node = FocusNode();
+  FocusNode _node = FocusNode();
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
       focusNode: _node,
       autofocus: true,
-      
-      onKey: (event){
-        
-       if (event is RawKeyDownEvent) {
-       
-      String keyLabel = event.logicalKey.keyLabel;
-   
- switch (keyLabel) {
-        case '1':
-           Navigator.pushNamed(
+      onKey: (event) {
+        if (event is RawKeyDownEvent) {
+          String keyLabel = event.logicalKey.keyLabel;
+
+          switch (keyLabel) {
+            case '1':
+              Navigator.pushNamed(
                   context, RouterList.WindingJobStart_Control_Screen);
-          break;
-        case '2':
-        Navigator.pushNamed(
+              break;
+            case '2':
+              Navigator.pushNamed(
                   context, RouterList.WindingJobFinish_Control_Screen);
-          break;
-        case '3':
-         Navigator.pushNamed(
+              break;
+            case '3':
+              Navigator.pushNamed(
                   context, RouterList.ProcessStart_Control_Screen);
-          break;
-        case '4':
-          Navigator.pushNamed(
+              break;
+            case '4':
+              Navigator.pushNamed(
                   context, RouterList.ProcessFinish_control_Screen);
-          break;
-        case '5':
-         Navigator.pushNamed(
+              break;
+            case '5':
+              Navigator.pushNamed(
                   context, RouterList.TreatMentStart_control_Screen);
-          break;
-        case '6':
-          Navigator.pushNamed(
+              break;
+            case '6':
+              Navigator.pushNamed(
                   context, RouterList.TreatmentFinish_control_Screen);
-          break;
-        case '7':
-          Navigator.pushNamed(
+              break;
+            case '7':
+              Navigator.pushNamed(
                   context, RouterList.ReportRouteSheet_control_Screen);
-          break;
-        case '8':
-       Navigator.pushNamed(
+              break;
+            case '8':
+              Navigator.pushNamed(
                   context, RouterList.MaterialInput_control_Screen);
-          break;
-      }
- 
-      
-     
-    }
+              break;
+          }
+        }
       },
       child: BgWhite(
         isHideTitle: false,
@@ -86,32 +80,42 @@ FocusNode _node = FocusNode();
                   context, RouterList.WindingJobFinish_Control_Screen),
             ),
             CardButton2(
-              text: "3.Process\nStart",
+              text: "3.Winding\nRecord",
+              onPress: () => Navigator.pushNamed(
+                  context, RouterList.WindingRecord_Control_Screen),
+            ),
+            CardButton2(
+              text: "4.Material\nTrace",
+              onPress: () => Navigator.pushNamed(
+                  context, RouterList.Material_Trace_Control_Screen),
+            ),
+            CardButton2(
+              text: "5.Process\nStart",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.ProcessStart_Control_Screen),
             ),
             CardButton2(
-              text: "4.Process\nFinish",
+              text: "6.Process\nFinish",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.ProcessFinish_control_Screen),
             ),
             CardButton2(
-              text: "5.Treatment\nStart",
+              text: "7.Treatment\nStart",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.TreatMentStart_control_Screen),
             ),
             CardButton2(
-              text: "6.Treatment\nFinish",
+              text: "8.Treatment\nFinish",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.TreatmentFinish_control_Screen),
             ),
             CardButton2(
-              text: "7.Report Route Sheet",
+              text: "9.Report Route Sheet",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.ReportRouteSheet_control_Screen),
             ),
             CardButton2(
-              text: "8.Material\nInput",
+              text: "10.Material\nInput",
               onPress: () => Navigator.pushNamed(
                   context, RouterList.MaterialInput_control_Screen),
             ),

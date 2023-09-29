@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/PMDaily/PMDaily_Control.dart';
 import 'package:hitachi/screens/filmreceive/filmreceive_control.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
-import 'package:hitachi/screens/lineElement/materialInput/scan/materialInput_Screen.dart';
+
 import 'package:hitachi/screens/lineElement/materialInput/materialInput_control_page.dart';
-import 'package:hitachi/screens/lineElement/materialInput/hold/materialInput_hold_Screen.dart';
+
+import 'package:hitachi/screens/lineElement/materialtrace/materialTrace_control.dart';
 import 'package:hitachi/screens/lineElement/processFinish/processFinish_control_.dart';
-import 'package:hitachi/screens/lineElement/processFinish/scan/processFinish_scan_screen.dart';
+
 import 'package:hitachi/screens/lineElement/processStart/processStart_Control.dart';
-import 'package:hitachi/screens/lineElement/processStart/scan/processStart_scan_screen.dart';
+
 import 'package:hitachi/screens/lineElement/reportRouteSheet/reportRouteSheet_main.dart';
-import 'package:hitachi/screens/lineElement/treatmentFinish/scan/treatmentFinish_scan_screen.dart';
+
 import 'package:hitachi/screens/lineElement/treatmentFinish/treatmentFinish_control_page.dart';
-import 'package:hitachi/screens/lineElement/treatmentStart/scan/treatmentStart_scan_screen.dart';
+
 import 'package:hitachi/screens/lineElement/treatmentStart/treatmentStart_control_page.dart';
-import 'package:hitachi/screens/lineElement/windingFinish/hold/windingJobFinish_hold_screen.dart';
-import 'package:hitachi/screens/lineElement/windingFinish/scan/windingjobFinish_screen.dart';
+
 import 'package:hitachi/screens/lineElement/windingFinish/windingFinishControlPage.dart';
-import 'package:hitachi/screens/lineElement/windingStart/Scan/windingjobstart_Scan_Screen.dart';
-import 'package:hitachi/screens/lineElement/windingStart/hold/windingjobstart_Hold_Screen.dart';
+
 import 'package:hitachi/screens/lineElement/windingStart/windingStart_Control.dart';
+import 'package:hitachi/screens/lineElement/windingrecord/windingrecord_control.dart';
 import 'package:hitachi/screens/machinebreackdown/mbd_control.dart';
 import 'package:hitachi/screens/mainMenu/Homepage.dart';
 import 'package:hitachi/screens/planWinding/PlanWinding_Control.dart';
 
-import 'package:hitachi/screens/planWinding/scan/planwinding_Screen.dart';
 import 'package:hitachi/screens/settingWeb/settingWeb_screen.dart';
 import 'package:hitachi/screens/zincthickness/zthnControl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -59,6 +59,19 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: WindingFinishControlPage(),
+            type: PageTransitionType.fade);
+
+      //WindingRecord - LineElement
+      case RouterList.WindingRecord_Control_Screen:
+        return PageTransition(
+            settings: settings,
+            child: WindingRecordControl(),
+            type: PageTransitionType.fade);
+      //MaterialTrace - LineElement
+      case RouterList.Material_Trace_Control_Screen:
+        return PageTransition(
+            settings: settings,
+            child: MaterialTraceControl(),
             type: PageTransitionType.fade);
 
       //ProcessStart - LineElement
@@ -121,6 +134,12 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: ZincThicknessControl(),
+            type: PageTransitionType.fade);
+      //DownloadMaster
+      case RouterList.DownloadMasterScreen:
+        return PageTransition(
+            settings: settings,
+            child: SizedBox(),
             type: PageTransitionType.fade);
       //SettingWeb
       case RouterList.Setting_web:

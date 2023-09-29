@@ -17,6 +17,12 @@ class RouterList {
   //WindingJobFinish
   static const String WindingJobFinish_Control_Screen =
       '/lineElementMenu/WIndingFinish/WindingControlPage';
+  //WindingRecord
+  static const String WindingRecord_Control_Screen =
+      '/lineElementMenu/WindingRecord/WindingControl';
+  //WindingRecord
+  static const String Material_Trace_Control_Screen =
+      '/lineElementMenu/MaterialTrace/MaterialTrace';
   //ProcessStart
   static const String ProcessStart_Control_Screen =
       '/lineElementMenu/ProcessStart/processstartControlPage';
@@ -44,6 +50,7 @@ class RouterList {
   //PlanWinding
   static const String Planwinding_control_Screen =
       '/lineElementMenu/planWinding';
+
   //FilmReceive
   static const String ZincThickness_control = '/lineElementMenu/Zincthickness';
 
@@ -51,4 +58,6 @@ class RouterList {
   static const String PMDaily_control_Screen = '/LineElement/SendPMDaily';
   //Test Connection
   static const String Setting_web = '/settingWeb/settingWeb';
+  //DownLoadMaster Page
+  static const String DownloadMasterScreen = '/downloadMaster';
 }

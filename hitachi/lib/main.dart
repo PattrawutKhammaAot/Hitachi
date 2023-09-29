@@ -80,7 +80,6 @@ class MyApp extends StatelessWidget {
                     message: 'Check your internet connection and try again ',
                     type: AlertType.error,
                     duration: const Duration(seconds: 10));
-                print("offline");
               } else if (state is NetworkSuccess) {
                 AppData.setMode("Online");
                 AlertSnackBar.show(
@@ -88,8 +87,6 @@ class MyApp extends StatelessWidget {
                     message: 'You\'re Online Now',
                     type: AlertType.success,
                     duration: const Duration(seconds: 5));
-
-                print("online");
               }
             },
             child: child,
