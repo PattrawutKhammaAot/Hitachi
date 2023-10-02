@@ -74,7 +74,7 @@ class DatabaseHelper {
     _createPMload(db, newVersion);
     _craetePM(db, newVersion);
     _createDateWindingPlan(db, newVersion);
-    _createBarcodePrinting(db, newVersion);
+    _createCombobox(db, newVersion);
     _createZincThickness(db, newVersion);
     _createPlanWinding(db, newVersion);
     _createPMDaily(db, newVersion);
@@ -82,7 +82,7 @@ class DatabaseHelper {
 
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
-     
+
     print("WriteData FucnTionInsertDataSheet ${tableName}");
     return await db.insert(tableName, row);
   }
@@ -110,6 +110,12 @@ class DatabaseHelper {
     //ColumnName คือ Key whereArgs คือค่า ID
     return await db
         .delete(tableName!, where: '$columnName = ?', whereArgs: [columnValue]);
+  }
+
+  Future<List<Map<String, dynamic>>> queryDropdown({String? group}) async {
+    Database db = await this.database;
+    return await db
+        .query('COMBOBOX', where: 'nameGroup = ?', whereArgs: [group]);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
@@ -384,7 +390,6 @@ class DatabaseHelper {
     try {
       Database db = await DatabaseHelper().database;
       int count = await db.delete('${tableName!}');
-     
     } catch (e) {
       print('Error deleting from SQLite: $e');
     }
@@ -680,7 +685,9 @@ class DatabaseHelper {
         'StartDate TEXT,'
         'FinDate TEXT,'
         'StartEnd TEXT,'
-        'CheckComplete TEXT'
+        'CheckComplete TEXT,'
+        'TempCurve TEXT,'
+        'TreatmentTime TEXT'
         ')');
   }
 
@@ -984,15 +991,12 @@ class DatabaseHelper {
         'Note TEXT)');
   }
 
-  void _createBarcodePrinting(Database db, int newVersion) async {
-    await db.execute('CREATE TABLE BARCODE_PRINTING_SHEET ('
+  void _createCombobox(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE COMBOBOX ('
         'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
-        'CheckUser TEXT, '
-        'Batch TEXT, '
-        'Product TEXT, '
-        'Barcode TEXT, '
-        'Result INTEGER, '
-        'DateBarcode TEXT)');
+        'nameGroup TEXT, '
+        'valueMember TEXT, '
+        'IsActive BOOLEAN)');
   }
 
   void _createZincThickness(Database db, int newVersion) async {

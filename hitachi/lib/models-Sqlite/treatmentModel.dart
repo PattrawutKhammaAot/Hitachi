@@ -12,7 +12,9 @@ class TreatmentModel {
       this.BATCH7,
       this.STARTDATE,
       this.FINDATE,
-      this.CHECK_COMPLETE});
+      this.CHECK_COMPLETE,
+      this.TEMP_CURVE,
+      this.TREATMENT_TIME});
   final int? ID;
   final String? MACHINE_NO;
   final String? OPERATOR_NAME;
@@ -26,6 +28,8 @@ class TreatmentModel {
   final String? STARTDATE;
   final String? FINDATE;
   final String? CHECK_COMPLETE;
+  final String? TEMP_CURVE;
+  final String? TREATMENT_TIME;
 
   List<Object> get props => [
         ID!,
@@ -40,7 +44,9 @@ class TreatmentModel {
         BATCH7!,
         STARTDATE!,
         FINDATE!,
-        CHECK_COMPLETE!
+        CHECK_COMPLETE!,
+        TEMP_CURVE!,
+        TREATMENT_TIME!,
       ];
   TreatmentModel.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
@@ -55,5 +61,7 @@ class TreatmentModel {
         BATCH7 = map['Batch7'],
         STARTDATE = map['StartDate'],
         FINDATE = map['FinDate'],
+        TEMP_CURVE = map['TempCurve'],
+        TREATMENT_TIME = map['TreatmentTime'],
         CHECK_COMPLETE = map['CheckComplete'];
 }

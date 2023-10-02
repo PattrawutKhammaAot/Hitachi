@@ -44,12 +44,87 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     _initPackageInfo();
     super.initState();
     _node.requestFocus();
+    _testInsertData();
   }
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
     setState(() {
       _packageInfo = info;
+    });
+  }
+
+  Future _testInsertData() async {
+    await DatabaseHelper().deleteDataAllFromSQLite(tableName: 'COMBOBOX');
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Visual_Inspection',
+      'valueMember': 'G',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Visual_Inspection',
+      'valueMember': 'NG',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Check_Confirmation',
+      'valueMember': 'Confirm',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Check_Confirmation',
+      'valueMember': 'Non-Confirm',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Clearing_Voltage',
+      'valueMember': '950',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Clearing_Voltage',
+      'valueMember': '1500',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Clearing_Voltage',
+      'valueMember': '1700',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Clearing_Voltage',
+      'valueMember': '1850',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Clearing_Voltage',
+      'valueMember': '2100',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Torque_Confirmation',
+      'valueMember': '950',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Torque_Confirmation',
+      'valueMember': '3',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Torque_Confirmation',
+      'valueMember': '6',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Torque_Confirmation',
+      'valueMember': '10',
+      'IsActive': true,
+    });
+    await DatabaseHelper().insertSqlite('COMBOBOX', {
+      'nameGroup': 'Torque_Confirmation',
+      'valueMember': '15.5',
+      'IsActive': true,
     });
   }
 
@@ -87,7 +162,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               Navigator.pushNamed(context, RouterList.ZincThickness_control);
               break;
             case '7':
-              Navigator.pushNamed(context, RouterList.Setting_web);
+              Navigator.pushNamed(context, RouterList.DownloadMasterScreen);
               break;
             case '8':
               Navigator.pushNamed(context, RouterList.Setting_web);
@@ -167,8 +242,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                       textAlign: TextAlign.center,
                       text: "7.Download Master",
                       colortext: COLOR_WHITE,
-                      onPress: () =>
-                          Navigator.pushNamed(context, RouterList.Setting_web),
+                      onPress: () => Navigator.pushNamed(
+                          context, RouterList.DownloadMasterScreen),
                     ),
                     SizedBox(
                       height: 15,

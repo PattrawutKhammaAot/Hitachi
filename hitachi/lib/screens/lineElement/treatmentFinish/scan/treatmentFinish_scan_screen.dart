@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/combobox/comboboxModel.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +33,8 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   final TextEditingController _batch5Controller = TextEditingController();
   final TextEditingController _batch6Controller = TextEditingController();
   final TextEditingController _batch7Controller = TextEditingController();
+  final TextEditingController _tempCurve = TextEditingController();
+  final TextEditingController _treatmentTime = TextEditingController();
 
   //FOCUS
   final f1 = FocusNode();
@@ -46,11 +50,18 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
 //
   Color? bgChange;
 
+  bool isTm = false;
+
+  List<String> dropdownList = ['Confirm', 'Non-Confirm'];
+
+  List<ComboBoxModel> combolist = [];
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
   void initState() {
     f1.requestFocus();
     _getHold();
+    _getDropdownList();
     super.initState();
   }
 
@@ -63,6 +74,15 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
     } else {
       EasyLoading.showError("Please Input Info");
     }
+  }
+
+  Future _getDropdownList() async {
+    var sql = await DatabaseHelper().queryDropdown(group: 'Check_Confirmation');
+    if (sql.isNotEmpty) {
+      combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+    }
+
+    setState(() {});
   }
 
   Future _getHold() async {
@@ -86,8 +106,9 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
           BATCH_NO_5: _batch5Controller.text.trim(),
           BATCH_NO_6: _batch6Controller.text.trim(),
           BATCH_NO_7: _batch7Controller.text.trim(),
-          FINISH_DATE:
-              DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()))),
+          FINISH_DATE: DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
+          TEMP_CURVE: isTm == false ? "" : _tempCurve.text.trim(),
+          TREATMENT_TIME: isTm == false ? "" : _treatmentTime.text.trim())),
     );
   }
 
@@ -113,6 +134,8 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
         'FinDate': DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
         'StartEnd': 'F',
         'CheckComplete': 'End',
+        'TempCurve': isTm == false ? "-" : _tempCurve.text.trim(),
+        'TreatmentTime': isTm == false ? "-" : _treatmentTime.text.trim()
       });
     } catch (e, s) {
       print(e);
@@ -198,6 +221,19 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                 children: [
                   RowBoxInputField(
                     focusNode: f1,
+                    onChanged: (p0) {
+                      if (p0.length >= 2) {
+                        if (p0.substring(0, 2) == "TM" ||
+                            p0.substring(0, 2) == "tm") {
+                          isTm = true;
+                          setState(() {});
+                        }
+                      } else {
+                        print("isNot");
+                        isTm = false;
+                        setState(() {});
+                      }
+                    },
                     onEditingComplete: () {
                       if (_machineNoController.text.length == 3) {
                         f2.requestFocus();
@@ -371,6 +407,180 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
                   ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Divider(),
+                  isTm == true
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Label(
+                                  "Heat Tratement",
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Label(
+                                      "Temp Curve :",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: SizedBox(
+                                      height: 45,
+                                      child: DropdownButtonFormField2(
+                                        value: _tempCurve.text = 'Confirm',
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                        ),
+                                        isExpanded: true,
+                                        // hint: Center(
+                                        //   child: Text(
+                                        //     'New',
+                                        //     style: TextStyle(fontSize: 14),
+                                        //   ),
+                                        // ),
+                                        items: combolist
+                                            .toList()
+                                            .map((item) =>
+                                                DropdownMenuItem<String>(
+                                                  value: item.VALUEMEMBER,
+                                                  child: Text(
+                                                    "${item.VALUEMEMBER}",
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        onChanged: (value) {
+                                          _tempCurve.text = value ?? "-";
+                                          setState(() {});
+                                        },
+                                        onSaved: (value) {
+                                          print(value);
+                                        },
+                                        buttonStyleData: const ButtonStyleData(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 10),
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.black45,
+                                          ),
+                                          iconSize: 30,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Label(
+                                    "Treatment Time : ",
+                                    textAlign: TextAlign.right,
+                                  )),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: SizedBox(
+                                      height: 45,
+                                      child: DropdownButtonFormField2(
+                                        value: _treatmentTime.text = 'Confirm',
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                        ),
+                                        isExpanded: true,
+                                        items: combolist
+                                            .toList()
+                                            .map((item) =>
+                                                DropdownMenuItem<String>(
+                                                  value: item.VALUEMEMBER,
+                                                  child: Text(
+                                                    "${item.VALUEMEMBER}",
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        onChanged: (value) {
+                                          _treatmentTime.text = value ?? "-";
+                                          setState(() {});
+                                        },
+                                        onSaved: (value) {
+                                          print(value);
+                                        },
+                                        buttonStyleData: const ButtonStyleData(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 10),
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.black45,
+                                          ),
+                                          iconSize: 30,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox.shrink(),
                   SizedBox(
                     height: 5,
                   ),

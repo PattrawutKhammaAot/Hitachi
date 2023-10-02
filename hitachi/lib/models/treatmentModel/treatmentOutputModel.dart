@@ -10,7 +10,9 @@ class TreatMentOutputModel {
       this.BATCH_NO_6,
       this.BATCH_NO_7,
       this.START_DATE,
-      this.FINISH_DATE});
+      this.FINISH_DATE,
+      this.TEMP_CURVE,
+      this.TREATMENT_TIME});
 
   final String? MACHINE_NO;
   final int? OPERATOR_NAME;
@@ -23,6 +25,9 @@ class TreatMentOutputModel {
   final String? BATCH_NO_7;
   final String? START_DATE;
   final String? FINISH_DATE;
+  final String? TEMP_CURVE;
+  final String? TREATMENT_TIME;
+
   TreatMentOutputModel copyWith(
       {String? MACHINE_NO,
       int? OPERATOR_NAME,
@@ -34,7 +39,9 @@ class TreatMentOutputModel {
       String? BATCH_NO_6,
       String? BATCH_NO_7,
       String? START_DATE,
-      String? FINISH_DATE}) {
+      String? FINISH_DATE,
+      String? TEMP_CURVE,
+      String? TREATMENT_TIME}) {
     return TreatMentOutputModel(
         MACHINE_NO: MACHINE_NO ?? this.MACHINE_NO,
         OPERATOR_NAME: OPERATOR_NAME ?? this.OPERATOR_NAME,
@@ -46,7 +53,9 @@ class TreatMentOutputModel {
         BATCH_NO_6: BATCH_NO_6 ?? this.BATCH_NO_6,
         BATCH_NO_7: BATCH_NO_7 ?? this.BATCH_NO_7,
         START_DATE: START_DATE ?? this.START_DATE,
-        FINISH_DATE: FINISH_DATE ?? this.FINISH_DATE);
+        FINISH_DATE: FINISH_DATE ?? this.FINISH_DATE,
+        TEMP_CURVE: TEMP_CURVE ?? this.TEMP_CURVE,
+        TREATMENT_TIME: TREATMENT_TIME ?? this.TREATMENT_TIME);
   }
 
   @override
@@ -61,6 +70,8 @@ class TreatMentOutputModel {
         'BatchNo6': BATCH_NO_6,
         'BatchNo7': BATCH_NO_7,
         'StartDate': START_DATE,
-        'FinishDate': FINISH_DATE
+        'FinishDate': FINISH_DATE,
+        'T1': TEMP_CURVE,
+        'T2': TREATMENT_TIME,
       };
 }

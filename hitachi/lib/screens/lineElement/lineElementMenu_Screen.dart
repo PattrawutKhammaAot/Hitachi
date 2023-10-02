@@ -34,11 +34,11 @@ class _LineElementScreenState extends State<LineElementScreen> {
               break;
             case '3':
               Navigator.pushNamed(
-                  context, RouterList.ProcessStart_Control_Screen);
+                  context, RouterList.WindingRecord_Control_Screen);
               break;
             case '4':
               Navigator.pushNamed(
-                  context, RouterList.ProcessFinish_control_Screen);
+                  context, RouterList.Material_Trace_Control_Screen);
               break;
             case '5':
               Navigator.pushNamed(
@@ -53,6 +53,14 @@ class _LineElementScreenState extends State<LineElementScreen> {
                   context, RouterList.ReportRouteSheet_control_Screen);
               break;
             case '8':
+              Navigator.pushNamed(
+                  context, RouterList.MaterialInput_control_Screen);
+              break;
+            case '9':
+              Navigator.pushNamed(
+                  context, RouterList.MaterialInput_control_Screen);
+              break;
+            case '10':
               Navigator.pushNamed(
                   context, RouterList.MaterialInput_control_Screen);
               break;

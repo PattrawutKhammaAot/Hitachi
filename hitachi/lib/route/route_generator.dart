@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/PMDaily/PMDaily_Control.dart';
+import 'package:hitachi/screens/downloadMaster/download_master_Screen.dart';
 import 'package:hitachi/screens/filmreceive/filmreceive_control.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 
@@ -139,7 +140,7 @@ class RouteGenerator {
       case RouterList.DownloadMasterScreen:
         return PageTransition(
             settings: settings,
-            child: SizedBox(),
+            child: DownLoadMasterScreen(),
             type: PageTransitionType.fade);
       //SettingWeb
       case RouterList.Setting_web:

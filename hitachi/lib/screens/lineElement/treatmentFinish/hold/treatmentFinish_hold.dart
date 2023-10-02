@@ -39,6 +39,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
   void initState() {
     _getTreatMentSheet().then((result) {
       setState(() {
+        print(result[0].TEMP_CURVE);
         tmList = result;
         tmsDatasource = TreatMentStartDataSource(process: tmList);
       });
@@ -50,6 +51,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
   Future _getHold() async {
     List<Map<String, dynamic>> sql =
         await databaseHelper.queryAllRows('TREATMENT_SHEET');
+
     setState(() {
       widget.onChange
           ?.call(sql.where((element) => element['StartEnd'] == 'F').toList());
@@ -68,6 +70,8 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
     'b6': double.nan,
     'b7': double.nan,
     'findate': double.nan,
+    'temp': double.nan,
+    'treatmentTime': double.nan
   };
 
   Future<List<TreatmentModel>> _getTreatMentSheet() async {
@@ -78,6 +82,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
           .where((element) => element['StartEnd'] == 'F')
           .map((row) => TreatmentModel.fromMap(row))
           .toList();
+      print(rows);
       return result;
     } catch (e) {
       print(e);
@@ -360,6 +365,27 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                   ),
                                 ),
                               ),
+                              GridColumn(
+                                columnName: 'temp',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Temp Curve', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: 120,
+                                columnName: 'treatmentTime',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Treatment Time',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -442,6 +468,17 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                   DataCell(Center(child: Label("Start Date"))),
                                   DataCell(Label(
                                       "${tmList.where((element) => element.ID == _index.first).first.FINDATE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Temp Curve"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.TEMP_CURVE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Treatment Time"))),
+                                  DataCell(Label(
+                                      "${tmList.where((element) => element.ID == _index.first).first.TREATMENT_TIME}"))
                                 ])
                               ],
                             );
@@ -493,17 +530,18 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       var row = tmList.where((value) => value.ID == element).first;
       BlocProvider.of<TreatmentBloc>(context).add(
         TreatmentFinishSendEvent(TreatMentOutputModel(
-          MACHINE_NO: row.MACHINE_NO,
-          OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-          BATCH_NO_1: row.BATCH1,
-          BATCH_NO_2: row.BATCH2,
-          BATCH_NO_3: row.BATCH3,
-          BATCH_NO_4: row.BATCH4,
-          BATCH_NO_5: row.BATCH5,
-          BATCH_NO_6: row.BATCH6,
-          BATCH_NO_7: row.BATCH7,
-          FINISH_DATE: row.FINDATE,
-        )),
+            MACHINE_NO: row.MACHINE_NO,
+            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            BATCH_NO_1: row.BATCH1,
+            BATCH_NO_2: row.BATCH2,
+            BATCH_NO_3: row.BATCH3,
+            BATCH_NO_4: row.BATCH4,
+            BATCH_NO_5: row.BATCH5,
+            BATCH_NO_6: row.BATCH6,
+            BATCH_NO_7: row.BATCH7,
+            FINISH_DATE: row.FINDATE,
+            TEMP_CURVE: row.TEMP_CURVE,
+            TREATMENT_TIME: row.TREATMENT_TIME)),
       );
     });
   }
@@ -569,6 +607,7 @@ class TreatMentStartDataSource extends DataGridSource {
   TreatMentStartDataSource({List<TreatmentModel>? process}) {
     if (process != null) {
       for (var _item in process) {
+        print(_item.TREATMENT_TIME);
         _employees.add(
           DataGridRow(
             cells: [
@@ -584,6 +623,9 @@ class TreatMentStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'b6', value: _item.BATCH6),
               DataGridCell<String>(columnName: 'b7', value: _item.BATCH7),
               DataGridCell<String>(columnName: 'findate', value: _item.FINDATE),
+              DataGridCell<String>(columnName: 'temp', value: _item.TEMP_CURVE),
+              DataGridCell<String>(
+                  columnName: 'treatmentTime', value: _item.TREATMENT_TIME),
             ],
           ),
         );
