@@ -624,6 +624,11 @@ class DatabaseHelper {
         'Garbage TEXT,'
         'FinDate TEXT,'
         'StartEnd TEXT,'
+        'PeakCurrentWithstands TEXT,'
+        'HighVoltageTest TEXT,'
+        'ZinckThickness TEXT,'
+        'visualControl TEXT,'
+        'clearingVoltage TEXT,'
         'CheckComplete TEXT'
         ')');
   }

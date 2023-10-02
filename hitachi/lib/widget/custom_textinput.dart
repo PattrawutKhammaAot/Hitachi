@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 
@@ -16,11 +17,14 @@ class CustomTextInputField extends StatelessWidget {
       this.label,
       this.isHideLable = false,
       this.onFieldSubmitted,
+      this.keyboardType,
+      this.textInputFormatter,
       this.onChanged});
 
   final String? labelText;
   final FocusNode? focusNode;
   final TextEditingController? controller;
+  final List<TextInputFormatter>? textInputFormatter;
   final bool readOnly;
   final String? Function(String?)? validator;
   final int? maxLines;
@@ -30,11 +34,13 @@ class CustomTextInputField extends StatelessWidget {
   final bool? isHideLable;
   final Function(String)? onFieldSubmitted;
   final Function(String)? onChanged;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
         validator: validator,
@@ -43,7 +49,12 @@ class CustomTextInputField extends StatelessWidget {
         readOnly: readOnly,
         enabled: readOnly == false ? true : false,
         maxLines: maxLines ?? 1,
+        keyboardType: keyboardType,
+        inputFormatters: textInputFormatter,
         decoration: InputDecoration(
+            focusedErrorBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: COLOR_RED)),
+            errorStyle: TextStyle(color: COLOR_RED),
             hintText: hintText,
             suffixIcon: suffixIcon,
             contentPadding: EdgeInsets.only(left: 10),

@@ -39,7 +39,6 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
   void initState() {
     _getTreatMentSheet().then((result) {
       setState(() {
-        print(result[0].TEMP_CURVE);
         tmList = result;
         tmsDatasource = TreatMentStartDataSource(process: tmList);
       });
@@ -465,7 +464,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                       "${tmList.where((element) => element.ID == _index.first).first.BATCH7}"))
                                 ]),
                                 DataRow(cells: [
-                                  DataCell(Center(child: Label("Start Date"))),
+                                  DataCell(Center(child: Label("Finish Date"))),
                                   DataCell(Label(
                                       "${tmList.where((element) => element.ID == _index.first).first.FINDATE}"))
                                 ]),

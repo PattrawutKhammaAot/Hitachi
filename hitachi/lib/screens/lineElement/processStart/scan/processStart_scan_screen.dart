@@ -16,6 +16,7 @@ import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/widget/custom_textinput.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -34,6 +35,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   final TextEditingController operatorName2Controller = TextEditingController();
   final TextEditingController operatorName3Controller = TextEditingController();
   final TextEditingController batchNoController = TextEditingController();
+  final TextEditingController _peakController = TextEditingController();
+  final TextEditingController _highVoltageController = TextEditingController();
   DatabaseHelper databaseHelper = DatabaseHelper();
 
   ProcessInputModel? items;
@@ -49,13 +52,14 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   DateTime startDate = DateTime.now();
   String StartEndValue = 'S';
 
+  bool isShowHv = false;
   final f1 = FocusNode();
   final f2 = FocusNode();
   final f3 = FocusNode();
   final f4 = FocusNode();
   final f5 = FocusNode();
   final f6 = FocusNode();
-
+  final _formKey = GlobalKey<FormState>();
   Future<bool> _getProcessStart() async {
     try {
       var sql_processSheet = await databaseHelper.queryDataSelectProcess(
@@ -71,16 +75,11 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         keyAnd: 'BatchNo'.trim(),
         value: batchNoController.text.trim(),
       );
-      print(sql_processSheet.length);
 
-      // if (sql_processSheet[0]['Machine'] != MachineController.text.trim()) {
-      print(MachineController.text.trim());
-      print(sql_processSheet.length);
       if (sql_processSheet.isEmpty) {
-        print("if");
         // setState(() {
         _checkSendSqlite = true;
-        print("_checkSendSqlite = true;");
+
         _saveSendSqlite();
         // });
       } else {
@@ -204,219 +203,312 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           },
         )
       ],
-      child: BgWhite(
-          isHideAppBar: true,
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  RowBoxInputField(
-                    labelText: "Machine No :",
-                    maxLength: 3,
-                    controller: MachineController,
-                    height: 35,
-                    focusNode: f1,
-                    // enabled: _enabledMachineNo,
-                    onEditingComplete: () {
-                      if (MachineController.text.length > 2) {
-                        setState(() {
-                          print(MachineController.text);
-                          _enabledMachineNo = false;
-                          // valuetxtinput = MachineController.text.trim();
-                          valuetxtinput = "";
-                        });
-                        f2.requestFocus();
-                      } else {
-                        setState(() {
-                          _enabledCheckMachine = false;
-                          valuetxtinput = "Machine No : INVALID";
-                        });
-                      }
-                    },
-                    // onEditingComplete: () => f2.requestFocus(),
-                    onChanged: (value) {
-                      if (value == 'SD' && value.length == 2 ||
-                          value == 'sd' && value.length == 2) {
-                        setState(() {
-                          _enabledOperator = true;
-                          // _enabled = !_enabled;
-                        });
-                      } else if (value.length == 1) {
-                        setState(() {
-                          _enabledOperator = false;
-                        });
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Operator Name :",
-                    height: 35,
-                    controller: operatorNameController,
-                    maxLength: 12,
-                    focusNode: f2,
-                    // enabled: _enabledCheckMachine,
-                    onEditingComplete: () {
-                      if (operatorNameController.text.isNotEmpty) {
-                        setState(() {
-                          if (_enabledOperator == true) {
-                            f3.requestFocus();
-                          } else {
-                            f6.requestFocus();
+      child: Form(
+        key: _formKey,
+        child: BgWhite(
+            isHideAppBar: true,
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    RowBoxInputField(
+                      labelText: "Machine No :",
+                      maxLength: 3,
+                      controller: MachineController,
+                      height: 35,
+                      focusNode: f1,
+                      // enabled: _enabledMachineNo,
+                      onEditingComplete: () {
+                        if (MachineController.text.length > 2) {
+                          setState(() {
+                            print(MachineController.text);
+                            _enabledMachineNo = false;
+                            // valuetxtinput = MachineController.text.trim();
+                            valuetxtinput = "";
+                          });
+                          f2.requestFocus();
+                        } else {
+                          setState(() {
+                            _enabledCheckMachine = false;
+                            valuetxtinput = "Machine No : INVALID";
+                          });
+                        }
+                      },
+                      // onEditingComplete: () => f2.requestFocus(),
+                      onChanged: (value) {
+                        if (value == 'SD' && value.length == 2 ||
+                            value == 'sd' && value.length == 2) {
+                          setState(() {
+                            _enabledOperator = true;
+                            isShowHv = false;
+                            // _enabled = !_enabled;
+                          });
+                        } else if (value.length == 1) {
+                          setState(() {
+                            _enabledOperator = false;
+                            isShowHv = false;
+                          });
+                        } else if (value.length == 3) {
+                          if (value.toUpperCase().substring(0, 2) == 'HV') {
+                            showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Label('Final Test'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CustomTextInputField(
+                                          keyboardType: TextInputType.number,
+                                          isHideLable: true,
+                                          textInputFormatter: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[0-9.]'))
+                                          ],
+                                          labelText: "Peak Current WithStands",
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please enter a value';
+                                            }
+
+                                            num? intValue = num.tryParse(value);
+                                            if (intValue == null ||
+                                                intValue < 100 ||
+                                                intValue > 200) {
+                                              return 'Please enter a value between 100-200';
+                                            }
+
+                                            return null;
+                                          },
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        CustomTextInputField(
+                                          keyboardType: TextInputType.number,
+                                          isHideLable: true,
+                                          textInputFormatter: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[0-9.]'))
+                                          ],
+                                          labelText: "High-Voltage Test",
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please enter a value';
+                                            }
+
+                                            num? intValue = num.tryParse(value);
+                                            if (intValue == null ||
+                                                intValue < 600 ||
+                                                intValue > 1500) {
+                                              return 'Please enter a value between 600-1500';
+                                            }
+
+                                            return null;
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                      COLOR_RED)),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Label(
+                                            "Cancel",
+                                            color: COLOR_WHITE,
+                                          )),
+                                      ElevatedButton(
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                      COLOR_SUCESS)),
+                                          onPressed: () {},
+                                          child:
+                                              Label("OK", color: COLOR_WHITE))
+                                    ],
+                                  );
+                                });
                           }
-                          valuetxtinput = "";
-                        });
-                      } else {
-                        setState(() {
-                          valuetxtinput = "Operator Name : User INVALID";
-                        });
-                      }
-                    },
-                    type: TextInputType.number,
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                    onChanged: (value) {
-                      if (MachineController.text.isNotEmpty &&
-                          batchNoController.text.isNotEmpty) {
-                        setState(() {
-                          bgChange = COLOR_BLUE_DARK;
-                        });
-                      } else {
-                        setState(() {
-                          bgChange = Colors.grey;
-                        });
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  DottedLine(),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Operator Name :",
-                    height: 35,
-                    maxLength: 12,
-                    controller: operatorName1Controller,
-                    focusNode: f3,
-                    enabled: _enabledOperator,
-                    onEditingComplete: () => f4.requestFocus(),
-                    type: TextInputType.number,
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Operator Name :",
-                    height: 35,
-                    maxLength: 12,
-                    controller: operatorName2Controller,
-                    focusNode: f4,
-                    enabled: _enabledOperator,
-                    onEditingComplete: () => f5.requestFocus(),
-                    type: TextInputType.number,
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Operator Name :",
-                    height: 35,
-                    maxLength: 12,
-                    controller: operatorName3Controller,
-                    focusNode: f5,
-                    enabled: _enabledOperator,
-                    onEditingComplete: () => f6.requestFocus(),
-                    type: TextInputType.number,
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  DottedLine(),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  RowBoxInputField(
-                    labelText: "Batch No :",
-                    maxLength: 12,
-                    height: 35,
-                    onEditingComplete: () {
-                      if (batchNoController.text.length == 12) {
-                        _btnSend();
-                        valuetxtinput = "";
-                      } else {
-                        setState(() {
-                          valuetxtinput = "Batch No : INVALID";
-                        });
-                      }
-                    },
-                    controller: batchNoController,
-                    type: TextInputType.number,
-                    focusNode: f6,
-                    textInputFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                    onChanged: (value) {
-                      if (batchNoController.text.length == 12 &&
-                          operatorNameController.text.isNotEmpty) {
-                        setState(() {
-                          bgChange = COLOR_BLUE_DARK;
-                        });
-                      } else {
-                        setState(() {
-                          bgChange = Colors.grey;
-                        });
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Visibility(
-                        visible: true,
-                        child: Container(
-                            child: Label(
-                          " ${valuetxtinput}",
-                          color: COLOR_RED,
-                        )),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    child: Button(
-                      height: 40,
-                      bgColor: bgChange ?? Colors.grey,
-                      text: Label(
-                        "Send",
-                        color: COLOR_WHITE,
-                      ),
-                      onPress: () => _btnSend(),
+                        }
+                      },
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 5,
+                    ),
+                    RowBoxInputField(
+                      labelText: "Operator Name :",
+                      height: 35,
+                      controller: operatorNameController,
+                      maxLength: 12,
+                      focusNode: f2,
+                      // enabled: _enabledCheckMachine,
+                      onEditingComplete: () {
+                        if (operatorNameController.text.isNotEmpty) {
+                          setState(() {
+                            if (_enabledOperator == true) {
+                              f3.requestFocus();
+                            } else {
+                              f6.requestFocus();
+                            }
+                            valuetxtinput = "";
+                          });
+                        } else {
+                          setState(() {
+                            valuetxtinput = "Operator Name : User INVALID";
+                          });
+                        }
+                      },
+                      type: TextInputType.number,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                      onChanged: (value) {
+                        if (MachineController.text.isNotEmpty &&
+                            batchNoController.text.isNotEmpty) {
+                          setState(() {
+                            bgChange = COLOR_BLUE_DARK;
+                          });
+                        } else {
+                          setState(() {
+                            bgChange = Colors.grey;
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    DottedLine(),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    RowBoxInputField(
+                      labelText: "Operator Name :",
+                      height: 35,
+                      maxLength: 12,
+                      controller: operatorName1Controller,
+                      focusNode: f3,
+                      enabled: _enabledOperator,
+                      onEditingComplete: () => f4.requestFocus(),
+                      type: TextInputType.number,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    RowBoxInputField(
+                      labelText: "Operator Name :",
+                      height: 35,
+                      maxLength: 12,
+                      controller: operatorName2Controller,
+                      focusNode: f4,
+                      enabled: _enabledOperator,
+                      onEditingComplete: () => f5.requestFocus(),
+                      type: TextInputType.number,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    RowBoxInputField(
+                      labelText: "Operator Name :",
+                      height: 35,
+                      maxLength: 12,
+                      controller: operatorName3Controller,
+                      focusNode: f5,
+                      enabled: _enabledOperator,
+                      onEditingComplete: () => f6.requestFocus(),
+                      type: TextInputType.number,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    DottedLine(),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    RowBoxInputField(
+                      labelText: "Batch No :",
+                      maxLength: 12,
+                      height: 35,
+                      onEditingComplete: () {
+                        if (batchNoController.text.length == 12) {
+                          _btnSend();
+                          valuetxtinput = "";
+                        } else {
+                          setState(() {
+                            valuetxtinput = "Batch No : INVALID";
+                          });
+                        }
+                      },
+                      controller: batchNoController,
+                      type: TextInputType.number,
+                      focusNode: f6,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                      onChanged: (value) {
+                        if (batchNoController.text.length == 12 &&
+                            operatorNameController.text.isNotEmpty) {
+                          setState(() {
+                            bgChange = COLOR_BLUE_DARK;
+                          });
+                        } else {
+                          setState(() {
+                            bgChange = Colors.grey;
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Visibility(
+                          visible: true,
+                          child: Container(
+                              child: Label(
+                            " ${valuetxtinput}",
+                            color: COLOR_RED,
+                          )),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      child: Button(
+                        height: 40,
+                        bgColor: bgChange ?? Colors.grey,
+                        text: Label(
+                          "Send",
+                          color: COLOR_WHITE,
+                        ),
+                        onPress: () => _btnSend(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 
@@ -438,6 +530,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           'BatchNo': batchNoController.text.trim(),
           'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
           'StartEnd': StartEndValue.toString(),
+          'PeakCurrentWithstands': _peakController.text.trim(),
+          'HighVoltageTest': _highVoltageController.text.trim(),
         });
         print("saveSendSqlite");
         setState(() {
