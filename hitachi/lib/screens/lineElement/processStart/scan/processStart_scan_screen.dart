@@ -40,7 +40,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper();
 
   ProcessInputModel? items;
-  ProcessStartDataSource? matTracDs;
+
   List<ProcessModel>? processList;
   bool _enabledMachineNo = true;
   bool _enabledOperator = false;
@@ -59,6 +59,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   final f4 = FocusNode();
   final f5 = FocusNode();
   final f6 = FocusNode();
+  final _p1 = FocusNode();
+  final _p2 = FocusNode();
   final _formKey = GlobalKey<FormState>();
   Future<bool> _getProcessStart() async {
     try {
@@ -249,94 +251,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                             _enabledOperator = false;
                             isShowHv = false;
                           });
-                        } else if (value.length == 3) {
-                          if (value.toUpperCase().substring(0, 2) == 'HV') {
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Label('Final Test'),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CustomTextInputField(
-                                          keyboardType: TextInputType.number,
-                                          isHideLable: true,
-                                          textInputFormatter: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(r'[0-9.]'))
-                                          ],
-                                          labelText: "Peak Current WithStands",
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter a value';
-                                            }
-
-                                            num? intValue = num.tryParse(value);
-                                            if (intValue == null ||
-                                                intValue < 100 ||
-                                                intValue > 200) {
-                                              return 'Please enter a value between 100-200';
-                                            }
-
-                                            return null;
-                                          },
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        CustomTextInputField(
-                                          keyboardType: TextInputType.number,
-                                          isHideLable: true,
-                                          textInputFormatter: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(r'[0-9.]'))
-                                          ],
-                                          labelText: "High-Voltage Test",
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter a value';
-                                            }
-
-                                            num? intValue = num.tryParse(value);
-                                            if (intValue == null ||
-                                                intValue < 600 ||
-                                                intValue > 1500) {
-                                              return 'Please enter a value between 600-1500';
-                                            }
-
-                                            return null;
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                    actions: [
-                                      ElevatedButton(
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      COLOR_RED)),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: Label(
-                                            "Cancel",
-                                            color: COLOR_WHITE,
-                                          )),
-                                      ElevatedButton(
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      COLOR_SUCESS)),
-                                          onPressed: () {},
-                                          child:
-                                              Label("OK", color: COLOR_WHITE))
-                                    ],
-                                  );
-                                });
-                          }
                         }
                       },
                     ),
@@ -576,10 +490,117 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     if (MachineController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
-      _callAPI();
-      setState(() {
-        _enabledOperator = false;
-      });
+      if (MachineController.text.toUpperCase().substring(0, 2) == 'HV') {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Label('Final Test'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FutureBuilder(
+                      future: Future.delayed(Duration
+                          .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                      builder: (context, snapshot) {
+                        _p1.requestFocus(); // Focus ที่ _p1Focus
+                        return SizedBox
+                            .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                      },
+                    ),
+                    CustomTextInputField(
+                      focusNode: _p1,
+                      keyboardType: TextInputType.number,
+                      isHideLable: true,
+                      onFieldSubmitted: (value) {
+                        if (value.isNotEmpty) {
+                          _p2.requestFocus();
+                        }
+                      },
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                      ],
+                      labelText: "Peak Current WithStands",
+                      onChanged: (value) {
+                        _peakController.text = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a value';
+                        }
+
+                        num? intValue = num.tryParse(value);
+                        if (intValue == null ||
+                            intValue < 100 ||
+                            intValue > 200) {
+                          return 'Please enter a value between 100-200';
+                        }
+
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomTextInputField(
+                      focusNode: _p2,
+                      keyboardType: TextInputType.number,
+                      isHideLable: true,
+                      textInputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                      ],
+                      labelText: "High-Voltage Test",
+                      onChanged: (value) {
+                        _highVoltageController.text = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a value';
+                        }
+
+                        num? intValue = num.tryParse(value);
+                        if (intValue == null ||
+                            intValue < 600 ||
+                            intValue > 1500) {
+                          return 'Please enter a value between 600-1500';
+                        }
+
+                        return null;
+                      },
+                    )
+                  ],
+                ),
+                actions: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(COLOR_RED)),
+                      onPressed: () => Navigator.pop(context),
+                      child: Label(
+                        "Cancel",
+                        color: COLOR_WHITE,
+                      )),
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(COLOR_SUCESS)),
+                      onPressed: () {
+                        _callAPI();
+                        setState(() {
+                          _enabledOperator = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Label("OK", color: COLOR_WHITE))
+                ],
+              );
+            });
+      } else {
+        _callAPI();
+        setState(() {
+          _enabledOperator = false;
+        });
+      }
     } else {
       EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
@@ -588,14 +609,15 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   void _callAPI() {
     BlocProvider.of<LineElementBloc>(context).add(
       ProcessStartEvent(ProcessOutputModel(
-        MACHINE: MachineController.text.trim(),
-        OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
-        OPERATORNAME1: int.tryParse(operatorName1Controller.text.trim()),
-        OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
-        OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
-        BATCHNO: batchNoController.text.trim(),
-        STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-      )),
+          MACHINE: MachineController.text.trim(),
+          OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
+          OPERATORNAME1: int.tryParse(operatorName1Controller.text.trim()),
+          OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
+          OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
+          BATCHNO: batchNoController.text.trim(),
+          STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+          HVT: _highVoltageController.text.trim(),
+          PCW: _peakController.text.trim())),
     );
   }
 
@@ -662,57 +684,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           )
         ],
       ),
-    );
-  }
-}
-
-class ProcessStartDataSource extends DataGridSource {
-  ProcessStartDataSource({List<ProcessModel>? process}) {
-    if (process != null) {
-      for (var _item in process) {
-        _employees.add(
-          DataGridRow(
-            cells: [
-              DataGridCell<String>(columnName: 'Machine', value: _item.MACHINE),
-              DataGridCell<String>(
-                  columnName: 'Operatorname', value: _item.OPERATOR_NAME),
-              DataGridCell<String>(
-                  columnName: 'Operatorname1', value: _item.OPERATOR_NAME1),
-              DataGridCell<String>(
-                  columnName: 'Operatorname2', value: _item.OPERATOR_NAME2),
-              DataGridCell<String>(
-                  columnName: 'Operatorname3', value: _item.OPERATOR_NAME3),
-              DataGridCell<int>(
-                  columnName: 'BatchNO',
-                  value: int.tryParse(_item.BATCH_NO.toString())),
-            ],
-          ),
-        );
-      }
-    } else {
-      EasyLoading.showError("Can not request Data");
-    }
-  }
-
-  List<DataGridRow> _employees = [];
-
-  @override
-  List<DataGridRow> get rows => _employees;
-
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-      cells: row.getCells().map<Widget>(
-        (dataGridCell) {
-          return Container(
-            alignment: (dataGridCell.columnName == 'id' ||
-                    dataGridCell.columnName == 'qty')
-                ? Alignment.center
-                : Alignment.center,
-            child: Text(dataGridCell.value.toString()),
-          );
-        },
-      ).toList(),
     );
   }
 }

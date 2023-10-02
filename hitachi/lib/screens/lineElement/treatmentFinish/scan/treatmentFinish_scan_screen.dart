@@ -223,8 +223,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     focusNode: f1,
                     onChanged: (p0) {
                       if (p0.length >= 2) {
-                        if (p0.substring(0, 2) == "TM" ||
-                            p0.substring(0, 2) == "tm") {
+                        if (p0.toUpperCase().substring(0, 2) == "TM") {
                           isTm = true;
                           setState(() {});
                         }
@@ -445,7 +444,11 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                                     child: SizedBox(
                                       height: 45,
                                       child: DropdownButtonFormField2(
-                                        value: _tempCurve.text = 'Confirm',
+                                        value: combolist
+                                            .firstWhere((element) =>
+                                                element.VALUEMEMBER ==
+                                                'Confirm')
+                                            .VALUEMEMBER,
                                         decoration: InputDecoration(
                                           contentPadding: EdgeInsets.zero,
                                           border: OutlineInputBorder(
@@ -475,6 +478,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                                             .toList(),
                                         onChanged: (value) {
                                           _tempCurve.text = value ?? "-";
+                                          print(_tempCurve.text);
                                           setState(() {});
                                         },
                                         onSaved: (value) {
@@ -525,7 +529,11 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                                     child: SizedBox(
                                       height: 45,
                                       child: DropdownButtonFormField2(
-                                        value: _treatmentTime.text = 'Confirm',
+                                        value: combolist
+                                            .firstWhere((element) =>
+                                                element.VALUEMEMBER ==
+                                                'Confirm')
+                                            .VALUEMEMBER,
                                         decoration: InputDecoration(
                                           contentPadding: EdgeInsets.zero,
                                           border: OutlineInputBorder(
@@ -654,7 +662,6 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   }
 }
 
-//CodeOld
 // BgWhite(
 //           isHideAppBar: true,
 //           textTitle: "Treatment Finish",

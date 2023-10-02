@@ -8,6 +8,11 @@ class ProcessOutputModel {
     this.BATCHNO,
     this.STARTDATE,
     this.STARTEND,
+    this.PCW,
+    this.HVT,
+    this.ZINCK_THICKNESS,
+    this.VISUAL_CONTROL,
+    this.CLEARING_VOLTAGE,
   });
 
   final String? MACHINE;
@@ -18,6 +23,11 @@ class ProcessOutputModel {
   final String? BATCHNO;
   final String? STARTDATE;
   final String? STARTEND;
+  final String? PCW;
+  final String? HVT;
+  final String? ZINCK_THICKNESS;
+  final String? VISUAL_CONTROL;
+  final String? CLEARING_VOLTAGE;
 
   ProcessOutputModel copyWith({
     String? MACHINE,
@@ -28,6 +38,11 @@ class ProcessOutputModel {
     String? BATCHNO,
     String? STARTDATE,
     String? STARTEND,
+    String? PCW,
+    String? HVT,
+    String? ZINCK_THICKNESS,
+    String? VISUAL_CONTROL,
+    String? CLEARING_VOLTAGE,
   }) {
     return ProcessOutputModel(
       MACHINE: MACHINE ?? this.MACHINE,
@@ -38,6 +53,11 @@ class ProcessOutputModel {
       BATCHNO: BATCHNO ?? this.BATCHNO,
       STARTDATE: STARTDATE ?? this.STARTDATE,
       STARTEND: STARTEND ?? this.STARTEND,
+      PCW: PCW ?? this.PCW,
+      HVT: HVT ?? this.HVT,
+      ZINCK_THICKNESS: ZINCK_THICKNESS ?? this.ZINCK_THICKNESS,
+      VISUAL_CONTROL: VISUAL_CONTROL ?? this.VISUAL_CONTROL,
+      CLEARING_VOLTAGE: CLEARING_VOLTAGE ?? this.CLEARING_VOLTAGE,
     );
   }
 
@@ -51,5 +71,10 @@ class ProcessOutputModel {
         'BatchNo': BATCHNO,
         'StartDate': STARTDATE,
         'StartEnd': STARTEND,
+        'PCW': PCW,
+        'HVT': HVT,
+        'ZINCK': ZINCK_THICKNESS,
+        'VISUAL': VISUAL_CONTROL,
+        'CLEARING': CLEARING_VOLTAGE,
       };
 }

@@ -48,6 +48,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     'Operatorname3': double.nan,
     'BatchNO': double.nan,
     'StartDate': double.nan,
+    'peak': double.nan,
+    'high': double.nan,
   };
 
   Future<List<ProcessModel>> _getProcessStart() async {
@@ -370,6 +372,28 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['peak']!,
+                                columnName: 'peak',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Peak Current Withstands',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['high']!,
+                                columnName: 'high',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('High-Voltage Test',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
                                 width: columnWidths['StartDate']!,
                                 columnName: 'StartDate',
                                 label: Container(
@@ -448,6 +472,18 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                       "${processList.where((element) => element.ID == _index.first).first.BATCH_NO}"))
                                 ]),
                                 DataRow(cells: [
+                                  DataCell(Center(
+                                      child: Label("Peak Current Withstands"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.PCW}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(
+                                      child: Label("High-Voltage Test"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.HVT}"))
+                                ]),
+                                DataRow(cells: [
                                   DataCell(Center(child: Label("Start Date"))),
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.STARTDATE}"))
@@ -516,6 +552,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
               row.OPERATOR_NAME3.toString(),
             ),
             BATCHNO: row.BATCH_NO.toString(),
+            HVT: row.HVT,
+            PCW: row.PCW,
             STARTDATE: row.STARTDATE.toString(),
           ),
         ),
@@ -579,6 +617,8 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
+              DataGridCell<String>(columnName: 'peak', value: _item.PCW),
+              DataGridCell<String>(columnName: 'high', value: _item.HVT),
               DataGridCell<String>(
                   columnName: 'StartDate', value: _item.STARTDATE),
             ],

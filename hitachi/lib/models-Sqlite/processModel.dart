@@ -12,6 +12,11 @@ class ProcessModel {
     this.FINDATE,
     this.STARTEND,
     this.CHECKCOMPLETE,
+    this.PCW,
+    this.ZINCK_THICKNESS,
+    this.VISUAL_CONTROL,
+    this.CLEARING_VOLTAGE,
+    this.HVT,
   });
   final int? ID;
   final String? MACHINE;
@@ -25,6 +30,11 @@ class ProcessModel {
   final String? FINDATE;
   final String? STARTEND;
   final String? CHECKCOMPLETE;
+  final String? PCW;
+  final String? HVT;
+  final String? ZINCK_THICKNESS;
+  final String? VISUAL_CONTROL;
+  final String? CLEARING_VOLTAGE;
 
   List<Object> get props => [
         ID!,
@@ -39,6 +49,11 @@ class ProcessModel {
         FINDATE!,
         STARTEND!,
         CHECKCOMPLETE!,
+        PCW!,
+        HVT!,
+        ZINCK_THICKNESS!,
+        VISUAL_CONTROL!,
+        CLEARING_VOLTAGE!,
       ];
   ProcessModel.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
@@ -52,5 +67,10 @@ class ProcessModel {
         GARBAGE = map['Garbage'],
         FINDATE = map['FinDate'],
         STARTEND = map['StartEnd'],
-        CHECKCOMPLETE = map['CheckComplete'];
+        CHECKCOMPLETE = map['CheckComplete'],
+        PCW = map['PeakCurrentWithstands'],
+        ZINCK_THICKNESS = map['ZinckThickness'],
+        VISUAL_CONTROL = map['visualControl'],
+        CLEARING_VOLTAGE = map['clearingVoltage'],
+        HVT = map['HighVoltageTest'];
 }

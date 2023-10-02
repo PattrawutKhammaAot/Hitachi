@@ -70,7 +70,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
     'b7': double.nan,
     'findate': double.nan,
     'temp': double.nan,
-    'treatmentTime': double.nan
+    'treatmentTime': double.nan,
   };
 
   Future<List<TreatmentModel>> _getTreatMentSheet() async {
@@ -355,17 +355,8 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                columnName: 'findate',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child:
-                                        Label('FinishDate', color: COLOR_WHITE),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
                                 columnName: 'temp',
+                                width: columnWidths['temp']!,
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
@@ -375,13 +366,23 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
-                                width: 120,
+                                width: columnWidths['treatmentTime']!,
                                 columnName: 'treatmentTime',
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child: Label('Treatment Time',
                                         color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'findate',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('FinishDate', color: COLOR_WHITE),
                                   ),
                                 ),
                               ),
@@ -621,10 +622,10 @@ class TreatMentStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'b5', value: _item.BATCH5),
               DataGridCell<String>(columnName: 'b6', value: _item.BATCH6),
               DataGridCell<String>(columnName: 'b7', value: _item.BATCH7),
-              DataGridCell<String>(columnName: 'findate', value: _item.FINDATE),
               DataGridCell<String>(columnName: 'temp', value: _item.TEMP_CURVE),
               DataGridCell<String>(
                   columnName: 'treatmentTime', value: _item.TREATMENT_TIME),
+              DataGridCell<String>(columnName: 'findate', value: _item.FINDATE),
             ],
           ),
         );
