@@ -83,7 +83,7 @@ class DatabaseHelper {
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
 
-    print("WriteData FucnTionInsertDataSheet ${tableName}");
+    print("WriteData FucnTionInsertDataSheet ${row}");
     return await db.insert(tableName, row);
   }
 
@@ -112,10 +112,18 @@ class DatabaseHelper {
         .delete(tableName!, where: '$columnName = ?', whereArgs: [columnValue]);
   }
 
-  Future<List<Map<String, dynamic>>> queryDropdown({String? group}) async {
+  Future<List<Map<String, dynamic>>> queryDropdown(
+      List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query('COMBOBOX',
+        where: 'nameGroup IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<List<Map<String, dynamic>>> queryBatch(String batch) async {
     Database db = await this.database;
     return await db
-        .query('COMBOBOX', where: 'nameGroup = ?', whereArgs: [group]);
+        .query('ZINCTHICKNESS_SHEET', where: 'Batch = ?', whereArgs: [batch]);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {

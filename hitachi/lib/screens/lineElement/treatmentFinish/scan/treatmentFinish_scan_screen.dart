@@ -77,7 +77,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   }
 
   Future _getDropdownList() async {
-    var sql = await DatabaseHelper().queryDropdown(group: 'Check_Confirmation');
+    var sql = await DatabaseHelper().queryDropdown(['Check_Confirmation']);
     if (sql.isNotEmpty) {
       combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
     }
@@ -107,8 +107,16 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
           BATCH_NO_6: _batch6Controller.text.trim(),
           BATCH_NO_7: _batch7Controller.text.trim(),
           FINISH_DATE: DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
-          TEMP_CURVE: isTm == false ? "" : _tempCurve.text.trim(),
-          TREATMENT_TIME: isTm == false ? "" : _treatmentTime.text.trim())),
+          TEMP_CURVE: isTm == false
+              ? "-"
+              : _tempCurve.text.trim().isEmpty
+                  ? "Confirm"
+                  : _tempCurve.text.trim(),
+          TREATMENT_TIME: isTm == false
+              ? "-"
+              : _treatmentTime.text.trim().isEmpty
+                  ? "Confirm"
+                  : _treatmentTime.text.trim())),
     );
   }
 
@@ -134,8 +142,16 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
         'FinDate': DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
         'StartEnd': 'F',
         'CheckComplete': 'End',
-        'TempCurve': isTm == false ? "-" : _tempCurve.text.trim(),
-        'TreatmentTime': isTm == false ? "-" : _treatmentTime.text.trim()
+        'TempCurve': isTm == false
+            ? "-"
+            : _tempCurve.text.trim().isEmpty
+                ? "Confirm"
+                : _tempCurve.text.trim(),
+        'TreatmentTime': isTm == false
+            ? "-"
+            : _treatmentTime.text.trim().isEmpty
+                ? "Confirm"
+                : _treatmentTime.text.trim()
       });
     } catch (e, s) {
       print(e);
@@ -457,12 +473,6 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                                           ),
                                         ),
                                         isExpanded: true,
-                                        // hint: Center(
-                                        //   child: Text(
-                                        //     'New',
-                                        //     style: TextStyle(fontSize: 14),
-                                        //   ),
-                                        // ),
                                         items: combolist
                                             .toList()
                                             .map((item) =>
@@ -560,7 +570,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                                           setState(() {});
                                         },
                                         onSaved: (value) {
-                                          print(value);
+                                          _treatmentTime.text = value ?? "-";
                                         },
                                         buttonStyleData: const ButtonStyleData(
                                           height: 50,

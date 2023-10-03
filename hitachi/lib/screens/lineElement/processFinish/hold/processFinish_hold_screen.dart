@@ -49,6 +49,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     'RejectQTY': double.nan,
     'BatchNO': double.nan,
     'FinDate': double.nan,
+    'zinc': double.nan,
+    'visual': double.nan,
+    'clearing': double.nan,
+    'missing': double.nan,
+    'filing': double.nan,
   };
 
   Future<List<ProcessModel>> _getProcessStart() async {
@@ -335,6 +340,61 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['zinc']!,
+                                columnName: 'zinc',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Zinc Thickness',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['visual']!,
+                                columnName: 'visual',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Visual Control',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['clearing']!,
+                                columnName: 'clearing',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child:
+                                        Label('Clearing', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['missing']!,
+                                columnName: 'missing',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Missing  Ratio',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['filing']!,
+                                columnName: 'filing',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Filing Level',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
                                 width: columnWidths['FinDate']!,
                                 columnName: 'FinDate',
                                 label: Container(
@@ -400,6 +460,35 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                       "${processList.where((element) => element.ID == _index.first).first.BATCH_NO}"))
                                 ]),
                                 DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Zinc Thickness"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.ZINCK_THICKNESS}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Visual Control"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.VISUAL_CONTROL}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("Clearing"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.CLEARING_VOLTAGE}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Missing  Ratio"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.MISSING_RATIO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Filing Level"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.FILING_LEVEL}"))
+                                ]),
+                                DataRow(cells: [
                                   DataCell(Center(child: Label("Finish Date"))),
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.FINDATE}"))
@@ -460,6 +549,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
           OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
           REJECTQTY: int.tryParse(row.GARBAGE.toString()),
           BATCHNO: row.BATCH_NO.toString(),
+          ZINCK_THICKNESS: row.ZINCK_THICKNESS.toString(),
+          VISUAL_CONTROL: row.VISUAL_CONTROL.toString(),
+          CLEARING_VOLTAGE: row.CLEARING_VOLTAGE.toString(),
+          MISSING_RATIO: row.MISSING_RATIO.toString(),
+          FILING_LEVEL: row.FILING_LEVEL.toString(),
           FINISHDATE: row.FINDATE.toString(),
         )),
       );
@@ -518,6 +612,17 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
+              DataGridCell<String>(
+                  columnName: 'zinc', value: _item.ZINCK_THICKNESS.toString()),
+              DataGridCell<String>(
+                  columnName: 'visual', value: _item.VISUAL_CONTROL.toString()),
+              DataGridCell<String>(
+                  columnName: 'clearing',
+                  value: _item.CLEARING_VOLTAGE.toString()),
+              DataGridCell<String>(
+                  columnName: 'missing', value: _item.MISSING_RATIO.toString()),
+              DataGridCell<String>(
+                  columnName: 'filing', value: _item.FILING_LEVEL.toString()),
               DataGridCell<String>(
                   columnName: 'FinDate', value: _item.FINDATE.toString()),
             ],

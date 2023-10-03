@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,9 +12,11 @@ import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/combobox/comboboxModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/widget/custom_textinput.dart';
 import 'package:intl/intl.dart';
 
 class ProcessFinishScanScreen extends StatefulWidget {
@@ -42,11 +47,14 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   String valuetxtinput = "";
   Color? bgChange;
   bool _checkSendSqlite = false;
+  List<ComboBoxModel> combolist = [];
 
   final f1 = FocusNode();
   final f2 = FocusNode();
   final f3 = FocusNode();
   final f4 = FocusNode();
+  final f5 = FocusNode();
+  final f6 = FocusNode();
 
   String StartEndValue = 'E';
 
@@ -290,6 +298,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     textInputFormatter: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
+                    onEditingComplete: () => _btnSend(),
                     onChanged: (value) {
                       if (machineNoController.text.isNotEmpty &&
                           operatorNameController.text.isNotEmpty &&
@@ -342,15 +351,625 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     );
   }
 
+  Future _getDropdownList(String type) async {
+    if (type == 'ZN') {
+      combolist.clear();
+      var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
+
+      var zincSql =
+          await DatabaseHelper().queryBatch(batchNoController.text.trim());
+      if (sql.isNotEmpty) {
+        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+      }
+      if (zincSql.isNotEmpty) {
+        double totalSum = 0;
+
+        for (var row in zincSql) {
+          double thickness6 = double.tryParse(row['Thickness6'] ?? '0') ?? 0;
+          double thickness7 = double.tryParse(row['Thickness7'] ?? '0') ?? 0;
+          double thickness8 = double.tryParse(row['Thickness8'] ?? '0') ?? 0;
+          double thickness9 = double.tryParse(row['Thickness9'] ?? '0') ?? 0;
+
+          double average =
+              (thickness6 + thickness7 + thickness8 + thickness9) / 4;
+          totalSum += average;
+        }
+
+        _zinckController.text = totalSum.toStringAsFixed(2);
+      } else {
+        _zinckController.text = '0.5';
+      }
+    } else if (type == "CR") {
+      combolist.clear();
+      var sql = await DatabaseHelper()
+          .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
+
+      if (sql.isNotEmpty) {
+        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+      }
+    } else if (type == 'SD') {
+      combolist.clear();
+      var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
+      if (sql.isNotEmpty) {
+        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+      }
+    } else if (type == 'PU') {
+      combolist.clear();
+      var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
+      if (sql.isNotEmpty) {
+        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+      }
+    }
+    setState(() {});
+  }
+
   void _btnSend() async {
     if (machineNoController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
-      _callAPI();
+      if (machineNoController.text.length >= 2) {
+        switch (machineNoController.text.toUpperCase().substring(0, 2)) {
+          case 'ZN':
+            await _getDropdownList('ZN');
+            _visualControlController.text = combolist
+                    .firstWhere((element) => element.VALUEMEMBER == 'G')
+                    .VALUEMEMBER ??
+                "G";
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Label('Zinc'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: Future.delayed(Duration
+                              .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                          builder: (context, snapshot) {
+                            f5.requestFocus();
+                            return SizedBox
+                                .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                          },
+                        ),
+                        CustomTextInputField(
+                          focusNode: f5,
+                          controller: _zinckController,
+                          keyboardType: TextInputType.number,
+                          isHideLable: true,
+                          onFieldSubmitted: (value) {
+                            if (value.isNotEmpty) {}
+                          },
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                          ],
+                          labelText: 'Zinc Thickness',
+                          onChanged: (value) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please Entry Value";
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            value: combolist
+                                    .firstWhere(
+                                        (element) => element.VALUEMEMBER == 'G')
+                                    .VALUEMEMBER ??
+                                "G",
+                            decoration: InputDecoration(
+                              labelText: "Visual Control",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: combolist
+                                .toList()
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _visualControlController.text = value ?? "G";
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_RED)),
+                          onPressed: () {
+                            _zinckController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Label(
+                            "Cancel",
+                            color: COLOR_WHITE,
+                          )),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_SUCESS)),
+                          onPressed: () {
+                            _callAPI();
+
+                            Navigator.pop(context);
+                          },
+                          child: Label("OK", color: COLOR_WHITE))
+                    ],
+                  );
+                });
+            break;
+          case 'CR':
+            await _getDropdownList('CR');
+            _visualControlController.text = combolist
+                    .firstWhere((element) => element.VALUEMEMBER == 'G')
+                    .VALUEMEMBER ??
+                "G";
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Label('Clearing'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: Future.delayed(Duration
+                              .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                          builder: (context, snapshot) {
+                            f5.requestFocus();
+                            return SizedBox
+                                .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                          },
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            decoration: InputDecoration(
+                              labelText: "Clearing Voltage",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: combolist
+                                .where((item) => item.VALUEMEMBER!
+                                    .contains(RegExp(r'^\d+$')))
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _clearingVoltageController.text = value ?? '-';
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            value: combolist
+                                    .firstWhere(
+                                        (element) => element.VALUEMEMBER == 'G')
+                                    .VALUEMEMBER ??
+                                "G",
+                            decoration: InputDecoration(
+                              errorStyle: TextStyle(color: COLOR_RED),
+                              labelText: "Visual Control",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value == '' || value == null) {
+                                return 'Please Select Clearing Voltage';
+                              }
+                              return null;
+                            },
+                            items: combolist
+                                .toList()
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _visualControlController.text = value ?? "G";
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_RED)),
+                          onPressed: () {
+                            _zinckController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Label(
+                            "Cancel",
+                            color: COLOR_WHITE,
+                          )),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_SUCESS)),
+                          onPressed: () {
+                            if (_clearingVoltageController.text.isNotEmpty ||
+                                _clearingVoltageController.text != '') {
+                              _callAPI();
+                              Navigator.pop(context);
+                            } else {
+                              EasyLoading.showError(
+                                  "Please select Celaring Voltage");
+                            }
+                          },
+                          child: Label("OK", color: COLOR_WHITE))
+                    ],
+                  );
+                });
+            break;
+          case 'SD':
+            await _getDropdownList('SD');
+            _visualControlController.text = combolist
+                    .firstWhere((element) => element.VALUEMEMBER == 'G')
+                    .VALUEMEMBER ??
+                "G";
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Label('Solder'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: Future.delayed(Duration
+                              .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                          builder: (context, snapshot) {
+                            f5.requestFocus();
+                            return SizedBox
+                                .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                          },
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            value: combolist
+                                    .firstWhere(
+                                        (element) => element.VALUEMEMBER == 'G')
+                                    .VALUEMEMBER ??
+                                "G",
+                            decoration: InputDecoration(
+                              labelText: "Visual Control",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: combolist
+                                .toList()
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _visualControlController.text = value ?? "G";
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_RED)),
+                          onPressed: () {
+                            _zinckController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Label(
+                            "Cancel",
+                            color: COLOR_WHITE,
+                          )),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_SUCESS)),
+                          onPressed: () {
+                            _callAPI();
+
+                            Navigator.pop(context);
+                          },
+                          child: Label("OK", color: COLOR_WHITE))
+                    ],
+                  );
+                });
+            break;
+          case 'PU':
+            await _getDropdownList('PU');
+            _filingLevelController.text = combolist
+                    .firstWhere((element) => element.VALUEMEMBER == 'G')
+                    .VALUEMEMBER ??
+                "G";
+            _missingRatioController.text = '2.86 :1';
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Label('Pur'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FutureBuilder(
+                          future: Future.delayed(Duration
+                              .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                          builder: (context, snapshot) {
+                            f5.requestFocus();
+                            return SizedBox
+                                .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                          },
+                        ),
+                        CustomTextInputField(
+                          focusNode: f5,
+                          controller: _missingRatioController,
+                          keyboardType: TextInputType.number,
+                          isHideLable: true,
+                          onFieldSubmitted: (value) {
+                            if (value.isNotEmpty) {}
+                          },
+                          textInputFormatter: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                          ],
+                          labelText: 'MissingRatio',
+                          onChanged: (value) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please Entry Value";
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            value: combolist
+                                    .firstWhere(
+                                        (element) => element.VALUEMEMBER == 'G')
+                                    .VALUEMEMBER ??
+                                "G",
+                            decoration: InputDecoration(
+                              labelText: "Filing Level",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: combolist
+                                .toList()
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _filingLevelController.text = value ?? "G";
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_RED)),
+                          onPressed: () {
+                            _zinckController.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Label(
+                            "Cancel",
+                            color: COLOR_WHITE,
+                          )),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(COLOR_SUCESS)),
+                          onPressed: () {
+                            _callAPI();
+
+                            Navigator.pop(context);
+                          },
+                          child: Label("OK", color: COLOR_WHITE))
+                    ],
+                  );
+                });
+            break;
+          default:
+            _callAPI();
+            break;
+        }
+      }
     } else {
       EasyLoading.showInfo("กรุณาใส่ข้อมูลให้ครบ");
     }
   }
+
+  void _validatorBatch(String title,
+      {String? labelText,
+      String? errorText,
+      String? contoller,
+      String? type}) {}
 
   void _callAPI() {
     BlocProvider.of<LineElementBloc>(context).add(
@@ -375,6 +994,11 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       operatorNameController.text = "";
       batchNoController.text = "";
       rejectQtyController.text = "";
+      _zinckController.clear();
+      _visualControlController.clear();
+      _clearingVoltageController.clear();
+      _missingRatioController.clear();
+      _filingLevelController.clear();
     } catch (e) {
       print(e);
     }
@@ -476,27 +1100,30 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   void _updateSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.updateProcessFinish(
-            table: 'PROCESS_SHEET',
-            key1: 'OperatorName',
-            yieldKey1: int.tryParse(operatorNameController.text.trim()),
-            key2: 'BatchNo',
-            yieldKey2: batchNoController.text.trim(),
-            key3: 'Garbage',
-            yieldKey3: rejectQtyController.text.trim(),
-            key4: 'FinDate',
-            yieldKey4: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-            key5: 'StartEnd'.trim(),
-            yieldKey5: StartEndValue.trim(),
-            whereKey: 'Machine',
-            value: machineNoController.text.trim(),
-            whereKey2: 'BatchNo',
-            value2: batchNoController.text.trim(),
-            ZinckThickness: _zinckController.text.trim(),
-            visualControl: _visualControlController.text.trim(),
-            missingRatio: _missingRatioController.text.trim(),
-            filingLevel: _filingLevelController.text.trim(),
-            clearingVoltage: _clearingVoltageController.text.trim());
+        await databaseHelper
+            .updateProcessFinish(
+                table: 'PROCESS_SHEET',
+                key1: 'OperatorName',
+                yieldKey1: int.tryParse(operatorNameController.text.trim()),
+                key2: 'BatchNo',
+                yieldKey2: batchNoController.text.trim(),
+                key3: 'Garbage',
+                yieldKey3: rejectQtyController.text.trim(),
+                key4: 'FinDate',
+                yieldKey4:
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                key5: 'StartEnd'.trim(),
+                yieldKey5: StartEndValue.trim(),
+                whereKey: 'Machine',
+                value: machineNoController.text.trim(),
+                whereKey2: 'BatchNo',
+                value2: batchNoController.text.trim(),
+                ZinckThickness: _zinckController.text.trim(),
+                visualControl: _visualControlController.text.trim(),
+                missingRatio: _missingRatioController.text.trim(),
+                filingLevel: _filingLevelController.text.trim(),
+                clearingVoltage: _clearingVoltageController.text.trim())
+            .then((value) => _clearAllData());
         print("updateSendSqlite");
       }
     } catch (e) {
@@ -518,7 +1145,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'clearingVoltage': _clearingVoltageController.text.trim(),
         'MissingRatio': _missingRatioController.text.trim(),
         'FilingLevel': _filingLevelController.text.trim(),
-      });
+      }).then((value) => _clearAllData());
       print("ok");
     } catch (e) {
       print(e);
