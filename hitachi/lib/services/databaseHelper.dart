@@ -303,6 +303,15 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> upDateProcessStart(
+      Map<String, dynamic> data, String machine, String batch) async {
+    final Database db = await database;
+
+    print(data);
+    return await db.update('PROCESS_SHEET', data,
+        where: 'Machine = ? AND BatchNo = ?', whereArgs: [machine, batch]);
+  }
+
 //updateProcessStart
   Future<int> updateProcessStart(
       {String? table,
@@ -355,13 +364,18 @@ class DatabaseHelper {
       String? yieldKey3,
       String? yieldKey4,
       String? yieldKey5, //setE
+      String? ZinckThickness,
+      String? visualControl,
+      String? clearingVoltage,
+      String? missingRatio,
+      String? filingLevel,
       String? whereKey,
       String? value,
       String? whereKey2,
       String? value2}) async {
     final Database db = await database;
     String sql =
-        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4' , StartEnd = 'E' WHERE ${whereKey} = '$value'"
+        "UPDATE ${table} SET ${key1} = '$yieldKey1', ${key2} = '$yieldKey2', ${key3} = '$yieldKey3', ${key4} = '$yieldKey4', ZinckThickness = '${ZinckThickness}', visualControl = '${visualControl}', clearingVoltage = '${clearingVoltage}', MissingRatio = '${missingRatio}', FilingLevel = '${filingLevel}', StartEnd = 'E' WHERE ${whereKey} = '$value'"
         " AND ${whereKey2} ='${value2}' AND StartEnd = 'E' "; // แก้ไขตรงนี้;
     return await db.rawUpdate(sql);
   }
@@ -629,6 +643,8 @@ class DatabaseHelper {
         'ZinckThickness TEXT,'
         'visualControl TEXT,'
         'clearingVoltage TEXT,'
+        'MissingRatio TEXT,'
+        'FilingLevel TEXT,'
         'CheckComplete TEXT'
         ')');
   }

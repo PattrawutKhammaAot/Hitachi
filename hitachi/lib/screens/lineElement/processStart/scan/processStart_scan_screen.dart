@@ -460,25 +460,23 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   void _updateSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
-        await databaseHelper.updateProcessStart(
-          table: 'PROCESS_SHEET',
-          key1: 'OperatorName',
-          yieldKey1: int.tryParse(operatorNameController.text.trim()),
-          key2: 'OperatorName1',
-          yieldKey2: int.tryParse(operatorName1Controller.text.trim() ?? ""),
-          key3: 'OperatorName2',
-          yieldKey3: int.tryParse(operatorName2Controller.text.trim() ?? ""),
-          key4: 'OperatorName3',
-          yieldKey4: int.tryParse(operatorName3Controller.text.trim() ?? ""),
-          key5: 'BatchNo',
-          yieldKey5: batchNoController.text.trim(),
-          key6: 'StartDate',
-          yieldKey6: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-          whereKey: 'Machine',
-          value: MachineController.text.trim(),
-          whereKey2: 'BatchNo',
-          value2: batchNoController.text.trim(),
-        );
+        await databaseHelper.upDateProcessStart({
+          'OperatorName': int.tryParse(operatorNameController.text.trim()),
+          'OperatorName1': int.tryParse(operatorName1Controller.text.trim()),
+          'OperatorName2':
+              int.tryParse(operatorName2Controller.text.trim() ?? ""),
+          'OperatorName3':
+              int.tryParse(operatorName3Controller.text.trim() ?? ""),
+          'BatchNo': batchNoController.text.trim(),
+          'StartDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+          'Machine': MachineController.text.trim(),
+          'PeakCurrentWithstands': _peakController.text.trim(),
+          'HighVoltageTest': _highVoltageController.text.trim(),
+        }, MachineController.text, batchNoController.text).then((value) {
+          _clearAllData();
+          MachineController.clear();
+        });
+
         print("updateSendSqlite");
       }
     } catch (e) {
@@ -510,6 +508,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       },
                     ),
                     CustomTextInputField(
+                      controller: _peakController,
                       focusNode: _p1,
                       keyboardType: TextInputType.number,
                       isHideLable: true,
@@ -544,6 +543,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       height: 5,
                     ),
                     CustomTextInputField(
+                      controller: _highVoltageController,
                       focusNode: _p2,
                       keyboardType: TextInputType.number,
                       isHideLable: true,
@@ -629,6 +629,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       operatorName2Controller.text = "";
       operatorName3Controller.text = "";
       batchNoController.text = "";
+      MachineController.clear();
+      _peakController.clear();
+      _highVoltageController.clear();
     } catch (e) {
       print(e);
     }

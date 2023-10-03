@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
@@ -30,6 +31,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final TextEditingController operatorNameController = TextEditingController();
   final TextEditingController batchNoController = TextEditingController();
   final TextEditingController rejectQtyController = TextEditingController();
+  final TextEditingController _zinckController = TextEditingController();
+  final TextEditingController _visualControlController =
+      TextEditingController();
+  final TextEditingController _clearingVoltageController =
+      TextEditingController();
+  final TextEditingController _missingRatioController = TextEditingController();
+  final TextEditingController _filingLevelController = TextEditingController();
 
   String valuetxtinput = "";
   Color? bgChange;
@@ -352,6 +360,11 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         BATCHNO: batchNoController.text.trim(),
         REJECTQTY: int.tryParse(rejectQtyController.text.trim()),
         FINISHDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+        ZINCK_THICKNESS: _zinckController.text.trim(),
+        VISUAL_CONTROL: _visualControlController.text.trim(),
+        CLEARING_VOLTAGE: _clearingVoltageController.text.trim(),
+        MISSING_RATIO: _missingRatioController.text.trim(),
+        FILING_LEVEL: _filingLevelController.text.trim(),
       )),
     );
   }
@@ -460,37 +473,30 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
     }
   }
 
-  // void _updateSendSqlite() async {
-  //   try {
-  //     if (operatorNameController.text.isNotEmpty) {
-  //       await databaseHelper.updatetest();
-  //       print("updateSendSqlite");
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   void _updateSendSqlite() async {
     try {
       if (operatorNameController.text.isNotEmpty) {
         await databaseHelper.updateProcessFinish(
-          table: 'PROCESS_SHEET',
-          key1: 'OperatorName',
-          yieldKey1: int.tryParse(operatorNameController.text.trim()),
-          key2: 'BatchNo',
-          yieldKey2: batchNoController.text.trim(),
-          key3: 'Garbage',
-          yieldKey3: rejectQtyController.text.trim(),
-          key4: 'FinDate',
-          yieldKey4: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-          key5: 'StartEnd'.trim(),
-          yieldKey5: StartEndValue.trim(),
-          whereKey: 'Machine',
-          value: machineNoController.text.trim(),
-          whereKey2: 'BatchNo',
-          value2: batchNoController.text.trim(),
-        );
+            table: 'PROCESS_SHEET',
+            key1: 'OperatorName',
+            yieldKey1: int.tryParse(operatorNameController.text.trim()),
+            key2: 'BatchNo',
+            yieldKey2: batchNoController.text.trim(),
+            key3: 'Garbage',
+            yieldKey3: rejectQtyController.text.trim(),
+            key4: 'FinDate',
+            yieldKey4: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            key5: 'StartEnd'.trim(),
+            yieldKey5: StartEndValue.trim(),
+            whereKey: 'Machine',
+            value: machineNoController.text.trim(),
+            whereKey2: 'BatchNo',
+            value2: batchNoController.text.trim(),
+            ZinckThickness: _zinckController.text.trim(),
+            visualControl: _visualControlController.text.trim(),
+            missingRatio: _missingRatioController.text.trim(),
+            filingLevel: _filingLevelController.text.trim(),
+            clearingVoltage: _clearingVoltageController.text.trim());
         print("updateSendSqlite");
       }
     } catch (e) {
@@ -507,6 +513,11 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'Garbage': rejectQtyController.text.trim(),
         'FinDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         'StartEnd': StartEndValue.toString(),
+        'ZinckThickness': _zinckController.text.trim(),
+        'visualControl': _visualControlController.text.trim(),
+        'clearingVoltage': _clearingVoltageController.text.trim(),
+        'MissingRatio': _missingRatioController.text.trim(),
+        'FilingLevel': _filingLevelController.text.trim(),
       });
       print("ok");
     } catch (e) {
