@@ -19,7 +19,8 @@ class CustomTextInputField extends StatelessWidget {
       this.onFieldSubmitted,
       this.keyboardType,
       this.textInputFormatter,
-      this.onChanged});
+      this.onChanged,
+      this.maxLength});
 
   final String? labelText;
   final FocusNode? focusNode;
@@ -35,6 +36,7 @@ class CustomTextInputField extends StatelessWidget {
   final Function(String)? onFieldSubmitted;
   final Function(String)? onChanged;
   final TextInputType? keyboardType;
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +52,10 @@ class CustomTextInputField extends StatelessWidget {
         enabled: readOnly == false ? true : false,
         maxLines: maxLines ?? 1,
         keyboardType: keyboardType,
+        maxLength: maxLength,
         inputFormatters: textInputFormatter,
         decoration: InputDecoration(
+            counterText: '',
             focusedErrorBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: COLOR_RED)),
             errorStyle: TextStyle(color: COLOR_RED),

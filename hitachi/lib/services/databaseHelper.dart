@@ -78,6 +78,41 @@ class DatabaseHelper {
     _createZincThickness(db, newVersion);
     _createPlanWinding(db, newVersion);
     _createPMDaily(db, newVersion);
+    _createWindingRecordOutToServer(db, newVersion);
+    _createWindingRecordLoadInPDA(db, newVersion);
+  }
+
+  Future<List<Map<String, dynamic>>> queryWindingRecodeFormPda(
+      String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+
+    return await db.query(tableName,
+        where: 'BATCH_NO IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<int> insertRecordDB(String tableName, Map<String, dynamic> row) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${row}");
+    return await db.insert(tableName, row);
+  }
+
+  Future<int> updateRecordDB(String tableName, Map<String, dynamic> row,
+      List<String> whereArgs) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${row}");
+    return await db.update(tableName, row,
+        where: 'BATCH_NO IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<int> insert(String tableName, Map<String, dynamic> row) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${row}");
+    return await db.insert('WINDING_RECORD_LOAD_PDA', row);
   }
 
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
@@ -653,6 +688,96 @@ class DatabaseHelper {
         'clearingVoltage TEXT,'
         'MissingRatio TEXT,'
         'FilingLevel TEXT,'
+        'CheckComplete TEXT'
+        ')');
+  }
+
+  void _createWindingRecordLoadInPDA(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE WINDING_RECORD_LOAD_PDA ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'BATCH_NO TEXT,'
+        'START_TIME TEXT,'
+        'FINISH_TIME TEXT,'
+        'IPENO TEXT,'
+        'THICKNESS TEXT,'
+        'TURN TEXT,'
+        'DIAMETER TEXT, '
+        'CUSTOMER TEXT,'
+        'UF TEXT,'
+        'PPM_WEIGHT TEXT,'
+        'PACK_NO TEXT,'
+        'OUTPUT TEXT,'
+        'GROSS TEXT,'
+        'WIDTH_L TEXT,'
+        'WIDHT_R TEXT,'
+        'CB11 TEXT,'
+        'CB12 TEXT,'
+        'CB13 TEXT,'
+        'CB21 TEXT,'
+        'CB22 TEXT,'
+        'CB23 TEXT,'
+        'CB31 TEXT,'
+        'CB32 TEXT,'
+        'CB33 TEXT,'
+        'OF1 TEXT,'
+        'OF2 TEXT,'
+        'OF3 TEXT,'
+        'Burnoff TEXT,'
+        'FS1 TEXT,'
+        'FS2 TEXT,'
+        'FS3 TEXT,'
+        'FS4 TEXT,'
+        'GRADE TEXT,'
+        'TIME_RESS TEXT,'
+        'TIME_RELEASED TEXT,'
+        'HEAT_TEMP TEXT,'
+        'TENSION TEXT,'
+        'NIP_ROLL_PRESS TEXT,'
+        'CheckComplete TEXT'
+        ')');
+  }
+
+  void _createWindingRecordOutToServer(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE WINDING_RECORD_SEND_SERVER ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'BATCH_NO TEXT,'
+        'START_TIME TEXT,'
+        'FINISH_TIME TEXT,'
+        'IPENO TEXT,'
+        'THICKNESS TEXT,'
+        'TURN TEXT,'
+        'DIAMETER TEXT, '
+        'CUSTOMER TEXT,'
+        'UF TEXT,'
+        'PPM_WEIGHT TEXT,'
+        'PACK_NO TEXT,'
+        'OUTPUT TEXT,'
+        'GROSS TEXT,'
+        'WIDTH_L TEXT,'
+        'WIDHT_R TEXT,'
+        'CB11 TEXT,'
+        'CB12 TEXT,'
+        'CB13 TEXT,'
+        'CB21 TEXT,'
+        'CB22 TEXT,'
+        'CB23 TEXT,'
+        'CB31 TEXT,'
+        'CB32 TEXT,'
+        'CB33 TEXT,'
+        'OF1 TEXT,'
+        'OF2 TEXT,'
+        'OF3 TEXT,'
+        'Burnoff TEXT,'
+        'FS1 TEXT,'
+        'FS2 TEXT,'
+        'FS3 TEXT,'
+        'FS4 TEXT,'
+        'GRADE TEXT,'
+        'TIME_RESS TEXT,'
+        'TIME_RELEASED TEXT,'
+        'HEAT_TEMP TEXT,'
+        'TENSION TEXT,'
+        'NIP_ROLL_PRESS TEXT,'
         'CheckComplete TEXT'
         ')');
   }

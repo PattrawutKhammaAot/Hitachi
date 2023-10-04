@@ -706,7 +706,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                               Navigator.pop(context);
                             } else {
                               EasyLoading.showError(
-                                  "Please select Celaring Voltage");
+                                  "Please select Clearing Voltage");
                             }
                           },
                           child: Label("OK", color: COLOR_WHITE))
