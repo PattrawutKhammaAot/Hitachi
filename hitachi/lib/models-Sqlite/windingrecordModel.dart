@@ -1,5 +1,5 @@
-class WindingRecordModel {
-  const WindingRecordModel(
+class WindingRecordModelSqlite {
+  const WindingRecordModelSqlite(
       {this.BATCH_NO,
       this.START_TIME,
       this.FINISH_TIME,
@@ -122,7 +122,7 @@ class WindingRecordModel {
         NIP_ROLL_PRESS!,
         CheckComplete!,
       ];
-  WindingRecordModel.fromMap(Map<String, dynamic> map)
+  WindingRecordModelSqlite.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
         BATCH_NO = map['BATCH_NO'],
         START_TIME = map['START_TIME'],

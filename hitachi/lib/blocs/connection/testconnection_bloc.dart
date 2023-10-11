@@ -39,12 +39,44 @@ class TestconnectionBloc
         }
       },
     );
+    on<Test_ConnectionOnWindingRecordEvent>(
+      (event, emit) async {
+        try {
+          emit(TestconnectionWRDLoadingState());
+          final mlist = await fetctTestConnectionWRD();
+          emit(TestconnectionWRDLoadedState(mlist));
+        } catch (e) {
+          emit(TestconnectionWRDErrorState(e.toString()));
+        }
+      },
+    );
   }
 
   Future<ResponeDefault> fetchTestConnection() async {
     try {
       Response responese = await dio.get(
         TEMP_API_URL + 'Connection/TestConnection',
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 3)),
+      );
+
+      ResponeDefault items = ResponeDefault.fromJson(responese.data);
+      return items;
+    } catch (e, s) {
+      print(e);
+      print(s);
+      throw Exception();
+    }
+  }
+
+  Future<ResponeDefault> fetctTestConnectionWRD() async {
+    try {
+      print(BASE_API_URL);
+      print("TESTSTST");
+      Response responese = await dio.get(
+        BASE_API_URL + 'Connection/TestConnection',
         options: Options(
             headers: ApiConfig.HEADER(),
             sendTimeout: Duration(seconds: 3),

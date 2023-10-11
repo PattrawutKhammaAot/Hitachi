@@ -27,6 +27,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
   void initState() {
     _checkUrl();
     super.initState();
+    print(DateTime.now().toIso8601String());
   }
 
   void _checkUrl() {

@@ -13,3 +13,10 @@ class Test_ConnectionEvent extends TestconnectionEvent {
   @override
   List<Object> get prop => [];
 }
+
+class Test_ConnectionOnWindingRecordEvent extends TestconnectionEvent {
+  const Test_ConnectionOnWindingRecordEvent();
+
+  @override
+  List<Object> get prop => [];
+}

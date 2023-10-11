@@ -65,14 +65,14 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
   WindingRecordDataSource? wdRecordDBS;
   List<int> _index = [];
   DataGridRow? datagridRow;
-  List<WindingRecordModel>? wdrSqliteModel;
-  List<WindingRecordModel> wdrList = [];
-  Future<List<WindingRecordModel>> _getTreatMentSheet() async {
+  List<WindingRecordModelSqlite>? wdrSqliteModel;
+  List<WindingRecordModelSqlite> wdrList = [];
+  Future<List<WindingRecordModelSqlite>> _getTreatMentSheet() async {
     try {
       List<Map<String, dynamic>> rows =
           await databaseHelper.queryAllRows('WINDING_RECORD_SEND_SERVER');
-      List<WindingRecordModel> result =
-          rows.map((row) => WindingRecordModel.fromMap(row)).toList();
+      List<WindingRecordModelSqlite> result =
+          rows.map((row) => WindingRecordModelSqlite.fromMap(row)).toList();
       print(rows);
       return result;
     } catch (e, s) {
@@ -144,7 +144,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                                 wdrSqliteModel = datagridRow!
                                     .getCells()
                                     .map(
-                                      (e) => WindingRecordModel(),
+                                      (e) => WindingRecordModelSqlite(),
                                     )
                                     .toList();
                                 print(_index);
@@ -911,7 +911,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
 }
 
 class WindingRecordDataSource extends DataGridSource {
-  WindingRecordDataSource({List<WindingRecordModel>? process}) {
+  WindingRecordDataSource({List<WindingRecordModelSqlite>? process}) {
     try {
       if (process != null) {
         for (var _item in process) {

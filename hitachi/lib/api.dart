@@ -98,4 +98,15 @@ class ApiConfig {
 
   //Get PLAN_WINDING
   static String PLAN_WINDING = "${BASE_API_URL}LineElement/GetPlanWinding";
+  //Get COMBOBX
+  static String GET_COMBOBOX = "${BASE_API_URL}LineElement/GetCombobox";
+  //Get GetIPEProdSpec
+  static String GET_IPE_PRODUCTIONS =
+      "${BASE_API_URL}LineElement/GetIPEProdSpec";
+  //GETWindingRecord + Batch
+  static String GET_WINDING_RECORD =
+      "${BASE_API_URL}LineElement/GetWindingRecord?batch=";
+  //POST WindingRecord + Batch
+  static String SEND_WINDING_RECORD =
+      "${BASE_API_URL}LineElement/SendWindingRecord";
 }

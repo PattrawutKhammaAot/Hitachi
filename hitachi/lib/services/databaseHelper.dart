@@ -80,6 +80,8 @@ class DatabaseHelper {
     _createPMDaily(db, newVersion);
     _createWindingRecordOutToServer(db, newVersion);
     _createWindingRecordLoadInPDA(db, newVersion);
+    _create_Pda_IPE(db, newVersion);
+    _createIPEPROD(db, newVersion);
   }
 
   Future<List<Map<String, dynamic>>> queryWindingRecodeFormPda(
@@ -104,6 +106,14 @@ class DatabaseHelper {
 
     print("WriteData FucnTionInsertDataSheet ${row}");
     return await db.update(tableName, row,
+        where: 'BATCH_NO IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<int> deleteRecordDB(String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+
+    return await db.delete(tableName,
         where: 'BATCH_NO IN (${whereArgs.map((_) => '?').join(',')})',
         whereArgs: whereArgs);
   }
@@ -164,6 +174,48 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
     Database db = await this.database;
     return await db.query(tableName);
+  }
+
+  Future<List<Map<String, dynamic>>> queryCOMBOBOX(
+      String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query(tableName,
+        where: 'valueMember IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<List<Map<String, dynamic>>> queryIPESHEET(
+      String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query(tableName,
+        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<List<Map<String, dynamic>>> queryPRODSPEC(
+      List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query('PRODSPEC',
+        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<int> updateIPESHEET(String tableName, Map<String, dynamic> row,
+      List<String> whereArgs) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${row}");
+    return await db.update(tableName, row,
+        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<List<Map<String, dynamic>>> queryWindingSheet(
+      String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query(tableName,
+        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
   }
 
   Future<List<Map<String, dynamic>>> queryAllProcessStartRows(
@@ -548,6 +600,7 @@ class DatabaseHelper {
         'Status TEXT, '
         'start_end TEXT, '
         'value TEXT,'
+        'IPE TEXT,'
         'checkComplete TEXT '
         ')');
   }
@@ -571,6 +624,13 @@ class DatabaseHelper {
   void _createDateTimeNow(Database db, int newVersion) async {
     await db.execute('CREATE TABLE DATE_TIME_NOW_SHEET ('
         'DateTimeNow TEXT '
+        ')');
+  }
+
+  void _create_Pda_IPE(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE IPE_SHEET ('
+        'BatchNo TEXT ,'
+        'IPE_NO TEXT '
         ')');
   }
 
@@ -1150,6 +1210,33 @@ class DatabaseHelper {
         'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'nameGroup TEXT, '
         'valueMember TEXT, '
+        'Description TEXT, '
+        'IsActive BOOLEAN)');
+  }
+
+  void _createIPEPROD(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE PRODSPEC ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'JUMET TEXT ,'
+        'IPE TEXT ,'
+        'Film TEXT ,'
+        'Wind_Min TEXT ,'
+        'Wind_Avg TEXT ,'
+        'Wind_Max TEXT ,'
+        'Wind_Dia TEXT ,'
+        'Wind_Turn TEXT ,'
+        'Clearing TEXT ,'
+        'Treatment TEXT ,'
+        'Ipeak TEXT ,'
+        'HighVolt TEXT ,'
+        'Reactor TEXT ,'
+        'Measure_Min TEXT ,'
+        'Measure_Max TEXT ,'
+        'Tangent TEXT ,'
+        'BomP TEXT ,'
+        'SM TEXT ,'
+        'S1 TEXT ,'
+        'S2 TEXT ,'
         'IsActive BOOLEAN)');
   }
 

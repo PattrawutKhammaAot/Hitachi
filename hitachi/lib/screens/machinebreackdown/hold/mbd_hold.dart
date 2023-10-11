@@ -14,6 +14,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../models/machineBreakdown/machinebreakdownOutputMode.dart';
 import '../../../../widget/alertSnackBar.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
 class MachineBreakDownHoldScreen extends StatefulWidget {
   MachineBreakDownHoldScreen({super.key, this.onChange});
   ValueChanged<List<Map<String, dynamic>>>? onChange;
@@ -690,8 +691,6 @@ class BreakDownDataSource extends DataGridSource {
   BreakDownDataSource({List<BreakDownSheetModel>? process}) {
     if (process != null) {
       for (var _item in process) {
-        print(_item.STOPTECH_1);
-        print(_item.STOPTECH_2);
         _employees.add(
           DataGridRow(
             cells: [

@@ -30,3 +30,25 @@ class TestconnectionErrorState extends TestconnectionState {
   @override
   List<Object> get props => [error];
 }
+
+class TestconnectionWRDLoadingState extends TestconnectionState {
+  const TestconnectionWRDLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class TestconnectionWRDLoadedState extends TestconnectionState {
+  const TestconnectionWRDLoadedState(this.item);
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class TestconnectionWRDErrorState extends TestconnectionState {
+  const TestconnectionWRDErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

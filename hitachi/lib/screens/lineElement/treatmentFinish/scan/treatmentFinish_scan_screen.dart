@@ -10,6 +10,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/combobox/comboboxModel.dart';
+import 'package:hitachi/models/combobox/comboboxSqliteModel.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +55,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
 
   List<String> dropdownList = ['Confirm', 'Non-Confirm'];
 
-  List<ComboBoxModel> combolist = [];
+  List<ComboboxSqliteModel> combolist = [];
 
   DatabaseHelper databaseHelper = DatabaseHelper();
   @override
@@ -79,7 +80,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   Future _getDropdownList() async {
     var sql = await DatabaseHelper().queryDropdown(['Check_Confirmation']);
     if (sql.isNotEmpty) {
-      combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+      combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
     }
 
     setState(() {});

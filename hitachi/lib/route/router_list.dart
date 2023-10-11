@@ -60,4 +60,6 @@ class RouterList {
   static const String Setting_web = '/settingWeb/settingWeb';
   //DownLoadMaster Page
   static const String DownloadMasterScreen = '/downloadMaster';
+  static const String productionSpecScreen = 'downloadMaster/productionSpec';
+  static const String dropdownScreen = 'downloadMaster/dropdown';
 }

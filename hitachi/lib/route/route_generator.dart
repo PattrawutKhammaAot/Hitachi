@@ -3,6 +3,8 @@ import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/route/router_list.dart';
 import 'package:hitachi/screens/PMDaily/PMDaily_Control.dart';
 import 'package:hitachi/screens/downloadMaster/download_master_Screen.dart';
+import 'package:hitachi/screens/downloadMaster/dropdownScreen.dart';
+import 'package:hitachi/screens/downloadMaster/productionSpecScreen.dart';
 import 'package:hitachi/screens/filmreceive/filmreceive_control.dart';
 import 'package:hitachi/screens/lineElement/lineElementMenu_Screen.dart';
 
@@ -154,6 +156,18 @@ class RouteGenerator {
         return PageTransition(
             settings: settings,
             child: PMDailyControl(),
+            type: PageTransitionType.fade);
+      //ProductionSpec
+      case RouterList.productionSpecScreen:
+        return PageTransition(
+            settings: settings,
+            child: ProductionSpecScreen(),
+            type: PageTransitionType.fade);
+      //Dropdown
+      case RouterList.dropdownScreen:
+        return PageTransition(
+            settings: settings,
+            child: DropdownScreen(),
             type: PageTransitionType.fade);
     }
     throw UnsupportedError('Unknow route : ${settings.name}');

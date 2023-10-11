@@ -13,6 +13,7 @@ import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/combobox/comboboxModel.dart';
+import 'package:hitachi/models/combobox/comboboxSqliteModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/services/databaseHelper.dart';
@@ -47,7 +48,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   String valuetxtinput = "";
   Color? bgChange;
   bool _checkSendSqlite = false;
-  List<ComboBoxModel> combolist = [];
+  List<ComboboxSqliteModel> combolist = [];
 
   final f1 = FocusNode();
   final f2 = FocusNode();
@@ -359,7 +360,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       var zincSql =
           await DatabaseHelper().queryBatch(batchNoController.text.trim());
       if (sql.isNotEmpty) {
-        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+        combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
       }
       if (zincSql.isNotEmpty) {
         double totalSum = 0;
@@ -385,19 +386,21 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
 
       if (sql.isNotEmpty) {
-        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+        combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
       }
     } else if (type == 'SD') {
       combolist.clear();
-      var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
+      var sql = await DatabaseHelper()
+          .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
+      print(sql.length);
       if (sql.isNotEmpty) {
-        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+        combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
       }
     } else if (type == 'PU') {
       combolist.clear();
       var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
       if (sql.isNotEmpty) {
-        combolist = sql.map((e) => ComboBoxModel.fromMap(e)).toList();
+        combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
       }
     }
     setState(() {});
@@ -716,10 +719,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
             break;
           case 'SD':
             await _getDropdownList('SD');
-            _visualControlController.text = combolist
-                    .firstWhere((element) => element.VALUEMEMBER == 'G')
-                    .VALUEMEMBER ??
-                "G";
+            // _visualControlController.text = combolist
+            //         .firstWhere((element) => element.VALUEMEMBER == 'G')
+            //         .VALUEMEMBER ??
+            //     "G";
             showDialog(
                 barrierDismissible: false,
                 context: context,
@@ -737,6 +740,57 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                             return SizedBox
                                 .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
                           },
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: DropdownButtonFormField2(
+                            decoration: InputDecoration(
+                              labelText: "Clearing Voltage",
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            isExpanded: true,
+                            items: combolist
+                                .where((item) => item.VALUEMEMBER!
+                                    .contains(RegExp(r'^\d+$')))
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item.VALUEMEMBER,
+                                      child: Text(
+                                        "${item.VALUEMEMBER}",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _clearingVoltageController.text = value ?? '-';
+                            },
+                            onSaved: (value) {
+                              print(value);
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 20, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
                         ),
                         SizedBox(
                           height: 45,

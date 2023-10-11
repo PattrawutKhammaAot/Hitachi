@@ -25,6 +25,7 @@ import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/models/reportRouteSheet/reportRouteSheetModel.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Input_Model.dart';
 import 'package:hitachi/models/sendWdsReturnWeight/sendWdsReturnWeight_Output_Model.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 import '../../models/materialInput/loadMaterialInput/materialLoadModel.dart';
 
@@ -255,6 +256,24 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
       CheckWdsFinishInputModel post =
           CheckWdsFinishInputModel.fromJson(responese.data);
+
+      if (post.RESULT == true && post.MESSAGE == 'Success') {
+        var sql = await DatabaseHelper()
+            .queryIPESHEET("IPE_SHEET", [post.BATCHNO ?? "0"]);
+        if (sql.isEmpty) {
+          await DatabaseHelper().insertSqlite('IPE_SHEET', {
+            'BatchNo': post.BATCHNO,
+            'IPE_NO': post.IPE_NO,
+          });
+        } else {
+          await DatabaseHelper().updateIPESHEET('IPE_SHEET', {
+            'BatchNo': post.BATCHNO,
+            'IPE_NO': post.IPE_NO,
+          }, [
+            post.BATCHNO ?? "0"
+          ]);
+        }
+      }
       return post;
     } on Exception {
       throw Exception();
