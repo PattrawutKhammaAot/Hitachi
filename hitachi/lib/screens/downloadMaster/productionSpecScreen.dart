@@ -27,7 +27,7 @@ class _ProductionSpecScreenState extends State<ProductionSpecScreen> {
   int pdalength = 0;
   int serverlength = 0;
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<ProductionModel> itemCombo = [];
+  List<ProductionModel> itemProdSpec = [];
 
   @override
   void initState() {
@@ -88,17 +88,23 @@ class _ProductionSpecScreenState extends State<ProductionSpecScreen> {
           if (state is GetProductionLoadingState) {
             EasyLoading.show(status: "Loading ...");
           } else if (state is GetProductionLoadedState) {
-            itemCombo = state.item;
+            itemProdSpec = state.item;
             _getLengthDataFromPda().then((value) {
               setState(() {
                 dataSource = productionSpecDataSource(
-                    pda: pdalength, server: itemCombo.length);
+                    pda: pdalength, server: itemProdSpec.length);
               });
             });
             setState(() {});
             EasyLoading.dismiss();
           } else if (state is GetProductionErrorState) {
-            EasyLoading.showError("${state.error}");
+            EasyLoading.showError("Please Check Connection");
+            _getLengthDataFromPda().then((value) {
+              setState(() {
+                dataSource =
+                    productionSpecDataSource(pda: pdalength, server: 0);
+              });
+            });
           }
         })
       ],
@@ -168,13 +174,19 @@ class _ProductionSpecScreenState extends State<ProductionSpecScreen> {
                               backgroundColor:
                                   MaterialStatePropertyAll(COLOR_BLUE_DARK)),
                           onPressed: () async {
-                            await _saveDropdownOnPda(itemCombo);
-                            await _getLengthDataFromPda().then((value) {
-                              setState(() {
-                                dataSource = productionSpecDataSource(
-                                    pda: pdalength, server: itemCombo.length);
+                            if (itemProdSpec.isNotEmpty) {
+                              await _saveDropdownOnPda(itemProdSpec);
+                              await _getLengthDataFromPda().then((value) {
+                                setState(() {
+                                  dataSource = productionSpecDataSource(
+                                      pda: pdalength,
+                                      server: itemProdSpec.length);
+                                });
                               });
-                            });
+                              EasyLoading.showSuccess("Success !");
+                            } else {
+                              EasyLoading.showError("Please Check Connection");
+                            }
                           },
                           child: Label(
                             "Download",
@@ -197,7 +209,8 @@ class productionSpecDataSource extends DataGridSource {
       cells: [
         DataGridCell<int>(columnName: 'server', value: server),
         DataGridCell<int>(columnName: 'pda', value: pda),
-        DataGridCell<int>(columnName: 'diff', value: server - pda),
+        DataGridCell<int>(
+            columnName: 'diff', value: server != 0 ? server - pda : 0),
       ],
     ));
   }

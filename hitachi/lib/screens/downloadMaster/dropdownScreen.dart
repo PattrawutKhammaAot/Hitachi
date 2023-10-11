@@ -78,10 +78,17 @@ class _DropdownScreenState extends State<DropdownScreen> {
                     pda: pdalength, server: itemCombo.length);
               });
             });
+
             setState(() {});
             EasyLoading.dismiss();
           } else if (state is ComboboxErrorState) {
-            EasyLoading.showError("${state.error}");
+            _getLengthDataFromPda().then((value) {
+              setState(() {
+                dataSource = dropdownDataSource(pda: pdalength, server: 0);
+              });
+            });
+            setState(() {});
+            EasyLoading.showError("Please Check Connection");
           }
         })
       ],
@@ -151,13 +158,18 @@ class _DropdownScreenState extends State<DropdownScreen> {
                               backgroundColor:
                                   MaterialStatePropertyAll(COLOR_BLUE_DARK)),
                           onPressed: () async {
-                            await _saveDropdownOnPda(itemCombo);
-                            await _getLengthDataFromPda().then((value) {
-                              setState(() {
-                                dataSource = dropdownDataSource(
-                                    pda: pdalength, server: itemCombo.length);
+                            if (itemCombo.isNotEmpty) {
+                              await _saveDropdownOnPda(itemCombo);
+                              await _getLengthDataFromPda().then((value) {
+                                setState(() {
+                                  dataSource = dropdownDataSource(
+                                      pda: pdalength, server: itemCombo.length);
+                                });
                               });
-                            });
+                              EasyLoading.showSuccess("Success !");
+                            } else {
+                              EasyLoading.showError("Check Connection");
+                            }
                           },
                           child: Label(
                             "Download",
@@ -180,7 +192,8 @@ class dropdownDataSource extends DataGridSource {
       cells: [
         DataGridCell<int>(columnName: 'server', value: server),
         DataGridCell<int>(columnName: 'pda', value: pda),
-        DataGridCell<int>(columnName: 'diff', value: server - pda),
+        DataGridCell<int>(
+            columnName: 'diff', value: server != 0 ? server - pda : 0),
       ],
     ));
   }
