@@ -169,7 +169,7 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
               EasyLoading.dismiss();
               _errorDialog(
                   isHideCancle: false,
-                  text: Label("${state.error ?? "Check Connection"}"),
+                  text: Label("Check Connection"),
                   onpressOk: () {
                     Navigator.pop(context);
                   });

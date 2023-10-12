@@ -109,4 +109,7 @@ class ApiConfig {
   //POST WindingRecord + Batch
   static String SEND_WINDING_RECORD =
       "${BASE_API_URL}LineElement/SendWindingRecord";
+  //POST Update
+  static String UPDATE_MATERIAL_TRACE =
+      "${BASE_API_URL}LineElement/UpdateMaterialTrace";
 }

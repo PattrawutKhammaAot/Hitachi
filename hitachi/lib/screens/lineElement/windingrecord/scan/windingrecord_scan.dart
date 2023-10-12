@@ -109,7 +109,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final FocusNode _nip_roll_press_FocusNode = FocusNode();
   ResponeseWindingRecordModel itemWindingRecord = ResponeseWindingRecordModel();
 
-  String isCheckConnection = '';
+  String isCheckConnection = 'Save';
 
   _getDataRecordFormPDA() async {
     try {

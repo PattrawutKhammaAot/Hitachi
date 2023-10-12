@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+
+import 'package:hitachi/blocs/bloc/update_material_trace_bloc.dart';
+
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
+import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/widget/custom_textinput.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
 class MaterialTraceScanScreen extends StatefulWidget {
-  const MaterialTraceScanScreen({super.key});
+  const MaterialTraceScanScreen({super.key, this.onChange});
+  final ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<MaterialTraceScanScreen> createState() =>
@@ -12,17 +24,735 @@ class MaterialTraceScanScreen extends StatefulWidget {
 }
 
 class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
+  MaterialTraceDataSource? datasoruce;
+  List<MaterialTraceDatagridModel> dataText = [];
+  List<MaterialTraceDatagridModel> dataTextGrid = [];
+
+  TextEditingController _operatorController = TextEditingController();
+  TextEditingController _batchController = TextEditingController();
+  TextEditingController _processController = TextEditingController();
+  TextEditingController _lotNoController = TextEditingController();
+  TextEditingController _lotSubController = TextEditingController();
+  TextEditingController _materialController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+
+  FocusNode _processFocus = FocusNode();
+  FocusNode _lotNoFocus = FocusNode();
+  FocusNode _operatorNameFocus = FocusNode();
+  FocusNode _batchFocus = FocusNode();
+  List<int> _index = [];
+  bool isCheckValue = false;
+  int id = 0;
+  DataGridRow? datagridRow;
+  Map<String, double> columnWidths = {
+    'no': double.nan,
+    'pro': double.nan,
+    'mat': double.nan,
+    'lot': double.nan,
+  };
+
+  @override
+  void initState() {
+    _getHold();
+    super.initState();
+  }
+
+  _setValueDataGrid() async {
+    id++;
+    dataText.add(MaterialTraceDatagridModel(
+        ID: id,
+        Pro: _processController.text.trim(),
+        Mat: _materialController.text.trim(),
+        Lot: _lotSubController.text.trim()));
+    setState(() {
+      datasoruce = MaterialTraceDataSource(dataText);
+    });
+  }
+
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await DatabaseHelper().queryAllRows('MATUPDATE');
+
+    setState(() {
+      widget.onChange?.call(sql);
+    });
+  }
+
+  Map<String, String> extractValues(String input, {String? type}) {
+    Map<String, String> values = {};
+
+    if (type == 'PI') {
+      int startIndex = input.indexOf('<');
+
+      if (startIndex >= 0 && 8 >= 0) {
+        String value = input.substring(startIndex, 8);
+        values['PI'] = value;
+      }
+
+      return values;
+    } else {
+      List<String> parts = input.split('<');
+
+      for (int i = 1; i < parts.length; i++) {
+        List<String> codeValue = parts[i].split('>');
+
+        if (codeValue.length == 2) {
+          String code = codeValue[0];
+          String value = codeValue[1];
+          values[code] = value; // Add code and value to the map
+        }
+      }
+      return values;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BgWhite(
-        isHideAppBar: true,
-        body: Column(
-          children: [
-            Container(
-              color: COLOR_SUCESS,
-              child: Label("SCAN"),
-            )
-          ],
-        ));
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<UpdateMaterialTraceBloc, UpdateMaterialTraceState>(
+            listener: (context, state) async {
+          if (state is UpdateMaterialTraceLoadingState) {
+            EasyLoading.show(status: "Loading ...");
+          } else if (state is UpdateMaterialTraceLoadedState) {
+            if (state.item.MESSAGE == "Success") {
+              await deletedInfo();
+              _operatorController.clear();
+              _batchController.clear();
+              _processController.clear();
+              _lotNoController.clear();
+              _processFocus.requestFocus();
+              EasyLoading.showSuccess("Send Success !");
+              isCheckValue = false;
+              setState(() {});
+            } else {
+              EasyLoading.showError("${state.item.MESSAGE}");
+            }
+            EasyLoading.dismiss();
+          } else if (state is UpdateMaterialTraceErrorState) {
+            EasyLoading.dismiss();
+            _errorDialog(
+                text: Label("Internet offline. Do you want to save ?"),
+                onpressOk: () async {
+                  try {
+                    List<MaterialTraceDatagridModel> itemsToRemove = [];
+                    for (var item in dataText) {
+                      if (_index.contains(item.ID)) {
+                        itemsToRemove.add(item);
+                        await DatabaseHelper().insertSqlite('MATUPDATE', {
+                          'Material': item.Mat,
+                          'Operator': _operatorController.text.trim(),
+                          'BATCH_NO': _batchController.text.trim(),
+                          'PROCESS': item.Pro,
+                          'Lot': item.Lot,
+                          'Date': DateTime.now().toString()
+                        });
+                      }
+                    }
+                    await _getHold();
+                    dataText
+                        .removeWhere((item) => itemsToRemove.contains(item));
+                    setState(() {
+                      _index.clear();
+                      datasoruce = MaterialTraceDataSource(dataText);
+                    });
+                    _operatorController.clear();
+                    _batchController.clear();
+                    _processController.clear();
+                    _lotNoController.clear();
+                    _processFocus.requestFocus();
+                    EasyLoading.showSuccess("Send Success !");
+                    isCheckValue = false;
+                    setState(() {});
+                    Navigator.pop(context);
+                  } catch (e, s) {
+                    print(e);
+                    print(s);
+                  }
+                });
+          }
+        })
+      ],
+      child: BgWhite(
+          isHideAppBar: true,
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        CustomTextInputField(
+                          controller: _processController,
+                          focusNode: _processFocus,
+                          isHideLable: true,
+                          labelText: "Machine/Process",
+                          maxLength: 3,
+                          onFieldSubmitted: (value) {
+                            if (value.length == 3) {
+                              _lotNoFocus.requestFocus();
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                focusNode: _lotNoFocus,
+                                controller: _lotNoController,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.done,
+                                maxLines: 4,
+                                onFieldSubmitted: (value) {
+                                  if (value.isNotEmpty) {
+                                    _lotNoController.text = value;
+                                    _lotNoFocus.requestFocus();
+                                    _lotNoController.selection = TextSelection(
+                                        baseOffset: 0,
+                                        extentOffset:
+                                            _lotNoController.text.length);
+
+                                    var mapMat = extractValues(value);
+                                    var mapLot =
+                                        extractValues(value, type: "PI");
+
+                                    _materialController.text =
+                                        mapMat['PI'] ?? "";
+                                    _lotSubController.text = mapLot['PI'] ?? "";
+                                    isCheckValue = true;
+                                  } else {
+                                    isCheckValue = false;
+                                  }
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  labelText: "Lot No",
+                                  labelStyle: TextStyle(color: COLOR_BLUE_DARK),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  datasoruce != null
+                      ? Container(
+                          height: dataText.length >= 3 ? 300 : 150,
+                          child: SfDataGrid(
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            source: datasoruce!,
+                            columnWidthMode: ColumnWidthMode.fill,
+                            allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            selectionMode: SelectionMode.multiple,
+                            showCheckboxColumn: true,
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                              });
+                              return true;
+                            },
+                            onSelectionChanged:
+                                (selectRow, deselectedRows) async {
+                              if (selectRow.isNotEmpty) {
+                                if (selectRow.length ==
+                                        datasoruce!.effectiveRows.length &&
+                                    selectRow.length > 1) {
+                                  setState(() {
+                                    selectRow.forEach((row) {
+                                      _index.add(int.tryParse(
+                                          row.getCells()[0].value.toString())!);
+                                    });
+                                  });
+                                  print("object");
+                                } else {
+                                  setState(() {
+                                    _index.add(int.tryParse(selectRow.first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                    datagridRow = selectRow.first;
+                                    dataTextGrid = datagridRow!
+                                        .getCells()
+                                        .map(
+                                          (e) => MaterialTraceDatagridModel(),
+                                        )
+                                        .toList();
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  if (deselectedRows.length > 1) {
+                                    _index.clear();
+                                  } else {
+                                    _index.remove(int.tryParse(deselectedRows
+                                        .first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                  }
+                                });
+                              }
+                            },
+                            columns: [
+                              GridColumn(
+                                width: columnWidths['no']!,
+                                columnName: 'no',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'No.',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['pro']!,
+                                columnName: 'pro',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Pro.',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['mat']!,
+                                columnName: 'mat',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Material',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['lot']!,
+                                columnName: 'lot',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Lot',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(COLOR_RED)),
+                            onPressed: () async {
+                              if (_index.isNotEmpty) {
+                                await deletedInfo();
+                              } else {
+                                EasyLoading.showError("Please Select Column");
+                              }
+                            },
+                            child: Label(
+                              "Delete Lot",
+                              color: COLOR_WHITE,
+                            )),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      COLOR_BLUE_DARK)),
+                              onPressed: () async {
+                                if (_index.isNotEmpty) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (buildContext) {
+                                        _operatorNameFocus.requestFocus();
+                                        return AlertDialog(
+                                          title: Label("Edit Material"),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              FutureBuilder(
+                                                future: Future.delayed(Duration
+                                                    .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                                                builder: (context, snapshot) {
+                                                  _operatorNameFocus
+                                                      .requestFocus();
+                                                  return SizedBox
+                                                      .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                                                },
+                                              ),
+                                              CustomTextInputField(
+                                                focusNode: _operatorNameFocus,
+                                                controller: _operatorController,
+                                                isHideLable: true,
+                                                labelText: "Operator Name",
+                                                maxLength: 10,
+                                                onFieldSubmitted: (value) {
+                                                  if (value.length == 10) {
+                                                    _batchFocus.requestFocus();
+                                                  }
+                                                },
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              CustomTextInputField(
+                                                focusNode: _batchFocus,
+                                                isHideLable: true,
+                                                labelText: "Batch/Serial",
+                                                controller: _batchController,
+                                                onFieldSubmitted:
+                                                    (value) async {
+                                                  await sendApi();
+                                                },
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStatePropertyAll(
+                                                                    COLOR_RED)),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Label(
+                                                          "Back",
+                                                          color: COLOR_WHITE,
+                                                        )),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStatePropertyAll(
+                                                                    COLOR_BLUE_DARK)),
+                                                        onPressed: () async =>
+                                                            await sendApi(),
+                                                        child: Label(
+                                                          "Send",
+                                                          color: COLOR_WHITE,
+                                                        )),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                } else {
+                                  EasyLoading.showError("Please SelectRow");
+                                }
+                              },
+                              child: Label(
+                                "Edit Material",
+                                color: COLOR_WHITE,
+                              )),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    isCheckValue ? COLOR_SUCESS : COLOR_GREY)),
+                            onPressed: () async {
+                              if (_lotNoController.text.isNotEmpty &&
+                                  _processController.text.isNotEmpty &&
+                                  _materialController.text.isNotEmpty &&
+                                  _lotSubController.text.isNotEmpty &&
+                                  _materialController.text != '') {
+                                await _setValueDataGrid();
+                              } else {
+                                EasyLoading.showError("Please Input Lot No");
+                              }
+                            },
+                            child: Label(
+                              "Save Lot",
+                              color: COLOR_WHITE,
+                            )),
+                      ],
+                    ),
+                  ),
+                  // Divider(
+                  //   thickness: 2,
+                  // ),
+                  // Row(
+                  //   children: [Label("- Edit Material -")],
+                  // ),
+                  // SizedBox(
+                  //   height: 15,
+                  // ),
+                  // CustomTextInputField(
+                  //   focusNode: _operatorNameFocus,
+                  //   controller: _operatorController,
+                  //   isHideLable: true,
+                  //   labelText: "Operator Name",
+                  //   maxLength: 10,
+                  //   onFieldSubmitted: (value) {
+                  //     if (value.length == 10) {
+                  //       _batchFocus.requestFocus();
+                  //     }
+                  //   },
+                  // ),
+                  // SizedBox(
+                  //   height: 15,
+                  // ),
+                  // CustomTextInputField(
+                  //   focusNode: _batchFocus,
+                  //   isHideLable: true,
+                  //   labelText: "Batch/Serial",
+                  //   controller: _batchController,
+                  // ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: ElevatedButton(
+                  //       style: ButtonStyle(
+                  //           backgroundColor:
+                  //               MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  //       onPressed: () async {
+                  //         if (_index.isNotEmpty &&
+                  //             _operatorController.text.isNotEmpty &&
+                  //             _materialController.text.isNotEmpty &&
+                  //             _batchController.text.isNotEmpty) {
+                  //           _index.forEach((element) {
+                  //             for (var item in dataText) {
+                  //               if (item.ID == element) {
+                  //                 BlocProvider.of<
+                  //                         UpdateMaterialTraceBloc>(context)
+                  //                     .add(PostUpdateMaterialTraceEvent(
+                  //                         MaterialTraceUpdateModel(
+                  //                             DATE: DateTime.now().toString(),
+                  //                             MATERIAL: item.Mat,
+                  //                             LOT: item.Lot,
+                  //                             PROCESS: item.Pro,
+                  //                             OPERATOR: _operatorController.text
+                  //                                 .trim(),
+                  //                             BATCH_NO: _batchController.text
+                  //                                 .trim())));
+                  //               }
+                  //             }
+                  //           });
+                  //         } else {
+                  //           if (_operatorController.text.isEmpty) {
+                  //             _operatorNameFocus.requestFocus();
+                  //           } else if (_batchController.text.isEmpty) {
+                  //             _batchFocus.requestFocus();
+                  //           } else if (_operatorController.text.isEmpty &&
+                  //               _operatorController.text.isEmpty) {
+                  //             _operatorNameFocus.requestFocus();
+                  //           } else if (_index.isEmpty) {
+                  //             EasyLoading.showError("Please Select Row");
+                  //           }
+                  //         }
+                  //       },
+                  //       child: Label(
+                  //         "Send",
+                  //         color: COLOR_WHITE,
+                  //       )),
+                  // )
+                ],
+              ),
+            ),
+          )),
+    );
   }
+
+  Future sendApi() async {
+    if (_index.isNotEmpty &&
+        _operatorController.text.isNotEmpty &&
+        _materialController.text.isNotEmpty &&
+        _batchController.text.isNotEmpty) {
+      _index.forEach((element) {
+        for (var item in dataText) {
+          if (item.ID == element) {
+            BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+                PostUpdateMaterialTraceEvent(MaterialTraceUpdateModel(
+                    DATE: DateTime.now().toString(),
+                    MATERIAL: item.Mat,
+                    LOT: item.Lot,
+                    PROCESS: item.Pro,
+                    OPERATOR: _operatorController.text.trim(),
+                    BATCH_NO: _batchController.text.trim())));
+            Navigator.pop(context);
+          }
+        }
+      });
+    } else {
+      if (_operatorController.text.isEmpty) {
+        _operatorNameFocus.requestFocus();
+      } else if (_batchController.text.isEmpty) {
+        _batchFocus.requestFocus();
+      } else if (_operatorController.text.isEmpty &&
+          _operatorController.text.isEmpty) {
+        _operatorNameFocus.requestFocus();
+      } else if (_index.isEmpty) {
+        EasyLoading.showError("Please Select Row");
+      } else {
+        print("object");
+      }
+    }
+  }
+
+  Future deletedInfo() async {
+    List<MaterialTraceDatagridModel> itemsToRemove = [];
+
+    _index.forEach((element) {
+      for (var item in dataText) {
+        if (item.ID == element) {
+          itemsToRemove.add(item);
+        }
+      }
+    });
+
+    // ลบข้อมูลจากรายการ dataText ด้วย itemsToRemove
+    for (var itemToRemove in itemsToRemove) {
+      dataText.remove(itemToRemove);
+    }
+
+    // อัปเดต dataSource หลังจากลบข้อมูล
+    setState(() {
+      _index.clear();
+      datasoruce = MaterialTraceDataSource(dataText);
+    });
+  }
+
+  void _errorDialog(
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class MaterialTraceDataSource extends DataGridSource {
+  MaterialTraceDataSource(List<MaterialTraceDatagridModel> items) {
+    for (var item in items) {
+      _employees.add(DataGridRow(
+        cells: [
+          DataGridCell<int>(columnName: 'no', value: item.ID),
+          DataGridCell<String>(columnName: 'pro', value: item.Pro),
+          DataGridCell<String>(columnName: 'mat', value: item.Mat),
+          DataGridCell<String>(columnName: 'lot', value: item.Lot),
+        ],
+      ));
+    }
+  }
+
+  List<DataGridRow> _employees = [];
+
+  @override
+  List<DataGridRow> get rows => _employees;
+
+  @override
+  DataGridRowAdapter? buildRow(DataGridRow row) {
+    return DataGridRowAdapter(
+      cells: row.getCells().map<Widget>(
+        (dataGridCell) {
+          return Container(
+            alignment: (dataGridCell.columnName == 'id' ||
+                    dataGridCell.columnName == 'qty')
+                ? Alignment.center
+                : Alignment.center,
+            child: Text(dataGridCell.value.toString()),
+          );
+        },
+      ).toList(),
+    );
+  }
+}
+
+class MaterialTraceDatagridModel {
+  const MaterialTraceDatagridModel(
+      {this.Lot, this.Mat, this.Pro, this.ID, this.isCheck});
+  final int? ID;
+  final String? Pro;
+  final String? Mat;
+  final String? Lot;
+  final bool? isCheck;
+  List<Object> get props => [ID!, Pro!, Mat!, Lot!];
 }

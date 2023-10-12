@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:hitachi/blocs/bloc/update_material_trace_bloc.dart';
 import 'package:hitachi/blocs/combobox/combobox_bloc.dart';
 import 'package:hitachi/blocs/connection/testconnection_bloc.dart';
 import 'package:hitachi/blocs/filmReceive/film_receive_bloc.dart';
@@ -78,6 +79,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProductionSpecBloc>(
           create: (_) => ProductionSpecBloc(),
+        ),
+        BlocProvider<UpdateMaterialTraceBloc>(
+          create: (_) => UpdateMaterialTraceBloc(),
         ),
         BlocProvider(create: (_) => NetworkBloc()..add(NetworkObserve())),
       ],

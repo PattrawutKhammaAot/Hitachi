@@ -82,6 +82,7 @@ class DatabaseHelper {
     _createWindingRecordLoadInPDA(db, newVersion);
     _create_Pda_IPE(db, newVersion);
     _createIPEPROD(db, newVersion);
+    _createMaterialTraceUpdate(db, newVersion);
   }
 
   Future<List<Map<String, dynamic>>> queryWindingRecodeFormPda(
@@ -122,7 +123,7 @@ class DatabaseHelper {
     Database db = await this.database;
 
     print("WriteData FucnTionInsertDataSheet ${row}");
-    return await db.insert('WINDING_RECORD_LOAD_PDA', row);
+    return await db.insert(tableName, row);
   }
 
   Future<int> insertSqlite(String tableName, Map<String, dynamic> row) async {
@@ -1238,6 +1239,17 @@ class DatabaseHelper {
         'S1 TEXT ,'
         'S2 TEXT ,'
         'IsActive BOOLEAN)');
+  }
+
+  void _createMaterialTraceUpdate(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE MATUPDATE ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'Material TEXT ,'
+        'Operator TEXT ,'
+        'BATCH_NO TEXT ,'
+        'PROCESS TEXT ,'
+        'Lot TEXT ,'
+        'Date TEXT )');
   }
 
   void _createZincThickness(Database db, int newVersion) async {

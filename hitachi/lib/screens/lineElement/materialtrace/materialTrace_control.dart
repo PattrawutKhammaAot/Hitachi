@@ -27,8 +27,20 @@ class _MaterialTraceControlState extends State<MaterialTraceControl> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgetOptions = [
-      MaterialTraceScanScreen(),
-      MaterialTraceHoldScreen()
+      MaterialTraceScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      ),
+      MaterialTraceHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      )
     ];
     return BgWhite(
       textTitle: Padding(
