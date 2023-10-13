@@ -21,7 +21,9 @@ import 'package:hitachi/services/databaseHelper.dart';
 import 'package:hitachi/widget/custom_textinput.dart';
 
 class WindingRecordScanScreen extends StatefulWidget {
-  const WindingRecordScanScreen({super.key});
+  const WindingRecordScanScreen({super.key, this.onChange});
+
+  final ValueChanged<List<Map<String, dynamic>>>? onChange;
 
   @override
   State<WindingRecordScanScreen> createState() =>
@@ -493,11 +495,21 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     )));
   }
 
+  Future _getHold() async {
+    List<Map<String, dynamic>> sql =
+        await DatabaseHelper().queryAllRows('WINDING_RECORD_SEND_SERVER');
+
+    setState(() {
+      widget.onChange?.call(sql.toList());
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     BlocProvider.of<TestconnectionBloc>(context)
         .add(Test_ConnectionOnWindingRecordEvent());
+    _getHold();
     super.initState();
   }
 
@@ -549,7 +561,6 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         BlocListener<TestconnectionBloc, TestconnectionState>(
           listener: (context, state) {
             if (state is TestconnectionWRDLoadingState) {
-              EasyLoading.show();
             } else if (state is TestconnectionWRDLoadedState) {
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
@@ -643,7 +654,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           controller: _startTime_Controller,
                           isHideLable: true,
                           labelText: "START TIME",
-                          readOnly: true,
+                          // readOnly: true,
                         ),
                       ),
                     ],
@@ -659,7 +670,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           controller: _finishTime_Controller,
                           isHideLable: true,
                           labelText: "Finish Time".toUpperCase(),
-                          readOnly: true,
+                          // readOnly: true,
                         ),
                       ),
                       SizedBox(
@@ -671,7 +682,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           controller: _ipeNo_Controller,
                           isHideLable: true,
                           labelText: "IPE No.".toUpperCase(),
-                          readOnly: true,
+                          // readOnly: true,
                         ),
                       ),
                     ],
@@ -1560,6 +1571,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           onPressed: () async {
                             if (isCheckConnection == 'Save') {
                               await _funcSave();
+                              await _getHold();
                             } else if (isCheckConnection == 'Send') {
                               _sendApi();
                             }

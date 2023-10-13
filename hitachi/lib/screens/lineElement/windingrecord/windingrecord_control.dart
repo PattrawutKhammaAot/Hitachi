@@ -27,8 +27,20 @@ class _WindingRecordControlState extends State<WindingRecordControl> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgetOptions = [
-      WindingRecordScanScreen(),
-      WindingRecordHoldScreen()
+      WindingRecordScanScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      ),
+      WindingRecordHoldScreen(
+        onChange: (value) {
+          setState(() {
+            listHoldProcessEnd = value;
+          });
+        },
+      )
       // ProcessFinishScanScreen(
       //   onChange: (value) {
       //     setState(() {
