@@ -172,6 +172,12 @@ class DatabaseHelper {
         .query('ZINCTHICKNESS_SHEET', where: 'Batch = ?', whereArgs: [batch]);
   }
 
+  Future<List<Map<String, dynamic>>> queryBatchTable(
+      String tableName, String batch) async {
+    Database db = await this.database;
+    return await db.query(tableName, where: 'Batch = ?', whereArgs: [batch]);
+  }
+
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
     Database db = await this.database;
     return await db.query(tableName);
@@ -1249,6 +1255,8 @@ class DatabaseHelper {
         'BATCH_NO TEXT ,'
         'PROCESS TEXT ,'
         'Lot TEXT ,'
+        'Ipeak TEXT ,'
+        'HighVolt TEXT,'
         'Date TEXT )');
   }
 

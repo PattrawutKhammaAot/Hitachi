@@ -35,6 +35,8 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   TextEditingController _lotSubController = TextEditingController();
   TextEditingController _materialController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _highVoltageController = TextEditingController();
+  TextEditingController _ipeakController = TextEditingController();
 
   FocusNode _processFocus = FocusNode();
   FocusNode _lotNoFocus = FocusNode();
@@ -67,6 +69,11 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
     setState(() {
       datasoruce = MaterialTraceDataSource(dataText);
     });
+  }
+
+  _serachInGetProd() async {
+    var batch = await DatabaseHelper()
+        .queryIPESHEET('IPE_SHEET', [_batchController.text]);
   }
 
   Future _getHold() async {
@@ -386,107 +393,107 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                         SizedBox(
                           width: 15,
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
-                                      COLOR_BLUE_DARK)),
-                              onPressed: () async {
-                                if (_index.isNotEmpty) {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (buildContext) {
-                                        _operatorNameFocus.requestFocus();
-                                        return AlertDialog(
-                                          title: Label("Edit Material"),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              FutureBuilder(
-                                                future: Future.delayed(Duration
-                                                    .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                                                builder: (context, snapshot) {
-                                                  _operatorNameFocus
-                                                      .requestFocus();
-                                                  return SizedBox
-                                                      .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                                                },
-                                              ),
-                                              CustomTextInputField(
-                                                focusNode: _operatorNameFocus,
-                                                controller: _operatorController,
-                                                isHideLable: true,
-                                                labelText: "Operator Name",
-                                                maxLength: 10,
-                                                onFieldSubmitted: (value) {
-                                                  if (value.length == 10) {
-                                                    _batchFocus.requestFocus();
-                                                  }
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              CustomTextInputField(
-                                                focusNode: _batchFocus,
-                                                isHideLable: true,
-                                                labelText: "Batch/Serial",
-                                                controller: _batchController,
-                                                onFieldSubmitted:
-                                                    (value) async {
-                                                  await sendApi();
-                                                },
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: ElevatedButton(
-                                                        style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStatePropertyAll(
-                                                                    COLOR_RED)),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Label(
-                                                          "Back",
-                                                          color: COLOR_WHITE,
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(
-                                                    child: ElevatedButton(
-                                                        style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStatePropertyAll(
-                                                                    COLOR_BLUE_DARK)),
-                                                        onPressed: () async =>
-                                                            await sendApi(),
-                                                        child: Label(
-                                                          "Send",
-                                                          color: COLOR_WHITE,
-                                                        )),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      });
-                                } else {
-                                  EasyLoading.showError("Please SelectRow");
-                                }
-                              },
-                              child: Label(
-                                "Edit Material",
-                                color: COLOR_WHITE,
-                              )),
-                        ),
+                        // Expanded(
+                        //   flex: 1,
+                        //   child: ElevatedButton(
+                        //       style: ButtonStyle(
+                        //           backgroundColor: MaterialStatePropertyAll(
+                        //               COLOR_BLUE_DARK)),
+                        //       onPressed: () async {
+                        //         if (_index.isNotEmpty) {
+                        //           showDialog(
+                        //               barrierDismissible: false,
+                        //               context: context,
+                        //               builder: (buildContext) {
+                        //                 _operatorNameFocus.requestFocus();
+                        //                 return AlertDialog(
+                        //                   title: Label("Edit Material"),
+                        //                   content: Column(
+                        //                     mainAxisSize: MainAxisSize.min,
+                        //                     children: [
+                        //                       FutureBuilder(
+                        //                         future: Future.delayed(Duration
+                        //                             .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                        //                         builder: (context, snapshot) {
+                        //                           _operatorNameFocus
+                        //                               .requestFocus();
+                        //                           return SizedBox
+                        //                               .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                        //                         },
+                        //                       ),
+                        //                       CustomTextInputField(
+                        //                         focusNode: _operatorNameFocus,
+                        //                         controller: _operatorController,
+                        //                         isHideLable: true,
+                        //                         labelText: "Operator Name",
+                        //                         maxLength: 10,
+                        //                         onFieldSubmitted: (value) {
+                        //                           if (value.length == 10) {
+                        //                             _batchFocus.requestFocus();
+                        //                           }
+                        //                         },
+                        //                       ),
+                        //                       SizedBox(
+                        //                         height: 15,
+                        //                       ),
+                        //                       CustomTextInputField(
+                        //                         focusNode: _batchFocus,
+                        //                         isHideLable: true,
+                        //                         labelText: "Batch/Serial",
+                        //                         controller: _batchController,
+                        //                         onFieldSubmitted:
+                        //                             (value) async {
+                        //                           await sendApi();
+                        //                         },
+                        //                       ),
+                        //                       Row(
+                        //                         children: [
+                        //                           Expanded(
+                        //                             child: ElevatedButton(
+                        //                                 style: ButtonStyle(
+                        //                                     backgroundColor:
+                        //                                         MaterialStatePropertyAll(
+                        //                                             COLOR_RED)),
+                        //                                 onPressed: () {
+                        //                                   Navigator.pop(
+                        //                                       context);
+                        //                                 },
+                        //                                 child: Label(
+                        //                                   "Back",
+                        //                                   color: COLOR_WHITE,
+                        //                                 )),
+                        //                           ),
+                        //                           SizedBox(
+                        //                             width: 10,
+                        //                           ),
+                        //                           Expanded(
+                        //                             child: ElevatedButton(
+                        //                                 style: ButtonStyle(
+                        //                                     backgroundColor:
+                        //                                         MaterialStatePropertyAll(
+                        //                                             COLOR_BLUE_DARK)),
+                        //                                 onPressed: () async =>
+                        //                                     await sendApi(),
+                        //                                 child: Label(
+                        //                                   "Send",
+                        //                                   color: COLOR_WHITE,
+                        //                                 )),
+                        //                           ),
+                        //                         ],
+                        //                       )
+                        //                     ],
+                        //                   ),
+                        //                 );
+                        //               });
+                        //         } else {
+                        //           EasyLoading.showError("Please SelectRow");
+                        //         }
+                        //       },
+                        //       child: Label(
+                        //         "Edit Material",
+                        //         color: COLOR_WHITE,
+                        //       )),
+                        // ),
                         SizedBox(
                           width: 15,
                         ),
@@ -512,83 +519,98 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                       ],
                     ),
                   ),
-                  // Divider(
-                  //   thickness: 2,
-                  // ),
-                  // Row(
-                  //   children: [Label("- Edit Material -")],
-                  // ),
-                  // SizedBox(
-                  //   height: 15,
-                  // ),
-                  // CustomTextInputField(
-                  //   focusNode: _operatorNameFocus,
-                  //   controller: _operatorController,
-                  //   isHideLable: true,
-                  //   labelText: "Operator Name",
-                  //   maxLength: 10,
-                  //   onFieldSubmitted: (value) {
-                  //     if (value.length == 10) {
-                  //       _batchFocus.requestFocus();
-                  //     }
-                  //   },
-                  // ),
-                  // SizedBox(
-                  //   height: 15,
-                  // ),
-                  // CustomTextInputField(
-                  //   focusNode: _batchFocus,
-                  //   isHideLable: true,
-                  //   labelText: "Batch/Serial",
-                  //   controller: _batchController,
-                  // ),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: ElevatedButton(
-                  //       style: ButtonStyle(
-                  //           backgroundColor:
-                  //               MaterialStatePropertyAll(COLOR_BLUE_DARK)),
-                  //       onPressed: () async {
-                  //         if (_index.isNotEmpty &&
-                  //             _operatorController.text.isNotEmpty &&
-                  //             _materialController.text.isNotEmpty &&
-                  //             _batchController.text.isNotEmpty) {
-                  //           _index.forEach((element) {
-                  //             for (var item in dataText) {
-                  //               if (item.ID == element) {
-                  //                 BlocProvider.of<
-                  //                         UpdateMaterialTraceBloc>(context)
-                  //                     .add(PostUpdateMaterialTraceEvent(
-                  //                         MaterialTraceUpdateModel(
-                  //                             DATE: DateTime.now().toString(),
-                  //                             MATERIAL: item.Mat,
-                  //                             LOT: item.Lot,
-                  //                             PROCESS: item.Pro,
-                  //                             OPERATOR: _operatorController.text
-                  //                                 .trim(),
-                  //                             BATCH_NO: _batchController.text
-                  //                                 .trim())));
-                  //               }
-                  //             }
-                  //           });
-                  //         } else {
-                  //           if (_operatorController.text.isEmpty) {
-                  //             _operatorNameFocus.requestFocus();
-                  //           } else if (_batchController.text.isEmpty) {
-                  //             _batchFocus.requestFocus();
-                  //           } else if (_operatorController.text.isEmpty &&
-                  //               _operatorController.text.isEmpty) {
-                  //             _operatorNameFocus.requestFocus();
-                  //           } else if (_index.isEmpty) {
-                  //             EasyLoading.showError("Please Select Row");
-                  //           }
-                  //         }
-                  //       },
-                  //       child: Label(
-                  //         "Send",
-                  //         color: COLOR_WHITE,
-                  //       )),
-                  // )
+                  _index.isNotEmpty
+                      ? Column(
+                          children: [
+                            Divider(
+                              thickness: 2,
+                            ),
+                            Row(
+                              children: [Label("- Edit Material -")],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomTextInputField(
+                              focusNode: _operatorNameFocus,
+                              controller: _operatorController,
+                              isHideLable: true,
+                              labelText: "Operator Name",
+                              maxLength: 10,
+                              onFieldSubmitted: (value) {
+                                if (value.length == 10) {
+                                  _batchFocus.requestFocus();
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomTextInputField(
+                              focusNode: _batchFocus,
+                              isHideLable: true,
+                              labelText: "Batch/Serial",
+                              controller: _batchController,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor: MaterialStatePropertyAll(
+                                          COLOR_BLUE_DARK)),
+                                  onPressed: () async {
+                                    if (_index.isNotEmpty &&
+                                        _operatorController.text.isNotEmpty &&
+                                        _materialController.text.isNotEmpty &&
+                                        _batchController.text.isNotEmpty) {
+                                      _index.forEach((element) {
+                                        for (var item in dataText) {
+                                          if (item.ID == element) {
+                                            BlocProvider.of<
+                                                        UpdateMaterialTraceBloc>(
+                                                    context)
+                                                .add(PostUpdateMaterialTraceEvent(
+                                                    MaterialTraceUpdateModel(
+                                                        DATE: DateTime.now()
+                                                            .toString(),
+                                                        MATERIAL: item.Mat,
+                                                        LOT: item.Lot,
+                                                        PROCESS: item.Pro,
+                                                        OPERATOR:
+                                                            _operatorController
+                                                                .text
+                                                                .trim(),
+                                                        BATCH_NO:
+                                                            _batchController
+                                                                .text
+                                                                .trim())));
+                                          }
+                                        }
+                                      });
+                                    } else {
+                                      if (_operatorController.text.isEmpty) {
+                                        _operatorNameFocus.requestFocus();
+                                      } else if (_batchController
+                                          .text.isEmpty) {
+                                        _batchFocus.requestFocus();
+                                      } else if (_operatorController
+                                              .text.isEmpty &&
+                                          _operatorController.text.isEmpty) {
+                                        _operatorNameFocus.requestFocus();
+                                      } else if (_index.isEmpty) {
+                                        EasyLoading.showError(
+                                            "Please Select Row");
+                                      }
+                                    }
+                                  },
+                                  child: Label(
+                                    "Send",
+                                    color: COLOR_WHITE,
+                                  )),
+                            )
+                          ],
+                        )
+                      : SizedBox.shrink()
                 ],
               ),
             ),

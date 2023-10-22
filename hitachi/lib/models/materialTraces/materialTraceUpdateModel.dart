@@ -1,12 +1,15 @@
 class MaterialTraceUpdateModel {
-  const MaterialTraceUpdateModel(
-      {this.MATERIAL,
-      this.OPERATOR,
-      this.BATCH_NO,
-      this.PROCESS,
-      this.LOT,
-      this.DATE,
-      this.ID});
+  const MaterialTraceUpdateModel({
+    this.MATERIAL,
+    this.OPERATOR,
+    this.BATCH_NO,
+    this.PROCESS,
+    this.LOT,
+    this.DATE,
+    this.ID,
+    this.I_PEAK,
+    this.HIGH_VOLT,
+  });
   final int? ID;
   final String? MATERIAL;
   final String? OPERATOR;
@@ -14,6 +17,8 @@ class MaterialTraceUpdateModel {
   final String? PROCESS;
   final String? LOT;
   final String? DATE;
+  final String? I_PEAK;
+  final String? HIGH_VOLT;
 
   List<Object> get props => [
         MATERIAL!,
@@ -23,6 +28,8 @@ class MaterialTraceUpdateModel {
         LOT!,
         DATE!,
         ID!,
+        I_PEAK!,
+        HIGH_VOLT!
       ];
 
   static MaterialTraceUpdateModel fromJson(dynamic json) {
@@ -34,6 +41,8 @@ class MaterialTraceUpdateModel {
       PROCESS: json['PROCESS'],
       LOT: json['Lot'],
       DATE: json['Date'],
+      I_PEAK: json['Ipeak'],
+      HIGH_VOLT: json['HighVolt'],
     );
   }
 
@@ -44,16 +53,19 @@ class MaterialTraceUpdateModel {
         PROCESS = map['PROCESS'],
         LOT = map['Lot'],
         DATE = map['Date'],
+        I_PEAK = map['Ipeak'],
+        HIGH_VOLT = map['HighVolt'],
         ID = map['ID'];
 
-  MaterialTraceUpdateModel copyWith({
-    String? MATERIAL,
-    String? MACHINENO,
-    int? OPERATORNAME,
-    String? BATCHNO,
-    String? LOT,
-    String? STARTDATE,
-  }) {
+  MaterialTraceUpdateModel copyWith(
+      {String? MATERIAL,
+      String? MACHINENO,
+      int? OPERATORNAME,
+      String? BATCHNO,
+      String? LOT,
+      String? STARTDATE,
+      String? I_PEAK,
+      String? HIGH_VOLT}) {
     return MaterialTraceUpdateModel(
       MATERIAL: MATERIAL ?? this.MATERIAL,
       OPERATOR: OPERATOR ?? this.OPERATOR,
@@ -61,6 +73,8 @@ class MaterialTraceUpdateModel {
       PROCESS: PROCESS ?? this.PROCESS,
       LOT: LOT ?? this.LOT,
       DATE: DATE ?? this.DATE,
+      I_PEAK: I_PEAK ?? this.I_PEAK,
+      HIGH_VOLT: HIGH_VOLT ?? this.HIGH_VOLT,
     );
   }
 
@@ -72,5 +86,7 @@ class MaterialTraceUpdateModel {
         'PROCESS': PROCESS,
         'Lot': LOT,
         'Date': DATE,
+        'Ipeak': I_PEAK,
+        'HighVolt': HIGH_VOLT
       };
 }
