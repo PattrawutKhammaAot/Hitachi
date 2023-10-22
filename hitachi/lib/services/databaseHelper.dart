@@ -203,7 +203,7 @@ class DatabaseHelper {
       List<String> whereArgs) async {
     Database db = await this.database;
     return await db.query('PRODSPEC',
-        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        where: 'IPE IN (${whereArgs.map((_) => '?').join(',')})',
         whereArgs: whereArgs);
   }
 

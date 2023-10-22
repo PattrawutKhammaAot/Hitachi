@@ -59,6 +59,8 @@ class _MaterialTraceHoldScreenState extends State<MaterialTraceHoldScreen> {
     'pro': double.nan,
     'lot': double.nan,
     'date': double.nan,
+    'ipeak': double.nan,
+    'hv': double.nan,
   };
 
   Future<List<MaterialTraceUpdateModel>> _getTreatMentSheet() async {
@@ -310,6 +312,27 @@ class _MaterialTraceHoldScreenState extends State<MaterialTraceHoldScreen> {
                                   ),
                                 ),
                               ),
+                              GridColumn(
+                                width: columnWidths['ipeak']!,
+                                columnName: 'ipeak',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('IPEAK', color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['hv']!,
+                                columnName: 'hv',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('HighVoltage',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -375,6 +398,20 @@ class _MaterialTraceHoldScreenState extends State<MaterialTraceHoldScreen> {
                                     fontSize: 14,
                                   ))
                                 ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("IPEAK"))),
+                                  DataCell(Label(
+                                    "${tmList.where((element) => element.ID == _index.first).first.I_PEAK}",
+                                    fontSize: 14,
+                                  ))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(Center(child: Label("HIGHVOLT"))),
+                                  DataCell(Label(
+                                    "${tmList.where((element) => element.ID == _index.first).first.HIGH_VOLT}",
+                                    fontSize: 14,
+                                  ))
+                                ]),
                               ],
                             );
                           }),
@@ -430,7 +467,9 @@ class _MaterialTraceHoldScreenState extends State<MaterialTraceHoldScreen> {
               LOT: row.LOT,
               PROCESS: row.PROCESS,
               OPERATOR: row.OPERATOR,
-              BATCH_NO: row.BATCH_NO)));
+              BATCH_NO: row.BATCH_NO,
+              I_PEAK: row.I_PEAK,
+              HIGH_VOLT: row.HIGH_VOLT)));
     });
   }
 
@@ -503,6 +542,8 @@ class TreatMentStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'pro', value: _item.PROCESS),
               DataGridCell<String>(columnName: 'lot', value: _item.LOT),
               DataGridCell<String>(columnName: 'date', value: _item.DATE),
+              DataGridCell<String>(columnName: 'ipeak', value: _item.I_PEAK),
+              DataGridCell<String>(columnName: 'hv', value: _item.HIGH_VOLT),
             ],
           ),
         );

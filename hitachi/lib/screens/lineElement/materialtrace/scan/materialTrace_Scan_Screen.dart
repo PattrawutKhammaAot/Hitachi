@@ -38,6 +38,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   TextEditingController _dateController = TextEditingController();
   TextEditingController _highVoltageController = TextEditingController();
   TextEditingController _ipeakController = TextEditingController();
+  TextEditingController _ipeController = TextEditingController();
 
   FocusNode _processFocus = FocusNode();
   FocusNode _lotNoFocus = FocusNode();
@@ -73,8 +74,25 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   }
 
   _serachInGetProd() async {
+    print(_batchController.text);
     var batch = await DatabaseHelper()
         .queryIPESHEET('IPE_SHEET', [_batchController.text]);
+    if (batch.isNotEmpty) {
+      for (var item in batch) {
+        _ipeController.text = item['IPE_NO'];
+      }
+    }
+    if (_ipeController.text.isNotEmpty) {
+      var itemInProd =
+          await DatabaseHelper().queryPRODSPEC([_ipeController.text]);
+      if (itemInProd.isNotEmpty) {
+        for (var item in itemInProd) {
+          _highVoltageController.text = item['HighVolt'];
+          _ipeakController.text = item['Ipeak'];
+        }
+      }
+    }
+    setState(() {});
   }
 
   Future _getHold() async {
@@ -172,7 +190,9 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                           'BATCH_NO': _batchController.text.trim(),
                           'PROCESS': item.Pro,
                           'Lot': item.Lot,
-                          'Date': DateTime.now().toString()
+                          'Date': DateTime.now().toString(),
+                          'Ipeak': _ipeakController.text,
+                          'HighVolt': _highVoltageController.text,
                         });
                       }
                     }
@@ -400,129 +420,133 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                         SizedBox(
                           width: 15,
                         ),
-                        // Expanded(
-                        //   flex: 1,
-                        //   child: ElevatedButton(
-                        //       style: ButtonStyle(
-                        //           backgroundColor: MaterialStatePropertyAll(
-                        //               COLOR_BLUE_DARK)),
-                        //       onPressed: () async {
-                        //         if (_index.isNotEmpty) {
-                        //           showDialog(
-                        //               barrierDismissible: false,
-                        //               context: context,
-                        //               builder: (buildContext) {
-                        //                 _operatorNameFocus.requestFocus();
-                        //                 return AlertDialog(
-                        //                   title: Label("Edit Material"),
-                        //                   content: Column(
-                        //                     mainAxisSize: MainAxisSize.min,
-                        //                     children: [
-                        //                       FutureBuilder(
-                        //                         future: Future.delayed(Duration
-                        //                             .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                        //                         builder: (context, snapshot) {
-                        //                           _operatorNameFocus
-                        //                               .requestFocus();
-                        //                           return SizedBox
-                        //                               .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                        //                         },
-                        //                       ),
-                        //                       CustomTextInputField(
-                        //                         focusNode: _operatorNameFocus,
-                        //                         controller: _operatorController,
-                        //                         isHideLable: true,
-                        //                         labelText: "Operator Name",
-                        //                         maxLength: 10,
-                        //                         onFieldSubmitted: (value) {
-                        //                           if (value.length == 10) {
-                        //                             _batchFocus.requestFocus();
-                        //                           }
-                        //                         },
-                        //                       ),
-                        //                       SizedBox(
-                        //                         height: 15,
-                        //                       ),
-                        //                       CustomTextInputField(
-                        //                         focusNode: _batchFocus,
-                        //                         isHideLable: true,
-                        //                         labelText: "Batch/Serial",
-                        //                         controller: _batchController,
-                        //                         onFieldSubmitted:
-                        //                             (value) async {
-                        //                           await sendApi();
-                        //                         },
-                        //                       ),
-                        //                       Row(
-                        //                         children: [
-                        //                           Expanded(
-                        //                             child: ElevatedButton(
-                        //                                 style: ButtonStyle(
-                        //                                     backgroundColor:
-                        //                                         MaterialStatePropertyAll(
-                        //                                             COLOR_RED)),
-                        //                                 onPressed: () {
-                        //                                   Navigator.pop(
-                        //                                       context);
-                        //                                 },
-                        //                                 child: Label(
-                        //                                   "Back",
-                        //                                   color: COLOR_WHITE,
-                        //                                 )),
-                        //                           ),
-                        //                           SizedBox(
-                        //                             width: 10,
-                        //                           ),
-                        //                           Expanded(
-                        //                             child: ElevatedButton(
-                        //                                 style: ButtonStyle(
-                        //                                     backgroundColor:
-                        //                                         MaterialStatePropertyAll(
-                        //                                             COLOR_BLUE_DARK)),
-                        //                                 onPressed: () async =>
-                        //                                     await sendApi(),
-                        //                                 child: Label(
-                        //                                   "Send",
-                        //                                   color: COLOR_WHITE,
-                        //                                 )),
-                        //                           ),
-                        //                         ],
-                        //                       )
-                        //                     ],
-                        //                   ),
-                        //                 );
-                        //               });
-                        //         } else {
-                        //           EasyLoading.showError("Please SelectRow");
-                        //         }
-                        //       },
-                        //       child: Label(
-                        //         "Edit Material",
-                        //         color: COLOR_WHITE,
-                        //       )),
-                        // ),
+                        Expanded(
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      COLOR_BLUE_DARK)),
+                              onPressed: () async {
+                                if (_index.isNotEmpty) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (buildContext) {
+                                        _operatorNameFocus.requestFocus();
+                                        return AlertDialog(
+                                          title: Label("Edit Material"),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              FutureBuilder(
+                                                future: Future.delayed(Duration
+                                                    .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                                                builder: (context, snapshot) {
+                                                  _operatorNameFocus
+                                                      .requestFocus();
+                                                  return SizedBox
+                                                      .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                                                },
+                                              ),
+                                              CustomTextInputField(
+                                                focusNode: _operatorNameFocus,
+                                                controller: _operatorController,
+                                                isHideLable: true,
+                                                labelText: "Operator Name",
+                                                maxLength: 10,
+                                                onFieldSubmitted: (value) {
+                                                  if (value.length == 10) {
+                                                    _batchFocus.requestFocus();
+                                                  }
+                                                },
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              CustomTextInputField(
+                                                focusNode: _batchFocus,
+                                                isHideLable: true,
+                                                labelText: "Batch/Serial",
+                                                controller: _batchController,
+                                                onFieldSubmitted:
+                                                    (value) async {
+                                                  await sendApi();
+                                                },
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStatePropertyAll(
+                                                                    COLOR_RED)),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Label(
+                                                          "Back",
+                                                          color: COLOR_WHITE,
+                                                        )),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStatePropertyAll(
+                                                                    COLOR_BLUE_DARK)),
+                                                        onPressed: () async =>
+                                                            await sendApi(),
+                                                        child: Label(
+                                                          "Send",
+                                                          color: COLOR_WHITE,
+                                                        )),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                } else {
+                                  EasyLoading.showError("Please SelectRow");
+                                }
+                              },
+                              child: Label(
+                                "Edit Mat",
+                                color: COLOR_WHITE,
+                                textAlign: TextAlign.center,
+                              )),
+                        ),
                         SizedBox(
                           width: 15,
                         ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
-                                    isCheckValue ? COLOR_SUCESS : COLOR_GREY)),
-                            onPressed: () async {
-                              if (_lotNoController.text.isNotEmpty &&
-                                  _processController.text.isNotEmpty &&
-                                  _materialController.text.isNotEmpty &&
-                                  _lotSubController.text.isNotEmpty &&
-                                  _materialController.text != '') {
-                                await _setValueDataGrid();
-                              } else {
-                                EasyLoading.showError("Please Input Lot No");
-                              }
-                            },
-                            child: Label(
-                              "Save Lot",
-                              color: COLOR_WHITE,
-                            )),
+                        Expanded(
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      isCheckValue
+                                          ? COLOR_SUCESS
+                                          : COLOR_GREY)),
+                              onPressed: () async {
+                                if (_lotNoController.text.isNotEmpty &&
+                                    _processController.text.isNotEmpty &&
+                                    _materialController.text.isNotEmpty &&
+                                    _lotSubController.text.isNotEmpty &&
+                                    _materialController.text != '') {
+                                  await _setValueDataGrid();
+                                } else {
+                                  EasyLoading.showError("Please Input Lot No");
+                                }
+                              },
+                              child: Label(
+                                "Save Lot",
+                                color: COLOR_WHITE,
+                              )),
+                        ),
                       ],
                     ),
                   ),
@@ -558,6 +582,9 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                               isHideLable: true,
                               labelText: "Batch/Serial",
                               controller: _batchController,
+                              onFieldSubmitted: (value) async {
+                                await _serachInGetProd();
+                              },
                             ),
                             Align(
                               alignment: Alignment.centerRight,
@@ -566,49 +593,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                       backgroundColor: MaterialStatePropertyAll(
                                           COLOR_BLUE_DARK)),
                                   onPressed: () async {
-                                    if (_index.isNotEmpty &&
-                                        _operatorController.text.isNotEmpty &&
-                                        _materialController.text.isNotEmpty &&
-                                        _batchController.text.isNotEmpty) {
-                                      _index.forEach((element) {
-                                        for (var item in dataText) {
-                                          if (item.ID == element) {
-                                            BlocProvider.of<
-                                                        UpdateMaterialTraceBloc>(
-                                                    context)
-                                                .add(PostUpdateMaterialTraceEvent(
-                                                    MaterialTraceUpdateModel(
-                                                        DATE: DateTime.now()
-                                                            .toString(),
-                                                        MATERIAL: item.Mat,
-                                                        LOT: item.Lot,
-                                                        PROCESS: item.Pro,
-                                                        OPERATOR:
-                                                            _operatorController
-                                                                .text
-                                                                .trim(),
-                                                        BATCH_NO:
-                                                            _batchController
-                                                                .text
-                                                                .trim())));
-                                          }
-                                        }
-                                      });
-                                    } else {
-                                      if (_operatorController.text.isEmpty) {
-                                        _operatorNameFocus.requestFocus();
-                                      } else if (_batchController
-                                          .text.isEmpty) {
-                                        _batchFocus.requestFocus();
-                                      } else if (_operatorController
-                                              .text.isEmpty &&
-                                          _operatorController.text.isEmpty) {
-                                        _operatorNameFocus.requestFocus();
-                                      } else if (_index.isEmpty) {
-                                        EasyLoading.showError(
-                                            "Please Select Row");
-                                      }
-                                    }
+                                    sendApi();
                                   },
                                   child: Label(
                                     "Send",
@@ -630,6 +615,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
         _operatorController.text.isNotEmpty &&
         _materialController.text.isNotEmpty &&
         _batchController.text.isNotEmpty) {
+      await _serachInGetProd();
       _index.forEach((element) {
         for (var item in dataText) {
           if (item.ID == element) {
@@ -639,9 +625,10 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                     MATERIAL: item.Mat,
                     LOT: item.Lot,
                     PROCESS: item.Pro,
+                    I_PEAK: _ipeController.text,
+                    HIGH_VOLT: _highVoltageController.text,
                     OPERATOR: _operatorController.text.trim(),
                     BATCH_NO: _batchController.text.trim())));
-            Navigator.pop(context);
           }
         }
       });
