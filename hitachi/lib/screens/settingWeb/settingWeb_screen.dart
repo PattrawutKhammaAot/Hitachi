@@ -129,6 +129,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
                             setState(() {
                               BASE_API_URL = TEMP_API_URL;
                               pre.setString("API", BASE_API_URL);
+                              BASE_API_URL = pre.getString("API").toString();
                             });
 
                             // print(saveStringToSharedPreferences(BASE_API_URL));

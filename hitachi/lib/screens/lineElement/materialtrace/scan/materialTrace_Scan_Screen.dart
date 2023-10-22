@@ -550,59 +550,59 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                       ],
                     ),
                   ),
-                  _index.isNotEmpty
-                      ? Column(
-                          children: [
-                            Divider(
-                              thickness: 2,
-                            ),
-                            Row(
-                              children: [Label("- Edit Material -")],
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomTextInputField(
-                              focusNode: _operatorNameFocus,
-                              controller: _operatorController,
-                              isHideLable: true,
-                              labelText: "Operator Name",
-                              maxLength: 10,
-                              onFieldSubmitted: (value) {
-                                if (value.length == 10) {
-                                  _batchFocus.requestFocus();
-                                }
-                              },
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomTextInputField(
-                              focusNode: _batchFocus,
-                              isHideLable: true,
-                              labelText: "Batch/Serial",
-                              controller: _batchController,
-                              onFieldSubmitted: (value) async {
-                                await _serachInGetProd();
-                              },
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(
-                                          COLOR_BLUE_DARK)),
-                                  onPressed: () async {
-                                    sendApi();
-                                  },
-                                  child: Label(
-                                    "Send",
-                                    color: COLOR_WHITE,
-                                  )),
-                            )
-                          ],
-                        )
-                      : SizedBox.shrink()
+                  // _index.isNotEmpty
+                  //     ? Column(
+                  //         children: [
+                  //           Divider(
+                  //             thickness: 2,
+                  //           ),
+                  //           Row(
+                  //             children: [Label("- Edit Material -")],
+                  //           ),
+                  //           SizedBox(
+                  //             height: 15,
+                  //           ),
+                  //           CustomTextInputField(
+                  //             focusNode: _operatorNameFocus,
+                  //             controller: _operatorController,
+                  //             isHideLable: true,
+                  //             labelText: "Operator Name",
+                  //             maxLength: 10,
+                  //             onFieldSubmitted: (value) {
+                  //               if (value.length == 10) {
+                  //                 _batchFocus.requestFocus();
+                  //               }
+                  //             },
+                  //           ),
+                  //           SizedBox(
+                  //             height: 15,
+                  //           ),
+                  //           CustomTextInputField(
+                  //             focusNode: _batchFocus,
+                  //             isHideLable: true,
+                  //             labelText: "Batch/Serial",
+                  //             controller: _batchController,
+                  //             onFieldSubmitted: (value) async {
+                  //               await _serachInGetProd();
+                  //             },
+                  //           ),
+                  //           Align(
+                  //             alignment: Alignment.centerRight,
+                  //             child: ElevatedButton(
+                  //                 style: ButtonStyle(
+                  //                     backgroundColor: MaterialStatePropertyAll(
+                  //                         COLOR_BLUE_DARK)),
+                  //                 onPressed: () async {
+                  //                   sendApi();
+                  //                 },
+                  //                 child: Label(
+                  //                   "Send",
+                  //                   color: COLOR_WHITE,
+                  //                 )),
+                  //           )
+                  //         ],
+                  //       )
+                  //     : SizedBox.shrink()
                 ],
               ),
             ),
