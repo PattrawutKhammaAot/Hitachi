@@ -41,13 +41,14 @@ class ComboboxBloc extends Bloc<ComboboxEvent, ComboboxState> {
     );
   }
   Future<List<ComboBoxModel>> fetchCombobox() async {
+    print(ApiConfig.GET_COMBOBOX);
     try {
       Response responese = await dio.get(
         ApiConfig.GET_COMBOBOX,
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 10),
+            receiveTimeout: Duration(seconds: 10)),
       );
 
       List<ComboBoxModel> comboBoxList = (responese.data['Combobox'] as List)

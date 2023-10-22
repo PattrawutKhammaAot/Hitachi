@@ -58,8 +58,8 @@ class TestconnectionBloc
         TEMP_API_URL + 'Connection/TestConnection',
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 3),
-            receiveTimeout: Duration(seconds: 3)),
+            sendTimeout: Duration(seconds: 15),
+            receiveTimeout: Duration(seconds: 15)),
       );
 
       ResponeDefault items = ResponeDefault.fromJson(responese.data);

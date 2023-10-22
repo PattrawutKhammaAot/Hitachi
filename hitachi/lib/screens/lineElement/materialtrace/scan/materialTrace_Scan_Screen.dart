@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -113,6 +114,25 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
     }
   }
 
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.enter) {
+        if (_lotNoController.text.isNotEmpty) {
+          var mapMat = extractValues(_lotNoController.text);
+          var mapLot = extractValues(_lotNoController.text, type: "PI");
+
+          _materialController.text = mapMat['PI'] ?? "";
+          _lotSubController.text = mapLot['PI'] ?? "";
+          isCheckValue = true;
+        } else {
+          isCheckValue = false;
+        }
+        setState(() {});
+        _lotNoFocus.requestFocus();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -211,41 +231,29 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
+                                child: RawKeyboardListener(
+                              focusNode: FocusNode(),
+                              onKey: _handleKeyEvent,
                               child: TextFormField(
                                 focusNode: _lotNoFocus,
                                 controller: _lotNoController,
                                 keyboardType: TextInputType.multiline,
                                 textInputAction: TextInputAction.done,
+                                minLines: 1,
                                 maxLines: 4,
-                                onFieldSubmitted: (value) {
-                                  if (value.isNotEmpty) {
-                                    _lotNoController.text = value;
-                                    _lotNoFocus.requestFocus();
-                                    _lotNoController.selection = TextSelection(
-                                        baseOffset: 0,
-                                        extentOffset:
-                                            _lotNoController.text.length);
-
-                                    var mapMat = extractValues(value);
-                                    var mapLot =
-                                        extractValues(value, type: "PI");
-
-                                    _materialController.text =
-                                        mapMat['PI'] ?? "";
-                                    _lotSubController.text = mapLot['PI'] ?? "";
-                                    isCheckValue = true;
-                                  } else {
-                                    isCheckValue = false;
-                                  }
-                                  setState(() {});
-                                },
                                 decoration: InputDecoration(
                                   labelText: "Lot No",
                                   labelStyle: TextStyle(color: COLOR_BLUE_DARK),
                                   border: OutlineInputBorder(),
                                 ),
+                                onTap: () {
+                                  _lotNoController.selection = TextSelection(
+                                      baseOffset: 0,
+                                      extentOffset:
+                                          _lotNoController.text.length);
+                                },
                               ),
-                            )
+                            ))
                           ],
                         ),
                       ],
@@ -284,7 +292,6 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                           row.getCells()[0].value.toString())!);
                                     });
                                   });
-                                  print("object");
                                 } else {
                                   setState(() {
                                     _index.add(int.tryParse(selectRow.first
@@ -648,9 +655,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
         _operatorNameFocus.requestFocus();
       } else if (_index.isEmpty) {
         EasyLoading.showError("Please Select Row");
-      } else {
-        print("object");
-      }
+      } else {}
     }
   }
 
