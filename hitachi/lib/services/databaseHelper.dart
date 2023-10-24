@@ -119,6 +119,14 @@ class DatabaseHelper {
         whereArgs: whereArgs);
   }
 
+  Future<int> deleteMaterialDB(String tableName, List<String> whereArgs) async {
+    Database db = await this.database;
+
+    return await db.delete(tableName,
+        where: 'BatchNo IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
   Future<int> insert(String tableName, Map<String, dynamic> row) async {
     Database db = await this.database;
 

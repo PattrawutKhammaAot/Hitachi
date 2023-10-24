@@ -10,6 +10,7 @@ import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
+import 'package:hitachi/services/databaseHelper.dart';
 
 part 'update_material_trace_event.dart';
 part 'update_material_trace_state.dart';
@@ -50,9 +51,13 @@ class UpdateMaterialTraceBloc
       Response responese = await dio.post(ApiConfig.UPDATE_MATERIAL_TRACE,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 3)),
+              sendTimeout: Duration(seconds: 5),
+              receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(item.toJson()));
+      if (responese.statusCode == 200) {
+        await DatabaseHelper()
+            .deleteMaterialDB('IPE_SHEET', [item.BATCH_NO.toString()]);
+      }
 
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
 

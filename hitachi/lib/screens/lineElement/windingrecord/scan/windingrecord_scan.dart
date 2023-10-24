@@ -510,6 +510,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     BlocProvider.of<TestconnectionBloc>(context)
         .add(Test_ConnectionOnWindingRecordEvent());
     _getHold();
+    _batch_FocusNode.requestFocus();
     super.initState();
   }
 

@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
-import 'package:hitachi/blocs/bloc/update_material_trace_bloc.dart';
-
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
@@ -14,6 +12,8 @@ import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:hitachi/widget/custom_textinput.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../../../../blocs/materialTrace/update_material_trace_bloc.dart';
 
 class MaterialTraceScanScreen extends StatefulWidget {
   const MaterialTraceScanScreen({super.key, this.onChange});
@@ -46,6 +46,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   FocusNode _batchFocus = FocusNode();
   List<int> _index = [];
   bool isCheckValue = false;
+
   int id = 0;
   DataGridRow? datagridRow;
   Map<String, double> columnWidths = {
@@ -59,6 +60,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   void initState() {
     _getHold();
     super.initState();
+    _processFocus.requestFocus();
   }
 
   _setValueDataGrid() async {
@@ -77,6 +79,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
     print(_batchController.text);
     var batch = await DatabaseHelper()
         .queryIPESHEET('IPE_SHEET', [_batchController.text]);
+    print(batch);
     if (batch.isNotEmpty) {
       for (var item in batch) {
         _ipeController.text = item['IPE_NO'];
@@ -85,6 +88,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
     if (_ipeController.text.isNotEmpty) {
       var itemInProd =
           await DatabaseHelper().queryPRODSPEC([_ipeController.text]);
+      print(itemInProd);
       if (itemInProd.isNotEmpty) {
         for (var item in itemInProd) {
           _highVoltageController.text = item['HighVolt'];
@@ -142,11 +146,14 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
           _materialController.text = mapMat['PI'] ?? "";
           _lotSubController.text = mapLot['PI'] ?? "";
           isCheckValue = true;
+          Future.delayed(Duration(seconds: 1), () {
+            _lotNoController.selection = TextSelection(
+                baseOffset: 0, extentOffset: _lotNoController.text.length);
+          });
         } else {
           isCheckValue = false;
         }
         setState(() {});
-        _lotNoFocus.requestFocus();
       }
     }
   }
@@ -166,10 +173,14 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
               _batchController.clear();
               _processController.clear();
               _lotNoController.clear();
+              _ipeakController.clear();
+              _ipeController.clear();
+              _highVoltageController.clear();
               _processFocus.requestFocus();
               EasyLoading.showSuccess("Send Success !");
               isCheckValue = false;
               setState(() {});
+              Navigator.pop(context);
             } else {
               EasyLoading.showError("${state.item.MESSAGE}");
             }
@@ -212,6 +223,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                     isCheckValue = false;
                     setState(() {});
                     Navigator.pop(context);
+                    Navigator.pop(context);
                   } catch (e, s) {
                     print(e);
                     print(s);
@@ -252,13 +264,12 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                           children: [
                             Expanded(
                                 child: RawKeyboardListener(
-                              focusNode: FocusNode(),
                               onKey: _handleKeyEvent,
+                              focusNode: FocusNode(),
                               child: TextFormField(
+                                textInputAction: TextInputAction.done,
                                 focusNode: _lotNoFocus,
                                 controller: _lotNoController,
-                                keyboardType: TextInputType.multiline,
-                                textInputAction: TextInputAction.done,
                                 minLines: 1,
                                 maxLines: 4,
                                 decoration: InputDecoration(
@@ -266,12 +277,6 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                   labelStyle: TextStyle(color: COLOR_BLUE_DARK),
                                   border: OutlineInputBorder(),
                                 ),
-                                onTap: () {
-                                  _lotNoController.selection = TextSelection(
-                                      baseOffset: 0,
-                                      extentOffset:
-                                          _lotNoController.text.length);
-                                },
                               ),
                             ))
                           ],
@@ -279,125 +284,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                       ],
                     ),
                   ),
-                  datasoruce != null
-                      ? Container(
-                          height: dataText.length >= 3 ? 300 : 150,
-                          child: SfDataGrid(
-                            gridLinesVisibility: GridLinesVisibility.both,
-                            headerGridLinesVisibility: GridLinesVisibility.both,
-                            source: datasoruce!,
-                            columnWidthMode: ColumnWidthMode.fill,
-                            allowPullToRefresh: true,
-                            allowColumnsResizing: true,
-                            selectionMode: SelectionMode.multiple,
-                            showCheckboxColumn: true,
-                            columnResizeMode: ColumnResizeMode.onResizeEnd,
-                            onColumnResizeUpdate:
-                                (ColumnResizeUpdateDetails details) {
-                              setState(() {
-                                columnWidths[details.column.columnName] =
-                                    details.width;
-                              });
-                              return true;
-                            },
-                            onSelectionChanged:
-                                (selectRow, deselectedRows) async {
-                              if (selectRow.isNotEmpty) {
-                                if (selectRow.length ==
-                                        datasoruce!.effectiveRows.length &&
-                                    selectRow.length > 1) {
-                                  setState(() {
-                                    selectRow.forEach((row) {
-                                      _index.add(int.tryParse(
-                                          row.getCells()[0].value.toString())!);
-                                    });
-                                  });
-                                } else {
-                                  setState(() {
-                                    _index.add(int.tryParse(selectRow.first
-                                        .getCells()[0]
-                                        .value
-                                        .toString())!);
-                                    datagridRow = selectRow.first;
-                                    dataTextGrid = datagridRow!
-                                        .getCells()
-                                        .map(
-                                          (e) => MaterialTraceDatagridModel(),
-                                        )
-                                        .toList();
-                                  });
-                                }
-                              } else {
-                                setState(() {
-                                  if (deselectedRows.length > 1) {
-                                    _index.clear();
-                                  } else {
-                                    _index.remove(int.tryParse(deselectedRows
-                                        .first
-                                        .getCells()[0]
-                                        .value
-                                        .toString())!);
-                                  }
-                                });
-                              }
-                            },
-                            columns: [
-                              GridColumn(
-                                width: columnWidths['no']!,
-                                columnName: 'no',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'No.',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['pro']!,
-                                columnName: 'pro',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Pro.',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['mat']!,
-                                columnName: 'mat',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Material',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['lot']!,
-                                columnName: 'lot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Lot',
-                                      color: COLOR_WHITE,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SizedBox.shrink(),
+
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -550,6 +437,125 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                       ],
                     ),
                   ),
+                  datasoruce != null
+                      ? Container(
+                          height: dataText.length >= 3 ? 300 : 150,
+                          child: SfDataGrid(
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            source: datasoruce!,
+                            columnWidthMode: ColumnWidthMode.fill,
+                            allowPullToRefresh: true,
+                            allowColumnsResizing: true,
+                            selectionMode: SelectionMode.multiple,
+                            showCheckboxColumn: true,
+                            columnResizeMode: ColumnResizeMode.onResizeEnd,
+                            onColumnResizeUpdate:
+                                (ColumnResizeUpdateDetails details) {
+                              setState(() {
+                                columnWidths[details.column.columnName] =
+                                    details.width;
+                              });
+                              return true;
+                            },
+                            onSelectionChanged:
+                                (selectRow, deselectedRows) async {
+                              if (selectRow.isNotEmpty) {
+                                if (selectRow.length ==
+                                        datasoruce!.effectiveRows.length &&
+                                    selectRow.length > 1) {
+                                  setState(() {
+                                    selectRow.forEach((row) {
+                                      _index.add(int.tryParse(
+                                          row.getCells()[0].value.toString())!);
+                                    });
+                                  });
+                                } else {
+                                  setState(() {
+                                    _index.add(int.tryParse(selectRow.first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                    datagridRow = selectRow.first;
+                                    dataTextGrid = datagridRow!
+                                        .getCells()
+                                        .map(
+                                          (e) => MaterialTraceDatagridModel(),
+                                        )
+                                        .toList();
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  if (deselectedRows.length > 1) {
+                                    _index.clear();
+                                  } else {
+                                    _index.remove(int.tryParse(deselectedRows
+                                        .first
+                                        .getCells()[0]
+                                        .value
+                                        .toString())!);
+                                  }
+                                });
+                              }
+                            },
+                            columns: [
+                              GridColumn(
+                                width: columnWidths['no']!,
+                                columnName: 'no',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'No.',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['pro']!,
+                                columnName: 'pro',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Pro.',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['mat']!,
+                                columnName: 'mat',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Material',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
+                                width: columnWidths['lot']!,
+                                columnName: 'lot',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label(
+                                      'Lot',
+                                      color: COLOR_WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox.shrink(),
                   // _index.isNotEmpty
                   //     ? Column(
                   //         children: [
@@ -625,7 +631,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                     MATERIAL: item.Mat,
                     LOT: item.Lot,
                     PROCESS: item.Pro,
-                    I_PEAK: _ipeController.text,
+                    I_PEAK: _ipeakController.text,
                     HIGH_VOLT: _highVoltageController.text,
                     OPERATOR: _operatorController.text.trim(),
                     BATCH_NO: _batchController.text.trim())));
