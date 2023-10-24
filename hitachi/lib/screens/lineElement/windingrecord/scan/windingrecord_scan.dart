@@ -581,7 +581,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         BlocListener<WindingrecordBloc, WindingrecordState>(
             listener: (context, state) async {
           if (state is SendWindingRecordLoadingState) {
-            EasyLoading.show(status: "Loading Data ...");
+            EasyLoading.show(status: "Loading ...");
           } else if (state is SendWindingRecordLoadedState) {
             if (state.item.RESULT == true) {
               await DatabaseHelper().deleteRecordDB(
@@ -599,7 +599,16 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               _batch_FocusNode.requestFocus();
             }
           } else if (state is SendWindingRecordErrorState) {
-            EasyLoading.showError(state.error);
+            EasyLoading.showError("Please Check Connection");
+            // _errorDialog(
+            //     text: Label(
+            //         "Please Check Connection Internet \n Do you want to save data"),
+            //     onpressOk: () async {
+            //       await _funcSave();
+            //       await _getHold();
+
+            //       Navigator.pop(context);
+            //     });
           }
         }),
       ],
@@ -1597,6 +1606,59 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  void _errorDialog(
+      {Label? text,
+      Function? onpressOk,
+      Function? onpressCancel,
+      bool isHideCancle = true}) async {
+    // EasyLoading.showError("Error[03]", duration: Duration(seconds: 5));//if password
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        // title: const Text('AlertDialog Title'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: text,
+            ),
+          ],
+        ),
+
+        actions: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Visibility(
+                visible: isHideCancle,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              Visibility(
+                visible: isHideCancle,
+                child: SizedBox(
+                  width: 15,
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
+                onPressed: () => onpressOk?.call(),
+                child: const Text('OK'),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
