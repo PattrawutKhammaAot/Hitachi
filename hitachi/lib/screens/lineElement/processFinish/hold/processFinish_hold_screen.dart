@@ -587,11 +587,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
       if (row.MACHINE?.substring(0, 2).toUpperCase() == "SD") {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-            BATCHNO: row.BATCH_NO.toString(),
-          )),
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+              BATCHNO: row.BATCH_NO.toString(),
+              FINISHDATE: row.FINDATE)),
         );
 
         ///
@@ -607,11 +607,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
       } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "ZN") {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-            BATCHNO: row.BATCH_NO.toString(),
-          )),
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+              BATCHNO: row.BATCH_NO.toString(),
+              FINISHDATE: row.FINDATE)),
         );
 
         ///
@@ -626,11 +626,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
       } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "CR") {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-            BATCHNO: row.BATCH_NO.toString(),
-          )),
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+              BATCHNO: row.BATCH_NO.toString(),
+              FINISHDATE: row.FINDATE)),
         );
 
         ///
@@ -645,11 +645,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
       } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "PU") {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-            BATCHNO: row.BATCH_NO.toString(),
-          )),
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+              BATCHNO: row.BATCH_NO.toString(),
+              FINISHDATE: row.FINDATE)),
         );
         ////
         BlocProvider.of<LineElementBloc>(context).add(
@@ -662,11 +662,11 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
       } else {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-            BATCHNO: row.BATCH_NO.toString(),
-          )),
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+              BATCHNO: row.BATCH_NO.toString(),
+              FINISHDATE: row.FINDATE)),
         );
       }
     });
