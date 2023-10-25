@@ -260,3 +260,26 @@ class MaterialLoadDataErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  ProcessCheck State
+class ProcessCheckLoadingState extends LineElementState {
+  const ProcessCheckLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class ProcessCheckLoadedState extends LineElementState {
+  const ProcessCheckLoadedState(this.item);
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class ProcessCheckErrorState extends LineElementState {
+  const ProcessCheckErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

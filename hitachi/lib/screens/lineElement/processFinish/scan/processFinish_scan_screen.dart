@@ -14,6 +14,7 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/combobox/comboboxModel.dart';
 import 'package:hitachi/models/combobox/comboboxSqliteModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/services/databaseHelper.dart';
@@ -40,6 +41,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final TextEditingController _zinckController = TextEditingController();
   final TextEditingController _visualControlController =
       TextEditingController();
+  final TextEditingController _clearing_visualControlController =
+      TextEditingController();
   final TextEditingController _clearingVoltageController =
       TextEditingController();
   final TextEditingController _missingRatioController = TextEditingController();
@@ -49,6 +52,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   Color? bgChange;
   bool _checkSendSqlite = false;
   List<ComboboxSqliteModel> combolist = [];
+  List<ComboboxSqliteModel> combolistForSD = [];
 
   final f1 = FocusNode();
   final f2 = FocusNode();
@@ -84,10 +88,10 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           listener: (context, state) {
             if (state is ProcessFinishLoadingState) {
               EasyLoading.show(status: "Loading...");
-              print("loading");
+
+              print("isCallSendFinish");
             }
             if (state is ProcessFinishLoadedState) {
-              print("Loaded");
               EasyLoading.dismiss();
               // EasyLoading.show(status: "Loaded");
 
@@ -123,6 +127,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                       });
                     });
               } else {
+                print("Error Connection Internet");
                 EasyLoading.dismiss();
                 _errorDialog(
                     text: Label(
@@ -152,6 +157,36 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                     await _getProcessStart();
                     await _getHold();
                   });
+            }
+            if (state is ProcessCheckLoadingState) {
+              print("isCallProcessCheck");
+              // EasyLoading.show(status: "Loading ...");
+            } else if (state is ProcessCheckLoadedState) {
+              // if (state.item.RESULT == true) {
+              //   f1.requestFocus();
+              //   _clearAllData();
+              //   setState(() {
+              //     rejectQtyController.text = '0';
+              //   });
+              // } else {
+              //   EasyLoading.showError(state.item.MESSAGE ?? "Exception");
+              // }
+            } else if (state is ProcessCheckErrorState) {
+              EasyLoading.dismiss();
+              // _errorDialog(
+              //     text: Label("CheckConnection\n Do you want to Save"),
+              //     onpressOk: () async {
+              //       Navigator.pop(context);
+              //       await _getProcessStart();
+              //       machineNoController.clear();
+              //       operatorNameController.clear();
+              //       batchNoController.clear();
+              //       await _getHold();
+              //       setState(() {
+              //         rejectQtyController.text = '0';
+              //       });
+              //       f1.requestFocus();
+              //     });
             }
           },
         )
@@ -355,6 +390,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   Future _getDropdownList(String type) async {
     if (type == 'ZN') {
       combolist.clear();
+      combolistForSD.clear();
       var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
 
       var zincSql =
@@ -382,6 +418,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       }
     } else if (type == "CR") {
       combolist.clear();
+      combolistForSD.clear();
       var sql = await DatabaseHelper()
           .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
 
@@ -390,14 +427,21 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       }
     } else if (type == 'SD') {
       combolist.clear();
-      var sql = await DatabaseHelper()
-          .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
-      print(sql.length);
-      if (sql.isNotEmpty) {
-        combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
+      combolistForSD.clear();
+      var sqlClearing =
+          await DatabaseHelper().queryDropdown(['Clearing_Voltage']);
+      var sqlVisual =
+          await DatabaseHelper().queryDropdown(['Visual_Inspection']);
+      print(sqlClearing.length);
+      if (sqlClearing.isNotEmpty) {
+        combolist =
+            sqlClearing.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
+        combolistForSD =
+            sqlVisual.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
       }
     } else if (type == 'PU') {
       combolist.clear();
+      combolistForSD.clear();
       var sql = await DatabaseHelper().queryDropdown(['Visual_Inspection']);
       if (sql.isNotEmpty) {
         combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
@@ -528,6 +572,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                     MaterialStatePropertyAll(COLOR_RED)),
                             onPressed: () {
                               _zinckController.clear();
+                              _clearDataNew();
                               Navigator.pop(context);
                             },
                             child: Label(
@@ -539,8 +584,32 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 backgroundColor:
                                     MaterialStatePropertyAll(COLOR_SUCESS)),
                             onPressed: () {
+                              BlocProvider.of<LineElementBloc>(context).add(
+                                ProcessCheckEvent(ProcessCheckModel(
+                                  BATCH_NO: batchNoController.text,
+                                  IPE_NO: null,
+                                  MC_NO: machineNoController.text,
+                                  ZN_Thickness:
+                                      num.tryParse(_zinckController.text),
+                                  ZN_VC: _visualControlController.text,
+                                  CR_VC: null,
+                                  CR_Voltage: null,
+                                  SD_VC: null,
+                                  TM_Curve: null,
+                                  TM_Time: null,
+                                  PU_Ratio: null,
+                                  PU_Level: null,
+                                  HV_Peak_Current: null,
+                                  HV_HighVolt: null,
+                                  ME_C_AVG: null,
+                                  ME_TGD_AVG: null,
+                                  ME_Batch: null,
+                                  ME_Serial: null,
+                                  ME_Appearance: null,
+                                  ME_Quality_Check: null,
+                                )),
+                              );
                               _callAPI();
-
                               Navigator.pop(context);
                             },
                             child: Label("OK", color: COLOR_WHITE))
@@ -702,6 +771,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                     MaterialStatePropertyAll(COLOR_RED)),
                             onPressed: () {
                               _zinckController.clear();
+                              _clearDataNew();
                               Navigator.pop(context);
                             },
                             child: Label(
@@ -715,6 +785,31 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                             onPressed: () {
                               if (_clearingVoltageController.text.isNotEmpty ||
                                   _clearingVoltageController.text != '') {
+                                BlocProvider.of<LineElementBloc>(context).add(
+                                  ProcessCheckEvent(ProcessCheckModel(
+                                    BATCH_NO: batchNoController.text,
+                                    IPE_NO: null,
+                                    MC_NO: machineNoController.text,
+                                    ZN_Thickness: null,
+                                    ZN_VC: null,
+                                    CR_VC: _visualControlController.text,
+                                    CR_Voltage: int.tryParse(
+                                        _clearingVoltageController.text),
+                                    SD_VC: null,
+                                    TM_Curve: null,
+                                    TM_Time: null,
+                                    PU_Ratio: null,
+                                    PU_Level: null,
+                                    HV_Peak_Current: null,
+                                    HV_HighVolt: null,
+                                    ME_C_AVG: null,
+                                    ME_TGD_AVG: null,
+                                    ME_Batch: null,
+                                    ME_Serial: null,
+                                    ME_Appearance: null,
+                                    ME_Quality_Check: null,
+                                  )),
+                                );
                                 _callAPI();
                                 Navigator.pop(context);
                               } else {
@@ -735,12 +830,21 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
           case 'SD':
             await _getDropdownList('SD');
             if (combolist.isNotEmpty) {
+              _visualControlController.text = combolistForSD
+                      .firstWhere((element) => element.VALUEMEMBER == 'G')
+                      .VALUEMEMBER ??
+                  "G";
+
+              _clearing_visualControlController.text = combolistForSD
+                      .firstWhere((element) => element.VALUEMEMBER == 'G')
+                      .VALUEMEMBER ??
+                  "G";
               showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Label('Solder'),
+                      title: Label('Clearing'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -752,6 +856,64 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                               return SizedBox
                                   .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
                             },
+                          ),
+                          SizedBox(
+                            height: 45,
+                            child: DropdownButtonFormField2(
+                              value: combolistForSD.isNotEmpty
+                                  ? combolistForSD
+                                          .firstWhere((element) =>
+                                              element.VALUEMEMBER == 'G')
+                                          .VALUEMEMBER ??
+                                      "G"
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: "Visual Control",
+                                contentPadding: EdgeInsets.zero,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              isExpanded: true,
+                              items: combolistForSD
+                                  .toList()
+                                  .map((item) => DropdownMenuItem<String>(
+                                        value: item.VALUEMEMBER,
+                                        child: Text(
+                                          "${item.VALUEMEMBER}",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                _clearing_visualControlController.text =
+                                    value ?? "G";
+                              },
+                              onSaved: (value) {
+                                print(value);
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                height: 50,
+                                padding: EdgeInsets.only(left: 20, right: 10),
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
                           ),
                           SizedBox(
                             height: 45,
@@ -804,11 +966,22 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                           SizedBox(
                             height: 15,
                           ),
+                          Row(
+                            children: [
+                              Label(
+                                "Solder",
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
                           SizedBox(
                             height: 45,
                             child: DropdownButtonFormField2(
-                              value: combolist.isNotEmpty
-                                  ? combolist
+                              value: combolistForSD.isNotEmpty
+                                  ? combolistForSD
                                           .firstWhere((element) =>
                                               element.VALUEMEMBER == 'G')
                                           .VALUEMEMBER ??
@@ -822,7 +995,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 ),
                               ),
                               isExpanded: true,
-                              items: combolist
+                              items: combolistForSD
                                   .toList()
                                   .map((item) => DropdownMenuItem<String>(
                                         value: item.VALUEMEMBER,
@@ -870,6 +1043,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                     MaterialStatePropertyAll(COLOR_RED)),
                             onPressed: () {
                               _zinckController.clear();
+                              _clearDataNew();
                               Navigator.pop(context);
                             },
                             child: Label(
@@ -881,8 +1055,32 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 backgroundColor:
                                     MaterialStatePropertyAll(COLOR_SUCESS)),
                             onPressed: () {
+                              BlocProvider.of<LineElementBloc>(context).add(
+                                ProcessCheckEvent(ProcessCheckModel(
+                                  BATCH_NO: batchNoController.text,
+                                  IPE_NO: null,
+                                  MC_NO: machineNoController.text,
+                                  ZN_Thickness: null,
+                                  ZN_VC: null,
+                                  CR_VC: _clearing_visualControlController.text,
+                                  CR_Voltage: int.tryParse(
+                                      _clearingVoltageController.text),
+                                  SD_VC: _visualControlController.text,
+                                  TM_Curve: null,
+                                  TM_Time: null,
+                                  PU_Ratio: null,
+                                  PU_Level: null,
+                                  HV_Peak_Current: null,
+                                  HV_HighVolt: null,
+                                  ME_C_AVG: null,
+                                  ME_TGD_AVG: null,
+                                  ME_Batch: null,
+                                  ME_Serial: null,
+                                  ME_Appearance: null,
+                                  ME_Quality_Check: null,
+                                )),
+                              );
                               _callAPI();
-
                               Navigator.pop(context);
                             },
                             child: Label("OK", color: COLOR_WHITE))
@@ -1010,6 +1208,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                     MaterialStatePropertyAll(COLOR_RED)),
                             onPressed: () {
                               _zinckController.clear();
+                              _clearDataNew();
                               Navigator.pop(context);
                             },
                             child: Label(
@@ -1021,6 +1220,30 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 backgroundColor:
                                     MaterialStatePropertyAll(COLOR_SUCESS)),
                             onPressed: () {
+                              BlocProvider.of<LineElementBloc>(context).add(
+                                ProcessCheckEvent(ProcessCheckModel(
+                                  BATCH_NO: batchNoController.text,
+                                  IPE_NO: null,
+                                  MC_NO: machineNoController.text,
+                                  ZN_Thickness: null,
+                                  ZN_VC: null,
+                                  CR_VC: null,
+                                  CR_Voltage: null,
+                                  SD_VC: null,
+                                  TM_Curve: null,
+                                  TM_Time: null,
+                                  PU_Ratio: _missingRatioController.text,
+                                  PU_Level: _filingLevelController.text,
+                                  HV_Peak_Current: null,
+                                  HV_HighVolt: null,
+                                  ME_C_AVG: null,
+                                  ME_TGD_AVG: null,
+                                  ME_Batch: null,
+                                  ME_Serial: null,
+                                  ME_Appearance: null,
+                                  ME_Quality_Check: null,
+                                )),
+                              );
                               _callAPI();
 
                               Navigator.pop(context);
@@ -1059,11 +1282,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         BATCHNO: batchNoController.text.trim(),
         REJECTQTY: int.tryParse(rejectQtyController.text.trim()),
         FINISHDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-        ZINCK_THICKNESS: _zinckController.text.trim(),
-        VISUAL_CONTROL: _visualControlController.text.trim(),
-        CLEARING_VOLTAGE: _clearingVoltageController.text.trim(),
-        MISSING_RATIO: _missingRatioController.text.trim(),
-        FILING_LEVEL: _filingLevelController.text.trim(),
       )),
     );
   }
@@ -1079,6 +1297,20 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       _clearingVoltageController.clear();
       _missingRatioController.clear();
       _filingLevelController.clear();
+      _clearing_visualControlController.clear();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _clearDataNew() async {
+    try {
+      _zinckController.clear();
+      _visualControlController.clear();
+      _clearingVoltageController.clear();
+      _missingRatioController.clear();
+      _filingLevelController.clear();
+      _clearing_visualControlController.clear();
     } catch (e) {
       print(e);
     }
@@ -1221,6 +1453,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'FinDate': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         'StartEnd': StartEndValue.toString(),
         'ZinckThickness': _zinckController.text.trim(),
+        'visualControl_v': _clearing_visualControlController.text.trim(),
         'visualControl': _visualControlController.text.trim(),
         'clearingVoltage': _clearingVoltageController.text.trim(),
         'MissingRatio': _missingRatioController.text.trim(),

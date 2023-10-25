@@ -18,6 +18,7 @@ class ProcessModel {
       this.CLEARING_VOLTAGE,
       this.HVT,
       this.MISSING_RATIO,
+      this.VISUAL_CONTROL_CLEAR,
       this.FILING_LEVEL});
   final int? ID;
   final String? MACHINE;
@@ -38,6 +39,7 @@ class ProcessModel {
   final String? CLEARING_VOLTAGE;
   final String? MISSING_RATIO;
   final String? FILING_LEVEL;
+  final String? VISUAL_CONTROL_CLEAR;
 
   List<Object> get props => [
         ID!,
@@ -59,6 +61,7 @@ class ProcessModel {
         CLEARING_VOLTAGE!,
         MISSING_RATIO!,
         FILING_LEVEL!,
+        VISUAL_CONTROL_CLEAR!,
       ];
   ProcessModel.fromMap(Map<String, dynamic> map)
       : ID = map['ID'],
@@ -79,5 +82,6 @@ class ProcessModel {
         CLEARING_VOLTAGE = map['clearingVoltage'],
         HVT = map['HighVoltageTest'],
         MISSING_RATIO = map['MissingRatio'],
+        VISUAL_CONTROL_CLEAR = map['visualControl_v'],
         FILING_LEVEL = map['FilingLevel'];
 }

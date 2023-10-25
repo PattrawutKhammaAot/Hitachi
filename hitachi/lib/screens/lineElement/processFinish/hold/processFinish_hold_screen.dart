@@ -9,6 +9,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
@@ -52,6 +53,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     'zinc': double.nan,
     'visual': double.nan,
     'clearing': double.nan,
+    'clearing_v': double.nan,
     'missing': double.nan,
     'filing': double.nan,
   };
@@ -174,6 +176,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
                 if (state is ProcessFinishLoadingState) {
+                  print('isCallSendFinish');
                   EasyLoading.show(status: "Loading...");
                 } else if (state is ProcessFinishLoadedState) {
                   EasyLoading.dismiss();
@@ -201,6 +204,28 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                       onpressOk: () async {
                         Navigator.pop(context);
                       });
+                }
+                if (state is ProcessCheckLoadingState) {
+                  print('isCallCheck');
+                  // EasyLoading.show(status: "Loading ...");
+                } else if (state is ProcessCheckLoadedState) {
+                  // if (state.item.RESULT == true) {
+                  //   await deletedInfo();
+                  //   await _refreshPage();
+                  //   await _getHold();
+                  //   EasyLoading.showSuccess("Send complete",
+                  //       duration: Duration(seconds: 3));
+                  // } else {
+                  //   EasyLoading.showError(state.item.MESSAGE ?? "Exception");
+                  // }
+                } else if (state is ProcessCheckErrorState) {
+                  // EasyLoading.dismiss();
+                  // _errorDialog(
+                  //     isHideCancle: false,
+                  //     text: Label("Check Connection"),
+                  //     onpressOk: () {
+                  //       Navigator.pop(context);
+                  //     });
                 }
               },
             )
@@ -362,6 +387,17 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ),
                               ),
                               GridColumn(
+                                width: columnWidths['clearing_v']!,
+                                columnName: 'clearing_v',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                    child: Label('Clearing Visual Control',
+                                        color: COLOR_WHITE),
+                                  ),
+                                ),
+                              ),
+                              GridColumn(
                                 width: columnWidths['clearing']!,
                                 columnName: 'clearing',
                                 label: Container(
@@ -472,6 +508,12 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                       "${processList.where((element) => element.ID == _index.first).first.VISUAL_CONTROL}"))
                                 ]),
                                 DataRow(cells: [
+                                  DataCell(Center(
+                                      child: Label("Clearing_VisualControl"))),
+                                  DataCell(Label(
+                                      "${processList.where((element) => element.ID == _index.first).first.VISUAL_CONTROL_CLEAR}"))
+                                ]),
+                                DataRow(cells: [
                                   DataCell(Center(child: Label("Clearing"))),
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.CLEARING_VOLTAGE}"))
@@ -542,21 +584,91 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   _sendDataServer() {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
+      if (row.MACHINE?.substring(0, 2).toUpperCase() == "SD") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessFinishInputEvent(ProcessFinishOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+            BATCHNO: row.BATCH_NO.toString(),
+          )),
+        );
 
-      BlocProvider.of<LineElementBloc>(context).add(
-        ProcessFinishInputEvent(ProcessFinishOutputModel(
-          MACHINE: row.MACHINE,
-          OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-          REJECTQTY: int.tryParse(row.GARBAGE.toString()),
-          BATCHNO: row.BATCH_NO.toString(),
-          ZINCK_THICKNESS: row.ZINCK_THICKNESS.toString(),
-          VISUAL_CONTROL: row.VISUAL_CONTROL.toString(),
-          CLEARING_VOLTAGE: row.CLEARING_VOLTAGE.toString(),
-          MISSING_RATIO: row.MISSING_RATIO.toString(),
-          FILING_LEVEL: row.FILING_LEVEL.toString(),
-          FINISHDATE: row.FINDATE.toString(),
-        )),
-      );
+        ///
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: row.BATCH_NO,
+            MC_NO: row.MACHINE,
+            CR_VC: row.VISUAL_CONTROL_CLEAR,
+            CR_Voltage: int.tryParse(row.CLEARING_VOLTAGE ?? "0"),
+            SD_VC: row.VISUAL_CONTROL,
+          )),
+        );
+      } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "ZN") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessFinishInputEvent(ProcessFinishOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+            BATCHNO: row.BATCH_NO.toString(),
+          )),
+        );
+
+        ///
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: row.BATCH_NO,
+            MC_NO: row.MACHINE,
+            ZN_Thickness: num.tryParse(row.ZINCK_THICKNESS ?? "0"),
+            ZN_VC: row.VISUAL_CONTROL,
+          )),
+        );
+      } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "CR") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessFinishInputEvent(ProcessFinishOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+            BATCHNO: row.BATCH_NO.toString(),
+          )),
+        );
+
+        ///
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: row.BATCH_NO,
+            MC_NO: row.MACHINE,
+            CR_VC: row.VISUAL_CONTROL,
+            CR_Voltage: int.tryParse(row.CLEARING_VOLTAGE ?? "0"),
+          )),
+        );
+      } else if (row.MACHINE?.substring(0, 2).toUpperCase() == "PU") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessFinishInputEvent(ProcessFinishOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+            BATCHNO: row.BATCH_NO.toString(),
+          )),
+        );
+        ////
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: row.BATCH_NO,
+            PU_Ratio: row.MISSING_RATIO,
+            PU_Level: row.FILING_LEVEL,
+          )),
+        );
+      } else {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessFinishInputEvent(ProcessFinishOutputModel(
+            MACHINE: row.MACHINE,
+            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+            REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+            BATCHNO: row.BATCH_NO.toString(),
+          )),
+        );
+      }
     });
   }
 
@@ -616,6 +728,9 @@ class ProcessStartDataSource extends DataGridSource {
                   columnName: 'zinc', value: _item.ZINCK_THICKNESS.toString()),
               DataGridCell<String>(
                   columnName: 'visual', value: _item.VISUAL_CONTROL.toString()),
+              DataGridCell<String>(
+                  columnName: 'clearing_v',
+                  value: _item.VISUAL_CONTROL_CLEAR.toString()),
               DataGridCell<String>(
                   columnName: 'clearing',
                   value: _item.CLEARING_VOLTAGE.toString()),

@@ -760,6 +760,7 @@ class DatabaseHelper {
         'HighVoltageTest TEXT,'
         'ZinckThickness TEXT,'
         'visualControl TEXT,'
+        'visualControl_v TEXT,'
         'clearingVoltage TEXT,'
         'MissingRatio TEXT,'
         'FilingLevel TEXT,'

@@ -395,7 +395,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       BATCH_NO: _batch_Controller.text.trim(),
       START_DATE: _startTime_Controller.text,
       END_DATE: _finishTime_Controller.text,
-      START_TIME: _startTime_Controller.text,
+      START_TIME: DateTime.now().toString(),
       FINISH_TIME: _finishTime_Controller.text,
       OUTPUT: _output_Controller.text.isNotEmpty
           ? int.tryParse(_output_Controller.text)
@@ -524,6 +524,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
             EasyLoading.show(status: "Loading Data ...");
           } else if (state is GetWindingRecordLoadedState) {
             if (state.item.MESSAGE == 'No data in WindingRecord') {
+              // _getValuesFromServer(itemWindingRecord);
               _startTime_Controller.text = state.item.START_TIME.toString();
               _ipeNo_Controller.text = state.item.IPE_NO.toString();
               _finishTime_Controller.text = state.item.FINISH_TIME.toString();
@@ -537,6 +538,8 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
             } else if (state.item.MESSAGE == 'No data in WINDING_SHEET') {
               EasyLoading.showInfo("${state.item.MESSAGE}");
               await _getDataRecordFormPDA();
+              _thickness_FocusNode.requestFocus();
+              // _getValuesFromServer(itemWindingRecord);
             } else if (state.item.RESULT == true &&
                 state.item.MESSAGE == null) {
               EasyLoading.dismiss();
@@ -663,6 +666,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           focusNode: _startTime_FocusNode,
                           controller: _startTime_Controller,
                           isHideLable: true,
+                          readOnly: true,
                           labelText: "START TIME",
                           // readOnly: true,
                         ),
@@ -679,6 +683,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           focusNode: _finishTime_FocusNode,
                           controller: _finishTime_Controller,
                           isHideLable: true,
+                          readOnly: true,
                           labelText: "Finish Time".toUpperCase(),
                           // readOnly: true,
                         ),
@@ -691,6 +696,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           focusNode: _ipeNo_FocusNode,
                           controller: _ipeNo_Controller,
                           isHideLable: true,
+                          readOnly: true,
                           labelText: "IPE No.".toUpperCase(),
                           // readOnly: true,
                         ),
@@ -868,7 +874,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           labelText: "uf".toUpperCase(),
                           onFieldSubmitted: (value) {
                             if (value.isNotEmpty) {
-                              _ppmweight_FocusNode.requestFocus();
+                              _width_R__FocusNode.requestFocus();
                             } else {
                               _uf_FocusNode.requestFocus();
                             }
@@ -883,6 +889,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             controller: _ppmweight_Controller,
                             focusNode: _ppmweight_FocusNode,
                             isHideLable: true,
+                            readOnly: true,
                             labelText: "PPMWeight".toUpperCase(),
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _packno_FocusNode.requestFocus()
@@ -900,6 +907,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             controller: _packno_Controller,
                             focusNode: _packno_FocusNode,
                             isHideLable: true,
+                            readOnly: true,
                             labelText: "PackNo".toUpperCase(),
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _output_FocusNode.requestFocus()
@@ -913,6 +921,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             controller: _output_Controller,
                             focusNode: _output_FocusNode,
                             isHideLable: true,
+                            readOnly: true,
                             labelText: "Output:pcs".toUpperCase(),
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _width_R__FocusNode.requestFocus()

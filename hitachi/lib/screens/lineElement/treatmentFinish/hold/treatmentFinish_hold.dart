@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/models-Sqlite/treatmentModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -175,7 +177,47 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
                   });
             }
           },
-        )
+        ),
+        BlocListener<LineElementBloc, LineElementState>(
+            listener: (context, state) {
+          if (state is ProcessCheckLoadingState) {
+            // 1
+          } else if (state is ProcessCheckLoadedState) {
+            // if (state.item.RESULT == true) {
+            //   _machineNoController.clear();
+            //   _operatorNameController.clear();
+            //   _batch1Controller.clear();
+            //   _batch2Controller.clear();
+            //   _batch3Controller.clear();
+            //   _batch4Controller.clear();
+            //   _batch5Controller.clear();
+            //   _batch6Controller.clear();
+            //   _batch7Controller.clear();
+            //   f1.requestFocus();
+            // } else {
+            //   EasyLoading.showError(state.item.MESSAGE ?? "Exception");
+            // }
+          } else if (state is ProcessCheckErrorState) {
+            // EasyLoading.dismiss();
+            // _errorDialog(
+            //     text: Label("CheckConnection\n Do you want to Save"),
+            //     onpressOk: () async {
+            //       await _saveDataToSqlite();
+            //       await _getHold();
+            //       _machineNoController.clear();
+            //       _operatorNameController.clear();
+            //       _batch1Controller.clear();
+            //       _batch2Controller.clear();
+            //       _batch3Controller.clear();
+            //       _batch4Controller.clear();
+            //       _batch5Controller.clear();
+            //       _batch6Controller.clear();
+            //       _batch7Controller.clear();
+            //       f1.requestFocus();
+            //       Navigator.pop(context);
+            //     });
+          }
+        })
       ],
       child: BgWhite(
           isHideAppBar: true,
@@ -530,19 +572,28 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
       var row = tmList.where((value) => value.ID == element).first;
       BlocProvider.of<TreatmentBloc>(context).add(
         TreatmentFinishSendEvent(TreatMentOutputModel(
-            MACHINE_NO: row.MACHINE_NO,
-            OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            BATCH_NO_1: row.BATCH1,
-            BATCH_NO_2: row.BATCH2,
-            BATCH_NO_3: row.BATCH3,
-            BATCH_NO_4: row.BATCH4,
-            BATCH_NO_5: row.BATCH5,
-            BATCH_NO_6: row.BATCH6,
-            BATCH_NO_7: row.BATCH7,
-            FINISH_DATE: row.FINDATE,
-            TEMP_CURVE: row.TEMP_CURVE,
-            TREATMENT_TIME: row.TREATMENT_TIME)),
+          MACHINE_NO: row.MACHINE_NO,
+          OPERATOR_NAME: int.tryParse(row.OPERATOR_NAME.toString()),
+          BATCH_NO_1: row.BATCH1,
+          BATCH_NO_2: row.BATCH2,
+          BATCH_NO_3: row.BATCH3,
+          BATCH_NO_4: row.BATCH4,
+          BATCH_NO_5: row.BATCH5,
+          BATCH_NO_6: row.BATCH6,
+          BATCH_NO_7: row.BATCH7,
+          FINISH_DATE: row.FINDATE,
+        )),
       );
+      if (row.MACHINE_NO?.substring(0, 2).toUpperCase() == "TM") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: row.BATCH1,
+            MC_NO: row.MACHINE_NO,
+            TM_Curve: row.TEMP_CURVE,
+            TM_Time: row.TREATMENT_TIME,
+          )),
+        );
+      }
     });
   }
 

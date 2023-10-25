@@ -112,4 +112,7 @@ class ApiConfig {
   //POST Update
   static String UPDATE_MATERIAL_TRACE =
       "${BASE_API_URL}LineElement/UpdateMaterialTrace";
+  //POST UpdateCheckProcess
+  static String UPDATE_CHECK_PROCESS =
+      "${BASE_API_URL}LineElement/UpdateCheckProcess";
 }

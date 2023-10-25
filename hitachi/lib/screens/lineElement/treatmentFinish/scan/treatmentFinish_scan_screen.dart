@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/blocs/treatment/treatment_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
@@ -11,6 +12,7 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/combobox/comboboxModel.dart';
 import 'package:hitachi/models/combobox/comboboxSqliteModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
@@ -96,8 +98,27 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   }
 
   void _callApi() {
-    BlocProvider.of<TreatmentBloc>(context).add(
-      TreatmentFinishSendEvent(TreatMentOutputModel(
+    if (_machineNoController.text.length == 3) {
+      if (_machineNoController.text.substring(0, 2).toUpperCase() == "TM") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessCheckEvent(ProcessCheckModel(
+            BATCH_NO: _batch1Controller.text,
+            MC_NO: _machineNoController.text,
+            TM_Curve: isTm == false
+                ? "-"
+                : _tempCurve.text.trim().isEmpty
+                    ? "Confirm"
+                    : _tempCurve.text.trim(),
+            TM_Time: isTm == false
+                ? "-"
+                : _treatmentTime.text.trim().isEmpty
+                    ? "Confirm"
+                    : _treatmentTime.text.trim(),
+          )),
+        );
+      }
+      BlocProvider.of<TreatmentBloc>(context).add(
+        TreatmentFinishSendEvent(TreatMentOutputModel(
           MACHINE_NO: _machineNoController.text.trim(),
           OPERATOR_NAME: int.tryParse(_operatorNameController.text.trim()),
           BATCH_NO_1: _batch1Controller.text.trim(),
@@ -108,17 +129,9 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
           BATCH_NO_6: _batch6Controller.text.trim(),
           BATCH_NO_7: _batch7Controller.text.trim(),
           FINISH_DATE: DateFormat('yyyy MM dd HH:mm:ss').format(DateTime.now()),
-          TEMP_CURVE: isTm == false
-              ? "-"
-              : _tempCurve.text.trim().isEmpty
-                  ? "Confirm"
-                  : _tempCurve.text.trim(),
-          TREATMENT_TIME: isTm == false
-              ? "-"
-              : _treatmentTime.text.trim().isEmpty
-                  ? "Confirm"
-                  : _treatmentTime.text.trim())),
-    );
+        )),
+      );
+    }
   }
 
   Future _saveDataToSqlite() async {
@@ -144,12 +157,12 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
         'StartEnd': 'F',
         'CheckComplete': 'End',
         'TempCurve': isTm == false
-            ? "-"
+            ? ""
             : _tempCurve.text.trim().isEmpty
                 ? "Confirm"
                 : _tempCurve.text.trim(),
         'TreatmentTime': isTm == false
-            ? "-"
+            ? ""
             : _treatmentTime.text.trim().isEmpty
                 ? "Confirm"
                 : _treatmentTime.text.trim()
@@ -227,7 +240,47 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
               }
             }
           },
-        )
+        ),
+        BlocListener<LineElementBloc, LineElementState>(
+            listener: (context, state) {
+          if (state is ProcessCheckLoadingState) {
+            // 1
+          } else if (state is ProcessCheckLoadedState) {
+            // if (state.item.RESULT == true) {
+            //   _machineNoController.clear();
+            //   _operatorNameController.clear();
+            //   _batch1Controller.clear();
+            //   _batch2Controller.clear();
+            //   _batch3Controller.clear();
+            //   _batch4Controller.clear();
+            //   _batch5Controller.clear();
+            //   _batch6Controller.clear();
+            //   _batch7Controller.clear();
+            //   f1.requestFocus();
+            // } else {
+            //   EasyLoading.showError(state.item.MESSAGE ?? "Exception");
+            // }
+          } else if (state is ProcessCheckErrorState) {
+            // EasyLoading.dismiss();
+            // _errorDialog(
+            //     text: Label("CheckConnection\n Do you want to Save"),
+            //     onpressOk: () async {
+            //       await _saveDataToSqlite();
+            //       await _getHold();
+            //       _machineNoController.clear();
+            //       _operatorNameController.clear();
+            //       _batch1Controller.clear();
+            //       _batch2Controller.clear();
+            //       _batch3Controller.clear();
+            //       _batch4Controller.clear();
+            //       _batch5Controller.clear();
+            //       _batch6Controller.clear();
+            //       _batch7Controller.clear();
+            //       f1.requestFocus();
+            //       Navigator.pop(context);
+            //     });
+          }
+        })
       ],
       child: BgWhite(
           isHideAppBar: true,

@@ -106,6 +106,14 @@ class MaterialLoadEvent extends LineElementEvent {
   @override
   List<Object> get prop => [];
 }
+
+class ProcessCheckEvent extends LineElementEvent {
+  const ProcessCheckEvent(this.item);
+  final ProcessCheckModel item;
+
+  @override
+  List<Object> get prop => [item];
+}
 // //////////////////------------MaterialEvent-----------///////////////
 // class PMDailySendEvent extends LineElementEvent {
 //   const PMDailySendEvent(this.items);

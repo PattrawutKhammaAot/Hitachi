@@ -18,6 +18,7 @@ import 'package:hitachi/models/checkPackNo_Model.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
@@ -150,6 +151,17 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         }
       },
     );
+    on<ProcessCheckEvent>(
+      (event, emit) async {
+        try {
+          emit(ProcessCheckLoadingState());
+          final mlist = await fetchProcessCheck(event.item);
+          emit(ProcessCheckLoadedState(mlist));
+        } catch (e) {
+          emit(ProcessCheckErrorState(e.toString()));
+        }
+      },
+    );
 
 //ProcessStart
     on<ProcessStartEvent>(
@@ -222,6 +234,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //Hold
   Future<SendWdsFinishInputModel> fetchSendWindingFinish(
       SendWdsFinishOutputModel itemOutput) async {
+    print(itemOutput.toJson());
     try {
       Response responese = await dio.post(
         ApiConfig.LE_SEND_WINDING_FINISH,
@@ -403,6 +416,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //ProcessFinish
   Future<ProcessFinishInputModel> fetchProcessFinish(
       ProcessFinishOutputModel items) async {
+    print(items.toJson());
     try {
       Response response = await dio.post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
@@ -418,6 +432,28 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
     } catch (e) {
       print(e);
       return ProcessFinishInputModel();
+    }
+  }
+
+  //ProcessCheck
+  Future<ResponeDefault> fetchProcessCheck(ProcessCheckModel items) async {
+    print(items.toJson());
+    try {
+      Response response = await dio.post(ApiConfig.UPDATE_CHECK_PROCESS,
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 5),
+              receiveTimeout: Duration(seconds: 5)),
+          data: jsonEncode(items));
+
+      print(response.data);
+      ResponeDefault tmp = ResponeDefault.fromJson(response.data);
+
+      return tmp;
+    } catch (e, s) {
+      print(e);
+      print(s);
+      throw Exception();
     }
   }
 }

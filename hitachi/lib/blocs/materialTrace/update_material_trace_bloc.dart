@@ -54,6 +54,8 @@ class UpdateMaterialTraceBloc
               sendTimeout: Duration(seconds: 5),
               receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(item.toJson()));
+
+      print(responese.data);
       if (responese.statusCode == 200) {
         await DatabaseHelper()
             .deleteMaterialDB('IPE_SHEET', [item.BATCH_NO.toString()]);
