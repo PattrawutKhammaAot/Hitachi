@@ -8,8 +8,9 @@ class UpdateMaterialTraceEvent extends Equatable {
 }
 
 class PostUpdateMaterialTraceEvent extends UpdateMaterialTraceEvent {
-  const PostUpdateMaterialTraceEvent(this.items);
+  const PostUpdateMaterialTraceEvent(this.items, this.type);
   final MaterialTraceUpdateModel items;
+  final String? type;
 
   @override
   List<Object> get prop => [items];

@@ -83,6 +83,7 @@ class DatabaseHelper {
     _create_Pda_IPE(db, newVersion);
     _createIPEPROD(db, newVersion);
     _createMaterialTraceUpdate(db, newVersion);
+    _createMaterialMasterLot(db, newVersion);
   }
 
   Future<List<Map<String, dynamic>>> queryWindingRecodeFormPda(
@@ -1267,6 +1268,14 @@ class DatabaseHelper {
         'Ipeak TEXT ,'
         'HighVolt TEXT,'
         'Date TEXT )');
+  }
+
+  void _createMaterialMasterLot(Database db, int newVersion) async {
+    await db.execute('CREATE TABLE MASTERLOT ('
+        'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
+        'Material TEXT ,'
+        'PROCESS TEXT ,'
+        'Lot TEXT )');
   }
 
   void _createZincThickness(Database db, int newVersion) async {

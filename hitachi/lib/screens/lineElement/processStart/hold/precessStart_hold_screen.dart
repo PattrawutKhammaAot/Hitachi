@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -9,6 +10,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
 import 'package:hitachi/services/databaseHelper.dart';
@@ -537,27 +539,59 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   void _sendDataServer() async {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
-      BlocProvider.of<LineElementBloc>(context).add(
-        ProcessStartEvent(
-          ProcessOutputModel(
-            MACHINE: row.MACHINE,
-            OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
-            OPERATORNAME1: int.tryParse(
-              row.OPERATOR_NAME1.toString(),
+      if (row.MACHINE?.substring(0, 2).toUpperCase() == "HV") {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessStartEvent(
+            ProcessOutputModel(
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              OPERATORNAME1: int.tryParse(
+                row.OPERATOR_NAME1.toString(),
+              ),
+              OPERATORNAME2: int.tryParse(
+                row.OPERATOR_NAME2.toString(),
+              ),
+              OPERATORNAME3: int.tryParse(
+                row.OPERATOR_NAME3.toString(),
+              ),
+              BATCHNO: row.BATCH_NO.toString(),
+              STARTDATE: row.STARTDATE.toString(),
             ),
-            OPERATORNAME2: int.tryParse(
-              row.OPERATOR_NAME2.toString(),
-            ),
-            OPERATORNAME3: int.tryParse(
-              row.OPERATOR_NAME3.toString(),
-            ),
-            BATCHNO: row.BATCH_NO.toString(),
-            HVT: row.HVT,
-            PCW: row.PCW,
-            STARTDATE: row.STARTDATE.toString(),
           ),
-        ),
-      );
+        );
+        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+            PostUpdateMaterialTraceEvent(
+                MaterialTraceUpdateModel(
+                    DATE: row.STARTDATE,
+                    MATERIAL: null,
+                    LOT: null,
+                    PROCESS: null,
+                    I_PEAK: row.PCW,
+                    HIGH_VOLT: row.HVT,
+                    OPERATOR: row.OPERATOR_NAME,
+                    BATCH_NO: row.BATCH_NO),
+                "Process"));
+      } else {
+        BlocProvider.of<LineElementBloc>(context).add(
+          ProcessStartEvent(
+            ProcessOutputModel(
+              MACHINE: row.MACHINE,
+              OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+              OPERATORNAME1: int.tryParse(
+                row.OPERATOR_NAME1.toString(),
+              ),
+              OPERATORNAME2: int.tryParse(
+                row.OPERATOR_NAME2.toString(),
+              ),
+              OPERATORNAME3: int.tryParse(
+                row.OPERATOR_NAME3.toString(),
+              ),
+              BATCHNO: row.BATCH_NO.toString(),
+              STARTDATE: row.STARTDATE.toString(),
+            ),
+          ),
+        );
+      }
     });
   }
 

@@ -7,6 +7,7 @@ import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
 import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
@@ -36,7 +37,7 @@ class UpdateMaterialTraceBloc
       (event, emit) async {
         try {
           emit(UpdateMaterialTraceLoadingState());
-          final mlist = await fetchMaterialTrace(event.items);
+          final mlist = await fetchMaterialTrace(event.items, event.type!);
           emit(UpdateMaterialTraceLoadedState(mlist));
         } catch (e) {
           emit(UpdateMaterialTraceErrorState(e.toString()));
@@ -45,24 +46,24 @@ class UpdateMaterialTraceBloc
     );
   }
   Future<ResponeDefault> fetchMaterialTrace(
-      MaterialTraceUpdateModel item) async {
-    print(item.toJson());
+      MaterialTraceUpdateModel item, String type) async {
+    print("test Send${item.toJson()}");
     try {
-      Response responese = await dio.post(ApiConfig.UPDATE_MATERIAL_TRACE,
+      Response responese = await dio.post(
+          BASE_API_URL + "LineElement/UpdateMaterialTrace",
           options: Options(
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 5),
               receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(item.toJson()));
 
-      print(responese.data);
-      if (responese.statusCode == 200) {
+      if (type == "Process") {
         await DatabaseHelper()
             .deleteMaterialDB('IPE_SHEET', [item.BATCH_NO.toString()]);
       }
 
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
-
+      print(responese.data);
       return post;
     } catch (e, s) {
       print(e);

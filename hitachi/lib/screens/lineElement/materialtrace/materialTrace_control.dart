@@ -34,12 +34,15 @@ class _MaterialTraceControlState extends State<MaterialTraceControl> {
           });
         },
       ),
-      MaterialTraceHoldScreen(
-        onChange: (value) {
-          setState(() {
-            listHoldProcessEnd = value;
-          });
-        },
+      Offstage(
+        offstage: true, // ให้เป็น true เพื่อซ่อน
+        child: MaterialTraceHoldScreen(
+          onChange: (value) {
+            setState(() {
+              listHoldProcessEnd = value;
+            });
+          },
+        ),
       )
     ];
     return BgWhite(
@@ -53,15 +56,18 @@ class _MaterialTraceControlState extends State<MaterialTraceControl> {
             SizedBox(
               width: 10,
             ),
-            Label(
-              "-${listHoldProcessEnd.length ?? 0}-",
-              color: COLOR_RED,
+            Visibility(
+              visible: false,
+              child: Label(
+                "-${listHoldProcessEnd.length ?? 0}-",
+                color: COLOR_RED,
+              ),
             )
           ],
         ),
       ),
       body: Center(
-        child: widgetOptions.elementAt(_selectedIndex),
+        child: widgetOptions.first,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -71,8 +77,15 @@ class _MaterialTraceControlState extends State<MaterialTraceControl> {
             backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.work),
-            label: 'Hold',
+            activeIcon: null,
+            icon: IgnorePointer(
+              ignoring: true,
+              child: Icon(
+                Icons.work,
+                color: Colors.transparent,
+              ),
+            ),
+            label: '',
             backgroundColor: Colors.green,
           ),
         ],

@@ -462,15 +462,17 @@ class _MaterialTraceHoldScreenState extends State<MaterialTraceHoldScreen> {
     _index.forEach((element) async {
       var row = tmList.where((value) => value.ID == element).first;
       BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-          PostUpdateMaterialTraceEvent(MaterialTraceUpdateModel(
-              DATE: row.DATE,
-              MATERIAL: row.MATERIAL,
-              LOT: row.LOT,
-              PROCESS: row.PROCESS,
-              OPERATOR: row.OPERATOR,
-              BATCH_NO: row.BATCH_NO,
-              I_PEAK: row.I_PEAK,
-              HIGH_VOLT: row.HIGH_VOLT)));
+          PostUpdateMaterialTraceEvent(
+              MaterialTraceUpdateModel(
+                  DATE: row.DATE,
+                  MATERIAL: row.MATERIAL,
+                  LOT: row.LOT,
+                  PROCESS: row.PROCESS,
+                  OPERATOR: row.OPERATOR,
+                  BATCH_NO: row.BATCH_NO,
+                  I_PEAK: row.I_PEAK,
+                  HIGH_VOLT: row.HIGH_VOLT),
+              "MatUp"));
     });
   }
 

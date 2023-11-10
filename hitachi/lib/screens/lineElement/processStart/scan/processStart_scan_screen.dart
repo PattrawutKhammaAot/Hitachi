@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -13,6 +14,7 @@ import 'package:hitachi/helper/input/boxInputField.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
@@ -203,7 +205,21 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               f1.requestFocus();
             }
           },
-        )
+        ),
+        BlocListener<UpdateMaterialTraceBloc, UpdateMaterialTraceState>(
+            listener: (context, state) async {
+          if (state is UpdateMaterialTraceLoadingState) {
+            EasyLoading.show(status: "Loading ...");
+            print("UpdateMaterialCheck");
+          } else if (state is UpdateMaterialTraceLoadedState) {
+            EasyLoading.dismiss();
+            print("UpdateMaterialCheckSuccess");
+            _highVoltageController.clear();
+            _peakController.clear();
+          } else if (state is UpdateMaterialTraceErrorState) {
+            EasyLoading.dismiss();
+          }
+        })
       ],
       child: Form(
         key: _formKey,
@@ -484,11 +500,38 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     }
   }
 
+  _serachInGetProd() async {
+    var batch = await DatabaseHelper()
+        .queryIPESHEET('IPE_SHEET', [batchNoController.text]);
+    TextEditingController _ipeController = TextEditingController();
+    if (batch.isNotEmpty) {
+      for (var item in batch) {
+        _ipeController.text = item['IPE_NO'];
+      }
+    }
+    if (_ipeController.text.isNotEmpty) {
+      var itemInProd =
+          await DatabaseHelper().queryPRODSPEC([_ipeController.text]);
+
+      if (itemInProd.isNotEmpty) {
+        for (var item in itemInProd) {
+          _highVoltageController.text = item['HighVolt'];
+          _peakController.text = item['Ipeak'];
+        }
+      }
+    }
+    setState(() {});
+  }
+
   void _btnSend() async {
     if (MachineController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
       if (MachineController.text.toUpperCase().substring(0, 2) == 'HV') {
+        await _serachInGetProd();
+        bool peakValid = false;
+        bool highValid = false;
+// ignore: use_build_context_synchronously
         showDialog(
             barrierDismissible: false,
             context: context,
@@ -526,6 +569,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
+                          peakValid = false;
                           return 'Please enter a value';
                         }
 
@@ -533,10 +577,12 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         if (intValue == null ||
                             intValue < 100 ||
                             intValue > 200) {
+                          peakValid = false;
                           return 'Please enter a value between 100-200';
+                        } else {
+                          peakValid = true;
+                          return null;
                         }
-
-                        return null;
                       },
                     ),
                     SizedBox(
@@ -556,6 +602,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
+                          highValid = false;
                           return 'Please enter a value';
                         }
 
@@ -563,10 +610,12 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                         if (intValue == null ||
                             intValue < 600 ||
                             intValue > 1500) {
+                          highValid = false;
                           return 'Please enter a value between 600-1500';
+                        } else {
+                          highValid = true;
+                          return null;
                         }
-
-                        return null;
                       },
                     )
                   ],
@@ -575,7 +624,11 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                   ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll(COLOR_RED)),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        _peakController.clear();
+                        _highVoltageController.clear();
+                        Navigator.pop(context);
+                      },
                       child: Label(
                         "Cancel",
                         color: COLOR_WHITE,
@@ -584,12 +637,24 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStatePropertyAll(COLOR_SUCESS)),
-                      onPressed: () {
-                        _callAPI();
-                        setState(() {
-                          _enabledOperator = false;
-                        });
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        if (highValid && peakValid) {
+                          await _callAPI();
+                          await callApiMatUp();
+                          setState(() {
+                            _enabledOperator = false;
+                          });
+                          Navigator.pop(context);
+                        } else {
+                          if (!highValid && peakValid) {
+                            _p2.requestFocus();
+                          } else if (!peakValid && highValid) {
+                            _p1.requestFocus();
+                          } else if (highValid == false && peakValid == false) {
+                            _p1.requestFocus();
+                          }
+                          EasyLoading.showError("Please enter a valid value");
+                        }
                       },
                       child: Label("OK", color: COLOR_WHITE))
                 ],
@@ -606,19 +671,39 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     }
   }
 
-  void _callAPI() {
+  Future _callAPI() async {
     BlocProvider.of<LineElementBloc>(context).add(
       ProcessStartEvent(ProcessOutputModel(
-          MACHINE: MachineController.text.trim(),
-          OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
-          OPERATORNAME1: int.tryParse(operatorName1Controller.text.trim()),
-          OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
-          OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
-          BATCHNO: batchNoController.text.trim(),
-          STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-          HVT: _highVoltageController.text.trim(),
-          PCW: _peakController.text.trim())),
+        MACHINE: MachineController.text.trim(),
+        OPERATORNAME: int.tryParse(operatorNameController.text.trim()),
+        OPERATORNAME1: int.tryParse(operatorName1Controller.text.trim()),
+        OPERATORNAME2: int.tryParse(operatorName2Controller.text.trim()),
+        OPERATORNAME3: int.tryParse(operatorName3Controller.text.trim()),
+        BATCHNO: batchNoController.text.trim(),
+        STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+      )),
     );
+  }
+
+  Future callApiMatUp() async {
+    var sql = await DatabaseHelper().queryAllRows('MASTERLOT');
+    print(sql);
+    if (sql.isNotEmpty) {
+      for (var itemMasterLOT in sql) {
+        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+            PostUpdateMaterialTraceEvent(
+                MaterialTraceUpdateModel(
+                    DATE: DateTime.now().toString(),
+                    MATERIAL: itemMasterLOT['Material'].toString(),
+                    LOT: itemMasterLOT['Lot'].toString(),
+                    PROCESS: itemMasterLOT['PROCESS'].toString(),
+                    I_PEAK: _peakController.text,
+                    HIGH_VOLT: _highVoltageController.text,
+                    OPERATOR: operatorNameController.text,
+                    BATCH_NO: batchNoController.text.trim()),
+                "Process"));
+      }
+    }
   }
 
   void _clearAllData() async {

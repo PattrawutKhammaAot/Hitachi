@@ -287,6 +287,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           ]);
         }
       }
+      print(responese.data);
       return post;
     } on Exception {
       throw Exception();

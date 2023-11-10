@@ -59,24 +59,28 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   @override
   void initState() {
     _getHold();
+    _getHoldData().then((value) {
+      dataText = value;
+      datasoruce = MaterialTraceDataSource(value);
+    });
     super.initState();
     _processFocus.requestFocus();
   }
 
   _setValueDataGrid() async {
-    id++;
-    dataText.add(MaterialTraceDatagridModel(
-        ID: id,
-        Pro: _processController.text.trim(),
-        Mat: _materialController.text.trim(),
-        Lot: _lotSubController.text.trim()));
-    setState(() {
-      datasoruce = MaterialTraceDataSource(dataText);
+    await DatabaseHelper().insertSqlite('MASTERLOT', {
+      'Material': _materialController.text.trim(),
+      'PROCESS': _processController.text.trim(),
+      'Lot': _lotSubController.text.trim(),
     });
+    await _getHoldData().then((value) {
+      dataText = value;
+      datasoruce = MaterialTraceDataSource(value);
+    });
+    setState(() {});
   }
 
   _serachInGetProd() async {
-    print(_batchController.text);
     var batch = await DatabaseHelper()
         .queryIPESHEET('IPE_SHEET', [_batchController.text]);
     print(batch);
@@ -101,11 +105,21 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
 
   Future _getHold() async {
     List<Map<String, dynamic>> sql =
-        await DatabaseHelper().queryAllRows('MATUPDATE');
+        await DatabaseHelper().queryAllRows('MASTERLOT');
 
     setState(() {
       widget.onChange?.call(sql);
     });
+  }
+
+  Future<List<MaterialTraceDatagridModel>> _getHoldData() async {
+    List<Map<String, dynamic>> sql =
+        await DatabaseHelper().queryAllRows('MASTERLOT');
+    List<MaterialTraceDatagridModel> result =
+        sql.map((row) => MaterialTraceDatagridModel.fromMap(row)).toList();
+    setState(() {});
+
+    return result;
   }
 
   Map<String, String> extractValues(String input, {String? type}) {
@@ -168,7 +182,8 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
             EasyLoading.show(status: "Loading ...");
           } else if (state is UpdateMaterialTraceLoadedState) {
             if (state.item.MESSAGE == "Success") {
-              await deletedInfo();
+              // await deletedInfo();
+              // await _refreshPage();
               _operatorController.clear();
               _batchController.clear();
               _processController.clear();
@@ -180,55 +195,12 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
               EasyLoading.showSuccess("Send Success !");
               isCheckValue = false;
               setState(() {});
-              Navigator.pop(context);
             } else {
               EasyLoading.showError("${state.item.MESSAGE}");
             }
             EasyLoading.dismiss();
           } else if (state is UpdateMaterialTraceErrorState) {
-            EasyLoading.dismiss();
-            _errorDialog(
-                text: Label("Internet offline. Do you want to save ?"),
-                onpressOk: () async {
-                  try {
-                    List<MaterialTraceDatagridModel> itemsToRemove = [];
-                    for (var item in dataText) {
-                      if (_index.contains(item.ID)) {
-                        itemsToRemove.add(item);
-                        await DatabaseHelper().insertSqlite('MATUPDATE', {
-                          'Material': item.Mat,
-                          'Operator': _operatorController.text.trim(),
-                          'BATCH_NO': _batchController.text.trim(),
-                          'PROCESS': item.Pro,
-                          'Lot': item.Lot,
-                          'Date': DateTime.now().toString(),
-                          'Ipeak': _ipeakController.text,
-                          'HighVolt': _highVoltageController.text,
-                        });
-                      }
-                    }
-                    await _getHold();
-                    dataText
-                        .removeWhere((item) => itemsToRemove.contains(item));
-                    setState(() {
-                      _index.clear();
-                      datasoruce = MaterialTraceDataSource(dataText);
-                    });
-                    _operatorController.clear();
-                    _batchController.clear();
-                    _processController.clear();
-                    _lotNoController.clear();
-                    _processFocus.requestFocus();
-                    EasyLoading.showSuccess("Send Success !");
-                    isCheckValue = false;
-                    setState(() {});
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  } catch (e, s) {
-                    print(e);
-                    print(s);
-                  }
-                });
+            EasyLoading.showError("Please Check your Connection and try again");
           }
         })
       ],
@@ -296,6 +268,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                             onPressed: () async {
                               if (_index.isNotEmpty) {
                                 await deletedInfo();
+                                await _refreshPage();
                               } else {
                                 EasyLoading.showError("Please Select Column");
                               }
@@ -357,6 +330,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                                 onFieldSubmitted:
                                                     (value) async {
                                                   await sendApi();
+                                                  Navigator.pop(context);
                                                 },
                                               ),
                                               Row(
@@ -368,8 +342,14 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                                                 MaterialStatePropertyAll(
                                                                     COLOR_RED)),
                                                         onPressed: () {
+                                                          _operatorController
+                                                              .clear();
+                                                          _batchController
+                                                              .clear();
                                                           Navigator.pop(
                                                               context);
+                                                          _operatorController
+                                                              .clear();
                                                         },
                                                         child: Label(
                                                           "Back",
@@ -385,8 +365,11 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                                             backgroundColor:
                                                                 MaterialStatePropertyAll(
                                                                     COLOR_BLUE_DARK)),
-                                                        onPressed: () async =>
-                                                            await sendApi(),
+                                                        onPressed: () async {
+                                                          await sendApi();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
                                                         child: Label(
                                                           "Send",
                                                           color: COLOR_WHITE,
@@ -619,26 +602,28 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   Future sendApi() async {
     if (_index.isNotEmpty &&
         _operatorController.text.isNotEmpty &&
-        _materialController.text.isNotEmpty &&
         _batchController.text.isNotEmpty) {
       await _serachInGetProd();
       _index.forEach((element) {
         for (var item in dataText) {
           if (item.ID == element) {
             BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-                PostUpdateMaterialTraceEvent(MaterialTraceUpdateModel(
-                    DATE: DateTime.now().toString(),
-                    MATERIAL: item.Mat,
-                    LOT: item.Lot,
-                    PROCESS: item.Pro,
-                    I_PEAK: _ipeakController.text,
-                    HIGH_VOLT: _highVoltageController.text,
-                    OPERATOR: _operatorController.text.trim(),
-                    BATCH_NO: _batchController.text.trim())));
+                PostUpdateMaterialTraceEvent(
+                    MaterialTraceUpdateModel(
+                        DATE: DateTime.now().toString(),
+                        MATERIAL: item.Mat,
+                        LOT: item.Lot,
+                        PROCESS: item.Pro,
+                        I_PEAK: _ipeakController.text,
+                        HIGH_VOLT: _highVoltageController.text,
+                        OPERATOR: _operatorController.text.trim(),
+                        BATCH_NO: _batchController.text.trim()),
+                    "MatUp"));
           }
         }
       });
     } else {
+      print(_materialController.text);
       if (_operatorController.text.isEmpty) {
         _operatorNameFocus.requestFocus();
       } else if (_batchController.text.isEmpty) {
@@ -653,25 +638,22 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   }
 
   Future deletedInfo() async {
-    List<MaterialTraceDatagridModel> itemsToRemove = [];
-
-    _index.forEach((element) {
-      for (var item in dataText) {
-        if (item.ID == element) {
-          itemsToRemove.add(item);
-        }
-      }
-    });
-
-    // ลบข้อมูลจากรายการ dataText ด้วย itemsToRemove
-    for (var itemToRemove in itemsToRemove) {
-      dataText.remove(itemToRemove);
-    }
-
-    // อัปเดต dataSource หลังจากลบข้อมูล
     setState(() {
-      _index.clear();
-      datasoruce = MaterialTraceDataSource(dataText);
+      _index.forEach((element) async {
+        await DatabaseHelper().deletedRowSqlite(
+            tableName: 'MASTERLOT', columnName: 'ID', columnValue: element);
+        _index.clear();
+      });
+    });
+  }
+
+  Future _refreshPage() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      _getHoldData().then((value) {
+        dataText = value;
+        datasoruce = MaterialTraceDataSource(value);
+      });
+      setState(() {});
     });
   }
 
@@ -767,12 +749,16 @@ class MaterialTraceDataSource extends DataGridSource {
 }
 
 class MaterialTraceDatagridModel {
-  const MaterialTraceDatagridModel(
-      {this.Lot, this.Mat, this.Pro, this.ID, this.isCheck});
+  const MaterialTraceDatagridModel({this.Lot, this.Mat, this.Pro, this.ID});
   final int? ID;
   final String? Pro;
   final String? Mat;
   final String? Lot;
-  final bool? isCheck;
+
   List<Object> get props => [ID!, Pro!, Mat!, Lot!];
+  MaterialTraceDatagridModel.fromMap(Map<String, dynamic> map)
+      : ID = map['ID'],
+        Pro = map['PROCESS'],
+        Mat = map['Material'],
+        Lot = map['Lot'];
 }

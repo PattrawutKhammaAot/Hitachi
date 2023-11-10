@@ -19,6 +19,7 @@ import 'package:hitachi/models/windingRecordModel/ResponeseWindingRecordModel.da
 import 'package:hitachi/models/windingRecordModel/output_windingRecordModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:hitachi/widget/custom_textinput.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class WindingRecordScanScreen extends StatefulWidget {
   const WindingRecordScanScreen({super.key, this.onChange});
@@ -110,7 +111,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final FocusNode _tension_FocusNode = FocusNode();
   final FocusNode _nip_roll_press_FocusNode = FocusNode();
   ResponeseWindingRecordModel itemWindingRecord = ResponeseWindingRecordModel();
-
+  final _formKey = GlobalKey<FormState>();
   String isCheckConnection = 'Save';
 
   _getDataRecordFormPDA() async {
@@ -615,346 +616,403 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           }
         }),
       ],
-      child: BgWhite(
-          isHideAppBar: true,
-          body: Padding(
-            padding: EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _batch_FocusNode,
-                          controller: _batch_Controller,
-                          maxLength: 12,
-                          keyboardType: TextInputType.number,
-                          isHideLable: true,
-                          labelText: "BATCH NO",
-                          onFieldSubmitted: (value) async {
-                            if (value.length == 12) {
-                              BlocProvider.of<WindingrecordBloc>(context).add(
-                                GetWindingRecordEvent(value),
-                              );
-                              // _thickness_FocusNode.requestFocus();
-                            } else {
-                              _batch_FocusNode.requestFocus();
-                            }
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a value';
-                            } else if (value == null || value.length != 12) {
-                              return 'Please input batch 12 digit';
-                            }
-                            return null;
-                          },
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
+      child: Form(
+        key: _formKey,
+        child: BgWhite(
+            isHideAppBar: true,
+            body: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _batch_FocusNode,
+                            controller: _batch_Controller,
+                            maxLength: 12,
+                            keyboardType: TextInputType.number,
+                            isHideLable: true,
+                            labelText: "BATCH NO",
+                            onFieldSubmitted: (value) async {
+                              if (value.length == 12) {
+                                BlocProvider.of<WindingrecordBloc>(context).add(
+                                  GetWindingRecordEvent(value),
+                                );
+                                // _thickness_FocusNode.requestFocus();
+                              } else {
+                                _batch_FocusNode.requestFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return null;
+                              } else if (value == null || value.length != 12) {
+                                return 'Please input batch 12 digit';
+                              }
+                              return null;
+                            },
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]'))
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _startTime_FocusNode,
-                          controller: _startTime_Controller,
-                          isHideLable: true,
-                          readOnly: true,
-                          labelText: "START TIME",
-                          // readOnly: true,
+                        SizedBox(
+                          width: 10,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _finishTime_FocusNode,
-                          controller: _finishTime_Controller,
-                          isHideLable: true,
-                          readOnly: true,
-                          labelText: "Finish Time".toUpperCase(),
-                          // readOnly: true,
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _startTime_FocusNode,
+                            controller: _startTime_Controller,
+                            isHideLable: true,
+                            readOnly: true,
+                            labelText: "START TIME",
+                            // readOnly: true,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _ipeNo_FocusNode,
-                          controller: _ipeNo_Controller,
-                          isHideLable: true,
-                          readOnly: true,
-                          labelText: "IPE No.".toUpperCase(),
-                          // readOnly: true,
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _finishTime_FocusNode,
+                            controller: _finishTime_Controller,
+                            isHideLable: true,
+                            readOnly: true,
+                            labelText: "Finish Time".toUpperCase(),
+                            // readOnly: true,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _thickness_FocusNode,
-                          controller: _thickness_Controller,
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
-                          ],
-                          isHideLable: true,
-                          maxLength: 4,
-                          labelText: "Thickness".toUpperCase(),
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              double? thicknessValue = double.tryParse(value);
-                              if (thicknessValue == null ||
-                                  thicknessValue < 8 ||
-                                  thicknessValue > 15.7) {
-                                _thickness_FocusNode.requestFocus();
-                                _thickness_Controller.clear();
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _ipeNo_FocusNode,
+                            controller: _ipeNo_Controller,
+                            isHideLable: true,
+                            readOnly: true,
+                            labelText: "IPE No.".toUpperCase(),
+                            // readOnly: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _thickness_FocusNode,
+                            controller: _thickness_Controller,
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]'))
+                            ],
+                            isHideLable: true,
+                            maxLength: 4,
+                            labelText: "Thickness".toUpperCase(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                double? thicknessValue = double.tryParse(value);
+                                if (thicknessValue == null ||
+                                    thicknessValue < 8 ||
+                                    thicknessValue > 15.7) {
+                                  _thickness_FocusNode.requestFocus();
+                                  _thickness_Controller.clear();
+                                } else {
+                                  _turn_FocusNode.requestFocus();
+                                }
+                              }
+                            },
+                            validator: (value) {
+                              try {
+                                double? thicknessValue =
+                                    double.tryParse(value!);
+                                if (thicknessValue! < 8 ||
+                                    thicknessValue > 15.7) {
+                                  return 'Thickness between 8 and 15.7';
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _turn_FocusNode,
+                            controller: _turn_Controller,
+                            keyboardType: TextInputType.number,
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _diameter_FocusNode.requestFocus();
                               } else {
                                 _turn_FocusNode.requestFocus();
                               }
-                            }
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a value';
-                            }
+                            },
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]'))
+                            ],
+                            isHideLable: true,
+                            labelText: "Turn".toUpperCase(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _diameter_Controller,
+                            focusNode: _diameter_FocusNode,
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _custommer_FocusNode.requestFocus();
+                              } else {
+                                _diameter_FocusNode.requestFocus();
+                              }
+                            },
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
 
-                            double? thicknessValue = double.tryParse(value);
-                            if (thicknessValue == null ||
-                                thicknessValue < 8 ||
-                                thicknessValue > 15.7) {
-                              return 'Thickness between 8 and 15.7';
-                            }
-
-                            return null;
-                          },
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            isHideLable: true,
+                            labelText: "Diameter".toUpperCase(),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          focusNode: _turn_FocusNode,
-                          controller: _turn_Controller,
-                          keyboardType: TextInputType.number,
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _diameter_FocusNode.requestFocus();
-                            } else {
-                              _turn_FocusNode.requestFocus();
-                            }
-                          },
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
-                          isHideLable: true,
-                          labelText: "Turn".toUpperCase(),
+                        SizedBox(
+                          width: 10,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _diameter_Controller,
-                          focusNode: _diameter_FocusNode,
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,1}$')),
-                          ],
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _custommer_FocusNode.requestFocus();
-                            } else {
-                              _diameter_FocusNode.requestFocus();
-                            }
-                          },
-                          isHideLable: true,
-                          labelText: "Diameter".toUpperCase(),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: DropdownButtonFormField2(
-                          focusNode: _custommer_FocusNode,
-                          value: _custommer_Controller.text.isNotEmpty
-                              ? _custommer_Controller.text
-                              : null,
-                          alignment: Alignment.center,
-                          decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            labelText: "Customer",
-                            labelStyle: TextStyle(color: COLOR_BLUE_DARK),
-                            contentPadding: EdgeInsets.only(left: 15),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: COLOR_BLUE_DARK),
-                              borderRadius: BorderRadius.circular(15),
+                        Expanded(
+                          child: DropdownButtonFormField2(
+                            focusNode: _custommer_FocusNode,
+                            value: _custommer_Controller.text.isNotEmpty
+                                ? _custommer_Controller.text
+                                : null,
+                            alignment: Alignment.center,
+                            decoration: InputDecoration(
+                              alignLabelWithHint: true,
+                              labelText: "Customer",
+                              labelStyle: TextStyle(color: COLOR_BLUE_DARK),
+                              contentPadding: EdgeInsets.only(left: 15),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: COLOR_BLUE_DARK),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
-                          ),
-                          isExpanded: true,
-                          items: ['Export', 'Local']
-                              .toList()
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      "${item}",
-                                      style: const TextStyle(
-                                          fontSize: 14, color: COLOR_BLUE_DARK),
-                                    ),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            _custommer_Controller.text = value!;
-                            _uf_FocusNode.requestFocus();
-                          },
-                          onSaved: (value) {
-                            _custommer_Controller.text = value!;
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            height: 50,
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.black45,
-                            ),
-                            iconSize: 30,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _uf_Controller,
-                          focusNode: _uf_FocusNode,
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,1}$')),
-                          ],
-                          isHideLable: true,
-                          labelText: "uf".toUpperCase(),
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _width_R__FocusNode.requestFocus();
-                            } else {
+                            isExpanded: true,
+                            items: ['Export', 'Local']
+                                .toList()
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        "${item}",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            color: COLOR_BLUE_DARK),
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              _custommer_Controller.text = value!;
                               _uf_FocusNode.requestFocus();
-                            }
-                          },
+                            },
+                            onSaved: (value) {
+                              _custommer_Controller.text = value!;
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              height: 50,
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black45,
+                              ),
+                              iconSize: 30,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _ppmweight_Controller,
-                            focusNode: _ppmweight_FocusNode,
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _uf_Controller,
+                            focusNode: _uf_FocusNode,
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
                             isHideLable: true,
-                            readOnly: true,
-                            labelText: "PPMWeight".toUpperCase(),
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _packno_FocusNode.requestFocus()
-                                : _ppmweight_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _packno_Controller,
-                            focusNode: _packno_FocusNode,
-                            isHideLable: true,
-                            readOnly: true,
-                            labelText: "PackNo".toUpperCase(),
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _output_FocusNode.requestFocus()
-                                : _packno_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _output_Controller,
-                            focusNode: _output_FocusNode,
-                            isHideLable: true,
-                            readOnly: true,
-                            labelText: "Output:pcs".toUpperCase(),
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _width_R__FocusNode.requestFocus()
-                                : _output_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _width_R__Controller,
-                          focusNode: _width_R__FocusNode,
-                          isHideLable: true,
-                          labelText: "WIDTH : R",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          onFieldSubmitted: (p0) => p0.isNotEmpty
-                              ? _width_L__FocusNode.requestFocus()
-                              : _width_R__FocusNode.requestFocus(),
+                            labelText: "uf".toUpperCase(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _width_R__FocusNode.requestFocus();
+                              } else {
+                                _uf_FocusNode.requestFocus();
+                              }
+                            },
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _ppmweight_Controller,
+                              focusNode: _ppmweight_FocusNode,
+                              isHideLable: true,
+                              readOnly: true,
+                              labelText: "PPMWeight".toUpperCase(),
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _packno_FocusNode.requestFocus()
+                                  : _ppmweight_FocusNode.requestFocus()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _packno_Controller,
+                              focusNode: _packno_FocusNode,
+                              isHideLable: true,
+                              readOnly: true,
+                              labelText: "PackNo".toUpperCase(),
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _output_FocusNode.requestFocus()
+                                  : _packno_FocusNode.requestFocus()),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _output_Controller,
+                              focusNode: _output_FocusNode,
+                              isHideLable: true,
+                              readOnly: true,
+                              labelText: "Output:pcs".toUpperCase(),
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _width_R__FocusNode.requestFocus()
+                                  : _output_FocusNode.requestFocus()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _width_R__Controller,
+                            focusNode: _width_R__FocusNode,
+                            isHideLable: true,
+                            labelText: "WIDTH : R",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            onFieldSubmitted: (p0) => p0.isNotEmpty
+                                ? _width_L__FocusNode.requestFocus()
+                                : _width_R__FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _width_L__Controller,
                             focusNode: _width_L__FocusNode,
                             isHideLable: true,
@@ -962,34 +1020,52 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,2}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _gross_FocusNode.requestFocus()
-                                : _width_L__FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                            focusNode: _gross_FocusNode,
-                            controller: _gross_Controller,
-                            isHideLable: true,
-                            labelText: "GROSS WT",
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb11_FocusNode.requestFocus()
-                                : _gross_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _width_L__FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                              focusNode: _gross_FocusNode,
+                              controller: _gross_Controller,
+                              isHideLable: true,
+                              labelText: "GROSS WT",
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _cb11_FocusNode.requestFocus()
+                                  : _gross_FocusNode.requestFocus()),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb11_Controller,
                             focusNode: _cb11_FocusNode,
                             isHideLable: true,
@@ -997,21 +1073,39 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb12_FocusNode.requestFocus()
-                                : _cb11_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb11_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb12_Controller,
                             focusNode: _cb12_FocusNode,
                             isHideLable: true,
@@ -1019,17 +1113,35 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb13_FocusNode.requestFocus()
-                                : _cb12_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb12_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb13_Controller,
                             focusNode: _cb13_FocusNode,
                             isHideLable: true,
@@ -1037,21 +1149,39 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb21_FocusNode.requestFocus()
-                                : _cb13_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb13_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb21_Controller,
                             focusNode: _cb21_FocusNode,
                             isHideLable: true,
@@ -1059,17 +1189,35 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb22_FocusNode.requestFocus()
-                                : _cb21_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb21_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb22_Controller,
                             focusNode: _cb22_FocusNode,
                             isHideLable: true,
@@ -1077,21 +1225,39 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb23_FocusNode.requestFocus()
-                                : _cb22_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb22_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb23_Controller,
                             focusNode: _cb23_FocusNode,
                             isHideLable: true,
@@ -1099,17 +1265,35 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb31_FocusNode.requestFocus()
-                                : _cb23_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb23_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb31_Controller,
                             focusNode: _cb31_FocusNode,
                             isHideLable: true,
@@ -1117,21 +1301,39 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb32_FocusNode.requestFocus()
-                                : _cb31_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb31_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb32_Controller,
                             focusNode: _cb32_FocusNode,
                             isHideLable: true,
@@ -1139,17 +1341,35 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb33_FocusNode.requestFocus()
-                                : _cb32_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
+                                : _cb32_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
                             controller: _cb33_Controller,
                             focusNode: _cb33_FocusNode,
                             isHideLable: true,
@@ -1157,464 +1377,570 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,1}$')),
+                                  RegExp(r'[0-9.]')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _of1_FocusNode.requestFocus()
-                                : _cb33_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _of1_Controller,
-                          focusNode: _of1_FocusNode,
-                          isHideLable: true,
-                          labelText: "OF1",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          onFieldSubmitted: (value) => value.isNotEmpty
-                              ? _of2_FocusNode.requestFocus()
-                              : _of1_FocusNode.requestFocus(),
-                          validator: (value) {
-                            if (value != null) {
-                              double? of1Values = double.tryParse(value);
-                              if (value.length >= 4) {
-                                if (of1Values == null ||
-                                    of1Values < 1.50 ||
-                                    of1Values > 2.0) {
+                                : _cb33_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _of1_Controller,
+                            focusNode: _of1_FocusNode,
+                            isHideLable: true,
+                            labelText: "OF1",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            onFieldSubmitted: (value) => value.isNotEmpty
+                                ? _of2_FocusNode.requestFocus()
+                                : _of1_FocusNode.requestFocus(),
+                            validator: (value) {
+                              try {
+                                double? of1Values = double.tryParse(value!);
+                                if (of1Values! < 1.50 || of1Values > 2.0) {
                                   _of1_FocusNode.requestFocus();
 
                                   return "value between 1.50 - 2.00 !";
                                 } else {
-                                  // _of2_FocusNode.requestFocus();
+                                  return null;
                                 }
+                              } catch (e) {
+                                return null;
                               }
-                            }
-                            return null;
-                          },
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _of2_Controller,
-                            focusNode: _of2_FocusNode,
-                            isHideLable: true,
-                            labelText: "OF2",
-                            keyboardType: TextInputType.number,
-                            textInputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,2}$')),
-                            ],
-                            validator: (value) {
-                              if (value != null) {
-                                double? of1Values = double.tryParse(value);
-                                if (value.length >= 4) {
-                                  if (of1Values == null ||
-                                      of1Values < 1.50 ||
-                                      of1Values > 2.0) {
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _of2_Controller,
+                              focusNode: _of2_FocusNode,
+                              isHideLable: true,
+                              labelText: "OF2",
+                              keyboardType: TextInputType.number,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.]')),
+                              ],
+                              validator: (value) {
+                                try {
+                                  double? of1Values = double.tryParse(value!);
+                                  if (of1Values! < 1.50 || of1Values > 2.0) {
                                     _of2_FocusNode.requestFocus();
 
                                     return "value between 1.50 - 2.00 !";
                                   } else {
-                                    // _of3_FocusNode.requestFocus();
+                                    return null;
                                   }
+                                } catch (e) {
+                                  return null;
                                 }
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _of3_FocusNode.requestFocus()
-                                : _of2_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _of3_Controller,
-                            focusNode: _of3_FocusNode,
-                            isHideLable: true,
-                            labelText: "OF3",
-                            keyboardType: TextInputType.number,
-                            textInputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d+\.?\d{0,2}$')),
-                            ],
-                            validator: (value) {
-                              if (value != null) {
-                                double? of1Values = double.tryParse(value);
-                                if (value.length >= 4) {
-                                  if (of1Values == null ||
-                                      of1Values < 1.50 ||
-                                      of1Values > 2.0) {
+                              },
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _of3_FocusNode.requestFocus()
+                                  : _of2_FocusNode.requestFocus()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _of3_Controller,
+                              focusNode: _of3_FocusNode,
+                              isHideLable: true,
+                              labelText: "OF3",
+                              keyboardType: TextInputType.number,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.]')),
+                              ],
+                              validator: (value) {
+                                try {
+                                  double? of1Values = double.tryParse(value!);
+                                  if (of1Values! < 1.50 || of1Values > 2.0) {
                                     _of3_FocusNode.requestFocus();
 
                                     return "value between 1.50 - 2.00 !";
                                   } else {
-                                    // _burnOff_FocusNode.requestFocus();
+                                    return null;
                                   }
+                                } catch (e) {
+                                  return null;
                                 }
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _burnOff_FocusNode.requestFocus()
-                                : _of3_FocusNode.requestFocus()),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                            controller: _burnOff_Controller,
-                            focusNode: _burnOff_FocusNode,
-                            isHideLable: true,
-                            maxLength: 2,
-                            keyboardType: TextInputType.number,
-                            labelText: "BURN OFF",
-                            validator: (value) {
-                              if (value != null) {
-                                if (value.length == 2) {
-                                  int? of1Values = int.tryParse(value);
-                                  if (of1Values == null ||
-                                      of1Values < 27 ||
-                                      of1Values > 38) {
-                                    _burnOff_Controller.clear();
-                                    _burnOff_FocusNode.requestFocus();
+                              },
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _burnOff_FocusNode.requestFocus()
+                                  : _of3_FocusNode.requestFocus()),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                              controller: _burnOff_Controller,
+                              focusNode: _burnOff_FocusNode,
+                              isHideLable: true,
+                              maxLength: 2,
+                              keyboardType: TextInputType.number,
+                              labelText: "BURN OFF",
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
+                              validator: (value) {
+                                try {
+                                  int? of1Values = int.tryParse(value!);
+                                  if (of1Values! < 27 || of1Values > 38) {
                                     return 'input value between 27-38 !';
                                   } else {
-                                    // _fs1_FocusNode.requestFocus();
+                                    return null;
                                   }
+                                } catch (e) {
+                                  return null;
+                                }
+                              },
+                              onFieldSubmitted: (value) => value.isNotEmpty
+                                  ? _fs1_FocusNode.requestFocus()
+                                  : _burnOff_FocusNode.requestFocus()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs1_Controller,
+                            focusNode: _fs1_FocusNode,
+                            isHideLable: true,
+                            labelText: "FS1",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs2_FocusNode.requestFocus();
+                              } else {
+                                _fs1_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs2_Controller,
+                            focusNode: _fs2_FocusNode,
+                            isHideLable: true,
+                            labelText: "FS2",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs3_FocusNode.requestFocus();
+                              } else {
+                                _fs2_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs3_Controller,
+                            focusNode: _fs3_FocusNode,
+                            isHideLable: true,
+                            labelText: "FS3",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs4_FocusNode.requestFocus();
+                              } else {
+                                _fs3_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs4_Controller,
+                            focusNode: _fs4_FocusNode,
+                            isHideLable: true,
+                            labelText: "FS4",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _grade_FocusNode.requestFocus();
+                              } else {
+                                _fs4_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _grade_Controller,
+                            focusNode: _grade_FocusNode,
+                            isHideLable: true,
+                            labelText: "FILM GRADE",
+                            maxLength: 1,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z]')),
+                            ],
+                            // validator: (p0) {
+                            //   if (p0 != null) {
+                            //     if (p0.isEmpty) {
+                            //       return "Please Entry Value";
+                            //     }
+                            //   }
+                            //   return null;
+                            // },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _time_Press_FocusNode.requestFocus();
+                              } else {
+                                _grade_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _time_Press_Controller,
+                            focusNode: _time_Press_FocusNode,
+                            isHideLable: true,
+                            labelText: "TIME PRESS",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double? of1Values = double.tryParse(value!);
+                                if (of1Values! < 0.1 || of1Values > 0.9) {
+                                  return "value between 0.1 - 0.9 !";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _time_Released_FocusNode.requestFocus();
+                              } else {
+                                _time_Press_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _time_Released_Controller,
+                            focusNode: _time_Released_FocusNode,
+                            isHideLable: true,
+                            labelText: "TIME RELASED",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _heat_temp_FocusNode.requestFocus();
+                              } else {
+                                _time_Released_FocusNode.requestFocus();
+                              }
+                            },
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _heat_temp_Controller,
+                            focusNode: _heat_temp_FocusNode,
+                            isHideLable: true,
+                            keyboardType: TextInputType.number,
+                            labelText: "HEAT TEMP",
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _tension_FocusNode.requestFocus();
+                              } else {
+                                _heat_temp_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _tension_Controller,
+                            focusNode: _tension_FocusNode,
+                            keyboardType: TextInputType.number,
+                            isHideLable: true,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]')),
+                            ],
+                            labelText: "WINDING TENSION",
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _nip_roll_press_FocusNode.requestFocus();
+                              } else {
+                                _tension_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _nip_roll_press_Controller,
+                            focusNode: _nip_roll_press_FocusNode,
+                            isHideLable: true,
+                            labelText: "NIP ROLL PRESS",
+                            maxLength: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (isCheckConnection == 'Save') {
+                                await _funcSave();
+                                await _getHold();
+                              } else if (isCheckConnection == 'Send') {
+                                if (_formKey.currentState!.validate()) {
+                                  _sendApi();
+                                } else {
+                                  Alert(
+                                    closeIcon: Icon(
+                                      Icons.abc,
+                                      color: Colors.transparent,
+                                    ),
+                                    context: context,
+                                    type: AlertType.warning,
+                                    title: "WARNING !",
+                                    desc: "Please enter a valid value ",
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "OK",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        width: 120,
+                                      )
+                                    ],
+                                  ).show();
                                 }
                               }
-                              return null;
                             },
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _fs1_FocusNode.requestFocus()
-                                : _burnOff_FocusNode.requestFocus()),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _fs1_Controller,
-                          focusNode: _fs1_FocusNode,
-                          isHideLable: true,
-                          labelText: "FS1",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          validator: (p0) {
-                            if (p0 != null) {
-                              if (p0.isEmpty) {
-                                return "Please Entry Value";
-                              }
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _fs2_FocusNode.requestFocus();
-                            } else {
-                              _fs1_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _fs2_Controller,
-                          focusNode: _fs2_FocusNode,
-                          isHideLable: true,
-                          labelText: "FS2",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          validator: (p0) {
-                            if (p0 != null) {
-                              if (p0.isEmpty) {
-                                return "Please Entry Value";
-                              }
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _fs3_FocusNode.requestFocus();
-                            } else {
-                              _fs2_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _fs3_Controller,
-                          focusNode: _fs3_FocusNode,
-                          isHideLable: true,
-                          labelText: "FS3",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          validator: (p0) {
-                            if (p0 != null) {
-                              if (p0.isEmpty) {
-                                return "Please Entry Value";
-                              }
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _fs4_FocusNode.requestFocus();
-                            } else {
-                              _fs3_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _fs4_Controller,
-                          focusNode: _fs4_FocusNode,
-                          isHideLable: true,
-                          labelText: "FS4",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          validator: (p0) {
-                            if (p0 != null) {
-                              if (p0.isEmpty) {
-                                return "Please Entry Value";
-                              }
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _grade_FocusNode.requestFocus();
-                            } else {
-                              _fs4_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _grade_Controller,
-                          focusNode: _grade_FocusNode,
-                          isHideLable: true,
-                          labelText: "FILM GRADE",
-                          maxLength: 1,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[a-zA-Z]')),
-                          ],
-                          validator: (p0) {
-                            if (p0 != null) {
-                              if (p0.isEmpty) {
-                                return "Please Entry Value";
-                              }
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _time_Press_FocusNode.requestFocus();
-                            } else {
-                              _grade_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _time_Press_Controller,
-                          focusNode: _time_Press_FocusNode,
-                          isHideLable: true,
-                          labelText: "TIME PRESS",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,1}$')),
-                          ],
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _time_Released_FocusNode.requestFocus();
-                            } else {
-                              _time_Press_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _time_Released_Controller,
-                          focusNode: _time_Released_FocusNode,
-                          isHideLable: true,
-                          labelText: "TIME RELASED",
-                          keyboardType: TextInputType.number,
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}$')),
-                          ],
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _heat_temp_FocusNode.requestFocus();
-                            } else {
-                              _time_Released_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _heat_temp_Controller,
-                          focusNode: _heat_temp_FocusNode,
-                          isHideLable: true,
-                          keyboardType: TextInputType.number,
-                          labelText: "HEAT TEMP",
-                          textInputFormatter: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                          ],
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _tension_FocusNode.requestFocus();
-                            } else {
-                              _heat_temp_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _tension_Controller,
-                          focusNode: _tension_FocusNode,
-                          isHideLable: true,
-                          labelText: "WINDING TENSION",
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _nip_roll_press_FocusNode.requestFocus();
-                            } else {
-                              _tension_FocusNode.requestFocus();
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextInputField(
-                          controller: _nip_roll_press_Controller,
-                          focusNode: _nip_roll_press_FocusNode,
-                          isHideLable: true,
-                          labelText: "NIP ROLL PRESS",
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (isCheckConnection == 'Save') {
-                              await _funcSave();
-                              await _getHold();
-                            } else if (isCheckConnection == 'Send') {
-                              _sendApi();
-                            }
-                          },
-                          child: Label(
-                            '${isCheckConnection}',
-                            color: COLOR_WHITE,
+                            child: Label(
+                              '${isCheckConnection}',
+                              color: COLOR_WHITE,
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    isCheckConnection == 'Send'
+                                        ? COLOR_SUCESS
+                                        : COLOR_BLUE_DARK)),
                           ),
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll(
-                                  isCheckConnection == 'Send'
-                                      ? COLOR_SUCESS
-                                      : COLOR_BLUE_DARK)),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                ],
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 
