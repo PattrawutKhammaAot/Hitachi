@@ -17,8 +17,8 @@ class MaterialTraceUpdateModel {
   final String? PROCESS;
   final String? LOT;
   final String? DATE;
-  final String? I_PEAK;
-  final String? HIGH_VOLT;
+  final int? I_PEAK;
+  final int? HIGH_VOLT;
 
   List<Object> get props => [
         MATERIAL!,
@@ -64,8 +64,8 @@ class MaterialTraceUpdateModel {
       String? BATCHNO,
       String? LOT,
       String? STARTDATE,
-      String? I_PEAK,
-      String? HIGH_VOLT}) {
+      int? I_PEAK,
+      int? HIGH_VOLT}) {
     return MaterialTraceUpdateModel(
       MATERIAL: MATERIAL ?? this.MATERIAL,
       OPERATOR: OPERATOR ?? this.OPERATOR,

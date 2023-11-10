@@ -232,6 +232,7 @@ class _WindingJobFinishScreenState extends State<WindingJobFinishScreen> {
               } else if (state is CheckWindingFinishLoadedState) {
                 EasyLoading.dismiss();
                 if (state.item.RESULT == true) {
+                  EasyLoading.showInfo("IPE = ${state.item.IPE_NO}");
                   f3.requestFocus();
                 } else {
                   _errorDialog(

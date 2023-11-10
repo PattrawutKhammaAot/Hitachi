@@ -138,13 +138,13 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     text: Label("${state.item.MESSAGE}"),
                     isHideCancle: false,
                     onpressOk: () async {
-                      Navigator.pop(context);
                       MachineController.clear();
                       operatorNameController.clear();
                       operatorName1Controller.clear();
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+                      Navigator.pop(context);
                     });
                 bgChange = Colors.grey;
                 f1.requestFocus();
@@ -376,7 +376,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       labelText: "Batch No :",
                       maxLength: 12,
                       height: 35,
-                      onEditingComplete: () {
+                      onEditingComplete: () async {
                         if (batchNoController.text.length == 12) {
                           _btnSend();
                           valuetxtinput = "";
@@ -501,37 +501,53 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   }
 
   _serachInGetProd() async {
-    var batch = await DatabaseHelper()
-        .queryIPESHEET('IPE_SHEET', [batchNoController.text]);
-    TextEditingController _ipeController = TextEditingController();
-    if (batch.isNotEmpty) {
-      for (var item in batch) {
-        _ipeController.text = item['IPE_NO'];
-      }
-    }
-    if (_ipeController.text.isNotEmpty) {
-      var itemInProd =
-          await DatabaseHelper().queryPRODSPEC([_ipeController.text]);
+    try {
+      var batch = await DatabaseHelper()
+          .queryIPESHEET('IPE_SHEET', [batchNoController.text.trim()]);
+      TextEditingController _ipeController = TextEditingController();
+      print(batch);
 
-      if (itemInProd.isNotEmpty) {
-        for (var item in itemInProd) {
-          _highVoltageController.text = item['HighVolt'];
-          _peakController.text = item['Ipeak'];
+      if (batch.isNotEmpty) {
+        for (var item in batch) {
+          _ipeController.text = item['IPE_NO'];
         }
       }
+      if (_ipeController.text.isNotEmpty) {
+        var itemInProd =
+            await DatabaseHelper().queryPRODSPEC([_ipeController.text.trim()]);
+        print(itemInProd);
+
+        if (itemInProd.isNotEmpty) {
+          for (var item in itemInProd) {
+            _highVoltageController.text =
+                double.parse(item['HighVolt']).toInt().toString();
+            _peakController.text =
+                double.parse(item['Ipeak']).toInt().toString();
+          }
+        }
+      }
+      setState(() {});
+    } catch (e, s) {
+      print(e);
+      print(s);
     }
-    setState(() {});
   }
 
   void _btnSend() async {
     if (MachineController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
+      await _serachInGetProd();
       if (MachineController.text.toUpperCase().substring(0, 2) == 'HV') {
-        await _serachInGetProd();
         bool peakValid = false;
         bool highValid = false;
-// ignore: use_build_context_synchronously
+        if (_peakController.text.isNotEmpty) {
+          peakValid = true;
+        }
+        if (_highVoltageController.text.isNotEmpty) {
+          highValid = true;
+        }
+
         showDialog(
             barrierDismissible: false,
             context: context,
@@ -697,8 +713,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                     MATERIAL: itemMasterLOT['Material'].toString(),
                     LOT: itemMasterLOT['Lot'].toString(),
                     PROCESS: itemMasterLOT['PROCESS'].toString(),
-                    I_PEAK: _peakController.text,
-                    HIGH_VOLT: _highVoltageController.text,
+                    I_PEAK: int.tryParse(_peakController.text),
+                    HIGH_VOLT: int.tryParse(_highVoltageController.text),
                     OPERATOR: operatorNameController.text,
                     BATCH_NO: batchNoController.text.trim()),
                 "Process"));

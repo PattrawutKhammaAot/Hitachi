@@ -566,8 +566,8 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                     MATERIAL: null,
                     LOT: null,
                     PROCESS: null,
-                    I_PEAK: row.PCW,
-                    HIGH_VOLT: row.HVT,
+                    I_PEAK: int.tryParse(row.PCW.toString()),
+                    HIGH_VOLT: int.tryParse(row.HVT.toString()),
                     OPERATOR: row.OPERATOR_NAME,
                     BATCH_NO: row.BATCH_NO),
                 "Process"));

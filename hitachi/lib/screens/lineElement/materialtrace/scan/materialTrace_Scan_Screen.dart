@@ -614,8 +614,8 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                         MATERIAL: item.Mat,
                         LOT: item.Lot,
                         PROCESS: item.Pro,
-                        I_PEAK: _ipeakController.text,
-                        HIGH_VOLT: _highVoltageController.text,
+                        I_PEAK: int.tryParse(_ipeakController.text),
+                        HIGH_VOLT: int.tryParse(_highVoltageController.text),
                         OPERATOR: _operatorController.text.trim(),
                         BATCH_NO: _batchController.text.trim()),
                     "MatUp"));

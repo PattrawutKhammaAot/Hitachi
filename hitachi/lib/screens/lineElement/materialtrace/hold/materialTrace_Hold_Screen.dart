@@ -545,8 +545,8 @@ class TreatMentStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'pro', value: _item.PROCESS),
               DataGridCell<String>(columnName: 'lot', value: _item.LOT),
               DataGridCell<String>(columnName: 'date', value: _item.DATE),
-              DataGridCell<String>(columnName: 'ipeak', value: _item.I_PEAK),
-              DataGridCell<String>(columnName: 'hv', value: _item.HIGH_VOLT),
+              DataGridCell<int>(columnName: 'ipeak', value: _item.I_PEAK),
+              DataGridCell<int>(columnName: 'hv', value: _item.HIGH_VOLT),
             ],
           ),
         );
