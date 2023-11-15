@@ -68,15 +68,27 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   }
 
   _setValueDataGrid() async {
-    await DatabaseHelper().insertSqlite('MASTERLOT', {
-      'Material': _materialController.text.trim(),
-      'PROCESS': _processController.text.trim(),
-      'Lot': _lotSubController.text.trim(),
-    });
-    await _getHoldData().then((value) {
-      dataText = value;
-      datasoruce = MaterialTraceDataSource(value);
-    });
+    var masterLot = await DatabaseHelper()
+        .queryMASTERLOT([_materialController.text.trim()]);
+    if (masterLot.isEmpty) {
+      await DatabaseHelper().insertSqlite('MASTERLOT', {
+        'Material': _materialController.text.trim(),
+        'PROCESS': _processController.text.trim(),
+        'Lot': _lotSubController.text.trim(),
+      });
+      await _getHoldData().then((value) {
+        dataText = value;
+        datasoruce = MaterialTraceDataSource(value);
+      });
+    } else {
+      _errorDialog(
+          text: Label("MasterLot Duplicate !"),
+          isHideCancle: false,
+          onpressOk: () async {
+            Navigator.pop(context);
+          });
+    }
+
     setState(() {});
   }
 

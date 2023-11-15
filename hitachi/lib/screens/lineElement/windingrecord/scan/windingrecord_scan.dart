@@ -19,6 +19,7 @@ import 'package:hitachi/models/windingRecordModel/ResponeseWindingRecordModel.da
 import 'package:hitachi/models/windingRecordModel/output_windingRecordModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:hitachi/widget/custom_textinput.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class WindingRecordScanScreen extends StatefulWidget {
@@ -66,6 +67,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final TextEditingController _fs4_Controller = TextEditingController();
   final TextEditingController _grade_Controller = TextEditingController();
   final TextEditingController _time_Press_Controller = TextEditingController();
+  final TextEditingController _tempIPE_Controller = TextEditingController();
   final TextEditingController _time_Released_Controller =
       TextEditingController();
   final TextEditingController _heat_temp_Controller = TextEditingController();
@@ -171,7 +173,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           (startTime.isEmpty ? items.START_TIME : startTime) ?? "";
       _finishTime_Controller.text =
           (startTime.isEmpty ? items.FINISH_TIME : endTime) ?? "";
-      _ipeNo_Controller.text = ipe;
+      if (items.IPE_NO != null) {
+        _ipeNo_Controller.text = items.IPE_NO.toString();
+      } else {
+        _ipeNo_Controller.text = ipe.isEmpty ? _tempIPE_Controller.text : ipe;
+      }
+
       _thickness_Controller.text = items.THICKNESS ?? "";
       _turn_Controller.text = items.TURN.toString() ?? "";
       _diameter_Controller.text = items.DIAMETER.toString() ?? "";
@@ -396,102 +403,102 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       BATCH_NO: _batch_Controller.text.trim(),
       START_DATE: _startTime_Controller.text,
       END_DATE: _finishTime_Controller.text,
-      START_TIME: DateTime.now().toString(),
+      START_TIME: DateFormat('dd/MM/yyyy hh:mm:ss a').format(DateTime.now()),
       FINISH_TIME: _finishTime_Controller.text,
       OUTPUT: _output_Controller.text.isNotEmpty
           ? int.tryParse(_output_Controller.text)
-          : 0,
+          : null,
       IPE_NO: _ipeNo_Controller.text.isNotEmpty
           ? int.tryParse(_ipeNo_Controller.text)
-          : 0,
+          : null,
       THICKNESS: _thickness_Controller.text.trim(),
       PACK_NO: _packno_Controller.text.trim(),
       PPM_WEIGHT: _ppmweight_Controller.text.isNotEmpty
           ? num.tryParse(_ppmweight_Controller.text)
-          : 0,
+          : null,
       TURN: _turn_Controller.text.isNotEmpty
           ? int.tryParse(_turn_Controller.text)
-          : 0,
+          : null,
       DIAMETER: _diameter_Controller.text.isNotEmpty
           ? num.tryParse(_diameter_Controller.text)
-          : 0,
+          : null,
       CUSTOMER: _custommer_Controller.text.trim(),
       UF: _uf_Controller.text.isNotEmpty
           ? num.tryParse(_uf_Controller.text)
-          : 0,
+          : null,
       GROSS: _gross_Controller.text.isNotEmpty
           ? num.tryParse(_gross_Controller.text)
-          : 0,
+          : null,
       WIDTHL: _width_L__Controller.text.isNotEmpty
           ? num.tryParse(_width_L__Controller.text)
-          : 0,
+          : null,
       WIDTHR: _width_R__Controller.text.isNotEmpty
           ? num.tryParse(_width_R__Controller.text)
-          : 0,
+          : null,
       CB11: _cb11_Controller.text.isNotEmpty
           ? num.tryParse(_cb11_Controller.text)
-          : 0,
+          : null,
       CB12: _cb12_Controller.text.isNotEmpty
           ? num.tryParse(_cb12_Controller.text)
-          : 0,
+          : null,
       CB13: _cb13_Controller.text.isNotEmpty
           ? num.tryParse(_cb13_Controller.text)
-          : 0,
+          : null,
       CB21: _cb21_Controller.text.isNotEmpty
           ? num.tryParse(_cb21_Controller.text)
-          : 0,
+          : null,
       CB22: _cb22_Controller.text.isNotEmpty
           ? num.tryParse(_cb22_Controller.text)
-          : 0,
+          : null,
       CB23: _cb23_Controller.text.isNotEmpty
           ? num.tryParse(_cb23_Controller.text)
-          : 0,
+          : null,
       CB31: _cb31_Controller.text.isNotEmpty
           ? num.tryParse(_cb31_Controller.text)
-          : 0,
+          : null,
       CB32: _cb32_Controller.text.isNotEmpty
           ? num.tryParse(_cb32_Controller.text)
-          : 0,
+          : null,
       CB33: _cb33_Controller.text.isNotEmpty
           ? num.tryParse(_cb33_Controller.text)
-          : 0,
+          : null,
       OF1: _of1_Controller.text.isNotEmpty
           ? num.tryParse(_of1_Controller.text)
-          : 0,
+          : null,
       OF2: _of2_Controller.text.isNotEmpty
           ? num.tryParse(_of2_Controller.text)
-          : 0,
+          : null,
       OF3: _of3_Controller.text.isNotEmpty
           ? num.tryParse(_of3_Controller.text)
-          : 0,
+          : null,
       BURNOFF: _burnOff_Controller.text.isNotEmpty
           ? num.tryParse(_burnOff_Controller.text)
-          : 0,
+          : null,
       FS1: _fs1_Controller.text.isNotEmpty
           ? num.tryParse(_fs1_Controller.text)
-          : 0,
+          : null,
       FS2: _fs2_Controller.text.isNotEmpty
           ? num.tryParse(_fs2_Controller.text)
-          : 0,
+          : null,
       FS3: _fs3_Controller.text.isNotEmpty
           ? num.tryParse(_fs3_Controller.text)
-          : 0,
+          : null,
       FS4: _fs4_Controller.text.isNotEmpty
           ? num.tryParse(_fs4_Controller.text)
-          : 0,
+          : null,
       GRADE: _grade_Controller.text.trim(),
       TIME_PRESS: _time_Press_Controller.text.isNotEmpty
           ? num.tryParse(_time_Press_Controller.text)
-          : 0,
+          : null,
       TIME_RELEASED: _time_Released_Controller.text.isNotEmpty
           ? num.tryParse(_time_Released_Controller.text)
-          : 0,
+          : null,
       HEAT_TEMP: _heat_temp_Controller.text.isNotEmpty
           ? num.tryParse(_heat_temp_Controller.text)
-          : 0,
+          : null,
       TENSION: _tension_Controller.text.isNotEmpty
           ? int.tryParse(_tension_Controller.text)
-          : 0,
+          : null,
       NIP_ROLL_PRESS: _nip_roll_press_Controller.text.trim(),
     )));
   }
@@ -528,11 +535,24 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               // _getValuesFromServer(itemWindingRecord);
               _startTime_Controller.text = state.item.START_TIME.toString();
               _ipeNo_Controller.text = state.item.IPE_NO.toString();
+              _tempIPE_Controller.text = state.item.IPE_NO.toString();
               _finishTime_Controller.text = state.item.FINISH_TIME.toString();
               _ppmweight_Controller.text = state.item.PPM_WEIGHT.toString();
               _packno_Controller.text = state.item.PACK_NO.toString();
               _output_Controller.text = state.item.OUTPUT.toString();
+
               // if(PDA HAS DATA KEYIN) SETVALUES
+              await _getDataRecordFormPDA();
+              //             var loadDataSend = await DatabaseHelper()
+              //                 .queryWindingRecodeFormPda(
+              //                     'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text]);
+              //             if (loadDataSend.isNotEmpty) {
+              // List<WindingRecordModelSqlite> temp = [];
+              //             temp = loadDataSend
+              //                 .map((e) => WindingRecordModelSqlite.fromMap(e))
+              //                 .toList();
+              //             }
+
               EasyLoading.showInfo("${state.item.MESSAGE}");
               EasyLoading.dismiss();
               _thickness_FocusNode.requestFocus();
@@ -546,6 +566,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               EasyLoading.dismiss();
               itemWindingRecord = state.item;
               _getValuesFromServer(itemWindingRecord);
+              _thickness_FocusNode.requestFocus();
               setState(() {});
             }
           } else if (state is GetWindingRecordErrorState) {
@@ -588,14 +609,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
             EasyLoading.show(status: "Loading ...");
           } else if (state is SendWindingRecordLoadedState) {
             if (state.item.RESULT == true) {
-              await DatabaseHelper().deleteRecordDB(
-                  'WINDING_RECORD_SEND_SERVER',
-                  [_batch_Controller.text.trim()]);
+              await checkConditionIsNotEmtpy();
               EasyLoading.dismiss();
               _batch_Controller.clear();
               _clearController();
               _batch_FocusNode.requestFocus();
               EasyLoading.showSuccess("Send Success!");
+              await _getHold();
             } else {
               EasyLoading.showError("${state.item.MESSAGE}");
               _batch_Controller.clear();
@@ -716,39 +736,17 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                           child: CustomTextInputField(
                             focusNode: _thickness_FocusNode,
                             controller: _thickness_Controller,
-                            keyboardType: TextInputType.number,
+                            keyboardType:
+                                TextInputType.number, // รับค่าเป็นข้อความ
                             textInputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]'))
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^[\d\s-]*\.?\d{0,1}-?[\d\s-]*\.?\d{0,2}')),
                             ],
                             isHideLable: true,
-                            maxLength: 4,
                             labelText: "Thickness".toUpperCase(),
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
-                                double? thicknessValue = double.tryParse(value);
-                                if (thicknessValue == null ||
-                                    thicknessValue < 8 ||
-                                    thicknessValue > 15.7) {
-                                  _thickness_FocusNode.requestFocus();
-                                  _thickness_Controller.clear();
-                                } else {
-                                  _turn_FocusNode.requestFocus();
-                                }
-                              }
-                            },
-                            validator: (value) {
-                              try {
-                                double? thicknessValue =
-                                    double.tryParse(value!);
-                                if (thicknessValue! < 8 ||
-                                    thicknessValue > 15.7) {
-                                  return 'Thickness between 8 and 15.7';
-                                } else {
-                                  return null;
-                                }
-                              } catch (e) {
-                                return null;
+                                _turn_FocusNode.requestFocus();
                               }
                             },
                           ),
@@ -790,7 +788,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
@@ -892,7 +890,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             isHideLable: true,
                             labelText: "uf".toUpperCase(),
@@ -984,7 +982,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             onFieldSubmitted: (p0) => p0.isNotEmpty
                                 ? _width_L__FocusNode.requestFocus()
@@ -1020,7 +1018,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _gross_FocusNode.requestFocus()
@@ -1073,7 +1071,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb12_FocusNode.requestFocus()
@@ -1113,7 +1111,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb13_FocusNode.requestFocus()
@@ -1149,7 +1147,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb21_FocusNode.requestFocus()
@@ -1189,7 +1187,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb22_FocusNode.requestFocus()
@@ -1225,7 +1223,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb23_FocusNode.requestFocus()
@@ -1265,7 +1263,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb31_FocusNode.requestFocus()
@@ -1301,7 +1299,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb32_FocusNode.requestFocus()
@@ -1341,7 +1339,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _cb33_FocusNode.requestFocus()
@@ -1377,7 +1375,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _of1_FocusNode.requestFocus()
@@ -1417,7 +1415,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             onFieldSubmitted: (value) => value.isNotEmpty
                                 ? _of2_FocusNode.requestFocus()
@@ -1426,9 +1424,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               try {
                                 double? of1Values = double.tryParse(value!);
                                 if (of1Values! < 1.50 || of1Values > 2.0) {
-                                  _of1_FocusNode.requestFocus();
-
-                                  return "value between 1.50 - 2.00 !";
+                                  return "Value 1.50 - 2.00 !";
                                 } else {
                                   return null;
                                 }
@@ -1450,15 +1446,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               keyboardType: TextInputType.number,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.]')),
+                                    RegExp(r'^\d+\.?\d{0,2}')),
                               ],
                               validator: (value) {
                                 try {
                                   double? of1Values = double.tryParse(value!);
                                   if (of1Values! < 1.50 || of1Values > 2.0) {
-                                    _of2_FocusNode.requestFocus();
-
-                                    return "value between 1.50 - 2.00 !";
+                                    return "Value 1.50 - 2.00 !";
                                   } else {
                                     return null;
                                   }
@@ -1486,15 +1480,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               keyboardType: TextInputType.number,
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.]')),
+                                    RegExp(r'^\d+\.?\d{0,2}')),
                               ],
                               validator: (value) {
                                 try {
                                   double? of1Values = double.tryParse(value!);
                                   if (of1Values! < 1.50 || of1Values > 2.0) {
-                                    _of3_FocusNode.requestFocus();
-
-                                    return "value between 1.50 - 2.00 !";
+                                    return "Value 1.50 - 2.00 !";
                                   } else {
                                     return null;
                                   }
@@ -1525,7 +1517,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                 try {
                                   int? of1Values = int.tryParse(value!);
                                   if (of1Values! < 27 || of1Values > 38) {
-                                    return 'input value between 27-38 !';
+                                    return 'Value 27-38 !';
                                   } else {
                                     return null;
                                   }
@@ -1553,7 +1545,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             validator: (value) {
                               try {
@@ -1593,7 +1585,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             validator: (value) {
                               try {
@@ -1637,7 +1629,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             validator: (value) {
                               try {
@@ -1677,7 +1669,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             validator: (value) {
                               try {
@@ -1752,13 +1744,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,1}')),
                             ],
                             validator: (value) {
                               try {
                                 double? of1Values = double.tryParse(value!);
                                 if (of1Values! < 0.1 || of1Values > 0.9) {
-                                  return "value between 0.1 - 0.9 !";
+                                  return "Value 0.1 - 0.9 !";
                                 } else {
                                   return null;
                                 }
@@ -1791,7 +1783,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]')),
+                                  RegExp(r'^\d+\.?\d{0,2}')),
                             ],
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
@@ -1892,31 +1884,10 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                 await _funcSave();
                                 await _getHold();
                               } else if (isCheckConnection == 'Send') {
-                                if (_formKey.currentState!.validate()) {
-                                  _sendApi();
+                                if (_batch_Controller.text.isNotEmpty) {
+                                  await _sendApi();
                                 } else {
-                                  Alert(
-                                    closeIcon: Icon(
-                                      Icons.abc,
-                                      color: Colors.transparent,
-                                    ),
-                                    context: context,
-                                    type: AlertType.warning,
-                                    title: "WARNING !",
-                                    desc: "Please enter a valid value ",
-                                    buttons: [
-                                      DialogButton(
-                                        child: Text(
-                                          "OK",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20),
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                        width: 120,
-                                      )
-                                    ],
-                                  ).show();
+                                  _batch_FocusNode.requestFocus();
                                 }
                               }
                             },
@@ -1995,5 +1966,77 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         ],
       ),
     );
+  }
+
+  Future checkConditionIsNotEmtpy() async {
+    if (_batch_Controller.text.isNotEmpty) {
+      if (_thickness_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_turn_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_diameter_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_custommer_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_uf_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_width_R__Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_width_L__Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_gross_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb11_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb12_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb13_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb21_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb22_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb23_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb31_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb32_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_cb33_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_of1_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_of2_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_of3_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_burnOff_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_fs1_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_fs2_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_fs3_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_fs4_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_grade_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_time_Press_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_time_Released_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_heat_temp_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_tension_Controller.text.isEmpty) {
+        await _funcSave();
+      } else if (_nip_roll_press_Controller.text.isEmpty) {
+        await _funcSave();
+      } else {
+        await DatabaseHelper().deleteRecordDB(
+            'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text.trim()]);
+        await _getHold();
+      }
+    }
   }
 }

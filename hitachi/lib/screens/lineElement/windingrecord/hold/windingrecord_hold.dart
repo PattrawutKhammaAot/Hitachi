@@ -77,7 +77,6 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
           await databaseHelper.queryAllRows('WINDING_RECORD_SEND_SERVER');
       List<WindingRecordModelSqlite> result =
           rows.map((row) => WindingRecordModelSqlite.fromMap(row)).toList();
-      print(rows);
       return result;
     } catch (e, s) {
       print(e);
@@ -211,7 +210,6 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                             setState(() {
                               columnWidths[details.column.columnName] =
                                   details.width;
-                              print(details.width);
                             });
                             return true;
                           },
@@ -244,7 +242,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                                         (e) => WindingRecordModelSqlite(),
                                       )
                                       .toList();
-                                  print(_index);
+
                                   _colorSend = COLOR_BLUE_DARK;
                                   _colorDelete = COLOR_RED;
                                 });
@@ -938,133 +936,56 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
 
   _sendDataServer() {
     _index.forEach((element) async {
+      print(_index.length);
       var row = wdrList.where((value) => value.ID == element).first;
-      if (row.BATCH_NO != null &&
-          row.START_TIME != null &&
-          row.FINISH_TIME != null &&
-          row.IPE_NO != null &&
-          row.THICKNESS != null &&
-          row.TURN != null &&
-          row.DIAMETER != null &&
-          row.CUSTOMER != null &&
-          row.UF != null &&
-          row.PPM_WEIGHT != null &&
-          row.PACK_NO != null &&
-          row.OUTPUT != null &&
-          row.GROSS != null &&
-          row.WIDTH_L != null &&
-          row.WIDHT_R != null &&
-          row.CB11 != null &&
-          row.CB12 != null &&
-          row.CB13 != null &&
-          row.CB21 != null &&
-          row.CB22 != null &&
-          row.CB23 != null &&
-          row.CB31 != null &&
-          row.CB32 != null &&
-          row.CB33 != null &&
-          row.OF1 != null &&
-          row.OF2 != null &&
-          row.OF3 != null &&
-          row.BURN_OFF != null &&
-          row.FS1 != null &&
-          row.FS2 != null &&
-          row.FS3 != null &&
-          row.FS4 != null &&
-          row.GRADE != null &&
-          row.TIME_PRESS != null &&
-          row.TIME_RELEASED != null &&
-          row.HEAT_TEMP != null &&
-          row.TENSION != null &&
-          row.NIP_ROLL_PRESS != null &&
-          row.BATCH_NO != '' &&
-          row.START_TIME != '' &&
-          row.FINISH_TIME != '' &&
-          row.IPE_NO != '' &&
-          row.THICKNESS != '' &&
-          row.TURN != '' &&
-          row.DIAMETER != '' &&
-          row.CUSTOMER != '' &&
-          row.UF != '' &&
-          row.PPM_WEIGHT != '' &&
-          row.PACK_NO != '' &&
-          row.OUTPUT != '' &&
-          row.GROSS != '' &&
-          row.WIDTH_L != '' &&
-          row.WIDHT_R != '' &&
-          row.CB11 != '' &&
-          row.CB12 != '' &&
-          row.CB13 != '' &&
-          row.CB21 != '' &&
-          row.CB22 != '' &&
-          row.CB23 != '' &&
-          row.CB31 != '' &&
-          row.CB32 != '' &&
-          row.CB33 != '' &&
-          row.OF1 != '' &&
-          row.OF2 != '' &&
-          row.OF3 != '' &&
-          row.BURN_OFF != '' &&
-          row.FS1 != '' &&
-          row.FS2 != '' &&
-          row.FS3 != '' &&
-          row.FS4 != '' &&
-          row.GRADE != '' &&
-          row.TIME_PRESS != '' &&
-          row.TIME_RELEASED != '' &&
-          row.HEAT_TEMP != '' &&
-          row.TENSION != '' &&
-          row.NIP_ROLL_PRESS != '') {
-        batchID.add(row.ID!);
-        BlocProvider.of<WindingrecordBloc>(context).add(
-          SendWindingRecordEvent(OutputWindingRecordModel(
-            BATCH_NO: row.BATCH_NO,
-            START_DATE: row.START_TIME,
-            END_DATE: row.FINISH_TIME,
-            START_TIME: row.START_TIME,
-            FINISH_TIME: row.FINISH_TIME,
-            MACHINE: "",
-            OPERATOR: "",
-            OUTPUT: int.tryParse(row.OUTPUT!),
-            IPE_NO: int.tryParse(row.IPE_NO!),
-            THICKNESS: row.THICKNESS,
-            PACK_NO: row.PACK_NO,
-            PPM_WEIGHT: num.tryParse(row.PPM_WEIGHT!),
-            TURN: int.tryParse(row.TURN!),
-            DIAMETER: num.tryParse(row.DIAMETER!),
-            CUSTOMER: row.CUSTOMER,
-            UF: num.tryParse(row.UF!),
-            GROSS: num.tryParse(row.GROSS!),
-            WIDTHL: num.tryParse(row.WIDHT_R!),
-            WIDTHR: num.tryParse(row.WIDTH_L!),
-            CB11: num.tryParse(row.CB11!),
-            CB12: num.tryParse(row.CB12!),
-            CB13: num.tryParse(row.CB13!),
-            CB21: num.tryParse(row.CB21!),
-            CB22: num.tryParse(row.CB22!),
-            CB23: num.tryParse(row.CB23!),
-            CB31: num.tryParse(row.CB31!),
-            CB32: num.tryParse(row.CB32!),
-            CB33: num.tryParse(row.CB33!),
-            OF1: num.tryParse(row.OF1!),
-            OF2: num.tryParse(row.OF2!),
-            OF3: num.tryParse(row.OF3!),
-            BURNOFF: num.tryParse(row.BURN_OFF!),
-            FS1: num.tryParse(row.FS1!),
-            FS2: num.tryParse(row.FS2!),
-            FS3: num.tryParse(row.FS3!),
-            FS4: num.tryParse(row.FS4!),
-            GRADE: row.GRADE,
-            TIME_PRESS: num.tryParse(row.TIME_PRESS!),
-            TIME_RELEASED: num.tryParse(row.TIME_RELEASED!),
-            HEAT_TEMP: num.tryParse(row.HEAT_TEMP!),
-            TENSION: int.tryParse(row.TENSION!),
-            NIP_ROLL_PRESS: row.NIP_ROLL_PRESS,
-          )),
-        );
-      } else {
-        EasyLoading.showError("Please Update Field");
-      }
+
+      batchID.add(row.ID!);
+      BlocProvider.of<WindingrecordBloc>(context).add(
+        SendWindingRecordEvent(OutputWindingRecordModel(
+          BATCH_NO: row.BATCH_NO,
+          START_DATE: row.START_TIME,
+          END_DATE: row.FINISH_TIME,
+          START_TIME: row.START_TIME,
+          FINISH_TIME: row.FINISH_TIME,
+          MACHINE: "",
+          OPERATOR: "",
+          OUTPUT: int.tryParse(row.OUTPUT!),
+          IPE_NO: int.tryParse(row.IPE_NO!),
+          THICKNESS: row.THICKNESS,
+          PACK_NO: row.PACK_NO,
+          PPM_WEIGHT: num.tryParse(row.PPM_WEIGHT!),
+          TURN: int.tryParse(row.TURN!),
+          DIAMETER: num.tryParse(row.DIAMETER!),
+          CUSTOMER: row.CUSTOMER,
+          UF: num.tryParse(row.UF!),
+          GROSS: num.tryParse(row.GROSS!),
+          WIDTHL: num.tryParse(row.WIDHT_R!),
+          WIDTHR: num.tryParse(row.WIDTH_L!),
+          CB11: num.tryParse(row.CB11!),
+          CB12: num.tryParse(row.CB12!),
+          CB13: num.tryParse(row.CB13!),
+          CB21: num.tryParse(row.CB21!),
+          CB22: num.tryParse(row.CB22!),
+          CB23: num.tryParse(row.CB23!),
+          CB31: num.tryParse(row.CB31!),
+          CB32: num.tryParse(row.CB32!),
+          CB33: num.tryParse(row.CB33!),
+          OF1: num.tryParse(row.OF1!),
+          OF2: num.tryParse(row.OF2!),
+          OF3: num.tryParse(row.OF3!),
+          BURNOFF: num.tryParse(row.BURN_OFF!),
+          FS1: num.tryParse(row.FS1!),
+          FS2: num.tryParse(row.FS2!),
+          FS3: num.tryParse(row.FS3!),
+          FS4: num.tryParse(row.FS4!),
+          GRADE: row.GRADE,
+          TIME_PRESS: num.tryParse(row.TIME_PRESS!),
+          TIME_RELEASED: num.tryParse(row.TIME_RELEASED!),
+          HEAT_TEMP: num.tryParse(row.HEAT_TEMP!),
+          TENSION: int.tryParse(row.TENSION!),
+          NIP_ROLL_PRESS: row.NIP_ROLL_PRESS,
+        )),
+      );
     });
   }
 
@@ -1114,11 +1035,169 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
 
   Future deletedInfo({String? type, int? ID}) async {
     if (type == "Success") {
-      await databaseHelper.deletedRowSqlite(
-          tableName: 'WINDING_RECORD_SEND_SERVER',
-          columnName: 'ID',
-          columnValue: ID);
-      _index.clear();
+      wdrList.forEach((row) async {
+        if (row.BATCH_NO != null &&
+            row.START_TIME != null &&
+            row.FINISH_TIME != null &&
+            row.IPE_NO != null &&
+            row.THICKNESS != null &&
+            row.TURN != null &&
+            row.DIAMETER != null &&
+            row.CUSTOMER != null &&
+            row.UF != null &&
+            row.PPM_WEIGHT != null &&
+            row.PACK_NO != null &&
+            row.OUTPUT != null &&
+            row.GROSS != null &&
+            row.WIDTH_L != null &&
+            row.WIDHT_R != null &&
+            row.CB11 != null &&
+            row.CB12 != null &&
+            row.CB13 != null &&
+            row.CB21 != null &&
+            row.CB22 != null &&
+            row.CB23 != null &&
+            row.CB31 != null &&
+            row.CB32 != null &&
+            row.CB33 != null &&
+            row.OF1 != null &&
+            row.OF2 != null &&
+            row.OF3 != null &&
+            row.BURN_OFF != null &&
+            row.FS1 != null &&
+            row.FS2 != null &&
+            row.FS3 != null &&
+            row.FS4 != null &&
+            row.GRADE != null &&
+            row.TIME_PRESS != null &&
+            row.TIME_RELEASED != null &&
+            row.HEAT_TEMP != null &&
+            row.TENSION != null &&
+            row.NIP_ROLL_PRESS != null &&
+            row.BATCH_NO != null &&
+            row.START_TIME != null &&
+            row.FINISH_TIME != null &&
+            row.IPE_NO != null &&
+            row.THICKNESS != null &&
+            row.TURN != null &&
+            row.DIAMETER != null &&
+            row.CUSTOMER != null &&
+            row.UF != null &&
+            row.PPM_WEIGHT != null &&
+            row.PACK_NO != null &&
+            row.OUTPUT != null &&
+            row.GROSS != null &&
+            row.WIDTH_L != null &&
+            row.WIDHT_R != null &&
+            row.CB11 != null &&
+            row.CB12 != null &&
+            row.CB13 != null &&
+            row.CB21 != null &&
+            row.CB22 != null &&
+            row.CB23 != null &&
+            row.CB31 != null &&
+            row.CB32 != null &&
+            row.CB33 != null &&
+            row.OF1 != null &&
+            row.OF2 != null &&
+            row.OF3 != null &&
+            row.BURN_OFF != null &&
+            row.FS1 != null &&
+            row.FS2 != null &&
+            row.FS3 != null &&
+            row.FS4 != null &&
+            row.GRADE != null &&
+            row.TIME_PRESS != null &&
+            row.TIME_RELEASED != null &&
+            row.HEAT_TEMP != null &&
+            row.TENSION != null &&
+            row.NIP_ROLL_PRESS != null &&
+            row.BATCH_NO != '' &&
+            row.START_TIME != '' &&
+            row.FINISH_TIME != '' &&
+            row.IPE_NO != '' &&
+            row.THICKNESS != '' &&
+            row.TURN != '' &&
+            row.DIAMETER != '' &&
+            row.CUSTOMER != '' &&
+            row.UF != '' &&
+            row.PPM_WEIGHT != '' &&
+            row.PACK_NO != '' &&
+            row.OUTPUT != '' &&
+            row.GROSS != '' &&
+            row.WIDTH_L != '' &&
+            row.WIDHT_R != '' &&
+            row.CB11 != '' &&
+            row.CB12 != '' &&
+            row.CB13 != '' &&
+            row.CB21 != '' &&
+            row.CB22 != '' &&
+            row.CB23 != '' &&
+            row.CB31 != '' &&
+            row.CB32 != '' &&
+            row.CB33 != '' &&
+            row.OF1 != '' &&
+            row.OF2 != '' &&
+            row.OF3 != '' &&
+            row.BURN_OFF != '' &&
+            row.FS1 != '' &&
+            row.FS2 != '' &&
+            row.FS3 != '' &&
+            row.FS4 != '' &&
+            row.GRADE != '' &&
+            row.TIME_PRESS != '' &&
+            row.TIME_RELEASED != '' &&
+            row.HEAT_TEMP != '' &&
+            row.TENSION != '' &&
+            row.NIP_ROLL_PRESS != '' &&
+            row.BATCH_NO != '' &&
+            row.START_TIME != '' &&
+            row.FINISH_TIME != '' &&
+            row.IPE_NO != '' &&
+            row.THICKNESS != '' &&
+            row.TURN != '' &&
+            row.DIAMETER != '' &&
+            row.CUSTOMER != '' &&
+            row.UF != '' &&
+            row.PPM_WEIGHT != '' &&
+            row.PACK_NO != '' &&
+            row.OUTPUT != '' &&
+            row.GROSS != '' &&
+            row.WIDTH_L != '' &&
+            row.WIDHT_R != '' &&
+            row.CB11 != '' &&
+            row.CB12 != '' &&
+            row.CB13 != '' &&
+            row.CB21 != '' &&
+            row.CB22 != '' &&
+            row.CB23 != '' &&
+            row.CB31 != '' &&
+            row.CB32 != '' &&
+            row.CB33 != '' &&
+            row.OF1 != '' &&
+            row.OF2 != '' &&
+            row.OF3 != '' &&
+            row.BURN_OFF != '' &&
+            row.FS1 != '' &&
+            row.FS2 != '' &&
+            row.FS3 != '' &&
+            row.FS4 != '' &&
+            row.GRADE != '' &&
+            row.TIME_PRESS != '' &&
+            row.TIME_RELEASED != '' &&
+            row.HEAT_TEMP != '' &&
+            row.TENSION != '' &&
+            row.NIP_ROLL_PRESS != '') {
+          await databaseHelper.deletedRowSqlite(
+              tableName: 'WINDING_RECORD_SEND_SERVER',
+              columnName: 'ID',
+              columnValue: ID);
+          _index.clear();
+        } else {
+          print("else");
+        }
+      });
+
       setState(() {});
     } else {
       setState(() {

@@ -142,6 +142,14 @@ class DatabaseHelper {
     return await db.insert(tableName, row);
   }
 
+  Future<List<Map<String, dynamic>>> queryMASTERLOT(
+      List<String> whereArgs) async {
+    Database db = await this.database;
+    return await db.query('MASTERLOT',
+        where: 'Material IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
   Future<int> deleted(String tableName, String row) async {
     Database db = await this.database;
 
@@ -213,6 +221,16 @@ class DatabaseHelper {
     Database db = await this.database;
     return await db.query('PRODSPEC',
         where: 'IPE IN (${whereArgs.map((_) => '?').join(',')})',
+        whereArgs: whereArgs);
+  }
+
+  Future<int> updateMASTERLOT(String tableName, Map<String, dynamic> row,
+      List<String> whereArgs) async {
+    Database db = await this.database;
+
+    print("WriteData FucnTionInsertDataSheet ${row}");
+    return await db.update(tableName, row,
+        where: 'Material IN (${whereArgs.map((_) => '?').join(',')})',
         whereArgs: whereArgs);
   }
 

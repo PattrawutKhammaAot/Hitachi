@@ -455,346 +455,146 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
       if (machineNoController.text.length >= 2) {
-        switch (machineNoController.text.toUpperCase().substring(0, 2)) {
+        switch (machineNoController.text.toUpperCase().trim().substring(0, 2)) {
           case 'ZN':
-            await _getDropdownList('ZN');
-            if (combolist.isNotEmpty) {
-              _visualControlController.text = combolist
-                      .firstWhere((element) => element.VALUEMEMBER == 'G')
-                      .VALUEMEMBER ??
-                  "G";
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Label('Zinc'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FutureBuilder(
-                            future: Future.delayed(Duration
-                                .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                            builder: (context, snapshot) {
-                              f5.requestFocus();
-                              return SizedBox
-                                  .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                            },
-                          ),
-                          CustomTextInputField(
-                            focusNode: f5,
-                            controller: _zinckController,
-                            keyboardType: TextInputType.number,
-                            isHideLable: true,
-                            onFieldSubmitted: (value) {
-                              if (value.isNotEmpty) {}
-                            },
-                            textInputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]'))
-                            ],
-                            labelText: 'Zinc Thickness',
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please Entry Value";
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              value: combolist.isNotEmpty
-                                  ? combolist
-                                          .firstWhere((element) =>
-                                              element.VALUEMEMBER == 'G')
-                                          .VALUEMEMBER ??
-                                      "G"
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: "Visual Control",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              isExpanded: true,
-                              items: combolist
-                                  .toList()
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _visualControlController.text = value ?? "G";
+            try {
+              await _getDropdownList('ZN');
+              if (combolist.isNotEmpty) {
+                _visualControlController.text = combolist
+                        .firstWhere((element) => element.VALUEMEMBER == 'G')
+                        .VALUEMEMBER ??
+                    "G";
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Label('Zinc'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FutureBuilder(
+                              future: Future.delayed(Duration
+                                  .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                              builder: (context, snapshot) {
+                                f5.requestFocus();
+                                return SizedBox
+                                    .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
                               },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_RED)),
-                            onPressed: () {
-                              _zinckController.clear();
-                              _clearDataNew();
-                              Navigator.pop(context);
-                            },
-                            child: Label(
-                              "Cancel",
-                              color: COLOR_WHITE,
-                            )),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_SUCESS)),
-                            onPressed: () {
-                              BlocProvider.of<LineElementBloc>(context).add(
-                                ProcessCheckEvent(ProcessCheckModel(
-                                  BATCH_NO: batchNoController.text,
-                                  IPE_NO: null,
-                                  MC_NO: machineNoController.text,
-                                  ZN_Thickness:
-                                      num.tryParse(_zinckController.text),
-                                  ZN_VC: _visualControlController.text,
-                                  CR_VC: null,
-                                  CR_Voltage: null,
-                                  SD_VC: null,
-                                  TM_Curve: null,
-                                  TM_Time: null,
-                                  PU_Ratio: null,
-                                  PU_Level: null,
-                                  HV_Peak_Current: null,
-                                  HV_HighVolt: null,
-                                  ME_C_AVG: null,
-                                  ME_TGD_AVG: null,
-                                  ME_Batch: null,
-                                  ME_Serial: null,
-                                  ME_Appearance: null,
-                                  ME_Quality_Check: null,
-                                )),
-                              );
-                              _callAPI();
-                              Navigator.pop(context);
-                            },
-                            child: Label("OK", color: COLOR_WHITE))
-                      ],
-                    );
-                  });
-            } else {
-              EasyLoading.showInfo(
-                  "Please Download Dropdown \n Menu dropdown Master");
-            }
-
-            break;
-          case 'CR':
-            await _getDropdownList('CR');
-            if (combolist.isNotEmpty) {
-              _visualControlController.text = combolist
-                      .firstWhere((element) => element.VALUEMEMBER == 'G')
-                      .VALUEMEMBER ??
-                  "G";
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Label('Clearing'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FutureBuilder(
-                            future: Future.delayed(Duration
-                                .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                            builder: (context, snapshot) {
-                              f5.requestFocus();
-                              return SizedBox
-                                  .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                            },
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              decoration: InputDecoration(
-                                labelText: "Clearing Voltage",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              isExpanded: true,
-                              items: combolist
-                                  .where((item) => item.VALUEMEMBER!
-                                      .contains(RegExp(r'^\d+$')))
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _clearingVoltageController.text = value ?? '-';
+                            CustomTextInputField(
+                              focusNode: f5,
+                              controller: _zinckController,
+                              keyboardType: TextInputType.number,
+                              isHideLable: true,
+                              onFieldSubmitted: (value) {
+                                if (value.isNotEmpty) {}
                               },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              value: combolist
-                                      .firstWhere((element) =>
-                                          element.VALUEMEMBER == 'G')
-                                      .VALUEMEMBER ??
-                                  "G",
-                              decoration: InputDecoration(
-                                errorStyle: TextStyle(color: COLOR_RED),
-                                labelText: "Visual Control",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              isExpanded: true,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.]'))
+                              ],
+                              labelText: 'Zinc Thickness',
+                              onChanged: (value) {},
                               validator: (value) {
-                                if (value == '' || value == null) {
-                                  return 'Please Select Clearing Voltage';
+                                if (value == null || value.isEmpty) {
+                                  return "Please Entry Value";
                                 }
+
                                 return null;
                               },
-                              items: combolist
-                                  .toList()
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _visualControlController.text = value ?? "G";
-                              },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                value: combolist.isNotEmpty
+                                    ? combolist
+                                            .firstWhere((element) =>
+                                                element.VALUEMEMBER == 'G')
+                                            .VALUEMEMBER ??
+                                        "G"
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: "Visual Control",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                                isExpanded: true,
+                                items: combolist
+                                    .toList()
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _visualControlController.text = value ?? "G";
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_RED)),
-                            onPressed: () {
-                              _zinckController.clear();
-                              _clearDataNew();
-                              Navigator.pop(context);
-                            },
-                            child: Label(
-                              "Cancel",
-                              color: COLOR_WHITE,
-                            )),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_SUCESS)),
-                            onPressed: () {
-                              if (_clearingVoltageController.text.isNotEmpty ||
-                                  _clearingVoltageController.text != '') {
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_RED)),
+                              onPressed: () {
+                                _zinckController.clear();
+                                _clearDataNew();
+                                Navigator.pop(context);
+                              },
+                              child: Label(
+                                "Cancel",
+                                color: COLOR_WHITE,
+                              )),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_SUCESS)),
+                              onPressed: () {
                                 BlocProvider.of<LineElementBloc>(context).add(
                                   ProcessCheckEvent(ProcessCheckModel(
                                     BATCH_NO: batchNoController.text,
                                     IPE_NO: null,
                                     MC_NO: machineNoController.text,
-                                    ZN_Thickness: null,
-                                    ZN_VC: null,
-                                    CR_VC: _visualControlController.text,
-                                    CR_Voltage: int.tryParse(
-                                        _clearingVoltageController.text),
+                                    ZN_Thickness:
+                                        num.tryParse(_zinckController.text),
+                                    ZN_VC: _visualControlController.text,
+                                    CR_VC: null,
+                                    CR_Voltage: null,
                                     SD_VC: null,
                                     TM_Curve: null,
                                     TM_Time: null,
@@ -812,451 +612,668 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 );
                                 _callAPI();
                                 Navigator.pop(context);
-                              } else {
-                                EasyLoading.showError(
-                                    "Please select Clearing Voltage");
-                              }
-                            },
-                            child: Label("OK", color: COLOR_WHITE))
-                      ],
-                    );
-                  });
-            } else {
-              EasyLoading.showInfo(
-                  "Please Download Dropdown \n Menu dropdown Master");
+                              },
+                              child: Label("OK", color: COLOR_WHITE))
+                        ],
+                      );
+                    });
+              } else {
+                EasyLoading.showInfo(
+                    "Please Download Dropdown \n Menu dropdown Master");
+              }
+            } catch (e, s) {
+              EasyLoading.showInfo("$e");
             }
 
+            break;
+          case 'CR':
+            try {
+              await _getDropdownList('CR');
+              if (combolist.isNotEmpty) {
+                _visualControlController.text = combolist
+                        .firstWhere((element) => element.VALUEMEMBER == 'G')
+                        .VALUEMEMBER ??
+                    "G";
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Label('Clearing'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FutureBuilder(
+                              future: Future.delayed(Duration
+                                  .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                              builder: (context, snapshot) {
+                                f5.requestFocus();
+                                return SizedBox
+                                    .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                              },
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                decoration: InputDecoration(
+                                  labelText: "Clearing Voltage",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                isExpanded: true,
+                                items: combolist
+                                    .where((item) => item.VALUEMEMBER!
+                                        .contains(RegExp(r'^\d+$')))
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _clearingVoltageController.text =
+                                      value ?? '-';
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                value: combolist
+                                        .firstWhere((element) =>
+                                            element.VALUEMEMBER == 'G')
+                                        .VALUEMEMBER ??
+                                    "G",
+                                decoration: InputDecoration(
+                                  errorStyle: TextStyle(color: COLOR_RED),
+                                  labelText: "Visual Control",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                isExpanded: true,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == '' || value == null) {
+                                    return 'Please Select Clearing Voltage';
+                                  }
+                                  return null;
+                                },
+                                items: combolist
+                                    .toList()
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _visualControlController.text = value ?? "G";
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_RED)),
+                              onPressed: () {
+                                _zinckController.clear();
+                                _clearDataNew();
+                                Navigator.pop(context);
+                              },
+                              child: Label(
+                                "Cancel",
+                                color: COLOR_WHITE,
+                              )),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_SUCESS)),
+                              onPressed: () {
+                                if (_clearingVoltageController
+                                        .text.isNotEmpty ||
+                                    _clearingVoltageController.text != '') {
+                                  BlocProvider.of<LineElementBloc>(context).add(
+                                    ProcessCheckEvent(ProcessCheckModel(
+                                      BATCH_NO: batchNoController.text,
+                                      IPE_NO: null,
+                                      MC_NO: machineNoController.text,
+                                      ZN_Thickness: null,
+                                      ZN_VC: null,
+                                      CR_VC: _visualControlController.text,
+                                      CR_Voltage: int.tryParse(
+                                          _clearingVoltageController.text),
+                                      SD_VC: null,
+                                      TM_Curve: null,
+                                      TM_Time: null,
+                                      PU_Ratio: null,
+                                      PU_Level: null,
+                                      HV_Peak_Current: null,
+                                      HV_HighVolt: null,
+                                      ME_C_AVG: null,
+                                      ME_TGD_AVG: null,
+                                      ME_Batch: null,
+                                      ME_Serial: null,
+                                      ME_Appearance: null,
+                                      ME_Quality_Check: null,
+                                    )),
+                                  );
+                                  _callAPI();
+                                  Navigator.pop(context);
+                                } else {
+                                  EasyLoading.showError(
+                                      "Please select Clearing Voltage");
+                                }
+                              },
+                              child: Label("OK", color: COLOR_WHITE))
+                        ],
+                      );
+                    });
+              } else {
+                EasyLoading.showInfo(
+                    "Please Download Dropdown \n Menu dropdown Master");
+              }
+            } catch (e, s) {
+              EasyLoading.showError("$e");
+            }
             break;
           case 'SD':
-            await _getDropdownList('SD');
-            if (combolist.isNotEmpty) {
-              _visualControlController.text = combolistForSD
-                      .firstWhere((element) => element.VALUEMEMBER == 'G')
-                      .VALUEMEMBER ??
-                  "G";
+            try {
+              await _getDropdownList('SD');
+              if (combolist.isNotEmpty) {
+                _visualControlController.text = combolistForSD
+                        .firstWhere((element) => element.VALUEMEMBER == 'G')
+                        .VALUEMEMBER ??
+                    "G";
 
-              _clearing_visualControlController.text = combolistForSD
-                      .firstWhere((element) => element.VALUEMEMBER == 'G')
-                      .VALUEMEMBER ??
-                  "G";
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Label('Clearing'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FutureBuilder(
-                            future: Future.delayed(Duration
-                                .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                            builder: (context, snapshot) {
-                              f5.requestFocus();
-                              return SizedBox
-                                  .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                            },
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              value: combolistForSD.isNotEmpty
-                                  ? combolistForSD
-                                          .firstWhere((element) =>
-                                              element.VALUEMEMBER == 'G')
-                                          .VALUEMEMBER ??
-                                      "G"
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: "Visual Control",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                _clearing_visualControlController.text = combolistForSD
+                        .firstWhere((element) => element.VALUEMEMBER == 'G')
+                        .VALUEMEMBER ??
+                    "G";
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Label('Clearing'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FutureBuilder(
+                              future: Future.delayed(Duration
+                                  .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                              builder: (context, snapshot) {
+                                f5.requestFocus();
+                                return SizedBox
+                                    .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                              },
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                value: combolistForSD.isNotEmpty
+                                    ? combolistForSD
+                                            .firstWhere((element) =>
+                                                element.VALUEMEMBER == 'G')
+                                            .VALUEMEMBER ??
+                                        "G"
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: "Visual Control",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
-                              ),
-                              isExpanded: true,
-                              items: combolistForSD
-                                  .toList()
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
+                                isExpanded: true,
+                                items: combolistForSD
+                                    .toList()
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _clearing_visualControlController.text =
-                                    value ?? "G";
-                              },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _clearing_visualControlController.text =
+                                      value ?? "G";
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
                                 ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              decoration: InputDecoration(
-                                labelText: "Clearing Voltage",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                decoration: InputDecoration(
+                                  labelText: "Clearing Voltage",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
-                              ),
-                              isExpanded: true,
-                              items: combolist
-                                  .where((item) => item.VALUEMEMBER!
-                                      .contains(RegExp(r'^\d+$')))
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
+                                isExpanded: true,
+                                items: combolist
+                                    .where((item) => item.VALUEMEMBER!
+                                        .contains(RegExp(r'^\d+$')))
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _clearingVoltageController.text = value ?? '-';
-                              },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _clearingVoltageController.text =
+                                      value ?? '-';
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
                                 ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            children: [
-                              Label(
-                                "Solder",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              value: combolistForSD.isNotEmpty
-                                  ? combolistForSD
-                                          .firstWhere((element) =>
-                                              element.VALUEMEMBER == 'G')
-                                          .VALUEMEMBER ??
-                                      "G"
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: "Visual Control",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: [
+                                Label(
+                                  "Solder",
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                              isExpanded: true,
-                              items: combolistForSD
-                                  .toList()
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                value: combolistForSD.isNotEmpty
+                                    ? combolistForSD
+                                            .firstWhere((element) =>
+                                                element.VALUEMEMBER == 'G')
+                                            .VALUEMEMBER ??
+                                        "G"
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: "Visual Control",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                isExpanded: true,
+                                items: combolistForSD
+                                    .toList()
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _visualControlController.text = value ?? "G";
-                              },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _visualControlController.text = value ?? "G";
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
                                 ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_RED)),
+                              onPressed: () {
+                                _zinckController.clear();
+                                _clearDataNew();
+                                Navigator.pop(context);
+                              },
+                              child: Label(
+                                "Cancel",
+                                color: COLOR_WHITE,
+                              )),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_SUCESS)),
+                              onPressed: () {
+                                BlocProvider.of<LineElementBloc>(context).add(
+                                  ProcessCheckEvent(ProcessCheckModel(
+                                    BATCH_NO: batchNoController.text,
+                                    IPE_NO: null,
+                                    MC_NO: machineNoController.text,
+                                    ZN_Thickness: null,
+                                    ZN_VC: null,
+                                    CR_VC:
+                                        _clearing_visualControlController.text,
+                                    CR_Voltage: int.tryParse(
+                                        _clearingVoltageController.text),
+                                    SD_VC: _visualControlController.text,
+                                    TM_Curve: null,
+                                    TM_Time: null,
+                                    PU_Ratio: null,
+                                    PU_Level: null,
+                                    HV_Peak_Current: null,
+                                    HV_HighVolt: null,
+                                    ME_C_AVG: null,
+                                    ME_TGD_AVG: null,
+                                    ME_Batch: null,
+                                    ME_Serial: null,
+                                    ME_Appearance: null,
+                                    ME_Quality_Check: null,
+                                  )),
+                                );
+                                _callAPI();
+                                Navigator.pop(context);
+                              },
+                              child: Label("OK", color: COLOR_WHITE))
                         ],
-                      ),
-                      actions: [
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_RED)),
-                            onPressed: () {
-                              _zinckController.clear();
-                              _clearDataNew();
-                              Navigator.pop(context);
-                            },
-                            child: Label(
-                              "Cancel",
-                              color: COLOR_WHITE,
-                            )),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_SUCESS)),
-                            onPressed: () {
-                              BlocProvider.of<LineElementBloc>(context).add(
-                                ProcessCheckEvent(ProcessCheckModel(
-                                  BATCH_NO: batchNoController.text,
-                                  IPE_NO: null,
-                                  MC_NO: machineNoController.text,
-                                  ZN_Thickness: null,
-                                  ZN_VC: null,
-                                  CR_VC: _clearing_visualControlController.text,
-                                  CR_Voltage: int.tryParse(
-                                      _clearingVoltageController.text),
-                                  SD_VC: _visualControlController.text,
-                                  TM_Curve: null,
-                                  TM_Time: null,
-                                  PU_Ratio: null,
-                                  PU_Level: null,
-                                  HV_Peak_Current: null,
-                                  HV_HighVolt: null,
-                                  ME_C_AVG: null,
-                                  ME_TGD_AVG: null,
-                                  ME_Batch: null,
-                                  ME_Serial: null,
-                                  ME_Appearance: null,
-                                  ME_Quality_Check: null,
-                                )),
-                              );
-                              _callAPI();
-                              Navigator.pop(context);
-                            },
-                            child: Label("OK", color: COLOR_WHITE))
-                      ],
-                    );
-                  });
-            } else {
-              EasyLoading.showInfo(
-                  "Please Download Dropdown \n Menu dropdown Master");
+                      );
+                    });
+              } else {
+                EasyLoading.showInfo(
+                    "Please Download Dropdown \n Menu dropdown Master");
+              }
+            } catch (e, s) {
+              EasyLoading.showInfo("$e");
             }
-
             break;
           case 'PU':
-            await _getDropdownList('PU');
-            if (combolist.isNotEmpty) {
-              _filingLevelController.text = combolist
-                      .firstWhere((element) => element.VALUEMEMBER == 'G')
-                      .VALUEMEMBER ??
-                  "G";
-              _missingRatioController.text = '2.86 :1';
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Label('Pur'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FutureBuilder(
-                            future: Future.delayed(Duration
-                                .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-                            builder: (context, snapshot) {
-                              f5.requestFocus();
-                              return SizedBox
-                                  .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-                            },
-                          ),
-                          CustomTextInputField(
-                            focusNode: f5,
-                            controller: _missingRatioController,
-                            keyboardType: TextInputType.number,
-                            isHideLable: true,
-                            onFieldSubmitted: (value) {
-                              if (value.isNotEmpty) {}
-                            },
-                            textInputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9.]'))
-                            ],
-                            labelText: 'MissingRatio',
-                            onChanged: (value) {},
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please Entry Value";
-                              }
+            try {
+              await _getDropdownList('PU');
+              if (combolist.isNotEmpty) {
+                _filingLevelController.text = combolist
+                        .firstWhere((element) => element.VALUEMEMBER == 'G')
+                        .VALUEMEMBER ??
+                    "G";
+                _missingRatioController.text = '2.86 :1';
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Label('Pur'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FutureBuilder(
+                              future: Future.delayed(Duration
+                                  .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+                              builder: (context, snapshot) {
+                                f5.requestFocus();
+                                return SizedBox
+                                    .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+                              },
+                            ),
+                            CustomTextInputField(
+                              focusNode: f5,
+                              controller: _missingRatioController,
+                              keyboardType: TextInputType.number,
+                              isHideLable: true,
+                              onFieldSubmitted: (value) {
+                                if (value.isNotEmpty) {}
+                              },
+                              textInputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.]'))
+                              ],
+                              labelText: 'MissingRatio',
+                              onChanged: (value) {},
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please Entry Value";
+                                }
 
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            height: 45,
-                            child: DropdownButtonFormField2(
-                              value: combolist
-                                      .firstWhere((element) =>
-                                          element.VALUEMEMBER == 'G')
-                                      .VALUEMEMBER ??
-                                  "G",
-                              decoration: InputDecoration(
-                                labelText: "Filing Level",
-                                contentPadding: EdgeInsets.zero,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SizedBox(
+                              height: 45,
+                              child: DropdownButtonFormField2(
+                                value: combolist
+                                        .firstWhere((element) =>
+                                            element.VALUEMEMBER == 'G')
+                                        .VALUEMEMBER ??
+                                    "G",
+                                decoration: InputDecoration(
+                                  labelText: "Filing Level",
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
-                              ),
-                              isExpanded: true,
-                              items: combolist
-                                  .toList()
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item.VALUEMEMBER,
-                                        child: Text(
-                                          "${item.VALUEMEMBER}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
+                                isExpanded: true,
+                                items: combolist
+                                    .toList()
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item.VALUEMEMBER,
+                                          child: Text(
+                                            "${item.VALUEMEMBER}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                _filingLevelController.text = value ?? "G";
-                              },
-                              onSaved: (value) {
-                                print(value);
-                              },
-                              buttonStyleData: const ButtonStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 20, right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  _filingLevelController.text = value ?? "G";
+                                },
+                                onSaved: (value) {
+                                  print(value);
+                                },
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 10),
                                 ),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_RED)),
+                              onPressed: () {
+                                _zinckController.clear();
+                                _clearDataNew();
+                                Navigator.pop(context);
+                              },
+                              child: Label(
+                                "Cancel",
+                                color: COLOR_WHITE,
+                              )),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(COLOR_SUCESS)),
+                              onPressed: () {
+                                BlocProvider.of<LineElementBloc>(context).add(
+                                  ProcessCheckEvent(ProcessCheckModel(
+                                    BATCH_NO: batchNoController.text,
+                                    IPE_NO: null,
+                                    MC_NO: machineNoController.text,
+                                    ZN_Thickness: null,
+                                    ZN_VC: null,
+                                    CR_VC: null,
+                                    CR_Voltage: null,
+                                    SD_VC: null,
+                                    TM_Curve: null,
+                                    TM_Time: null,
+                                    PU_Ratio: _missingRatioController.text,
+                                    PU_Level: _filingLevelController.text,
+                                    HV_Peak_Current: null,
+                                    HV_HighVolt: null,
+                                    ME_C_AVG: null,
+                                    ME_TGD_AVG: null,
+                                    ME_Batch: null,
+                                    ME_Serial: null,
+                                    ME_Appearance: null,
+                                    ME_Quality_Check: null,
+                                  )),
+                                );
+                                _callAPI();
+
+                                Navigator.pop(context);
+                              },
+                              child: Label("OK", color: COLOR_WHITE))
                         ],
-                      ),
-                      actions: [
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_RED)),
-                            onPressed: () {
-                              _zinckController.clear();
-                              _clearDataNew();
-                              Navigator.pop(context);
-                            },
-                            child: Label(
-                              "Cancel",
-                              color: COLOR_WHITE,
-                            )),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(COLOR_SUCESS)),
-                            onPressed: () {
-                              BlocProvider.of<LineElementBloc>(context).add(
-                                ProcessCheckEvent(ProcessCheckModel(
-                                  BATCH_NO: batchNoController.text,
-                                  IPE_NO: null,
-                                  MC_NO: machineNoController.text,
-                                  ZN_Thickness: null,
-                                  ZN_VC: null,
-                                  CR_VC: null,
-                                  CR_Voltage: null,
-                                  SD_VC: null,
-                                  TM_Curve: null,
-                                  TM_Time: null,
-                                  PU_Ratio: _missingRatioController.text,
-                                  PU_Level: _filingLevelController.text,
-                                  HV_Peak_Current: null,
-                                  HV_HighVolt: null,
-                                  ME_C_AVG: null,
-                                  ME_TGD_AVG: null,
-                                  ME_Batch: null,
-                                  ME_Serial: null,
-                                  ME_Appearance: null,
-                                  ME_Quality_Check: null,
-                                )),
-                              );
-                              _callAPI();
-
-                              Navigator.pop(context);
-                            },
-                            child: Label("OK", color: COLOR_WHITE))
-                      ],
-                    );
-                  });
-            } else {
-              EasyLoading.showInfo(
-                  "Please Download Dropdown \n Menu dropdown Master");
+                      );
+                    });
+              } else {
+                EasyLoading.showInfo(
+                    "Please Download Dropdown \n Menu dropdown Master");
+              }
+            } catch (e, s) {
+              EasyLoading.showInfo("$e");
             }
-
             break;
           default:
             _callAPI();

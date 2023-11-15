@@ -5,9 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
-import 'package:hitachi/config.dart';
+
 import 'package:hitachi/models/combobox/comboboxModel.dart';
-import 'package:hitachi/services/databaseHelper.dart';
 
 part 'combobox_event.dart';
 part 'combobox_state.dart';
@@ -17,17 +16,14 @@ class ComboboxBloc extends Bloc<ComboboxEvent, ComboboxState> {
   ComboboxBloc() : super(ComboboxInitial()) {
     dio.httpClientAdapter = IOHttpClientAdapter(
       onHttpClientCreate: (_) {
-        // Don't trust any certificate just because their root cert is trusted.
         final HttpClient client =
             HttpClient(context: SecurityContext(withTrustedRoots: false));
-        // You can test the intermediate / root cert here. We just ignore it.
+
         client.badCertificateCallback = (cert, host, port) => true;
         return client;
       },
     );
-    on<ComboboxEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<ComboboxEvent>((event, emit) {});
     on<ComboboxGroupEvent>(
       (event, emit) async {
         try {
@@ -41,14 +37,13 @@ class ComboboxBloc extends Bloc<ComboboxEvent, ComboboxState> {
     );
   }
   Future<List<ComboBoxModel>> fetchCombobox() async {
-    print(ApiConfig.GET_COMBOBOX);
     try {
       Response responese = await dio.get(
         ApiConfig.GET_COMBOBOX,
         options: Options(
             headers: ApiConfig.HEADER(),
-            sendTimeout: Duration(seconds: 10),
-            receiveTimeout: Duration(seconds: 10)),
+            sendTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10)),
       );
 
       List<ComboBoxModel> comboBoxList = (responese.data['Combobox'] as List)
