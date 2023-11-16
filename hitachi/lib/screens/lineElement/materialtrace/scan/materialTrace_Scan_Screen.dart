@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,13 +69,18 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   }
 
   _setValueDataGrid() async {
-    var masterLot = await DatabaseHelper()
-        .queryMASTERLOT([_materialController.text.trim()]);
+    var masterLot = await DatabaseHelper().queryMASTERLOT(
+        [_lotNoController.text.trim().replaceAll(RegExp(r"\s+"), "")]);
+
     if (masterLot.isEmpty) {
       await DatabaseHelper().insertSqlite('MASTERLOT', {
         'Material': _materialController.text.trim(),
-        'PROCESS': _processController.text.trim(),
-        'Lot': _lotSubController.text.trim(),
+        'PROCESS': _processController.text.trim().toUpperCase(),
+        'Lot': _lotNoController.text
+            .trim()
+            .substring(0, 60)
+            .replaceAll(RegExp(r"\s+"), ""),
+        'LOTNO': _lotNoController.text.trim().replaceAll(RegExp(r"\s+"), "")
       });
       await _getHoldData().then((value) {
         dataText = value;
@@ -172,7 +178,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
           _materialController.text = mapMat['PI'] ?? "";
           _lotSubController.text = mapLot['PI'] ?? "";
           isCheckValue = true;
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(Duration(milliseconds: 500), () {
             _lotNoController.selection = TextSelection(
                 baseOffset: 0, extentOffset: _lotNoController.text.length);
           });

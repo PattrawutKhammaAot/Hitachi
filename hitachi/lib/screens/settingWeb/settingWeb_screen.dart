@@ -20,6 +20,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
   final TextEditingController _urlController = TextEditingController();
 
   String tempUrl = "https://dev.lvcap.th.hitachienergy.com/";
+  // String tempUrl = "http://10.10.60.115/API_Hitachi/";
 
   Color _isColorSuccess = Colors.grey;
 

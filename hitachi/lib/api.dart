@@ -115,4 +115,7 @@ class ApiConfig {
   //POST UpdateCheckProcess
   static String UPDATE_CHECK_PROCESS =
       "${BASE_API_URL}LineElement/UpdateCheckProcess";
+
+  //GETIPEProdSpecByBBatch
+  //GET_ThicknessZinc
 }

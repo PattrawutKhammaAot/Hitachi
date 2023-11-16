@@ -283,3 +283,49 @@ class ProcessCheckErrorState extends LineElementState {
   @override
   List<Object> get props => [error];
 }
+
+///  ProcessCheck State
+class GetIPEProdSpecByBatchLoadingState extends LineElementState {
+  const GetIPEProdSpecByBatchLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class GetIPEProdSpecByBatchLoadedState extends LineElementState {
+  const GetIPEProdSpecByBatchLoadedState(this.item);
+  final GetIPEProdSpecByBatchModel item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class GetIPEProdSpecByBatchErrorState extends LineElementState {
+  const GetIPEProdSpecByBatchErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
+
+///  ProcessCheck State
+class GetThincknessZincLoadingState extends LineElementState {
+  const GetThincknessZincLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class GetThincknessZincLoadedState extends LineElementState {
+  const GetThincknessZincLoadedState(this.item);
+  final String item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class GetThincknessZincErrorState extends LineElementState {
+  const GetThincknessZincErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

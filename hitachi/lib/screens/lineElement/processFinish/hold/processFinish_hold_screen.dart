@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -9,6 +10,7 @@ import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
@@ -56,6 +58,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     'clearing_v': double.nan,
     'missing': double.nan,
     'filing': double.nan,
+    'high': double.nan,
+    'peak': double.nan
   };
 
   Future<List<ProcessModel>> _getProcessStart() async {
@@ -176,7 +180,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
             BlocListener<LineElementBloc, LineElementState>(
               listener: (context, state) async {
                 if (state is ProcessFinishLoadingState) {
-                  print('isCallSendFinish');
                   EasyLoading.show(status: "Loading...");
                 } else if (state is ProcessFinishLoadedState) {
                   EasyLoading.dismiss();
@@ -206,7 +209,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                       });
                 }
                 if (state is ProcessCheckLoadingState) {
-                  print('isCallCheck');
                   // EasyLoading.show(status: "Loading ...");
                 } else if (state is ProcessCheckLoadedState) {
                   // if (state.item.RESULT == true) {
@@ -300,8 +302,6 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                         .toString())!);
                                   }
                                 });
-
-                                print('No Rows Selected');
                               }
                             },
                             columns: <GridColumn>[
@@ -364,6 +364,28 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                   ),
                                 ),
                               ),
+                              // GridColumn(
+                              //   width: columnWidths['peak']!,
+                              //   columnName: 'peak',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Peak Current Withstands',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['high']!,
+                              //   columnName: 'high',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('High-Voltage Test',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
                               GridColumn(
                                 width: columnWidths['zinc']!,
                                 columnName: 'zinc',
@@ -495,6 +517,18 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.BATCH_NO}"))
                                 ]),
+                                // DataRow(cells: [
+                                //   DataCell(Center(
+                                //       child: Label("Peak Current Withstands"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.PCW}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(Center(
+                                //       child: Label("High-Voltage Test"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.HVT}"))
+                                // ]),
                                 DataRow(cells: [
                                   DataCell(
                                       Center(child: Label("Zinc Thickness"))),
@@ -585,6 +619,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
       if (row.MACHINE?.substring(0, 2).toUpperCase() == "SD") {
+        print(row.MACHINE?.substring(0, 2).toUpperCase());
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
               MACHINE: row.MACHINE,
@@ -659,7 +694,33 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
             PU_Level: row.FILING_LEVEL,
           )),
         );
-      } else {
+      }
+      //  else if (row.MACHINE?.substring(0, 2).toUpperCase() == "HV") {
+      //   var sql = await DatabaseHelper().queryAllRows('MASTERLOT');
+      //   BlocProvider.of<LineElementBloc>(context).add(
+      //     ProcessFinishInputEvent(ProcessFinishOutputModel(
+      //         MACHINE: row.MACHINE,
+      //         OPERATORNAME: int.tryParse(row.OPERATOR_NAME.toString()),
+      //         REJECTQTY: int.tryParse(row.GARBAGE.toString()),
+      //         BATCHNO: row.BATCH_NO.toString(),
+      //         FINISHDATE: row.FINDATE)),
+      //   );
+      //   for (var itemMasterLOT in sql) {
+      //     BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+      //         PostUpdateMaterialTraceEvent(
+      //             MaterialTraceUpdateModel(
+      //                 DATE: row.FINDATE,
+      //                 MATERIAL: itemMasterLOT['Material'].toString(),
+      //                 LOT: itemMasterLOT['Lot'].toString(),
+      //                 PROCESS: itemMasterLOT['PROCESS'].toString(),
+      //                 I_PEAK: int.tryParse(row.PCW.toString()),
+      //                 HIGH_VOLT: int.tryParse(row.HVT.toString()),
+      //                 OPERATOR: row.OPERATOR_NAME,
+      //                 BATCH_NO: row.BATCH_NO),
+      //             "Process"));
+      //   }
+      // }
+      else {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessFinishInputEvent(ProcessFinishOutputModel(
               MACHINE: row.MACHINE,
@@ -724,6 +785,8 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<int>(
                   columnName: 'BatchNO',
                   value: int.tryParse(_item.BATCH_NO.toString())),
+              // DataGridCell<String>(columnName: 'peak', value: _item.PCW),
+              // DataGridCell<String>(columnName: 'high', value: _item.HVT),
               DataGridCell<String>(
                   columnName: 'zinc', value: _item.ZINCK_THICKNESS.toString()),
               DataGridCell<String>(

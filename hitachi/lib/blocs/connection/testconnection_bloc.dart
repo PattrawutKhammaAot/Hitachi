@@ -73,8 +73,6 @@ class TestconnectionBloc
 
   Future<ResponeDefault> fetctTestConnectionWRD() async {
     try {
-      print(BASE_API_URL);
-      print("TESTSTST");
       Response responese = await dio.get(
         BASE_API_URL + 'Connection/TestConnection',
         options: Options(

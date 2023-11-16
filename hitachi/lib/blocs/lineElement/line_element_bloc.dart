@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/api.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
 import 'package:hitachi/models/SendWdFinish/checkWdsFinishModel.dart';
 import 'package:hitachi/models/SendWdFinish/sendWdsFinish_Input_Model.dart';
@@ -15,6 +16,7 @@ import 'package:hitachi/models/SendWdFinish/sendWdsFinish_output_Model.dart';
 import 'package:hitachi/models/SendWds/SendWdsModel_Output.dart';
 import 'package:hitachi/models/SendWds/sendWdsModel_input.dart';
 import 'package:hitachi/models/checkPackNo_Model.dart';
+import 'package:hitachi/models/getIPEProdSpecByBatch/getIpeProdSpecByBatch.dart';
 import 'package:hitachi/models/materialInput/materialInputModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/pmdailyModel/PMDailyOutputModel.dart';
@@ -187,6 +189,28 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
         }
       },
     );
+    on<GetIPEProdSpecByBatchEvent>(
+      (event, emit) async {
+        try {
+          emit(GetIPEProdSpecByBatchLoadingState());
+          final mlist = await fetchGetIpeProdSpecByBatch(event.batch);
+          emit(GetIPEProdSpecByBatchLoadedState(mlist));
+        } catch (e) {
+          emit(GetIPEProdSpecByBatchErrorState(e.toString()));
+        }
+      },
+    );
+    on<GetThicknessZincBatchEvent>(
+      (event, emit) async {
+        try {
+          emit(GetThincknessZincLoadingState());
+          final mlist = await fetchGetThicknessZincBatch(event.batch);
+          emit(GetThincknessZincLoadedState(mlist));
+        } catch (e) {
+          emit(GetThincknessZincErrorState(e.toString()));
+        }
+      },
+    );
   }
 //Scan
   Future<sendWdsReturnWeightInputModel> fetchSendWindingReturnWeightScan(
@@ -301,8 +325,8 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       Response responese = await dio.get(ApiConfig.LE_CHECKPACK_NO + "$number",
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 60),
-              receiveTimeout: Duration(seconds: 60)));
+              sendTimeout: Duration(seconds: 5),
+              receiveTimeout: Duration(seconds: 5)));
       print(ApiConfig.LE_CHECKPACK_NO + "$number");
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
@@ -451,6 +475,44 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       ResponeDefault tmp = ResponeDefault.fromJson(response.data);
 
       return tmp;
+    } catch (e, s) {
+      print(e);
+      print(s);
+      throw Exception();
+    }
+  }
+
+  Future<GetIPEProdSpecByBatchModel> fetchGetIpeProdSpecByBatch(
+      String batch) async {
+    try {
+      Response responese = await dio.get(
+        BASE_API_URL + "LineElement/GetIPEProdSpecByBatch?batch=" + batch,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
+      );
+
+      GetIPEProdSpecByBatchModel post =
+          GetIPEProdSpecByBatchModel.fromJson(responese.data);
+      print(responese.data);
+      return post;
+    } on Exception {
+      throw Exception();
+    }
+  }
+
+  Future<String> fetchGetThicknessZincBatch(String batch) async {
+    try {
+      Response responese = await dio.get(
+        BASE_API_URL + "LineElement/GetThicknessZinc?batch=" + batch,
+        options: Options(
+            headers: ApiConfig.HEADER(),
+            sendTimeout: Duration(seconds: 60),
+            receiveTimeout: Duration(seconds: 60)),
+      );
+      print(responese.data);
+      return responese.data;
     } catch (e, s) {
       print(e);
       print(s);

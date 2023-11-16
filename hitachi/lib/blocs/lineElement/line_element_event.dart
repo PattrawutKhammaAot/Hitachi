@@ -114,6 +114,22 @@ class ProcessCheckEvent extends LineElementEvent {
   @override
   List<Object> get prop => [item];
 }
+
+class GetIPEProdSpecByBatchEvent extends LineElementEvent {
+  const GetIPEProdSpecByBatchEvent(this.batch);
+  final String batch;
+
+  @override
+  List<Object> get prop => [batch];
+}
+
+class GetThicknessZincBatchEvent extends LineElementEvent {
+  const GetThicknessZincBatchEvent(this.batch);
+  final String batch;
+
+  @override
+  List<Object> get prop => [batch];
+}
 // //////////////////------------MaterialEvent-----------///////////////
 // class PMDailySendEvent extends LineElementEvent {
 //   const PMDailySendEvent(this.items);

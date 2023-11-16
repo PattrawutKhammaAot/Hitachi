@@ -146,7 +146,7 @@ class DatabaseHelper {
       List<String> whereArgs) async {
     Database db = await this.database;
     return await db.query('MASTERLOT',
-        where: 'Material IN (${whereArgs.map((_) => '?').join(',')})',
+        where: 'LOTNO IN (${whereArgs.map((_) => '?').join(',')})',
         whereArgs: whereArgs);
   }
 
@@ -193,6 +193,12 @@ class DatabaseHelper {
       String tableName, String batch) async {
     Database db = await this.database;
     return await db.query(tableName, where: 'Batch = ?', whereArgs: [batch]);
+  }
+
+  Future<List<Map<String, dynamic>>> queryMasterlotProcess(String batch) async {
+    Database db = await this.database;
+    return await db
+        .query('MASTERLOT', where: 'PROCESS = ?', whereArgs: [batch]);
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
@@ -1293,6 +1299,7 @@ class DatabaseHelper {
         'ID INTEGER PRIMARY KEY AUTOINCREMENT,'
         'Material TEXT ,'
         'PROCESS TEXT ,'
+        'LOTNO TEXT ,'
         'Lot TEXT )');
   }
 

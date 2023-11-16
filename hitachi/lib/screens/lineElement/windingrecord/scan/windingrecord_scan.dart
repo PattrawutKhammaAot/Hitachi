@@ -119,18 +119,18 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   _getDataRecordFormPDA() async {
     try {
       var loadDataSend = await DatabaseHelper().queryWindingRecodeFormPda(
-          'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text]);
+          'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text.trim()]);
       var ipe = await DatabaseHelper()
-          .queryIPESHEET('IPE_SHEET', [_batch_Controller.text]);
+          .queryIPESHEET('IPE_SHEET', [_batch_Controller.text.trim()]);
       var windingSheet = await DatabaseHelper()
-          .queryIPESHEET('WINDING_SHEET', [_batch_Controller.text]);
+          .queryIPESHEET('WINDING_SHEET', [_batch_Controller.text.trim()]);
       String ipeText = '';
       String _startTime = '';
       String _finishTime = '';
 
       if (ipe.isNotEmpty) {
         for (var itemIPE in ipe) {
-          if (itemIPE['BatchNo'] == _batch_Controller.text) {
+          if (itemIPE['BatchNo'] == _batch_Controller.text.trim()) {
             ipeText = itemIPE['IPE_NO'];
           }
         }
@@ -158,10 +158,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         _ipeNo_Controller.text = ipeText;
 
         _thickness_FocusNode.requestFocus();
+        _textselection(_thickness_Controller);
+
         setState(() {});
+        EasyLoading.showSuccess("No data in Pda");
       }
     } catch (e, s) {
-      print(e);
+      EasyLoading.showError('$e', duration: Duration(seconds: 3));
+
       print(s);
     }
   }
@@ -172,7 +176,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       _startTime_Controller.text =
           (startTime.isEmpty ? items.START_TIME : startTime) ?? "";
       _finishTime_Controller.text =
-          (startTime.isEmpty ? items.FINISH_TIME : endTime) ?? "";
+          (endTime.isEmpty ? items.FINISH_TIME : endTime) ?? "";
       if (items.IPE_NO != null) {
         _ipeNo_Controller.text = items.IPE_NO.toString();
       } else {
@@ -216,49 +220,56 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     }
   }
 
+  _textselection(TextEditingController text) {
+    Future.delayed(Duration(microseconds: 500), () {
+      text.selection =
+          TextSelection(baseOffset: 0, extentOffset: text.text.length);
+    });
+  }
+
   _funcSave() async {
     var loadDataSend = await DatabaseHelper().queryWindingRecodeFormPda(
-        'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text]);
+        'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text.trim()]);
     if (loadDataSend.isEmpty) {
       await DatabaseHelper().insertRecordDB('WINDING_RECORD_SEND_SERVER', {
-        'BATCH_NO': _batch_Controller.text,
-        'START_TIME': _startTime_Controller.text,
-        'FINISH_TIME': _finishTime_Controller.text,
-        'IPENO': _ipeNo_Controller.text,
-        'THICKNESS': _thickness_Controller.text,
-        'TURN': _turn_Controller.text,
-        'DIAMETER': _diameter_Controller.text,
-        'CUSTOMER': _custommer_Controller.text,
-        'UF': _uf_Controller.text,
-        'PPM_WEIGHT': _ppmweight_Controller.text,
-        'PACK_NO': _packno_Controller.text,
-        'OUTPUT': _output_Controller.text,
-        'GROSS': _gross_Controller.text,
-        'WIDTH_L': _width_L__Controller.text,
-        'WIDHT_R': _width_R__Controller.text,
-        'CB11': _cb11_Controller.text,
-        'CB12': _cb12_Controller.text,
-        'CB13': _cb13_Controller.text,
-        'CB21': _cb21_Controller.text,
-        'CB22': _cb22_Controller.text,
-        'CB23': _cb23_Controller.text,
-        'CB31': _cb31_Controller.text,
-        'CB32': _cb32_Controller.text,
-        'CB33': _cb33_Controller.text,
-        'OF1': _of1_Controller.text,
-        'OF2': _of2_Controller.text,
-        'OF3': _of3_Controller.text,
-        'Burnoff': _burnOff_Controller.text,
-        'FS1': _fs1_Controller.text,
-        'FS2': _fs2_Controller.text,
-        'FS3': _fs3_Controller.text,
-        'FS4': _fs4_Controller.text,
-        'GRADE': _grade_Controller.text,
-        'TIME_RESS': _time_Press_Controller.text,
-        'TIME_RELEASED': _time_Released_Controller.text,
-        'HEAT_TEMP': _heat_temp_Controller.text,
-        'TENSION': _tension_Controller.text,
-        'NIP_ROLL_PRESS': _nip_roll_press_Controller.text,
+        'BATCH_NO': _batch_Controller.text.trim(),
+        'START_TIME': _startTime_Controller.text.trim(),
+        'FINISH_TIME': _finishTime_Controller.text.trim(),
+        'IPENO': _ipeNo_Controller.text.trim(),
+        'THICKNESS': _thickness_Controller.text.trim(),
+        'TURN': _turn_Controller.text.trim(),
+        'DIAMETER': _diameter_Controller.text.trim(),
+        'CUSTOMER': _custommer_Controller.text.trim(),
+        'UF': _uf_Controller.text.trim(),
+        'PPM_WEIGHT': _ppmweight_Controller.text.trim(),
+        'PACK_NO': _packno_Controller.text.trim(),
+        'OUTPUT': _output_Controller.text.trim(),
+        'GROSS': _gross_Controller.text.trim(),
+        'WIDTH_L': _width_L__Controller.text.trim(),
+        'WIDHT_R': _width_R__Controller.text.trim(),
+        'CB11': _cb11_Controller.text.trim(),
+        'CB12': _cb12_Controller.text.trim(),
+        'CB13': _cb13_Controller.text.trim(),
+        'CB21': _cb21_Controller.text.trim(),
+        'CB22': _cb22_Controller.text.trim(),
+        'CB23': _cb23_Controller.text.trim(),
+        'CB31': _cb31_Controller.text.trim(),
+        'CB32': _cb32_Controller.text.trim(),
+        'CB33': _cb33_Controller.text.trim(),
+        'OF1': _of1_Controller.text.trim(),
+        'OF2': _of2_Controller.text.trim(),
+        'OF3': _of3_Controller.text.trim(),
+        'Burnoff': _burnOff_Controller.text.trim(),
+        'FS1': _fs1_Controller.text.trim(),
+        'FS2': _fs2_Controller.text.trim(),
+        'FS3': _fs3_Controller.text.trim(),
+        'FS4': _fs4_Controller.text.trim(),
+        'GRADE': _grade_Controller.text.trim(),
+        'TIME_RESS': _time_Press_Controller.text.trim(),
+        'TIME_RELEASED': _time_Released_Controller.text.trim(),
+        'HEAT_TEMP': _heat_temp_Controller.text.trim(),
+        'TENSION': _tension_Controller.text.trim(),
+        'NIP_ROLL_PRESS': _nip_roll_press_Controller.text.trim(),
       }).then((value) {
         _clearController();
         _batch_Controller.clear();
@@ -354,6 +365,69 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     _heat_temp_Controller.text = items.HEAT_TEMP.toString();
     _tension_Controller.text = items.TENSION.toString();
     _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS.toString();
+  }
+
+  Future _setValuesControllerOffline() async {
+    try {
+      var loadDataSend = await DatabaseHelper().queryWindingRecodeFormPda(
+          'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text.trim()]);
+      if (loadDataSend.isNotEmpty) {
+        List<WindingRecordModelSqlite> temps = [];
+        temps = loadDataSend
+            .map((e) => WindingRecordModelSqlite.fromMap(e))
+            .toList();
+        for (var items in temps) {
+          _startTime_Controller.text = items.START_TIME.toString();
+          _finishTime_Controller.text = items.FINISH_TIME.toString();
+          _ipeNo_Controller.text = items.IPE_NO.toString();
+          _thickness_Controller.text = items.THICKNESS.toString();
+          _turn_Controller.text = items.TURN.toString();
+          _diameter_Controller.text = items.DIAMETER.toString();
+          _custommer_Controller.text = items.CUSTOMER ?? "";
+          _uf_Controller.text = items.UF.toString();
+          _ppmweight_Controller.text = items.PPM_WEIGHT.toString();
+          _packno_Controller.text = items.PACK_NO.toString();
+          _output_Controller.text = items.OUTPUT.toString();
+          _gross_Controller.text = items.GROSS.toString();
+          _width_L__Controller.text = items.WIDTH_L.toString();
+          _width_R__Controller.text = items.WIDHT_R.toString();
+          _cb11_Controller.text = items.CB11.toString();
+          _cb12_Controller.text = items.CB12.toString();
+          _cb13_Controller.text = items.CB13.toString();
+          _cb21_Controller.text = items.CB21.toString();
+          _cb22_Controller.text = items.CB22.toString();
+          _cb23_Controller.text = items.CB23.toString();
+          _cb31_Controller.text = items.CB31.toString();
+          _cb32_Controller.text = items.CB32.toString();
+          _cb33_Controller.text = items.CB33.toString();
+          _of1_Controller.text = items.OF1.toString();
+          _of2_Controller.text = items.OF2.toString();
+          _of3_Controller.text = items.OF3.toString();
+          _burnOff_Controller.text = items.BURN_OFF.toString();
+          _fs1_Controller.text = items.FS1.toString();
+          _fs2_Controller.text = items.FS2.toString();
+          _fs3_Controller.text = items.FS3.toString();
+          _fs4_Controller.text = items.FS4.toString();
+          _grade_Controller.text = items.GRADE.toString();
+          _time_Press_Controller.text = items.TIME_PRESS.toString();
+          _time_Released_Controller.text = items.TIME_RELEASED.toString();
+          _heat_temp_Controller.text = items.HEAT_TEMP.toString();
+          _tension_Controller.text = items.TENSION.toString();
+          _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS.toString();
+        }
+        setState(() {});
+      } else {
+        _errorDialog(
+            text: Label("No data In PDA"),
+            isHideCancle: false,
+            onpressOk: () async {
+              Navigator.pop(context);
+              _clearController();
+            });
+      }
+    } catch (e) {
+      EasyLoading.showError("$e", duration: Duration(seconds: 3));
+    }
   }
 
   _clearController() {
@@ -533,29 +607,70 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           } else if (state is GetWindingRecordLoadedState) {
             if (state.item.MESSAGE == 'No data in WindingRecord') {
               // _getValuesFromServer(itemWindingRecord);
-              _startTime_Controller.text = state.item.START_TIME.toString();
+
+              _startTime_Controller.text =
+                  state.item.START_TIME ?? state.item.START_DATE ?? "-";
               _ipeNo_Controller.text = state.item.IPE_NO.toString();
               _tempIPE_Controller.text = state.item.IPE_NO.toString();
-              _finishTime_Controller.text = state.item.FINISH_TIME.toString();
+              _finishTime_Controller.text =
+                  state.item.FINISH_TIME ?? state.item.END_DATE ?? "-";
               _ppmweight_Controller.text = state.item.PPM_WEIGHT.toString();
               _packno_Controller.text = state.item.PACK_NO.toString();
               _output_Controller.text = state.item.OUTPUT.toString();
+              var loadDataSend = await DatabaseHelper()
+                  .queryWindingRecodeFormPda('WINDING_RECORD_SEND_SERVER',
+                      [_batch_Controller.text.trim()]);
+              if (loadDataSend.isNotEmpty) {
+                List<WindingRecordModelSqlite> temp = [];
+                temp = loadDataSend
+                    .map((e) => WindingRecordModelSqlite.fromMap(e))
+                    .toList();
+                for (var items in temp) {
+                  _thickness_Controller.text = items.THICKNESS.toString();
+                  _turn_Controller.text = items.TURN.toString();
+                  _diameter_Controller.text = items.DIAMETER.toString();
+                  _custommer_Controller.text = items.CUSTOMER.toString();
+                  _uf_Controller.text = items.UF.toString();
+                  _width_L__Controller.text = items.WIDTH_L.toString();
+                  _width_R__Controller.text = items.WIDHT_R.toString();
+                  _gross_Controller.text = items.GROSS.toString();
+                  _cb11_Controller.text = items.CB11.toString();
+                  _cb12_Controller.text = items.CB12.toString();
+                  _cb13_Controller.text = items.CB13.toString();
+                  _cb21_Controller.text = items.CB21.toString();
+                  _cb22_Controller.text = items.CB22.toString();
+                  _cb23_Controller.text = items.CB23.toString();
+                  _cb31_Controller.text = items.CB31.toString();
+                  _cb32_Controller.text = items.CB32.toString();
+                  _cb33_Controller.text = items.CB33.toString();
+                  _of1_Controller.text = items.OF1.toString();
+                  _of2_Controller.text = items.OF2.toString();
+                  _of3_Controller.text = items.OF3.toString();
+                  _burnOff_Controller.text = items.BURN_OFF.toString();
+                  _fs1_Controller.text = items.FS1.toString();
+                  _fs2_Controller.text = items.FS2.toString();
+                  _fs3_Controller.text = items.FS3.toString();
+                  _fs4_Controller.text = items.FS4.toString();
+                  _grade_Controller.text = items.GRADE.toString();
+                  _time_Press_Controller.text = items.TIME_PRESS.toString();
+                  _time_Released_Controller.text =
+                      items.TIME_RELEASED.toString();
+                  _heat_temp_Controller.text = items.HEAT_TEMP.toString();
+                  _tension_Controller.text = items.TENSION.toString();
+                  _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS ?? "";
+                }
 
+                setState(() {});
+                EasyLoading.showSuccess("Load Data Success");
+              }
               // if(PDA HAS DATA KEYIN) SETVALUES
-              await _getDataRecordFormPDA();
-              //             var loadDataSend = await DatabaseHelper()
-              //                 .queryWindingRecodeFormPda(
-              //                     'WINDING_RECORD_SEND_SERVER', [_batch_Controller.text]);
-              //             if (loadDataSend.isNotEmpty) {
-              // List<WindingRecordModelSqlite> temp = [];
-              //             temp = loadDataSend
-              //                 .map((e) => WindingRecordModelSqlite.fromMap(e))
-              //                 .toList();
-              //             }
+              // await _getDataRecordFormPDA();
+              setState(() {});
 
               EasyLoading.showInfo("${state.item.MESSAGE}");
               EasyLoading.dismiss();
               _thickness_FocusNode.requestFocus();
+              _textselection(_thickness_Controller);
             } else if (state.item.MESSAGE == 'No data in WINDING_SHEET') {
               EasyLoading.showInfo("${state.item.MESSAGE}");
               await _getDataRecordFormPDA();
@@ -565,13 +680,69 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                 state.item.MESSAGE == null) {
               EasyLoading.dismiss();
               itemWindingRecord = state.item;
-              _getValuesFromServer(itemWindingRecord);
+              var loadDataSend = await DatabaseHelper()
+                  .queryWindingRecodeFormPda('WINDING_RECORD_SEND_SERVER',
+                      [_batch_Controller.text.trim()]);
+              if (loadDataSend.isNotEmpty) {
+                List<WindingRecordModelSqlite> temp = [];
+                temp = loadDataSend
+                    .map((e) => WindingRecordModelSqlite.fromMap(e))
+                    .toList();
+                for (var items in temp) {
+                  _startTime_Controller.text = items.START_TIME.toString();
+                  _finishTime_Controller.text = items.FINISH_TIME.toString();
+                  _ipeNo_Controller.text = items.IPE_NO.toString();
+                  _ppmweight_Controller.text = items.PPM_WEIGHT.toString();
+                  _packno_Controller.text = items.PACK_NO.toString();
+                  _output_Controller.text = items.OUTPUT.toString();
+                  _thickness_Controller.text = items.THICKNESS.toString();
+                  _turn_Controller.text = items.TURN.toString();
+                  _diameter_Controller.text = items.DIAMETER.toString();
+                  _custommer_Controller.text = items.CUSTOMER.toString();
+                  _uf_Controller.text = items.UF.toString();
+                  _width_L__Controller.text = items.WIDTH_L.toString();
+                  _width_R__Controller.text = items.WIDHT_R.toString();
+                  _gross_Controller.text = items.GROSS.toString();
+                  _cb11_Controller.text = items.CB11.toString();
+                  _cb12_Controller.text = items.CB12.toString();
+                  _cb13_Controller.text = items.CB13.toString();
+                  _cb21_Controller.text = items.CB21.toString();
+                  _cb22_Controller.text = items.CB22.toString();
+                  _cb23_Controller.text = items.CB23.toString();
+                  _cb31_Controller.text = items.CB31.toString();
+                  _cb32_Controller.text = items.CB32.toString();
+                  _cb33_Controller.text = items.CB33.toString();
+                  _of1_Controller.text = items.OF1.toString();
+                  _of2_Controller.text = items.OF2.toString();
+                  _of3_Controller.text = items.OF3.toString();
+                  _burnOff_Controller.text = items.BURN_OFF.toString();
+                  _fs1_Controller.text = items.FS1.toString();
+                  _fs2_Controller.text = items.FS2.toString();
+                  _fs3_Controller.text = items.FS3.toString();
+                  _fs4_Controller.text = items.FS4.toString();
+                  _grade_Controller.text = items.GRADE.toString();
+                  _time_Press_Controller.text = items.TIME_PRESS.toString();
+                  _time_Released_Controller.text =
+                      items.TIME_RELEASED.toString();
+                  _heat_temp_Controller.text = items.HEAT_TEMP.toString();
+                  _tension_Controller.text = items.TENSION.toString();
+                  _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS ?? "";
+                }
+              } else {
+                _getValuesFromServer(itemWindingRecord);
+              }
+
+              setState(() {});
+
               _thickness_FocusNode.requestFocus();
+              _textselection(_thickness_Controller);
               setState(() {});
             }
           } else if (state is GetWindingRecordErrorState) {
             EasyLoading.dismiss();
-            await _getDataRecordFormPDA();
+            await _setValuesControllerOffline();
+            _thickness_FocusNode.requestFocus();
+            _textselection(_thickness_Controller);
           }
         }),
         BlocListener<NetworkBloc, NetworkState>(
@@ -614,6 +785,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               _batch_Controller.clear();
               _clearController();
               _batch_FocusNode.requestFocus();
+              _custommer_Controller.clear();
               EasyLoading.showSuccess("Send Success!");
               await _getHold();
             } else {
@@ -747,6 +919,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _turn_FocusNode.requestFocus();
+                                _textselection(_turn_Controller);
                               }
                             },
                           ),
@@ -762,6 +935,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _diameter_FocusNode.requestFocus();
+                                _textselection(_diameter_Controller);
                               } else {
                                 _turn_FocusNode.requestFocus();
                               }
@@ -854,6 +1028,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onChanged: (value) {
                               _custommer_Controller.text = value!;
                               _uf_FocusNode.requestFocus();
+                              _textselection(_uf_Controller);
                             },
                             onSaved: (value) {
                               _custommer_Controller.text = value!;
@@ -897,6 +1072,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _width_R__FocusNode.requestFocus();
+                                _textselection(_width_R__Controller);
                               } else {
                                 _uf_FocusNode.requestFocus();
                               }
@@ -930,9 +1106,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               isHideLable: true,
                               readOnly: true,
                               labelText: "PPMWeight".toUpperCase(),
-                              onFieldSubmitted: (value) => value.isNotEmpty
-                                  ? _packno_FocusNode.requestFocus()
-                                  : _ppmweight_FocusNode.requestFocus()),
+                              onFieldSubmitted: (value) {
+                                if (value.isNotEmpty) {
+                                  _packno_FocusNode.requestFocus();
+                                  _textselection(_ppmweight_Controller);
+                                }
+                              }),
                         ),
                       ],
                     ),
@@ -984,9 +1163,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,2}')),
                             ],
-                            onFieldSubmitted: (p0) => p0.isNotEmpty
-                                ? _width_L__FocusNode.requestFocus()
-                                : _width_R__FocusNode.requestFocus(),
+                            onFieldSubmitted: (p0) {
+                              if (p0.isNotEmpty) {
+                                _width_L__FocusNode.requestFocus();
+                                _textselection(_width_L__Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1020,9 +1202,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,2}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _gross_FocusNode.requestFocus()
-                                : _width_L__FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _gross_FocusNode.requestFocus();
+                                _textselection(_gross_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1055,9 +1240,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               controller: _gross_Controller,
                               isHideLable: true,
                               labelText: "GROSS WT",
-                              onFieldSubmitted: (value) => value.isNotEmpty
-                                  ? _cb11_FocusNode.requestFocus()
-                                  : _gross_FocusNode.requestFocus()),
+                              onFieldSubmitted: (value) {
+                                if (value.isNotEmpty) {
+                                  _cb11_FocusNode.requestFocus();
+                                  _textselection(_cb11_Controller);
+                                }
+                              }),
                         ),
                         SizedBox(
                           width: 10,
@@ -1073,9 +1261,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb12_FocusNode.requestFocus()
-                                : _cb11_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb12_FocusNode.requestFocus();
+                                _textselection(_cb12_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1113,9 +1304,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb13_FocusNode.requestFocus()
-                                : _cb12_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb13_FocusNode.requestFocus();
+                                _textselection(_cb13_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1149,9 +1343,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb21_FocusNode.requestFocus()
-                                : _cb13_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb21_FocusNode.requestFocus();
+                                _textselection(_cb21_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1189,9 +1386,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb22_FocusNode.requestFocus()
-                                : _cb21_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb22_FocusNode.requestFocus();
+                                _textselection(_cb22_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1225,9 +1425,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb23_FocusNode.requestFocus()
-                                : _cb22_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb23_FocusNode.requestFocus();
+                                _textselection(_cb23_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1265,9 +1468,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb31_FocusNode.requestFocus()
-                                : _cb23_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb31_FocusNode.requestFocus();
+                                _textselection(_cb31_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1301,9 +1507,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb32_FocusNode.requestFocus()
-                                : _cb31_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb32_FocusNode.requestFocus();
+                                _textselection(_cb32_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1341,9 +1550,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _cb33_FocusNode.requestFocus()
-                                : _cb32_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _cb33_FocusNode.requestFocus();
+                                _textselection(_cb33_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1377,9 +1589,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,1}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _of1_FocusNode.requestFocus()
-                                : _cb33_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _of1_FocusNode.requestFocus();
+                                _textselection(_of1_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double parsedValue = double.parse(value!);
@@ -1417,9 +1632,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^\d+\.?\d{0,2}')),
                             ],
-                            onFieldSubmitted: (value) => value.isNotEmpty
-                                ? _of2_FocusNode.requestFocus()
-                                : _of1_FocusNode.requestFocus(),
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _of2_FocusNode.requestFocus();
+                                _textselection(_of2_Controller);
+                              }
+                            },
                             validator: (value) {
                               try {
                                 double? of1Values = double.tryParse(value!);
@@ -1439,30 +1657,34 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                         ),
                         Expanded(
                           child: CustomTextInputField(
-                              controller: _of2_Controller,
-                              focusNode: _of2_FocusNode,
-                              isHideLable: true,
-                              labelText: "OF2",
-                              keyboardType: TextInputType.number,
-                              textInputFormatter: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d+\.?\d{0,2}')),
-                              ],
-                              validator: (value) {
-                                try {
-                                  double? of1Values = double.tryParse(value!);
-                                  if (of1Values! < 1.50 || of1Values > 2.0) {
-                                    return "Value 1.50 - 2.00 !";
-                                  } else {
-                                    return null;
-                                  }
-                                } catch (e) {
+                            controller: _of2_Controller,
+                            focusNode: _of2_FocusNode,
+                            isHideLable: true,
+                            labelText: "OF2",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double? of1Values = double.tryParse(value!);
+                                if (of1Values! < 1.50 || of1Values > 2.0) {
+                                  return "Value 1.50 - 2.00 !";
+                                } else {
                                   return null;
                                 }
-                              },
-                              onFieldSubmitted: (value) => value.isNotEmpty
-                                  ? _of3_FocusNode.requestFocus()
-                                  : _of2_FocusNode.requestFocus()),
+                              } catch (e) {
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _of3_FocusNode.requestFocus();
+                                _textselection(_of3_Controller);
+                              }
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -1473,61 +1695,69 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                       children: [
                         Expanded(
                           child: CustomTextInputField(
-                              controller: _of3_Controller,
-                              focusNode: _of3_FocusNode,
-                              isHideLable: true,
-                              labelText: "OF3",
-                              keyboardType: TextInputType.number,
-                              textInputFormatter: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d+\.?\d{0,2}')),
-                              ],
-                              validator: (value) {
-                                try {
-                                  double? of1Values = double.tryParse(value!);
-                                  if (of1Values! < 1.50 || of1Values > 2.0) {
-                                    return "Value 1.50 - 2.00 !";
-                                  } else {
-                                    return null;
-                                  }
-                                } catch (e) {
+                            controller: _of3_Controller,
+                            focusNode: _of3_FocusNode,
+                            isHideLable: true,
+                            labelText: "OF3",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double? of1Values = double.tryParse(value!);
+                                if (of1Values! < 1.50 || of1Values > 2.0) {
+                                  return "Value 1.50 - 2.00 !";
+                                } else {
                                   return null;
                                 }
-                              },
-                              onFieldSubmitted: (value) => value.isNotEmpty
-                                  ? _burnOff_FocusNode.requestFocus()
-                                  : _of3_FocusNode.requestFocus()),
+                              } catch (e) {
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _burnOff_FocusNode.requestFocus();
+                                _textselection(_burnOff_Controller);
+                              }
+                            },
+                          ),
                         ),
                         SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: CustomTextInputField(
-                              controller: _burnOff_Controller,
-                              focusNode: _burnOff_FocusNode,
-                              isHideLable: true,
-                              maxLength: 2,
-                              keyboardType: TextInputType.number,
-                              labelText: "BURN OFF",
-                              textInputFormatter: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9]')),
-                              ],
-                              validator: (value) {
-                                try {
-                                  int? of1Values = int.tryParse(value!);
-                                  if (of1Values! < 27 || of1Values > 38) {
-                                    return 'Value 27-38 !';
-                                  } else {
-                                    return null;
-                                  }
-                                } catch (e) {
+                            controller: _burnOff_Controller,
+                            focusNode: _burnOff_FocusNode,
+                            isHideLable: true,
+                            maxLength: 2,
+                            keyboardType: TextInputType.number,
+                            labelText: "BURN OFF",
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]')),
+                            ],
+                            validator: (value) {
+                              try {
+                                int? of1Values = int.tryParse(value!);
+                                if (of1Values! < 27 || of1Values > 38) {
+                                  return 'Value 27-38 !';
+                                } else {
                                   return null;
                                 }
-                              },
-                              onFieldSubmitted: (value) => value.isNotEmpty
-                                  ? _fs1_FocusNode.requestFocus()
-                                  : _burnOff_FocusNode.requestFocus()),
+                              } catch (e) {
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs1_FocusNode.requestFocus();
+                                _textselection(_fs1_Controller);
+                              }
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -1567,6 +1797,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _fs2_FocusNode.requestFocus();
+                                _textselection(_fs2_Controller);
                               } else {
                                 _fs1_FocusNode.requestFocus();
                               }
@@ -1607,6 +1838,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _fs3_FocusNode.requestFocus();
+                                _textselection(_fs3_Controller);
                               } else {
                                 _fs2_FocusNode.requestFocus();
                               }
@@ -1651,6 +1883,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _fs4_FocusNode.requestFocus();
+                                _textselection(_fs4_Controller);
                               } else {
                                 _fs3_FocusNode.requestFocus();
                               }
@@ -1691,6 +1924,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _grade_FocusNode.requestFocus();
+                                _textselection(_grade_Controller);
                               } else {
                                 _fs4_FocusNode.requestFocus();
                               }
@@ -1726,6 +1960,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _time_Press_FocusNode.requestFocus();
+                                _textselection(_time_Press_Controller);
                               } else {
                                 _grade_FocusNode.requestFocus();
                               }
@@ -1761,6 +1996,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _time_Released_FocusNode.requestFocus();
+                                _textselection(_time_Released_Controller);
                               } else {
                                 _time_Press_FocusNode.requestFocus();
                               }
@@ -1788,6 +2024,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _heat_temp_FocusNode.requestFocus();
+                                _textselection(_heat_temp_Controller);
                               } else {
                                 _time_Released_FocusNode.requestFocus();
                               }
@@ -1828,6 +2065,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _tension_FocusNode.requestFocus();
+                                _textselection(_tension_Controller);
                               } else {
                                 _heat_temp_FocusNode.requestFocus();
                               }
@@ -1855,6 +2093,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _nip_roll_press_FocusNode.requestFocus();
+                                _textselection(_nip_roll_press_Controller);
                               } else {
                                 _tension_FocusNode.requestFocus();
                               }

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
@@ -14,6 +15,7 @@ import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models/combobox/comboboxModel.dart';
 import 'package:hitachi/models/combobox/comboboxSqliteModel.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processFinish/processFinishInputModel.dart';
 import 'package:hitachi/models/processFinish/processFinishOutput.dart';
@@ -47,13 +49,15 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       TextEditingController();
   final TextEditingController _missingRatioController = TextEditingController();
   final TextEditingController _filingLevelController = TextEditingController();
+  final TextEditingController _peakController = TextEditingController();
+  final TextEditingController _highVoltageController = TextEditingController();
 
   String valuetxtinput = "";
   Color? bgChange;
   bool _checkSendSqlite = false;
   List<ComboboxSqliteModel> combolist = [];
   List<ComboboxSqliteModel> combolistForSD = [];
-
+  String _textZincthickness = '';
   final f1 = FocusNode();
   final f2 = FocusNode();
   final f3 = FocusNode();
@@ -61,6 +65,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final f5 = FocusNode();
   final f6 = FocusNode();
 
+  final _p1 = FocusNode();
+  final _p2 = FocusNode();
   String StartEndValue = 'E';
 
   @override
@@ -188,6 +194,20 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               //       f1.requestFocus();
               //     });
             }
+            if (state is GetIPEProdSpecByBatchLoadingState) {
+            } else if (state is GetIPEProdSpecByBatchLoadedState) {
+              if (state.item.I_PEAK != null && state.item.HIGH_VOLT != null) {
+                _clearingVoltageController.text = state.item.CLEARING!;
+              }
+              setState(() {});
+            } else if (state is GetIPEProdSpecByBatchErrorState) {}
+            if (state is GetThincknessZincLoadedState) {
+              if (state.item.isNotEmpty) {
+                _textZincthickness = state.item;
+                print(_zinckController.text);
+              }
+              setState(() {});
+            }
           },
         )
       ],
@@ -290,6 +310,16 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                         setState(() {
                           valuetxtinput = "";
                         });
+                        BlocProvider.of<LineElementBloc>(context).add(
+                          GetIPEProdSpecByBatchEvent(
+                            batchNoController.text.trim(),
+                          ),
+                        );
+                        BlocProvider.of<LineElementBloc>(context).add(
+                          GetThicknessZincBatchEvent(
+                            batchNoController.text.trim(),
+                          ),
+                        );
                       } else {
                         setState(() {
                           valuetxtinput = "Batch No : INVALID";
@@ -413,6 +443,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         }
 
         _zinckController.text = totalSum.toStringAsFixed(2);
+      } else if (_textZincthickness.isNotEmpty && _textZincthickness != '') {
+        _zinckController.text = _textZincthickness;
       } else {
         _zinckController.text = '0.5';
       }
@@ -421,6 +453,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       combolistForSD.clear();
       var sql = await DatabaseHelper()
           .queryDropdown(['Visual_Inspection', 'Clearing_Voltage']);
+      print(sql);
 
       if (sql.isNotEmpty) {
         combolist = sql.map((e) => ComboboxSqliteModel.fromMap(e)).toList();
@@ -572,8 +605,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   backgroundColor:
                                       MaterialStatePropertyAll(COLOR_RED)),
                               onPressed: () {
-                                _zinckController.clear();
-                                _clearDataNew();
                                 Navigator.pop(context);
                               },
                               child: Label(
@@ -663,6 +694,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   ),
                                 ),
                                 isExpanded: true,
+                                value: combolist
+                                    .firstWhere(
+                                        (element) =>
+                                            element.VALUEMEMBER ==
+                                            _clearingVoltageController.text,
+                                        orElse: () => ComboboxSqliteModel())
+                                    .VALUEMEMBER,
                                 items: combolist
                                     .where((item) => item.VALUEMEMBER!
                                         .contains(RegExp(r'^\d+$')))
@@ -776,8 +814,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   backgroundColor:
                                       MaterialStatePropertyAll(COLOR_RED)),
                               onPressed: () {
-                                _zinckController.clear();
-                                _clearDataNew();
                                 Navigator.pop(context);
                               },
                               child: Label(
@@ -936,6 +972,13 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   ),
                                 ),
                                 isExpanded: true,
+                                value: combolist
+                                    .firstWhere(
+                                        (element) =>
+                                            element.VALUEMEMBER ==
+                                            _clearingVoltageController.text,
+                                        orElse: () => ComboboxSqliteModel())
+                                    .VALUEMEMBER,
                                 items: combolist
                                     .where((item) => item.VALUEMEMBER!
                                         .contains(RegExp(r'^\d+$')))
@@ -1053,8 +1096,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   backgroundColor:
                                       MaterialStatePropertyAll(COLOR_RED)),
                               onPressed: () {
-                                _zinckController.clear();
-                                _clearDataNew();
                                 Navigator.pop(context);
                               },
                               child: Label(
@@ -1222,8 +1263,6 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   backgroundColor:
                                       MaterialStatePropertyAll(COLOR_RED)),
                               onPressed: () {
-                                _zinckController.clear();
-                                _clearDataNew();
                                 Navigator.pop(context);
                               },
                               child: Label(
@@ -1275,6 +1314,134 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               EasyLoading.showInfo("$e");
             }
             break;
+          // case 'HV':
+          //   try {
+          //     //Waiting CheckProcess from Pong
+          //     bool peakValid = false;
+          //     bool highValid = false;
+          //     if (_peakController.text.isNotEmpty) {
+          //       peakValid = true;
+          //     }
+          //     if (_highVoltageController.text.isNotEmpty) {
+          //       highValid = true;
+          //     }
+          //     showDialog(
+          //         barrierDismissible: false,
+          //         context: context,
+          //         builder: (context) {
+          //           return AlertDialog(
+          //             title: Label('Final Test'),
+          //             content: Column(
+          //               mainAxisSize: MainAxisSize.min,
+          //               children: [
+          //                 FutureBuilder(
+          //                   future: Future.delayed(Duration
+          //                       .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
+          //                   builder: (context, snapshot) {
+          //                     _p1.requestFocus(); // Focus ที่ _p1Focus
+          //                     return SizedBox
+          //                         .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
+          //                   },
+          //                 ),
+          //                 CustomTextInputField(
+          //                   controller: _peakController,
+          //                   focusNode: _p1,
+          //                   keyboardType: TextInputType.number,
+          //                   isHideLable: true,
+          //                   onFieldSubmitted: (value) {
+          //                     if (value.isNotEmpty) {
+          //                       _p2.requestFocus();
+          //                     }
+          //                   },
+          //                   textInputFormatter: [
+          //                     FilteringTextInputFormatter.allow(
+          //                         RegExp(r'[0-9.]'))
+          //                   ],
+          //                   labelText: "Peak Current WithStands",
+          //                   onChanged: (value) {
+          //                     _peakController.text = value;
+          //                   },
+          //                   validator: (value) {
+          //                     if (value == null || value.isEmpty) {
+          //                       peakValid = false;
+          //                       return 'Please enter a value';
+          //                     }
+          //                     num? intValue = num.tryParse(value);
+          //                     if (intValue == null ||
+          //                         intValue < 100 ||
+          //                         intValue > 200) {
+          //                       peakValid = false;
+          //                       return 'Please enter a value between 100-200';
+          //                     } else {
+          //                       peakValid = true;
+          //                       return null;
+          //                     }
+          //                   },
+          //                 ),
+          //                 SizedBox(
+          //                   height: 5,
+          //                 ),
+          //                 CustomTextInputField(
+          //                   controller: _highVoltageController,
+          //                   focusNode: _p2,
+          //                   keyboardType: TextInputType.number,
+          //                   isHideLable: true,
+          //                   textInputFormatter: [
+          //                     FilteringTextInputFormatter.allow(
+          //                         RegExp(r'[0-9.]'))
+          //                   ],
+          //                   labelText: "High-Voltage Test",
+          //                   onChanged: (value) {
+          //                     _highVoltageController.text = value;
+          //                   },
+          //                   validator: (value) {
+          //                     if (value == null || value.isEmpty) {
+          //                       highValid = false;
+          //                       return 'Please enter a value';
+          //                     }
+          //                     num? intValue = num.tryParse(value);
+          //                     if (intValue == null ||
+          //                         intValue < 600 ||
+          //                         intValue > 1500) {
+          //                       highValid = false;
+          //                       return 'Please enter a value between 600-1500';
+          //                     } else {
+          //                       highValid = true;
+          //                       return null;
+          //                     }
+          //                   },
+          //                 )
+          //               ],
+          //             ),
+          //             actions: [
+          //               ElevatedButton(
+          //                   style: ButtonStyle(
+          //                       backgroundColor:
+          //                           MaterialStatePropertyAll(COLOR_RED)),
+          //                   onPressed: () {
+          //                     _peakController.clear();
+          //                     _highVoltageController.clear();
+          //                     Navigator.pop(context);
+          //                   },
+          //                   child: Label(
+          //                     "Cancel",
+          //                     color: COLOR_WHITE,
+          //                   )),
+          //               ElevatedButton(
+          //                   style: ButtonStyle(
+          //                       backgroundColor:
+          //                           MaterialStatePropertyAll(COLOR_SUCESS)),
+          //                   onPressed: () async {
+          //                     await _callAPI();
+          //                     await callApiMatUp();
+          //                     Navigator.pop(context);
+          //                   },
+          //                   child: Label("OK", color: COLOR_WHITE))
+          //             ],
+          //           );
+          //         });
+          //   } catch (e) {}
+          //   break;
           default:
             _callAPI();
             break;
@@ -1291,7 +1458,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
       String? contoller,
       String? type}) {}
 
-  void _callAPI() {
+  Future _callAPI() async {
     BlocProvider.of<LineElementBloc>(context).add(
       ProcessFinishInputEvent(ProcessFinishOutputModel(
         MACHINE: machineNoController.text.trim(),
@@ -1475,10 +1642,33 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
         'clearingVoltage': _clearingVoltageController.text.trim(),
         'MissingRatio': _missingRatioController.text.trim(),
         'FilingLevel': _filingLevelController.text.trim(),
+        'PeakCurrentWithstands': _peakController.text.trim(),
+        'HighVoltageTest': _highVoltageController.text.trim(),
       }).then((value) => _clearAllData());
       print("ok");
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future callApiMatUp() async {
+    var sql = await DatabaseHelper().queryAllRows('MASTERLOT');
+    print(sql);
+    if (sql.isNotEmpty) {
+      for (var itemMasterLOT in sql) {
+        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+            PostUpdateMaterialTraceEvent(
+                MaterialTraceUpdateModel(
+                    DATE: DateTime.now().toString(),
+                    MATERIAL: itemMasterLOT['Material'].toString(),
+                    LOT: itemMasterLOT['Lot'].toString(),
+                    PROCESS: itemMasterLOT['PROCESS'].toString(),
+                    I_PEAK: int.tryParse(_peakController.text),
+                    HIGH_VOLT: int.tryParse(_highVoltageController.text),
+                    OPERATOR: operatorNameController.text,
+                    BATCH_NO: batchNoController.text.trim()),
+                "Process"));
+      }
     }
   }
 }

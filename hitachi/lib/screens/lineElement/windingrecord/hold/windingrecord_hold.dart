@@ -205,6 +205,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                           selectionMode: SelectionMode.multiple,
                           allowPullToRefresh: true,
                           allowColumnsResizing: true,
+                          sortingGestureType: SortingGestureType.tap,
                           onColumnResizeUpdate:
                               (ColumnResizeUpdateDetails details) {
                             setState(() {

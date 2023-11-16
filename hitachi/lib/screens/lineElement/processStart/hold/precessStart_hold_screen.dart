@@ -11,6 +11,7 @@ import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models-Sqlite/processModel.dart';
 import 'package:hitachi/models/materialInput/materialOutputModel.dart';
 import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
+import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 
 import 'package:hitachi/services/databaseHelper.dart';
@@ -52,6 +53,12 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
     'StartDate': double.nan,
     'peak': double.nan,
     'high': double.nan,
+    'zinc': double.nan,
+    'visual': double.nan,
+    'clearing': double.nan,
+    'clearing_v': double.nan,
+    'missing': double.nan,
+    'filing': double.nan,
   };
 
   Future<List<ProcessModel>> _getProcessStart() async {
@@ -402,10 +409,76 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
                                     child:
-                                        Label('Start Date', color: COLOR_WHITE),
+                                        Label('StartDate', color: COLOR_WHITE),
                                   ),
                                 ),
                               ),
+                              // GridColumn(
+                              //   width: columnWidths['zinc']!,
+                              //   columnName: 'zinc',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Zinc Thickness',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['visual']!,
+                              //   columnName: 'visual',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Visual Control',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['clearing_v']!,
+                              //   columnName: 'clearing_v',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Clearing Visual Control',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['clearing']!,
+                              //   columnName: 'clearing',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child:
+                              //           Label('Clearing', color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['missing']!,
+                              //   columnName: 'missing',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Missing  Ratio',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   width: columnWidths['filing']!,
+                              //   columnName: 'filing',
+                              //   label: Container(
+                              //     color: COLOR_BLUE_DARK,
+                              //     child: Center(
+                              //       child: Label('Filing Level',
+                              //           color: COLOR_WHITE),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -490,6 +563,42 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.STARTDATE}"))
                                 ]),
+                                //
+                                // DataRow(cells: [
+                                //   DataCell(
+                                //       Center(child: Label("Zinc Thickness"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.ZINCK_THICKNESS}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(
+                                //       Center(child: Label("Visual Control"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.VISUAL_CONTROL}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(Center(
+                                //       child: Label("Clearing_VisualControl"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.VISUAL_CONTROL_CLEAR}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(Center(child: Label("Clearing"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.CLEARING_VOLTAGE}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(
+                                //       Center(child: Label("Missing  Ratio"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.MISSING_RATIO}"))
+                                // ]),
+                                // DataRow(cells: [
+                                //   DataCell(
+                                //       Center(child: Label("Filing Level"))),
+                                //   DataCell(Label(
+                                //       "${processList.where((element) => element.ID == _index.first).first.FILING_LEVEL}"))
+                                // ]),
                               ],
                             );
                           }),
@@ -539,7 +648,11 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
   void _sendDataServer() async {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
-      if (row.MACHINE?.substring(0, 2).toUpperCase() == "HV") {
+      var sql = await DatabaseHelper()
+          .queryMasterlotProcess(row.MACHINE!.toUpperCase().toString());
+
+      print(sql);
+      if (sql.isNotEmpty) {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessStartEvent(
             ProcessOutputModel(
@@ -559,18 +672,25 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
             ),
           ),
         );
-        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-            PostUpdateMaterialTraceEvent(
-                MaterialTraceUpdateModel(
-                    DATE: row.STARTDATE,
-                    MATERIAL: null,
-                    LOT: null,
-                    PROCESS: null,
-                    I_PEAK: int.tryParse(row.PCW.toString()),
-                    HIGH_VOLT: int.tryParse(row.HVT.toString()),
-                    OPERATOR: row.OPERATOR_NAME,
-                    BATCH_NO: row.BATCH_NO),
-                "Process"));
+
+        for (var itemMasterLot in sql) {
+          BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+              PostUpdateMaterialTraceEvent(
+                  MaterialTraceUpdateModel(
+                      DATE: row.STARTDATE,
+                      MATERIAL: itemMasterLot['Material'].toString(),
+                      LOT: itemMasterLot['Lot'].toString(),
+                      PROCESS: itemMasterLot['PROCESS'].toString(),
+                      I_PEAK: row.PCW == null
+                          ? null
+                          : int.tryParse(row.PCW.toString()),
+                      HIGH_VOLT: row.HVT == null
+                          ? null
+                          : int.tryParse(row.HVT.toString()),
+                      OPERATOR: row.OPERATOR_NAME,
+                      BATCH_NO: row.BATCH_NO),
+                  "Process"));
+        }
       } else {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessStartEvent(
@@ -655,6 +775,20 @@ class ProcessStartDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'high', value: _item.HVT),
               DataGridCell<String>(
                   columnName: 'StartDate', value: _item.STARTDATE),
+              // DataGridCell<String>(
+              //     columnName: 'zinc', value: _item.ZINCK_THICKNESS.toString()),
+              // DataGridCell<String>(
+              //     columnName: 'visual', value: _item.VISUAL_CONTROL.toString()),
+              // DataGridCell<String>(
+              //     columnName: 'clearing_v',
+              //     value: _item.VISUAL_CONTROL_CLEAR.toString()),
+              // DataGridCell<String>(
+              //     columnName: 'clearing',
+              //     value: _item.CLEARING_VOLTAGE.toString()),
+              // DataGridCell<String>(
+              //     columnName: 'missing', value: _item.MISSING_RATIO.toString()),
+              // DataGridCell<String>(
+              //     columnName: 'filing', value: _item.FILING_LEVEL.toString()),
             ],
           ),
         );
