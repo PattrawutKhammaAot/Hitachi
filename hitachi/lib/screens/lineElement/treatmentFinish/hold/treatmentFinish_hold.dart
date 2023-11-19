@@ -26,7 +26,7 @@ class TreatmentFinishHoldScreen extends StatefulWidget {
 }
 
 class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _ipeController = TextEditingController();
   List<int> _index = [];
 
   TreatMentStartDataSource? tmsDatasource;
@@ -216,6 +216,12 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
             //       f1.requestFocus();
             //       Navigator.pop(context);
             //     });
+          }
+          if (state is GetIPEProdSpecByBatchLoadedState) {
+            if (state.item.IPE_NO != null) {
+              _ipeController.text = state.item.IPE_NO!;
+            }
+            setState(() {});
           }
         })
       ],
@@ -585,14 +591,111 @@ class _TreatmentFinishHoldScreenState extends State<TreatmentFinishHoldScreen> {
         )),
       );
       if (row.MACHINE_NO?.substring(0, 2).toUpperCase() == "TM") {
-        BlocProvider.of<LineElementBloc>(context).add(
-          ProcessCheckEvent(ProcessCheckModel(
-            BATCH_NO: row.BATCH1,
-            MC_NO: row.MACHINE_NO,
-            TM_Curve: row.TEMP_CURVE,
-            TM_Time: row.TREATMENT_TIME,
-          )),
-        );
+        if (row.BATCH1 != null && row.BATCH1 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH1!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH1,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH2 != null && row.BATCH2 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH2!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH2,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH3 != null && row.BATCH3 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH3!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH3,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH4 != null && row.BATCH4 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH4!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH4,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH5 != null && row.BATCH5 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH5!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH5,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH6 != null && row.BATCH6 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH6!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH6,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
+        if (row.BATCH7 != null && row.BATCH7 != '') {
+          BlocProvider.of<LineElementBloc>(context).add(
+            GetIPEProdSpecByBatchEvent(row.BATCH7!.trim().toString()),
+          );
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: row.BATCH7,
+              IPE_NO: int.tryParse(_ipeController.text),
+              // MC_NO: row.MACHINE_NO,
+              TM_Curve: row.TEMP_CURVE,
+              TM_Time: row.TREATMENT_TIME,
+            )),
+          );
+        }
       }
     });
   }

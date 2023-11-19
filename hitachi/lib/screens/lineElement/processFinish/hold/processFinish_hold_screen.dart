@@ -35,7 +35,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
 
   List<ProcessModel>? processModelSqlite;
   List<ProcessModel> processList = [];
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _ipeController = TextEditingController();
 
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
@@ -228,6 +228,12 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                   //     onpressOk: () {
                   //       Navigator.pop(context);
                   //     });
+                }
+                if (state is GetIPEProdSpecByBatchLoadedState) {
+                  if (state.item.IPE_NO != null) {
+                    _ipeController.text = state.item.IPE_NO!;
+                  }
+                  setState(() {});
                 }
               },
             )
@@ -436,7 +442,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 label: Container(
                                   color: COLOR_BLUE_DARK,
                                   child: Center(
-                                    child: Label('Missing  Ratio',
+                                    child: Label('Mixing Ratio',
                                         color: COLOR_WHITE),
                                   ),
                                 ),
@@ -554,7 +560,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
-                                      Center(child: Label("Missing  Ratio"))),
+                                      Center(child: Label("Mixing Ratio"))),
                                   DataCell(Label(
                                       "${processList.where((element) => element.ID == _index.first).first.MISSING_RATIO}"))
                                 ]),
@@ -618,6 +624,10 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
   _sendDataServer() {
     _index.forEach((element) async {
       var row = processList.where((value) => value.ID == element).first;
+      BlocProvider.of<LineElementBloc>(context).add(
+        GetIPEProdSpecByBatchEvent(row.BATCH_NO!.trim().toString()),
+      );
+      await Future.delayed(Duration(milliseconds: 500));
       if (row.MACHINE?.substring(0, 2).toUpperCase() == "SD") {
         print(row.MACHINE?.substring(0, 2).toUpperCase());
         BlocProvider.of<LineElementBloc>(context).add(
@@ -633,7 +643,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessCheckEvent(ProcessCheckModel(
             BATCH_NO: row.BATCH_NO,
-            MC_NO: row.MACHINE,
+            IPE_NO: int.tryParse(_ipeController.text),
+            // MC_NO: row.MACHINE,
             CR_VC: row.VISUAL_CONTROL_CLEAR,
             CR_Voltage: int.tryParse(row.CLEARING_VOLTAGE ?? "0"),
             SD_VC: row.VISUAL_CONTROL,
@@ -653,7 +664,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessCheckEvent(ProcessCheckModel(
             BATCH_NO: row.BATCH_NO,
-            MC_NO: row.MACHINE,
+            // MC_NO: row.MACHINE,
+            IPE_NO: int.tryParse(_ipeController.text),
             ZN_Thickness: num.tryParse(row.ZINCK_THICKNESS ?? "0"),
             ZN_VC: row.VISUAL_CONTROL,
           )),
@@ -672,7 +684,8 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessCheckEvent(ProcessCheckModel(
             BATCH_NO: row.BATCH_NO,
-            MC_NO: row.MACHINE,
+            // MC_NO: row.MACHINE,
+            IPE_NO: int.tryParse(_ipeController.text),
             CR_VC: row.VISUAL_CONTROL,
             CR_Voltage: int.tryParse(row.CLEARING_VOLTAGE ?? "0"),
           )),
@@ -690,6 +703,7 @@ class _ProcessFinishHoldScreenState extends State<ProcessFinishHoldScreen> {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessCheckEvent(ProcessCheckModel(
             BATCH_NO: row.BATCH_NO,
+            IPE_NO: int.tryParse(_ipeController.text),
             PU_Ratio: row.MISSING_RATIO,
             PU_Level: row.FILING_LEVEL,
           )),

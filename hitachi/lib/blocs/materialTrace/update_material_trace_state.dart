@@ -31,3 +31,26 @@ class UpdateMaterialTraceErrorState extends UpdateMaterialTraceState {
   @override
   List<Object> get props => [error];
 }
+
+class DeleteMaterialTraceLoadingState extends UpdateMaterialTraceState {
+  const DeleteMaterialTraceLoadingState();
+  @override
+  List<Object> get props => [];
+}
+
+class DeleteMaterialTraceLoadedState extends UpdateMaterialTraceState {
+  const DeleteMaterialTraceLoadedState(this.item);
+
+  final ResponeDefault item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class DeleteMaterialTraceErrorState extends UpdateMaterialTraceState {
+  const DeleteMaterialTraceErrorState(this.error);
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

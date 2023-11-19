@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
+import 'package:hitachi/config.dart';
 
 import 'package:hitachi/models/combobox/comboboxModel.dart';
 
@@ -39,7 +40,7 @@ class ComboboxBloc extends Bloc<ComboboxEvent, ComboboxState> {
   Future<List<ComboBoxModel>> fetchCombobox() async {
     try {
       Response responese = await dio.get(
-        ApiConfig.GET_COMBOBOX,
+        BASE_API_URL + "LineElement/GetCombobox",
         options: Options(
             headers: ApiConfig.HEADER(),
             sendTimeout: const Duration(seconds: 10),

@@ -10,6 +10,7 @@ import 'package:hitachi/blocs/machineBreakDown/machine_break_down_bloc.dart';
 import 'package:hitachi/config.dart';
 import 'package:hitachi/models-Sqlite/materialtraceModel.dart';
 import 'package:hitachi/models/ResponeDefault.dart';
+import 'package:hitachi/models/materialTraces/deleteMaterialTraceModel.dart';
 import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 
@@ -44,10 +45,21 @@ class UpdateMaterialTraceBloc
         }
       },
     );
+    on<DeleteMaterialTraceTraceEvent>(
+      (event, emit) async {
+        try {
+          emit(DeleteMaterialTraceLoadingState());
+          final mlist = await fetchDeleteMaterialTrace(event.items);
+          emit(DeleteMaterialTraceLoadedState(mlist));
+        } catch (e) {
+          emit(DeleteMaterialTraceErrorState(e.toString()));
+        }
+      },
+    );
   }
   Future<ResponeDefault> fetchMaterialTrace(
       MaterialTraceUpdateModel item, String type) async {
-    print("test Send${item.toJson()}");
+    print(jsonEncode(item.toJson()));
     try {
       Response responese = await dio.post(
           BASE_API_URL + "LineElement/UpdateMaterialTrace",
@@ -57,13 +69,31 @@ class UpdateMaterialTraceBloc
               receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(item.toJson()));
 
-      if (type == "Process") {
-        await DatabaseHelper()
-            .deleteMaterialDB('IPE_SHEET', [item.BATCH_NO.toString()]);
-      }
+      print(responese.data);
+      ResponeDefault post = ResponeDefault.fromJson(responese.data);
+      return post;
+    } catch (e, s) {
+      print("testFalse");
+      print(e);
+      print(s);
+      throw Exception();
+    }
+  }
+
+  Future<ResponeDefault> fetchDeleteMaterialTrace(
+      DeleteMaterialTraceUpdateModel item) async {
+    try {
+      Response responese = await dio.post(
+          BASE_API_URL +
+              "LineElement/DeleteMaterialTrace?batch=${item.BATCH}&process=${item.PROCESS}",
+          options: Options(
+              headers: ApiConfig.HEADER(),
+              sendTimeout: Duration(seconds: 5),
+              receiveTimeout: Duration(seconds: 5)),
+          data: jsonEncode(item.toJson()));
 
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
-      print(responese.data);
+
       return post;
     } catch (e, s) {
       print(e);

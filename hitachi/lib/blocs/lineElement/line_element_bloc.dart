@@ -462,7 +462,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
   //ProcessCheck
   Future<ResponeDefault> fetchProcessCheck(ProcessCheckModel items) async {
-    print(items.toJson());
+    print(jsonEncode(items));
     try {
       Response response = await dio.post(ApiConfig.UPDATE_CHECK_PROCESS,
           options: Options(

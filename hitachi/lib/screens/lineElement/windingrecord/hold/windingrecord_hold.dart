@@ -158,6 +158,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
           if (state is SendWindingRecordLoadingState) {
             EasyLoading.show(status: "Loading ...");
           } else if (state is SendWindingRecordLoadedState) {
+            EasyLoading.dismiss();
             if (state.item.MESSAGE == "Success") {
               if (batchID.isNotEmpty) {
                 for (var iditem in batchID) {
@@ -172,6 +173,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
 
               EasyLoading.showSuccess("Send Success!");
             } else {
+              EasyLoading.dismiss();
               _errorDialog(
                   isHideCancle: false,
                   text: Label("${state.item.MESSAGE ?? "Check Connection"}"),

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hitachi/api.dart';
+import 'package:hitachi/config.dart';
 import 'package:hitachi/models/productions/productionsModel.dart';
 
 part 'production_spec_event.dart';
@@ -43,7 +44,7 @@ class ProductionSpecBloc
     print(ApiConfig.GET_IPE_PRODUCTIONS);
     try {
       Response responese = await dio.get(
-        ApiConfig.GET_IPE_PRODUCTIONS,
+        BASE_API_URL + "LineElement/GetIPEProdSpec",
         options: Options(
             headers: ApiConfig.HEADER(),
             sendTimeout: Duration(seconds: 3),

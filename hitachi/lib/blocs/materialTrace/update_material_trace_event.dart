@@ -15,3 +15,11 @@ class PostUpdateMaterialTraceEvent extends UpdateMaterialTraceEvent {
   @override
   List<Object> get prop => [items];
 }
+
+class DeleteMaterialTraceTraceEvent extends UpdateMaterialTraceEvent {
+  const DeleteMaterialTraceTraceEvent(this.items);
+  final DeleteMaterialTraceUpdateModel items;
+
+  @override
+  List<Object> get prop => [items];
+}

@@ -51,6 +51,7 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
   final TextEditingController _filingLevelController = TextEditingController();
   final TextEditingController _peakController = TextEditingController();
   final TextEditingController _highVoltageController = TextEditingController();
+  final TextEditingController _ipeController = TextEditingController();
 
   String valuetxtinput = "";
   Color? bgChange;
@@ -199,12 +200,17 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
               if (state.item.I_PEAK != null && state.item.HIGH_VOLT != null) {
                 _clearingVoltageController.text = state.item.CLEARING!;
               }
+              print(state.item.IPE_NO);
+              if (state.item.IPE_NO != null && state.item.IPE_NO != '') {
+                _ipeController.text = state.item.IPE_NO!;
+              }
               setState(() {});
             } else if (state is GetIPEProdSpecByBatchErrorState) {}
             if (state is GetThincknessZincLoadedState) {
               if (state.item.isNotEmpty) {
                 _textZincthickness = state.item;
-                print(_zinckController.text);
+              } else {
+                _textZincthickness = "0.5";
               }
               setState(() {});
             }
@@ -619,8 +625,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 BlocProvider.of<LineElementBloc>(context).add(
                                   ProcessCheckEvent(ProcessCheckModel(
                                     BATCH_NO: batchNoController.text,
-                                    IPE_NO: null,
-                                    MC_NO: machineNoController.text,
+                                    IPE_NO: int.tryParse(_ipeController.text),
+                                    // MC_NO: machineNoController.text,
                                     ZN_Thickness:
                                         num.tryParse(_zinckController.text),
                                     ZN_VC: _visualControlController.text,
@@ -831,8 +837,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                   BlocProvider.of<LineElementBloc>(context).add(
                                     ProcessCheckEvent(ProcessCheckModel(
                                       BATCH_NO: batchNoController.text,
-                                      IPE_NO: null,
-                                      MC_NO: machineNoController.text,
+                                      IPE_NO: int.tryParse(_ipeController.text),
+                                      // MC_NO: machineNoController.text,
                                       ZN_Thickness: null,
                                       ZN_VC: null,
                                       CR_VC: _visualControlController.text,
@@ -1110,8 +1116,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 BlocProvider.of<LineElementBloc>(context).add(
                                   ProcessCheckEvent(ProcessCheckModel(
                                     BATCH_NO: batchNoController.text,
-                                    IPE_NO: null,
-                                    MC_NO: machineNoController.text,
+                                    IPE_NO: int.tryParse(_ipeController.text),
+                                    // MC_NO: machineNoController.text,
                                     ZN_Thickness: null,
                                     ZN_VC: null,
                                     CR_VC:
@@ -1178,16 +1184,15 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                             CustomTextInputField(
                               focusNode: f5,
                               controller: _missingRatioController,
-                              keyboardType: TextInputType.number,
                               isHideLable: true,
                               onFieldSubmitted: (value) {
                                 if (value.isNotEmpty) {}
                               },
                               textInputFormatter: [
                                 FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.]'))
+                                    RegExp(r'[0-9.:]'))
                               ],
-                              labelText: 'MissingRatio',
+                              labelText: 'Mixing Ratio',
                               onChanged: (value) {},
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -1277,8 +1282,8 @@ class _ProcessFinishScanScreenState extends State<ProcessFinishScanScreen> {
                                 BlocProvider.of<LineElementBloc>(context).add(
                                   ProcessCheckEvent(ProcessCheckModel(
                                     BATCH_NO: batchNoController.text,
-                                    IPE_NO: null,
-                                    MC_NO: machineNoController.text,
+                                    IPE_NO: int.tryParse(_ipeController.text),
+                                    // MC_NO: machineNoController.text,
                                     ZN_Thickness: null,
                                     ZN_VC: null,
                                     CR_VC: null,

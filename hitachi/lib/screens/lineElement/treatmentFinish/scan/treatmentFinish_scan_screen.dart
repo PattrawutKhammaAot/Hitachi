@@ -38,6 +38,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
   final TextEditingController _batch7Controller = TextEditingController();
   final TextEditingController _tempCurve = TextEditingController();
   final TextEditingController _treatmentTime = TextEditingController();
+  final TextEditingController _ipe_noController = TextEditingController();
 
   //FOCUS
   final f1 = FocusNode();
@@ -97,25 +98,157 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
     });
   }
 
-  void _callApi() {
+  Future callBatch(text) async {
+    BlocProvider.of<LineElementBloc>(context).add(
+      GetIPEProdSpecByBatchEvent(text),
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+  }
+
+  Future _callApi() async {
     if (_machineNoController.text.length == 3) {
       if (_machineNoController.text.substring(0, 2).toUpperCase() == "TM") {
-        BlocProvider.of<LineElementBloc>(context).add(
-          ProcessCheckEvent(ProcessCheckModel(
-            BATCH_NO: _batch1Controller.text,
-            MC_NO: _machineNoController.text,
-            TM_Curve: isTm == false
-                ? "-"
-                : _tempCurve.text.trim().isEmpty
-                    ? "Confirm"
-                    : _tempCurve.text.trim(),
-            TM_Time: isTm == false
-                ? "-"
-                : _treatmentTime.text.trim().isEmpty
-                    ? "Confirm"
-                    : _treatmentTime.text.trim(),
-          )),
-        );
+        if (_batch1Controller.text.isNotEmpty) {
+          await callBatch(_batch1Controller.text);
+
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch1Controller.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch2Controller.text.isNotEmpty) {
+          await callBatch(_batch2Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch2Controller.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch3Controller.text.isNotEmpty) {
+          await callBatch(_batch3Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch3Controller.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch4Controller.text.isNotEmpty) {
+          await callBatch(_batch4Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch4Controller.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch5Controller.text.isNotEmpty) {
+          await callBatch(_batch5Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch5Controller.text,
+              // MC_NO: _machineNoController.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch6Controller.text.isNotEmpty) {
+          await callBatch(_batch6Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              BATCH_NO: _batch6Controller.text,
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
+        if (_batch7Controller.text.isNotEmpty) {
+          await callBatch(_batch7Controller.text);
+          BlocProvider.of<LineElementBloc>(context).add(
+            ProcessCheckEvent(ProcessCheckModel(
+              IPE_NO: int.tryParse(_ipe_noController.text),
+              BATCH_NO: _batch7Controller.text,
+              // MC_NO: _machineNoController.text,
+              TM_Curve: isTm == false
+                  ? "-"
+                  : _tempCurve.text.trim().isEmpty
+                      ? "Confirm"
+                      : _tempCurve.text.trim(),
+              TM_Time: isTm == false
+                  ? "-"
+                  : _treatmentTime.text.trim().isEmpty
+                      ? "Confirm"
+                      : _treatmentTime.text.trim(),
+            )),
+          );
+        }
       }
       BlocProvider.of<TreatmentBloc>(context).add(
         TreatmentFinishSendEvent(TreatMentOutputModel(
@@ -243,6 +376,12 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
         ),
         BlocListener<LineElementBloc, LineElementState>(
             listener: (context, state) {
+          if (state is GetIPEProdSpecByBatchLoadedState) {
+            if (state.item.IPE_NO != null) {
+              _ipe_noController.text = state.item.IPE_NO!;
+            }
+            setState(() {});
+          }
           if (state is ProcessCheckLoadingState) {
             // 1
           } else if (state is ProcessCheckLoadedState) {
@@ -294,7 +433,13 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     onChanged: (p0) {
                       if (p0.length >= 2) {
                         if (p0.toUpperCase().substring(0, 2) == "TM") {
-                          isTm = true;
+                          if (combolist.isEmpty) {
+                            EasyLoading.showError(
+                                "Please Download DropdownMaster");
+                          } else {
+                            isTm = true;
+                          }
+
                           setState(() {});
                         }
                       } else {
@@ -480,7 +625,7 @@ class _TreatmentFinishScanScreenState extends State<TreatmentFinishScanScreen> {
                     height: 5,
                   ),
                   Divider(),
-                  isTm == true
+                  combolist.isNotEmpty && isTm == true
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,

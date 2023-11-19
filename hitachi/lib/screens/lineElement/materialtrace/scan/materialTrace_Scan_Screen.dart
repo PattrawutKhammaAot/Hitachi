@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/materialTraces/deleteMaterialTraceModel.dart';
 
 import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
@@ -76,10 +78,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
       await DatabaseHelper().insertSqlite('MASTERLOT', {
         'Material': _materialController.text.trim(),
         'PROCESS': _processController.text.trim().toUpperCase(),
-        'Lot': _lotNoController.text
-            .trim()
-            .substring(0, 60)
-            .replaceAll(RegExp(r"\s+"), ""),
+        'Lot': _lotNoController.text.trim().replaceAll(RegExp(r"\s+"), ""),
         'LOTNO': _lotNoController.text.trim().replaceAll(RegExp(r"\s+"), "")
       });
       await _getHoldData().then((value) {
@@ -95,29 +94,6 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
           });
     }
 
-    setState(() {});
-  }
-
-  _serachInGetProd() async {
-    var batch = await DatabaseHelper()
-        .queryIPESHEET('IPE_SHEET', [_batchController.text]);
-    print(batch);
-    if (batch.isNotEmpty) {
-      for (var item in batch) {
-        _ipeController.text = item['IPE_NO'];
-      }
-    }
-    if (_ipeController.text.isNotEmpty) {
-      var itemInProd =
-          await DatabaseHelper().queryPRODSPEC([_ipeController.text]);
-      print(itemInProd);
-      if (itemInProd.isNotEmpty) {
-        for (var item in itemInProd) {
-          _highVoltageController.text = item['HighVolt'];
-          _ipeakController.text = item['Ipeak'];
-        }
-      }
-    }
     setState(() {});
   }
 
@@ -220,6 +196,16 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
           } else if (state is UpdateMaterialTraceErrorState) {
             EasyLoading.showError("Please Check your Connection and try again");
           }
+        }),
+        BlocListener<LineElementBloc, LineElementState>(
+            listener: (context, state) {
+          if (state is GetIPEProdSpecByBatchLoadedState) {
+            if (state.item.IPE_NO != null) {
+              _ipeController.text = state.item.IPE_NO!;
+            }
+            print(_ipeController.text);
+            setState(() {});
+          }
         })
       ],
       child: BgWhite(
@@ -274,7 +260,6 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                       ],
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -347,6 +332,17 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                                 controller: _batchController,
                                                 onFieldSubmitted:
                                                     (value) async {
+                                                  BlocProvider.of<
+                                                              LineElementBloc>(
+                                                          context)
+                                                      .add(
+                                                    GetIPEProdSpecByBatchEvent(
+                                                      _batchController.text
+                                                          .trim(),
+                                                    ),
+                                                  );
+                                                  await Future.delayed(Duration(
+                                                      milliseconds: 500));
                                                   await sendApi();
                                                   Navigator.pop(context);
                                                 },
@@ -384,6 +380,20 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                                                 MaterialStatePropertyAll(
                                                                     COLOR_BLUE_DARK)),
                                                         onPressed: () async {
+                                                          BlocProvider.of<
+                                                                      LineElementBloc>(
+                                                                  context)
+                                                              .add(
+                                                            GetIPEProdSpecByBatchEvent(
+                                                              _batchController
+                                                                  .text
+                                                                  .trim(),
+                                                            ),
+                                                          );
+                                                          await Future.delayed(
+                                                              Duration(
+                                                                  milliseconds:
+                                                                      500));
                                                           await sendApi();
                                                           Navigator.pop(
                                                               context);
@@ -557,59 +567,6 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                           ),
                         )
                       : SizedBox.shrink(),
-                  // _index.isNotEmpty
-                  //     ? Column(
-                  //         children: [
-                  //           Divider(
-                  //             thickness: 2,
-                  //           ),
-                  //           Row(
-                  //             children: [Label("- Edit Material -")],
-                  //           ),
-                  //           SizedBox(
-                  //             height: 15,
-                  //           ),
-                  //           CustomTextInputField(
-                  //             focusNode: _operatorNameFocus,
-                  //             controller: _operatorController,
-                  //             isHideLable: true,
-                  //             labelText: "Operator Name",
-                  //             maxLength: 10,
-                  //             onFieldSubmitted: (value) {
-                  //               if (value.length == 10) {
-                  //                 _batchFocus.requestFocus();
-                  //               }
-                  //             },
-                  //           ),
-                  //           SizedBox(
-                  //             height: 15,
-                  //           ),
-                  //           CustomTextInputField(
-                  //             focusNode: _batchFocus,
-                  //             isHideLable: true,
-                  //             labelText: "Batch/Serial",
-                  //             controller: _batchController,
-                  //             onFieldSubmitted: (value) async {
-                  //               await _serachInGetProd();
-                  //             },
-                  //           ),
-                  //           Align(
-                  //             alignment: Alignment.centerRight,
-                  //             child: ElevatedButton(
-                  //                 style: ButtonStyle(
-                  //                     backgroundColor: MaterialStatePropertyAll(
-                  //                         COLOR_BLUE_DARK)),
-                  //                 onPressed: () async {
-                  //                   sendApi();
-                  //                 },
-                  //                 child: Label(
-                  //                   "Send",
-                  //                   color: COLOR_WHITE,
-                  //                 )),
-                  //           )
-                  //         ],
-                  //       )
-                  //     : SizedBox.shrink()
                 ],
               ),
             ),
@@ -621,19 +578,23 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
     if (_index.isNotEmpty &&
         _operatorController.text.isNotEmpty &&
         _batchController.text.isNotEmpty) {
-      await _serachInGetProd();
-      _index.forEach((element) {
+      _index.forEach((element) async {
         for (var item in dataText) {
           if (item.ID == element) {
+            BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+                DeleteMaterialTraceTraceEvent(DeleteMaterialTraceUpdateModel(
+                    BATCH: _batchController.text.trim(), PROCESS: item.Pro)));
+
             BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
                 PostUpdateMaterialTraceEvent(
                     MaterialTraceUpdateModel(
                         DATE: DateTime.now().toString(),
+                        IPE_NO: _ipeController.text,
                         MATERIAL: item.Mat,
                         LOT: item.Lot,
                         PROCESS: item.Pro,
-                        I_PEAK: int.tryParse(_ipeakController.text),
-                        HIGH_VOLT: int.tryParse(_highVoltageController.text),
+                        I_PEAK: null,
+                        HIGH_VOLT: null,
                         OPERATOR: _operatorController.text.trim(),
                         BATCH_NO: _batchController.text.trim()),
                     "MatUp"));

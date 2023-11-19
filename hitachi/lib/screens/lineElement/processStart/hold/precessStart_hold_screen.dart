@@ -33,7 +33,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
 
   List<ProcessModel>? processModelSqlite;
   List<ProcessModel> processList = [];
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _ipeController = TextEditingController();
 
   Color _colorSend = COLOR_GREY;
   Color _colorDelete = COLOR_GREY;
@@ -217,6 +217,13 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
                       onpressOk: () async {
                         Navigator.pop(context);
                       });
+                }
+                if (state is GetIPEProdSpecByBatchLoadedState) {
+                  if (state.item.IPE_NO != null) {
+                    _ipeController.text = state.item.IPE_NO!;
+                  }
+
+                  setState(() {});
                 }
               },
             )
@@ -650,8 +657,10 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
       var row = processList.where((value) => value.ID == element).first;
       var sql = await DatabaseHelper()
           .queryMasterlotProcess(row.MACHINE!.toUpperCase().toString());
-
-      print(sql);
+      BlocProvider.of<LineElementBloc>(context).add(
+        GetIPEProdSpecByBatchEvent(row.BATCH_NO!.trim().toString()),
+      );
+      await Future.delayed(Duration(milliseconds: 300));
       if (sql.isNotEmpty) {
         BlocProvider.of<LineElementBloc>(context).add(
           ProcessStartEvent(
@@ -678,6 +687,7 @@ class _ProcessStartHoldScreenState extends State<ProcessStartHoldScreen> {
               PostUpdateMaterialTraceEvent(
                   MaterialTraceUpdateModel(
                       DATE: row.STARTDATE,
+                      IPE_NO: _ipeController.text,
                       MATERIAL: itemMasterLot['Material'].toString(),
                       LOT: itemMasterLot['Lot'].toString(),
                       PROCESS: itemMasterLot['PROCESS'].toString(),

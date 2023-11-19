@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:hitachi/appdata.dart';
 import 'package:hitachi/blocs/lineElement/line_element_bloc.dart';
 import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
@@ -22,8 +23,10 @@ import 'package:hitachi/models/processCheck/processCheckModel.dart';
 import 'package:hitachi/models/processStart/processInputModel.dart';
 import 'package:hitachi/models/processStart/processOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
+import 'package:hitachi/widget/alertSnackBar.dart';
 import 'package:hitachi/widget/custom_textinput.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class ProcessStartScanScreen extends StatefulWidget {
@@ -67,6 +70,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   final TextEditingController _zinckController = TextEditingController();
   final TextEditingController _visualControlController =
       TextEditingController();
+  final TextEditingController _ipe_noController = TextEditingController();
   bool isShowHv = false;
   final f1 = FocusNode();
   final f2 = FocusNode();
@@ -77,6 +81,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
   final _p1 = FocusNode();
   final _p2 = FocusNode();
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = true;
   Future<bool> _getProcessStart() async {
     try {
       var sql_processSheet = await databaseHelper.queryDataSelectProcess(
@@ -154,6 +159,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+                      _highVoltageController.clear();
+                      _peakController.clear();
+                      _ipe_noController.clear();
                       Navigator.pop(context);
                     });
                 bgChange = Colors.grey;
@@ -174,6 +182,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+
                       await _getHold();
                     });
               } else {
@@ -191,6 +200,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       operatorName2Controller.clear();
                       operatorName3Controller.clear();
                       batchNoController.clear();
+
                       await _getHold();
                     });
               }
@@ -218,6 +228,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 _peakController.text = state.item.I_PEAK!;
                 _highVoltageController.text = state.item.HIGH_VOLT!;
               }
+              if (state.item.IPE_NO != null && state.item.IPE_NO != '') {
+                _ipe_noController.text = state.item.IPE_NO!;
+              }
               setState(() {});
             } else if (state is GetIPEProdSpecByBatchErrorState) {}
           },
@@ -225,15 +238,24 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         BlocListener<UpdateMaterialTraceBloc, UpdateMaterialTraceState>(
             listener: (context, state) async {
           if (state is UpdateMaterialTraceLoadingState) {
-            EasyLoading.show(status: "Loading ...");
             print("UpdateMaterialCheck");
           } else if (state is UpdateMaterialTraceLoadedState) {
+            setState(() {
+              isLoading = false;
+            });
+            // print("UpdateMaterialCheckSuccess");
+            BlocProvider.of<LineElementBloc>(context).add(
+              GetIPEProdSpecByBatchEvent(
+                batchNoController.text.trim(),
+              ),
+            );
+
             EasyLoading.dismiss();
-            print("UpdateMaterialCheckSuccess");
-            _highVoltageController.clear();
-            _peakController.clear();
           } else if (state is UpdateMaterialTraceErrorState) {
             EasyLoading.dismiss();
+            setState(() {
+              isLoading = false;
+            });
           }
         })
       ],
@@ -395,6 +417,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       onEditingComplete: () async {
                         if (batchNoController.text.length == 12) {
                           _btnSend();
+
                           valuetxtinput = "";
                         } else {
                           setState(() {
@@ -559,1036 +582,17 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
     if (MachineController.text.isNotEmpty &&
         operatorNameController.text.isNotEmpty &&
         batchNoController.text.isNotEmpty) {
-      var sql = await DatabaseHelper()
-          .queryMasterlotProcess(MachineController.text.trim().toUpperCase());
-      print(sql);
+      _highVoltageController.clear();
+      _peakController.clear();
+      _ipe_noController.clear();
+      BlocProvider.of<LineElementBloc>(context).add(
+        GetIPEProdSpecByBatchEvent(
+          batchNoController.text.trim(),
+        ),
+      );
       if (MachineController.text.length >= 2) {
-        //
-        // switch (MachineController.text.toUpperCase().trim().substring(0, 2)) {
-        //   case 'HV':
-        // try {
-        //   bool peakValid = false;
-        //   bool highValid = false;
-        //   if (_peakController.text.isNotEmpty) {
-        //     peakValid = true;
-        //   }
-        //   if (_highVoltageController.text.isNotEmpty) {
-        //     highValid = true;
-        //   }
-        //   showDialog(
-        //       barrierDismissible: false,
-        //       context: context,
-        //       builder: (context) {
-        //         return AlertDialog(
-        //           title: Label('Final Test'),
-        //           content: Column(
-        //             mainAxisSize: MainAxisSize.min,
-        //             children: [
-        //               FutureBuilder(
-        //                 future: Future.delayed(Duration
-        //                     .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-        //                 builder: (context, snapshot) {
-        //                   _p1.requestFocus(); // Focus ที่ _p1Focus
-        //                   return SizedBox
-        //                       .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-        //                 },
-        //               ),
-        //               CustomTextInputField(
-        //                 controller: _peakController,
-        //                 focusNode: _p1,
-        //                 keyboardType: TextInputType.number,
-        //                 isHideLable: true,
-        //                 onFieldSubmitted: (value) {
-        //                   if (value.isNotEmpty) {
-        //                     _p2.requestFocus();
-        //                   }
-        //                 },
-        //                 textInputFormatter: [
-        //                   FilteringTextInputFormatter.allow(
-        //                       RegExp(r'[0-9.]'))
-        //                 ],
-        //                 labelText: "Peak Current WithStands",
-        //                 onChanged: (value) {
-        //                   _peakController.text = value;
-        //                 },
-        //                 validator: (value) {
-        //                   if (value == null || value.isEmpty) {
-        //                     peakValid = false;
-        //                     return 'Please enter a value';
-        //                   }
-        //                   num? intValue = num.tryParse(value);
-        //                   if (intValue == null ||
-        //                       intValue < 100 ||
-        //                       intValue > 200) {
-        //                     peakValid = false;
-        //                     return 'Value 100-200';
-        //                   } else {
-        //                     peakValid = true;
-        //                     return null;
-        //                   }
-        //                 },
-        //               ),
-        //               SizedBox(
-        //                 height: 5,
-        //               ),
-        //               CustomTextInputField(
-        //                 controller: _highVoltageController,
-        //                 focusNode: _p2,
-        //                 keyboardType: TextInputType.number,
-        //                 isHideLable: true,
-        //                 textInputFormatter: [
-        //                   FilteringTextInputFormatter.allow(
-        //                       RegExp(r'[0-9.]'))
-        //                 ],
-        //                 labelText: "High-Voltage Test",
-        //                 onChanged: (value) {
-        //                   _highVoltageController.text = value;
-        //                 },
-        //                 validator: (value) {
-        //                   if (value == null || value.isEmpty) {
-        //                     highValid = false;
-        //                     return 'Please enter a value';
-        //                   }
-        //                   num? intValue = num.tryParse(value);
-        //                   if (intValue == null ||
-        //                       intValue < 600 ||
-        //                       intValue > 1500) {
-        //                     highValid = false;
-        //                     return 'Value 600-1500';
-        //                   } else {
-        //                     highValid = true;
-        //                     return null;
-        //                   }
-        //                 },
-        //               )
-        //             ],
-        //           ),
-        //           actions: [
-        //             ElevatedButton(
-        //                 style: ButtonStyle(
-        //                     backgroundColor:
-        //                         MaterialStatePropertyAll(COLOR_RED)),
-        //                 onPressed: () {
-        //                   _peakController.clear();
-        //                   _highVoltageController.clear();
-        //                   Navigator.pop(context);
-        //                 },
-        //                 child: Label(
-        //                   "Cancel",
-        //                   color: COLOR_WHITE,
-        //                 )),
-        //             ElevatedButton(
-        //                 style: ButtonStyle(
-        //                     backgroundColor:
-        //                         MaterialStatePropertyAll(COLOR_SUCESS)),
-        //                 onPressed: () async {
-        //                   await _callAPI();
-        //                   await callApiMatUp();
-        //                   Navigator.pop(context);
-        //                 },
-        //                 child: Label("OK", color: COLOR_WHITE))
-        //           ],
-        //         );
-        //       });
-        // } catch (e) {
-        //   EasyLoading.showInfo("$e");
-        // }
-        //     break;
-        //   case 'ZN':
-        //     try {
-        //       var sql = await DatabaseHelper().queryMasterlotProcess(
-        //           MachineController.text.trim().toUpperCase());
-        //       for (var itemMasterLOT in sql) {
-        //         BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-        //             PostUpdateMaterialTraceEvent(
-        //                 MaterialTraceUpdateModel(
-        //                     DATE: DateTime.now().toString(),
-        //                     MATERIAL: itemMasterLOT['Material'].toString(),
-        //                     LOT: itemMasterLOT['Lot'].toString(),
-        //                     PROCESS: itemMasterLOT['PROCESS'].toString(),
-        //                     I_PEAK: int.tryParse(_peakController.text),
-        //                     HIGH_VOLT:
-        //                         int.tryParse(_highVoltageController.text),
-        //                     OPERATOR: operatorNameController.text,
-        //                     BATCH_NO: batchNoController.text.trim()),
-        //                 "Process"));
-        //       }
-        //       // await _getDropdownList('ZN');
-        //       // if (combolist.isNotEmpty) {
-        //       //   _visualControlController.text = combolist
-        //       //           .firstWhere((element) => element.VALUEMEMBER == 'G')
-        //       //           .VALUEMEMBER ??
-        //       //       "G";
-        //       //   showDialog(
-        //       //       barrierDismissible: false,
-        //       //       context: context,
-        //       //       builder: (context) {
-        //       //         return AlertDialog(
-        //       //           title: Label('Zinc'),
-        //       //           content: Column(
-        //       //             mainAxisSize: MainAxisSize.min,
-        //       //             children: [
-        //       //               FutureBuilder(
-        //       //                 future: Future.delayed(Duration
-        //       //                     .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-        //       //                 builder: (context, snapshot) {
-        //       //                   f5.requestFocus();
-        //       //                   return SizedBox
-        //       //                       .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-        //       //                 },
-        //       //               ),
-        //       //               CustomTextInputField(
-        //       //                 focusNode: f5,
-        //       //                 controller: _zinckController,
-        //       //                 keyboardType: TextInputType.number,
-        //       //                 isHideLable: true,
-        //       //                 onFieldSubmitted: (value) {
-        //       //                   if (value.isNotEmpty) {}
-        //       //                 },
-        //       //                 textInputFormatter: [
-        //       //                   FilteringTextInputFormatter.allow(
-        //       //                       RegExp(r'[0-9.]'))
-        //       //                 ],
-        //       //                 labelText: 'Zinc Thickness',
-        //       //                 onChanged: (value) {},
-        //       //                 validator: (value) {
-        //       //                   if (value == null || value.isEmpty) {
-        //       //                     return "Please Entry Value";
-        //       //                   }
-        //       //                   return null;
-        //       //                 },
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   value: combolist.isNotEmpty
-        //       //                       ? combolist
-        //       //                               .firstWhere((element) =>
-        //       //                                   element.VALUEMEMBER == 'G')
-        //       //                               .VALUEMEMBER ??
-        //       //                           "G"
-        //       //                       : null,
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Visual Control",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolist
-        //       //                       .toList()
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _visualControlController.text = value ?? "G";
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 5,
-        //       //               ),
-        //       //             ],
-        //       //           ),
-        //       //           actions: [
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_RED)),
-        //       //                 onPressed: () {
-        //       //                   _zinckController.clear();
-        //       //                   _clearDataNew();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label(
-        //       //                   "Cancel",
-        //       //                   color: COLOR_WHITE,
-        //       //                 )),
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_SUCESS)),
-        //       //                 onPressed: () {
-        //       //                   BlocProvider.of<LineElementBloc>(context).add(
-        //       //                     ProcessCheckEvent(ProcessCheckModel(
-        //       //                       BATCH_NO: batchNoController.text,
-        //       //                       IPE_NO: null,
-        //       //                       MC_NO: MachineController.text,
-        //       //                       ZN_Thickness:
-        //       //                           num.tryParse(_zinckController.text),
-        //       //                       ZN_VC: _visualControlController.text,
-        //       //                       CR_VC: null,
-        //       //                       CR_Voltage: null,
-        //       //                       SD_VC: null,
-        //       //                       TM_Curve: null,
-        //       //                       TM_Time: null,
-        //       //                       PU_Ratio: null,
-        //       //                       PU_Level: null,
-        //       //                       HV_Peak_Current: null,
-        //       //                       HV_HighVolt: null,
-        //       //                       ME_C_AVG: null,
-        //       //                       ME_TGD_AVG: null,
-        //       //                       ME_Batch: null,
-        //       //                       ME_Serial: null,
-        //       //                       ME_Appearance: null,
-        //       //                       ME_Quality_Check: null,
-        //       //                     )),
-        //       //                   );
-        //       //                   _callAPI();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label("OK", color: COLOR_WHITE))
-        //       //           ],
-        //       //         );
-        //       //       });
-        //       // } else {
-        //       //   EasyLoading.showInfo(
-        //       //       "Please Download Dropdown \n Menu dropdown Master");
-        //       // }
-        //     } catch (e, s) {
-        //       EasyLoading.showInfo("$e");
-        //     }
-        //     break;
-        //   case 'CR':
-        //     try {
-        //       var sql = await DatabaseHelper().queryMasterlotProcess(
-        //           MachineController.text.trim().toUpperCase());
-        //       for (var itemMasterLOT in sql) {
-        //         BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-        //             PostUpdateMaterialTraceEvent(
-        //                 MaterialTraceUpdateModel(
-        //                     DATE: DateTime.now().toString(),
-        //                     MATERIAL: itemMasterLOT['Material'].toString(),
-        //                     LOT: itemMasterLOT['Lot'].toString(),
-        //                     PROCESS: itemMasterLOT['PROCESS'].toString(),
-        //                     I_PEAK: int.tryParse(_peakController.text),
-        //                     HIGH_VOLT:
-        //                         int.tryParse(_highVoltageController.text),
-        //                     OPERATOR: operatorNameController.text,
-        //                     BATCH_NO: batchNoController.text.trim()),
-        //                 "Process"));
-        //       }
-        //       // await _getDropdownList('CR');
-        //       // if (combolist.isNotEmpty) {
-        //       //   _visualControlController.text = combolist
-        //       //           .firstWhere((element) => element.VALUEMEMBER == 'G')
-        //       //           .VALUEMEMBER ??
-        //       //       "G";
-        //       //   showDialog(
-        //       //       barrierDismissible: false,
-        //       //       context: context,
-        //       //       builder: (context) {
-        //       //         return AlertDialog(
-        //       //           title: Label('Clearing'),
-        //       //           content: Column(
-        //       //             mainAxisSize: MainAxisSize.min,
-        //       //             children: [
-        //       //               FutureBuilder(
-        //       //                 future: Future.delayed(Duration
-        //       //                     .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-        //       //                 builder: (context, snapshot) {
-        //       //                   f5.requestFocus();
-        //       //                   return SizedBox
-        //       //                       .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-        //       //                 },
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Clearing Voltage",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolist
-        //       //                       .where((item) => item.VALUEMEMBER!
-        //       //                           .contains(RegExp(r'^\d+$')))
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _clearingVoltageController.text =
-        //       //                         value ?? '-';
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   value: combolist
-        //       //                           .firstWhere((element) =>
-        //       //                               element.VALUEMEMBER == 'G')
-        //       //                           .VALUEMEMBER ??
-        //       //                       "G",
-        //       //                   decoration: InputDecoration(
-        //       //                     errorStyle: TextStyle(color: COLOR_RED),
-        //       //                     labelText: "Visual Control",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   autovalidateMode:
-        //       //                       AutovalidateMode.onUserInteraction,
-        //       //                   validator: (value) {
-        //       //                     if (value == '' || value == null) {
-        //       //                       return 'Please Select Clearing Voltage';
-        //       //                     }
-        //       //                     return null;
-        //       //                   },
-        //       //                   items: combolist
-        //       //                       .toList()
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _visualControlController.text = value ?? "G";
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 5,
-        //       //               ),
-        //       //             ],
-        //       //           ),
-        //       //           actions: [
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_RED)),
-        //       //                 onPressed: () {
-        //       //                   _zinckController.clear();
-        //       //                   _clearDataNew();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label(
-        //       //                   "Cancel",
-        //       //                   color: COLOR_WHITE,
-        //       //                 )),
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_SUCESS)),
-        //       //                 onPressed: () {
-        //       //                   if (_clearingVoltageController
-        //       //                           .text.isNotEmpty ||
-        //       //                       _clearingVoltageController.text != '') {
-        //       //                     BlocProvider.of<LineElementBloc>(context).add(
-        //       //                       ProcessCheckEvent(ProcessCheckModel(
-        //       //                         BATCH_NO: batchNoController.text,
-        //       //                         IPE_NO: null,
-        //       //                         MC_NO: MachineController.text,
-        //       //                         ZN_Thickness: null,
-        //       //                         ZN_VC: null,
-        //       //                         CR_VC: _visualControlController.text,
-        //       //                         CR_Voltage: int.tryParse(
-        //       //                             _clearingVoltageController.text),
-        //       //                         SD_VC: null,
-        //       //                         TM_Curve: null,
-        //       //                         TM_Time: null,
-        //       //                         PU_Ratio: null,
-        //       //                         PU_Level: null,
-        //       //                         HV_Peak_Current: null,
-        //       //                         HV_HighVolt: null,
-        //       //                         ME_C_AVG: null,
-        //       //                         ME_TGD_AVG: null,
-        //       //                         ME_Batch: null,
-        //       //                         ME_Serial: null,
-        //       //                         ME_Appearance: null,
-        //       //                         ME_Quality_Check: null,
-        //       //                       )),
-        //       //                     );
-        //       //                     _callAPI();
-        //       //                     Navigator.pop(context);
-        //       //                   } else {
-        //       //                     EasyLoading.showError(
-        //       //                         "Please select Clearing Voltage");
-        //       //                   }
-        //       //                 },
-        //       //                 child: Label("OK", color: COLOR_WHITE))
-        //       //           ],
-        //       //         );
-        //       //       });
-        //       // } else {
-        //       //   EasyLoading.showInfo(
-        //       //       "Please Download Dropdown \n Menu dropdown Master");
-        //       // }
-        //     } catch (e, s) {
-        //       EasyLoading.showError("$e");
-        //     }
-        //     break;
-        //   case 'SD':
-        //     try {
-        //       var sql = await DatabaseHelper().queryMasterlotProcess(
-        //           MachineController.text.trim().toUpperCase());
-        //       for (var itemMasterLOT in sql) {
-        //         BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-        //             PostUpdateMaterialTraceEvent(
-        //                 MaterialTraceUpdateModel(
-        //                     DATE: DateTime.now().toString(),
-        //                     MATERIAL: itemMasterLOT['Material'].toString(),
-        //                     LOT: itemMasterLOT['Lot'].toString(),
-        //                     PROCESS: itemMasterLOT['PROCESS'].toString(),
-        //                     I_PEAK: int.tryParse(_peakController.text),
-        //                     HIGH_VOLT:
-        //                         int.tryParse(_highVoltageController.text),
-        //                     OPERATOR: operatorNameController.text,
-        //                     BATCH_NO: batchNoController.text.trim()),
-        //                 "Process"));
-        //       }
-        //       // await _getDropdownList('SD');
-        //       // if (combolist.isNotEmpty) {
-        //       //   _visualControlController.text = combolistForSD
-        //       //           .firstWhere((element) => element.VALUEMEMBER == 'G')
-        //       //           .VALUEMEMBER ??
-        //       //       "G";
-        //       //   _clearing_visualControlController.text = combolistForSD
-        //       //           .firstWhere((element) => element.VALUEMEMBER == 'G')
-        //       //           .VALUEMEMBER ??
-        //       //       "G";
-        //       //   showDialog(
-        //       //       barrierDismissible: false,
-        //       //       context: context,
-        //       //       builder: (context) {
-        //       //         return AlertDialog(
-        //       //           title: Label('Clearing'),
-        //       //           content: Column(
-        //       //             mainAxisSize: MainAxisSize.min,
-        //       //             children: [
-        //       //               FutureBuilder(
-        //       //                 future: Future.delayed(Duration
-        //       //                     .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-        //       //                 builder: (context, snapshot) {
-        //       //                   f5.requestFocus();
-        //       //                   return SizedBox
-        //       //                       .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-        //       //                 },
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   value: combolistForSD.isNotEmpty
-        //       //                       ? combolistForSD
-        //       //                               .firstWhere((element) =>
-        //       //                                   element.VALUEMEMBER == 'G')
-        //       //                               .VALUEMEMBER ??
-        //       //                           "G"
-        //       //                       : null,
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Visual Control",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolistForSD
-        //       //                       .toList()
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _clearing_visualControlController.text =
-        //       //                         value ?? "G";
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Clearing Voltage",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolist
-        //       //                       .where((item) => item.VALUEMEMBER!
-        //       //                           .contains(RegExp(r'^\d+$')))
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _clearingVoltageController.text =
-        //       //                         value ?? '-';
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               Row(
-        //       //                 children: [
-        //       //                   Label(
-        //       //                     "Solder",
-        //       //                     fontWeight: FontWeight.bold,
-        //       //                   ),
-        //       //                 ],
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   value: combolistForSD.isNotEmpty
-        //       //                       ? combolistForSD
-        //       //                               .firstWhere((element) =>
-        //       //                                   element.VALUEMEMBER == 'G')
-        //       //                               .VALUEMEMBER ??
-        //       //                           "G"
-        //       //                       : null,
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Visual Control",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolistForSD
-        //       //                       .toList()
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _visualControlController.text = value ?? "G";
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 5,
-        //       //               ),
-        //       //             ],
-        //       //           ),
-        //       //           actions: [
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_RED)),
-        //       //                 onPressed: () {
-        //       //                   _zinckController.clear();
-        //       //                   _clearDataNew();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label(
-        //       //                   "Cancel",
-        //       //                   color: COLOR_WHITE,
-        //       //                 )),
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_SUCESS)),
-        //       //                 onPressed: () {
-        //       //                   BlocProvider.of<LineElementBloc>(context).add(
-        //       //                     ProcessCheckEvent(ProcessCheckModel(
-        //       //                       BATCH_NO: batchNoController.text,
-        //       //                       IPE_NO: null,
-        //       //                       MC_NO: MachineController.text,
-        //       //                       ZN_Thickness: null,
-        //       //                       ZN_VC: null,
-        //       //                       CR_VC:
-        //       //                           _clearing_visualControlController.text,
-        //       //                       CR_Voltage: int.tryParse(
-        //       //                           _clearingVoltageController.text),
-        //       //                       SD_VC: _visualControlController.text,
-        //       //                       TM_Curve: null,
-        //       //                       TM_Time: null,
-        //       //                       PU_Ratio: null,
-        //       //                       PU_Level: null,
-        //       //                       HV_Peak_Current: null,
-        //       //                       HV_HighVolt: null,
-        //       //                       ME_C_AVG: null,
-        //       //                       ME_TGD_AVG: null,
-        //       //                       ME_Batch: null,
-        //       //                       ME_Serial: null,
-        //       //                       ME_Appearance: null,
-        //       //                       ME_Quality_Check: null,
-        //       //                     )),
-        //       //                   );
-        //       //                   _callAPI();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label("OK", color: COLOR_WHITE))
-        //       //           ],
-        //       //         );
-        //       //       });
-        //       // } else {
-        //       //   EasyLoading.showInfo(
-        //       //       "Please Download Dropdown \n Menu dropdown Master");
-        //       // }
-        //     } catch (e, s) {
-        //       EasyLoading.showInfo("$e");
-        //     }
-        //     break;
-        //   case 'PU':
-        //     try {
-        //       _callAPI();
-        //       var sql = await DatabaseHelper().queryMasterlotProcess(
-        //           MachineController.text.trim().toUpperCase());
-        //       for (var itemMasterLOT in sql) {
-        //         BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-        //             PostUpdateMaterialTraceEvent(
-        //                 MaterialTraceUpdateModel(
-        //                     DATE: DateTime.now().toString(),
-        //                     MATERIAL: itemMasterLOT['Material'].toString(),
-        //                     LOT: itemMasterLOT['Lot'].toString(),
-        //                     PROCESS: itemMasterLOT['PROCESS'].toString(),
-        //                     I_PEAK: int.tryParse(_peakController.text),
-        //                     HIGH_VOLT:
-        //                         int.tryParse(_highVoltageController.text),
-        //                     OPERATOR: operatorNameController.text,
-        //                     BATCH_NO: batchNoController.text.trim()),
-        //                 "Process"));
-        //       }
-        //       // await _getDropdownList('PU');
-        //       // if (combolist.isNotEmpty) {
-        //       //   _filingLevelController.text = combolist
-        //       //           .firstWhere((element) => element.VALUEMEMBER == 'G')
-        //       //           .VALUEMEMBER ??
-        //       //       "G";
-        //       //   _missingRatioController.text = '2.86 :1';
-        //       //   showDialog(
-        //       //       barrierDismissible: false,
-        //       //       context: context,
-        //       //       builder: (context) {
-        //       //         return AlertDialog(
-        //       //           title: Label('Pur'),
-        //       //           content: Column(
-        //       //             mainAxisSize: MainAxisSize.min,
-        //       //             children: [
-        //       //               FutureBuilder(
-        //       //                 future: Future.delayed(Duration
-        //       //                     .zero), // ใช้ Future.delayed เพื่อทำให้โฟกัสทันที
-        //       //                 builder: (context, snapshot) {
-        //       //                   f5.requestFocus();
-        //       //                   return SizedBox
-        //       //                       .shrink(); // ไม่มีการแสดงผลในระหว่างการรอ Future.delayed
-        //       //                 },
-        //       //               ),
-        //       //               CustomTextInputField(
-        //       //                 focusNode: f5,
-        //       //                 controller: _missingRatioController,
-        //       //                 keyboardType: TextInputType.number,
-        //       //                 isHideLable: true,
-        //       //                 onFieldSubmitted: (value) {
-        //       //                   if (value.isNotEmpty) {}
-        //       //                 },
-        //       //                 textInputFormatter: [
-        //       //                   FilteringTextInputFormatter.allow(
-        //       //                       RegExp(r'[0-9.]'))
-        //       //                 ],
-        //       //                 labelText: 'MissingRatio',
-        //       //                 onChanged: (value) {},
-        //       //                 validator: (value) {
-        //       //                   if (value == null || value.isEmpty) {
-        //       //                     return "Please Entry Value";
-        //       //                   }
-        //       //                   return null;
-        //       //                 },
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 15,
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 45,
-        //       //                 child: DropdownButtonFormField2(
-        //       //                   value: combolist
-        //       //                           .firstWhere((element) =>
-        //       //                               element.VALUEMEMBER == 'G')
-        //       //                           .VALUEMEMBER ??
-        //       //                       "G",
-        //       //                   decoration: InputDecoration(
-        //       //                     labelText: "Filing Level",
-        //       //                     contentPadding: EdgeInsets.zero,
-        //       //                     border: OutlineInputBorder(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                   isExpanded: true,
-        //       //                   items: combolist
-        //       //                       .toList()
-        //       //                       .map((item) => DropdownMenuItem<String>(
-        //       //                             value: item.VALUEMEMBER,
-        //       //                             child: Text(
-        //       //                               "${item.VALUEMEMBER}",
-        //       //                               style: const TextStyle(
-        //       //                                 fontSize: 14,
-        //       //                               ),
-        //       //                             ),
-        //       //                           ))
-        //       //                       .toList(),
-        //       //                   onChanged: (value) {
-        //       //                     _filingLevelController.text = value ?? "G";
-        //       //                   },
-        //       //                   onSaved: (value) {
-        //       //                     print(value);
-        //       //                   },
-        //       //                   buttonStyleData: const ButtonStyleData(
-        //       //                     height: 50,
-        //       //                     padding: EdgeInsets.only(left: 20, right: 10),
-        //       //                   ),
-        //       //                   iconStyleData: const IconStyleData(
-        //       //                     icon: Icon(
-        //       //                       Icons.arrow_drop_down,
-        //       //                       color: Colors.black45,
-        //       //                     ),
-        //       //                     iconSize: 30,
-        //       //                   ),
-        //       //                   dropdownStyleData: DropdownStyleData(
-        //       //                     decoration: BoxDecoration(
-        //       //                       borderRadius: BorderRadius.circular(15),
-        //       //                     ),
-        //       //                   ),
-        //       //                 ),
-        //       //               ),
-        //       //               SizedBox(
-        //       //                 height: 5,
-        //       //               ),
-        //       //             ],
-        //       //           ),
-        //       //           actions: [
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_RED)),
-        //       //                 onPressed: () {
-        //       //                   _zinckController.clear();
-        //       //                   _clearDataNew();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label(
-        //       //                   "Cancel",
-        //       //                   color: COLOR_WHITE,
-        //       //                 )),
-        //       //             ElevatedButton(
-        //       //                 style: ButtonStyle(
-        //       //                     backgroundColor:
-        //       //                         MaterialStatePropertyAll(COLOR_SUCESS)),
-        //       //                 onPressed: () {
-        //       //                   BlocProvider.of<LineElementBloc>(context).add(
-        //       //                     ProcessCheckEvent(ProcessCheckModel(
-        //       //                       BATCH_NO: batchNoController.text,
-        //       //                       IPE_NO: null,
-        //       //                       MC_NO: MachineController.text,
-        //       //                       ZN_Thickness: null,
-        //       //                       ZN_VC: null,
-        //       //                       CR_VC: null,
-        //       //                       CR_Voltage: null,
-        //       //                       SD_VC: null,
-        //       //                       TM_Curve: null,
-        //       //                       TM_Time: null,
-        //       //                       PU_Ratio: _missingRatioController.text,
-        //       //                       PU_Level: _filingLevelController.text,
-        //       //                       HV_Peak_Current: null,
-        //       //                       HV_HighVolt: null,
-        //       //                       ME_C_AVG: null,
-        //       //                       ME_TGD_AVG: null,
-        //       //                       ME_Batch: null,
-        //       //                       ME_Serial: null,
-        //       //                       ME_Appearance: null,
-        //       //                       ME_Quality_Check: null,
-        //       //                     )),
-        //       //                   );
-        //       //                   _callAPI();
-        //       //                   Navigator.pop(context);
-        //       //                 },
-        //       //                 child: Label("OK", color: COLOR_WHITE))
-        //       //           ],
-        //       //         );
-        //       //       });
-        //       // } else {
-        //       //   EasyLoading.showInfo(
-        //       //       "Please Download Dropdown \n Menu dropdown Master");
-        //       // }
-        //     } catch (e, s) {
-        //       EasyLoading.showInfo("$e");
-        //     }
-        //     break;
-        //   default:
-        //     _callAPI();
-        //     break;
-        // }
-
         if (MachineController.text.substring(0, 2).toUpperCase() == 'HV') {
           try {
-            BlocProvider.of<LineElementBloc>(context).add(
-              GetIPEProdSpecByBatchEvent(
-                batchNoController.text.trim(),
-              ),
-            );
             bool peakValid = false;
             bool highValid = false;
             if (_peakController.text.isNotEmpty) {
@@ -1689,8 +693,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                               backgroundColor:
                                   MaterialStatePropertyAll(COLOR_RED)),
                           onPressed: () {
-                            _peakController.clear();
-                            _highVoltageController.clear();
                             Navigator.pop(context);
                           },
                           child: Label(
@@ -1702,9 +704,65 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                               backgroundColor:
                                   MaterialStatePropertyAll(COLOR_SUCESS)),
                           onPressed: () async {
-                            await _callAPI();
-                            await callApiMatUp(sql);
-                            Navigator.pop(context);
+                            if (await AppData.getMode() == 'Online') {
+                              if (isLoading == true) {
+                                var sql1 = await DatabaseHelper()
+                                    .queryMasterlotProcess(MachineController
+                                        .text
+                                        .trim()
+                                        .toUpperCase());
+                                if (sql1.isNotEmpty) {
+                                  for (var itemMasterLOT in sql1) {
+                                    BlocProvider.of<
+                                            UpdateMaterialTraceBloc>(context)
+                                        .add(PostUpdateMaterialTraceEvent(
+                                            MaterialTraceUpdateModel(
+                                                DATE: DateTime.now().toString(),
+                                                MATERIAL:
+                                                    itemMasterLOT['Material'] ??
+                                                        "",
+                                                LOT: itemMasterLOT['Lot']
+                                                    .toString(),
+                                                PROCESS:
+                                                    itemMasterLOT['PROCESS'] ??
+                                                        "",
+                                                IPE_NO: _ipe_noController.text
+                                                    .trim(),
+                                                I_PEAK: int.tryParse(
+                                                    _peakController.text),
+                                                HIGH_VOLT: int.tryParse(
+                                                    _highVoltageController
+                                                        .text),
+                                                OPERATOR:
+                                                    operatorNameController.text,
+                                                BATCH_NO: batchNoController.text
+                                                    .trim()),
+                                            "Process"));
+
+                                    await Future.delayed(
+                                        Duration(milliseconds: 300));
+                                  }
+
+                                  await _callAPI();
+                                  isLoading = true;
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                } else {
+                                  AlertSnackBar.show(
+                                      title: 'MasterLot Invalid',
+                                      message: 'Please Input MasterLot',
+                                      type: AlertType.error,
+                                      duration: const Duration(seconds: 5));
+                                }
+
+                                EasyLoading.dismiss();
+                              } else {
+                                print("test1234");
+                              }
+                            } else {
+                              Navigator.pop(context);
+                              await _callAPI();
+                            }
                           },
                           child: Label("OK", color: COLOR_WHITE))
                     ],
@@ -1713,11 +771,28 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
           } catch (e) {
             EasyLoading.showInfo("$e");
           }
-          print("object1");
         } else if (MachineController.text.substring(0, 2).toUpperCase() !=
-                'HV' &&
-            sql.isNotEmpty) {
-          await callApiMatUp(sql);
+            'HV') {
+          var sql = await DatabaseHelper().queryMasterlotProcess(
+              MachineController.text.trim().toUpperCase());
+
+          if (sql.isNotEmpty) {
+            for (var itemMasterLOT in sql) {
+              BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+                  PostUpdateMaterialTraceEvent(
+                      MaterialTraceUpdateModel(
+                          DATE: DateTime.now().toString(),
+                          MATERIAL: itemMasterLOT['Material'].toString(),
+                          IPE_NO: null,
+                          LOT: itemMasterLOT['Lot'].toString(),
+                          PROCESS: itemMasterLOT['PROCESS'].toString(),
+                          I_PEAK: null,
+                          HIGH_VOLT: null,
+                          OPERATOR: operatorNameController.text,
+                          BATCH_NO: batchNoController.text.trim()),
+                      "Process"));
+            }
+          }
           _callAPI();
         } else {
           _callAPI();
@@ -1740,26 +815,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         STARTDATE: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )),
     );
-  }
-
-  Future callApiMatUp(List<Map<String, dynamic>> sql) async {
-    if (sql.isNotEmpty) {
-      print(sql.length);
-      for (var itemMasterLOT in sql) {
-        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
-            PostUpdateMaterialTraceEvent(
-                MaterialTraceUpdateModel(
-                    DATE: DateTime.now().toString(),
-                    MATERIAL: itemMasterLOT['Material'].toString(),
-                    LOT: itemMasterLOT['Lot'].toString(),
-                    PROCESS: itemMasterLOT['PROCESS'].toString(),
-                    I_PEAK: int.tryParse(_peakController.text),
-                    HIGH_VOLT: int.tryParse(_highVoltageController.text),
-                    OPERATOR: operatorNameController.text,
-                    BATCH_NO: batchNoController.text.trim()),
-                "Process"));
-      }
-    }
   }
 
   Future _getDropdownList(String type) async {

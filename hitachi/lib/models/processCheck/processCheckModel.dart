@@ -2,7 +2,7 @@ class ProcessCheckModel {
   const ProcessCheckModel({
     this.BATCH_NO,
     this.IPE_NO,
-    this.MC_NO,
+    // this.MC_NO,
     this.ZN_Thickness,
     this.ZN_VC,
     this.CR_VC,
@@ -24,7 +24,7 @@ class ProcessCheckModel {
 
   final String? BATCH_NO;
   final int? IPE_NO;
-  final String? MC_NO;
+  // final String? MC_NO;
   final num? ZN_Thickness;
   final String? ZN_VC;
   final String? CR_VC;
@@ -46,7 +46,7 @@ class ProcessCheckModel {
   ProcessCheckModel copyWith({
     String? BATCH_NO,
     int? IPE_NO,
-    String? MC_NO,
+    // String? MC_NO,
     num? ZN_Thickness,
     String? ZN_VC,
     String? CR_VC,
@@ -68,7 +68,7 @@ class ProcessCheckModel {
     return ProcessCheckModel(
       BATCH_NO: BATCH_NO ?? this.BATCH_NO,
       IPE_NO: IPE_NO ?? this.IPE_NO,
-      MC_NO: MC_NO ?? this.MC_NO,
+      // MC_NO: MC_NO ?? this.MC_NO,
       ZN_Thickness: ZN_Thickness ?? this.ZN_Thickness,
       ZN_VC: ZN_VC ?? this.ZN_VC,
       CR_VC: CR_VC ?? this.CR_VC,
@@ -93,7 +93,7 @@ class ProcessCheckModel {
   Map toJson() => {
         'BATCH_NO': BATCH_NO,
         'IPE_NO': IPE_NO,
-        'MC_NO': MC_NO,
+        // 'MC_NO': MC_NO,
         'ZN_Thickness': ZN_Thickness,
         'ZN_VC': ZN_VC,
         'CR_VC': CR_VC,
