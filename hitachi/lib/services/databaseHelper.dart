@@ -201,6 +201,12 @@ class DatabaseHelper {
         .query('MASTERLOT', where: 'PROCESS = ?', whereArgs: [batch]);
   }
 
+  Future<List<Map<String, dynamic>>> queryMasterlotTmProcess(machine) async {
+    Database db = await this.database;
+    return await db
+        .query('MASTERLOT', where: 'PROCESS LIKE ?', whereArgs: ['%$machine%']);
+  }
+
   Future<List<Map<String, dynamic>>> queryAllRows(String tableName) async {
     Database db = await this.database;
     return await db.query(tableName);

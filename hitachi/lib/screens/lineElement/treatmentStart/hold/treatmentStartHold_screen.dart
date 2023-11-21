@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/blocs/treatment/treatment_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/text/label.dart';
 import 'package:hitachi/models-Sqlite/treatmentModel.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -528,6 +530,40 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
   _sendDataServer() {
     _index.forEach((element) async {
       var row = tmList.where((value) => value.ID == element).first;
+      print(row.MACHINE_NO);
+      if (row.MACHINE_NO!.substring(0, 2).toUpperCase().toString() == 'TM') {
+        var itemMasterLotTreatment = await DatabaseHelper()
+            .queryMasterlotTmProcess(row.MACHINE_NO?.substring(0, 2));
+
+        if (row.BATCH1 != null && row.BATCH1 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH1,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH2 != null && row.BATCH2 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH2,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH3 != null && row.BATCH3 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH3,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH4 != null && row.BATCH4 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH4,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH5 != null && row.BATCH5 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH5,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH6 != null && row.BATCH6 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH6,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+        if (row.BATCH7 != null && row.BATCH7 != '') {
+          _callApiUpdateMaterialTrace(itemMasterLotTreatment, row.BATCH7,
+              row.OPERATOR_NAME, row.MACHINE_NO);
+        }
+      }
 
       BlocProvider.of<TreatmentBloc>(context).add(
         TreatmentStartSendEvent(TreatMentOutputModel(
@@ -544,6 +580,27 @@ class _TreatmentStartHoldScreenState extends State<TreatmentStartHoldScreen> {
         )),
       );
     });
+  }
+
+  Future _callApiUpdateMaterialTrace(
+      List<Map<String, dynamic>> row, batch, operator, machine) async {
+    if (row.isNotEmpty) {
+      for (var itemMasterLOT in row) {
+        BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+            PostUpdateMaterialTraceEvent(
+                MaterialTraceUpdateModel(
+                    DATE: DateTime.now().toString(),
+                    MATERIAL: itemMasterLOT['Material'].toString(),
+                    IPE_NO: null,
+                    LOT: itemMasterLOT['Lot'].toString(),
+                    PROCESS: machine,
+                    I_PEAK: null,
+                    HIGH_VOLT: null,
+                    OPERATOR: operator,
+                    BATCH_NO: batch),
+                "Process"));
+      }
+    }
   }
 
   Future deletedInfo() async {

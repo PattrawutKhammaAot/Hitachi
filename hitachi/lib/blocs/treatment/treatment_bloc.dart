@@ -66,8 +66,8 @@ class TreatmentBloc extends Bloc<TreatmentEvent, TreatmentState> {
       Response responese = await dio.post(ApiConfig.TREAMTMENT_START,
           options: Options(
               headers: ApiConfig.HEADER(),
-              sendTimeout: Duration(seconds: 5),
-              receiveTimeout: Duration(seconds: 5)),
+              sendTimeout: Duration(seconds: 60),
+              receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(item));
       print(responese.data);
       ResponeDefault post = ResponeDefault.fromJson(responese.data);

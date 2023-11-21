@@ -49,6 +49,7 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
   FocusNode _batchFocus = FocusNode();
   List<int> _index = [];
   bool isCheckValue = false;
+  ScrollController _scrollController = ScrollController();
 
   int id = 0;
   DataGridRow? datagridRow;
@@ -449,121 +450,136 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                     ),
                   ),
                   datasoruce != null
-                      ? Container(
-                          height: dataText.length >= 3 ? 300 : 150,
-                          child: SfDataGrid(
-                            gridLinesVisibility: GridLinesVisibility.both,
-                            headerGridLinesVisibility: GridLinesVisibility.both,
-                            source: datasoruce!,
-                            columnWidthMode: ColumnWidthMode.fill,
-                            allowPullToRefresh: true,
-                            allowColumnsResizing: true,
-                            selectionMode: SelectionMode.multiple,
-                            showCheckboxColumn: true,
-                            columnResizeMode: ColumnResizeMode.onResizeEnd,
-                            onColumnResizeUpdate:
-                                (ColumnResizeUpdateDetails details) {
-                              setState(() {
-                                columnWidths[details.column.columnName] =
-                                    details.width;
-                              });
-                              return true;
-                            },
-                            onSelectionChanged:
-                                (selectRow, deselectedRows) async {
-                              if (selectRow.isNotEmpty) {
-                                if (selectRow.length ==
-                                        datasoruce!.effectiveRows.length &&
-                                    selectRow.length > 1) {
-                                  setState(() {
-                                    selectRow.forEach((row) {
-                                      _index.add(int.tryParse(
-                                          row.getCells()[0].value.toString())!);
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            height: dataText.length >= 3
+                                ? MediaQuery.of(context).size.width
+                                : 150,
+                            child: SfDataGrid(
+                              shrinkWrapColumns: true,
+                              shrinkWrapRows: true,
+                              // horizontalScrollPhysics: BouncingScrollPhysics(),
+                              verticalScrollPhysics: BouncingScrollPhysics(),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              gridLinesVisibility: GridLinesVisibility.both,
+                              headerGridLinesVisibility:
+                                  GridLinesVisibility.both,
+                              // allowSwiping: true,
+                              isScrollbarAlwaysShown: true,
+                              // // allowPullToRefresh: true,
+                              allowColumnsResizing: true,
+                              columnResizeMode: ColumnResizeMode.onResizeEnd,
+                              selectionMode: SelectionMode.multiple,
+                              source: datasoruce!,
+                              showCheckboxColumn: true,
+                              onColumnResizeUpdate:
+                                  (ColumnResizeUpdateDetails details) {
+                                setState(() {
+                                  columnWidths[details.column.columnName] =
+                                      details.width;
+                                });
+                                return true;
+                              },
+                              onSelectionChanged:
+                                  (selectRow, deselectedRows) async {
+                                if (selectRow.isNotEmpty) {
+                                  if (selectRow.length ==
+                                          datasoruce!.effectiveRows.length &&
+                                      selectRow.length > 1) {
+                                    setState(() {
+                                      selectRow.forEach((row) {
+                                        _index.add(int.tryParse(row
+                                            .getCells()[0]
+                                            .value
+                                            .toString())!);
+                                      });
                                     });
-                                  });
+                                  } else {
+                                    setState(() {
+                                      _index.add(int.tryParse(selectRow.first
+                                          .getCells()[0]
+                                          .value
+                                          .toString())!);
+                                      datagridRow = selectRow.first;
+                                      dataTextGrid = datagridRow!
+                                          .getCells()
+                                          .map(
+                                            (e) => MaterialTraceDatagridModel(),
+                                          )
+                                          .toList();
+                                    });
+                                  }
                                 } else {
                                   setState(() {
-                                    _index.add(int.tryParse(selectRow.first
-                                        .getCells()[0]
-                                        .value
-                                        .toString())!);
-                                    datagridRow = selectRow.first;
-                                    dataTextGrid = datagridRow!
-                                        .getCells()
-                                        .map(
-                                          (e) => MaterialTraceDatagridModel(),
-                                        )
-                                        .toList();
+                                    if (deselectedRows.length > 1) {
+                                      _index.clear();
+                                    } else {
+                                      _index.remove(int.tryParse(deselectedRows
+                                          .first
+                                          .getCells()[0]
+                                          .value
+                                          .toString())!);
+                                    }
                                   });
                                 }
-                              } else {
-                                setState(() {
-                                  if (deselectedRows.length > 1) {
-                                    _index.clear();
-                                  } else {
-                                    _index.remove(int.tryParse(deselectedRows
-                                        .first
-                                        .getCells()[0]
-                                        .value
-                                        .toString())!);
-                                  }
-                                });
-                              }
-                            },
-                            columns: [
-                              GridColumn(
-                                width: columnWidths['no']!,
-                                columnName: 'no',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'No.',
-                                      color: COLOR_WHITE,
+                              },
+                              columns: [
+                                GridColumn(
+                                  width: columnWidths['no']!,
+                                  columnName: 'no',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label(
+                                        'No.',
+                                        color: COLOR_WHITE,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['pro']!,
-                                columnName: 'pro',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Pro.',
-                                      color: COLOR_WHITE,
+                                GridColumn(
+                                  width: columnWidths['pro']!,
+                                  columnName: 'pro',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label(
+                                        'Pro.',
+                                        color: COLOR_WHITE,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['mat']!,
-                                columnName: 'mat',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Material',
-                                      color: COLOR_WHITE,
+                                GridColumn(
+                                  width: columnWidths['mat']!,
+                                  columnName: 'mat',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label(
+                                        'Material',
+                                        color: COLOR_WHITE,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              GridColumn(
-                                width: columnWidths['lot']!,
-                                columnName: 'lot',
-                                label: Container(
-                                  color: COLOR_BLUE_DARK,
-                                  child: Center(
-                                    child: Label(
-                                      'Lot',
-                                      color: COLOR_WHITE,
+                                GridColumn(
+                                  width: columnWidths['lot']!,
+                                  // width: MediaQuery.of(context).size.width,
+                                  columnName: 'lot',
+                                  label: Container(
+                                    color: COLOR_BLUE_DARK,
+                                    child: Center(
+                                      child: Label(
+                                        'Lot',
+                                        color: COLOR_WHITE,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         )
                       : SizedBox.shrink(),

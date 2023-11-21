@@ -146,6 +146,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               print("ProcessStartLoadingState");
             }
             if (state is ProcessStartLoadedState) {
+              isLoading = true;
+              setState(() {});
               EasyLoading.dismiss();
               if (state.item.RESULT == true) {
                 EasyLoading.dismiss();
@@ -210,7 +212,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
               EasyLoading.dismiss();
               setState(() {
                 _enabledMachineNo = true;
+                isLoading = true;
               });
+
               _errorDialog(
                   text: Label("CheckConnection\n Do you want to Save"),
                   // isHideCancle: false,
@@ -704,64 +708,57 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                               backgroundColor:
                                   MaterialStatePropertyAll(COLOR_SUCESS)),
                           onPressed: () async {
-                            if (await AppData.getMode() == 'Online') {
-                              if (isLoading == true) {
-                                var sql1 = await DatabaseHelper()
-                                    .queryMasterlotProcess(MachineController
-                                        .text
-                                        .trim()
-                                        .toUpperCase());
-                                if (sql1.isNotEmpty) {
-                                  for (var itemMasterLOT in sql1) {
-                                    BlocProvider.of<
-                                            UpdateMaterialTraceBloc>(context)
-                                        .add(PostUpdateMaterialTraceEvent(
-                                            MaterialTraceUpdateModel(
-                                                DATE: DateTime.now().toString(),
-                                                MATERIAL:
-                                                    itemMasterLOT['Material'] ??
-                                                        "",
-                                                LOT: itemMasterLOT['Lot']
-                                                    .toString(),
-                                                PROCESS:
-                                                    itemMasterLOT['PROCESS'] ??
-                                                        "",
-                                                IPE_NO: _ipe_noController.text
-                                                    .trim(),
-                                                I_PEAK: int.tryParse(
-                                                    _peakController.text),
-                                                HIGH_VOLT: int.tryParse(
-                                                    _highVoltageController
-                                                        .text),
-                                                OPERATOR:
-                                                    operatorNameController.text,
-                                                BATCH_NO: batchNoController.text
-                                                    .trim()),
-                                            "Process"));
+                            if (isLoading == true) {
+                              var sql1 = await DatabaseHelper()
+                                  .queryMasterlotProcess(MachineController.text
+                                      .trim()
+                                      .toUpperCase());
+                              if (sql1.isNotEmpty) {
+                                for (var itemMasterLOT in sql1) {
+                                  BlocProvider.of<UpdateMaterialTraceBloc>(context)
+                                      .add(PostUpdateMaterialTraceEvent(
+                                          MaterialTraceUpdateModel(
+                                              DATE: DateTime.now().toString(),
+                                              MATERIAL:
+                                                  itemMasterLOT['Material'] ??
+                                                      "",
+                                              LOT: itemMasterLOT['Lot']
+                                                  .toString(),
+                                              PROCESS:
+                                                  itemMasterLOT['PROCESS'] ??
+                                                      "",
+                                              IPE_NO:
+                                                  _ipe_noController.text.trim(),
+                                              I_PEAK: int.tryParse(
+                                                  _peakController.text),
+                                              HIGH_VOLT: int.tryParse(
+                                                  _highVoltageController.text),
+                                              OPERATOR:
+                                                  operatorNameController.text,
+                                              BATCH_NO: batchNoController.text
+                                                  .trim()),
+                                          "Process"));
 
-                                    await Future.delayed(
-                                        Duration(milliseconds: 300));
-                                  }
-
-                                  await _callAPI();
-                                  isLoading = true;
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                } else {
-                                  AlertSnackBar.show(
-                                      title: 'MasterLot Invalid',
-                                      message: 'Please Input MasterLot',
-                                      type: AlertType.error,
-                                      duration: const Duration(seconds: 5));
+                                  await Future.delayed(
+                                      Duration(milliseconds: 300));
                                 }
 
-                                EasyLoading.dismiss();
+                                await _callAPI();
+                                isLoading = true;
+                                setState(() {});
+                                Navigator.pop(context);
                               } else {
-                                print("test1234");
+                                AlertSnackBar.show(
+                                    title: 'MasterLot Invalid',
+                                    message: 'Please Input MasterLot',
+                                    type: AlertType.error,
+                                    duration: const Duration(seconds: 5));
                               }
+
+                              EasyLoading.dismiss();
                             } else {
                               Navigator.pop(context);
-                              await _callAPI();
+                              EasyLoading.showError("Please Reload Page");
                             }
                           },
                           child: Label("OK", color: COLOR_WHITE))
@@ -772,7 +769,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
             EasyLoading.showInfo("$e");
           }
         } else if (MachineController.text.substring(0, 2).toUpperCase() !=
-            'HV') {
+                'HV' &&
+            MachineController.text.substring(0, 2).toUpperCase() != 'TM') {
           var sql = await DatabaseHelper().queryMasterlotProcess(
               MachineController.text.trim().toUpperCase());
 

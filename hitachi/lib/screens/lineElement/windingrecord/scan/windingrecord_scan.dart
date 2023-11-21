@@ -327,9 +327,25 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   }
 
   _getValuesFromServer(ResponeseWindingRecordModel items) {
+    String? startTime;
+    String? finishTime;
+    try {
+      startTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+          items.START_DATE ?? items.START_TIME ?? DateTime.now().toString()));
+      finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+          items.END_DATE ?? items.FINISH_TIME ?? DateTime.now().toString()));
+    } catch (e) {
+      DateTime dateTime = DateFormat('M/d/yyyy h:mm:ss a').parse(
+          items.START_TIME ?? items.START_DATE ?? DateTime.now().toString());
+      DateTime dateTime2 = DateFormat('M/d/yyyy h:mm:ss a').parse(
+          items.FINISH_TIME ?? items.END_DATE ?? DateTime.now().toString());
+      startTime = DateFormat('HH:mm:ss').format(dateTime);
+      finishTime = DateFormat('HH:mm:ss').format(dateTime2);
+    }
+
     _batch_Controller.text = items.BATCH_NO.toString();
-    _startTime_Controller.text = items.START_TIME.toString();
-    _finishTime_Controller.text = items.FINISH_TIME.toString();
+    _startTime_Controller.text = startTime;
+    _finishTime_Controller.text = finishTime;
     _ipeNo_Controller.text = items.IPE_NO.toString();
     _thickness_Controller.text = items.THICKNESS.toString();
     _turn_Controller.text = items.TURN.toString();
@@ -608,12 +624,16 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
             if (state.item.MESSAGE == 'No data in WindingRecord') {
               // _getValuesFromServer(itemWindingRecord);
 
-              _startTime_Controller.text =
-                  state.item.START_TIME ?? state.item.START_DATE ?? "-";
+              _startTime_Controller.text = DateFormat('HH:mm:ss').format(
+                  DateTime.parse(state.item.START_TIME ??
+                      state.item.START_DATE ??
+                      DateTime.now().toString()));
               _ipeNo_Controller.text = state.item.IPE_NO.toString();
               _tempIPE_Controller.text = state.item.IPE_NO.toString();
-              _finishTime_Controller.text =
-                  state.item.FINISH_TIME ?? state.item.END_DATE ?? "-";
+              _finishTime_Controller.text = DateFormat('HH:mm:ss').format(
+                  DateTime.parse(state.item.FINISH_TIME ??
+                      state.item.END_DATE ??
+                      DateTime.now().toString()));
               _ppmweight_Controller.text = state.item.PPM_WEIGHT.toString();
               _packno_Controller.text = state.item.PACK_NO.toString();
               _output_Controller.text = state.item.OUTPUT.toString();
@@ -678,57 +698,159 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               // _getValuesFromServer(itemWindingRecord);
             } else if (state.item.RESULT == true &&
                 state.item.MESSAGE == null) {
+              print(state.item.START_DATE);
+              String? startTime;
+              String? finishTime;
+              String currentTime = DateTime.now().toString();
+              try {
+                startTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+                    state.item.START_TIME ??
+                        state.item.START_DATE ??
+                        currentTime));
+                finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+                    state.item.FINISH_TIME ??
+                        state.item.END_DATE ??
+                        DateTime.now().toString()));
+              } catch (e) {
+                DateTime dateTime = DateFormat('M/d/yyyy h:mm:ss a').parse(
+                    state.item.START_TIME ??
+                        state.item.START_DATE ??
+                        DateTime.now().toString());
+                DateTime dateTime2 = DateFormat('M/d/yyyy h:mm:ss a').parse(
+                    state.item.FINISH_TIME ??
+                        state.item.END_DATE ??
+                        DateTime.now().toString());
+                startTime = DateFormat('HH:mm:ss').format(dateTime);
+                finishTime = DateFormat('HH:mm:ss').format(dateTime2);
+              }
+
               EasyLoading.dismiss();
               itemWindingRecord = state.item;
               var loadDataSend = await DatabaseHelper()
                   .queryWindingRecodeFormPda('WINDING_RECORD_SEND_SERVER',
                       [_batch_Controller.text.trim()]);
               if (loadDataSend.isNotEmpty) {
+                print("inNotEmpty");
+                print(loadDataSend);
+
                 List<WindingRecordModelSqlite> temp = [];
                 temp = loadDataSend
                     .map((e) => WindingRecordModelSqlite.fromMap(e))
                     .toList();
                 for (var items in temp) {
-                  _startTime_Controller.text = items.START_TIME.toString();
-                  _finishTime_Controller.text = items.FINISH_TIME.toString();
-                  _ipeNo_Controller.text = items.IPE_NO.toString();
-                  _ppmweight_Controller.text = items.PPM_WEIGHT.toString();
-                  _packno_Controller.text = items.PACK_NO.toString();
-                  _output_Controller.text = items.OUTPUT.toString();
-                  _thickness_Controller.text = items.THICKNESS.toString();
-                  _turn_Controller.text = items.TURN.toString();
-                  _diameter_Controller.text = items.DIAMETER.toString();
-                  _custommer_Controller.text = items.CUSTOMER.toString();
-                  _uf_Controller.text = items.UF.toString();
-                  _width_L__Controller.text = items.WIDTH_L.toString();
-                  _width_R__Controller.text = items.WIDHT_R.toString();
-                  _gross_Controller.text = items.GROSS.toString();
-                  _cb11_Controller.text = items.CB11.toString();
-                  _cb12_Controller.text = items.CB12.toString();
-                  _cb13_Controller.text = items.CB13.toString();
-                  _cb21_Controller.text = items.CB21.toString();
-                  _cb22_Controller.text = items.CB22.toString();
-                  _cb23_Controller.text = items.CB23.toString();
-                  _cb31_Controller.text = items.CB31.toString();
-                  _cb32_Controller.text = items.CB32.toString();
-                  _cb33_Controller.text = items.CB33.toString();
-                  _of1_Controller.text = items.OF1.toString();
-                  _of2_Controller.text = items.OF2.toString();
-                  _of3_Controller.text = items.OF3.toString();
-                  _burnOff_Controller.text = items.BURN_OFF.toString();
-                  _fs1_Controller.text = items.FS1.toString();
-                  _fs2_Controller.text = items.FS2.toString();
-                  _fs3_Controller.text = items.FS3.toString();
-                  _fs4_Controller.text = items.FS4.toString();
-                  _grade_Controller.text = items.GRADE.toString();
-                  _time_Press_Controller.text = items.TIME_PRESS.toString();
+                  _startTime_Controller.text = items.START_TIME == ''
+                      ? startTime
+                      : items.START_TIME ?? "";
+                  _finishTime_Controller.text = items.FINISH_TIME == ''
+                      ? finishTime
+                      : items.FINISH_TIME ?? "";
+                  _ipeNo_Controller.text = items.IPE_NO == ''
+                      ? state.item.IPE_NO.toString()
+                      : items.IPE_NO ?? "";
+                  _ppmweight_Controller.text = items.PPM_WEIGHT == ''
+                      ? state.item.PPM_WEIGHT.toString()
+                      : items.PPM_WEIGHT ?? "";
+                  _packno_Controller.text = items.PACK_NO == ''
+                      ? state.item.PACK_NO ?? ""
+                      : items.PACK_NO ?? "";
+                  _output_Controller.text = items.OUTPUT == ''
+                      ? state.item.OUTPUT.toString()
+                      : items.OUTPUT ?? "";
+                  _thickness_Controller.text = items.THICKNESS == ''
+                      ? state.item.THICKNESS ?? ""
+                      : items.THICKNESS ?? "";
+                  _turn_Controller.text = items.TURN == ''
+                      ? state.item.TURN.toString()
+                      : items.TURN ?? "";
+                  _diameter_Controller.text = items.DIAMETER == ''
+                      ? state.item.DIAMETER.toString()
+                      : items.DIAMETER ?? "";
+                  _custommer_Controller.text = items.CUSTOMER == ''
+                      ? state.item.CUSTOMER ?? ""
+                      : items.CUSTOMER ?? "";
+                  _uf_Controller.text = items.UF == ''
+                      ? state.item.UF.toString()
+                      : items.UF ?? "";
+                  _width_L__Controller.text = items.WIDTH_L == ''
+                      ? state.item.WIDTHL.toString()
+                      : items.WIDTH_L ?? "";
+                  _width_R__Controller.text = items.WIDHT_R == ''
+                      ? state.item.WIDTHR.toString()
+                      : items.WIDHT_R ?? "";
+                  _gross_Controller.text = items.GROSS == ''
+                      ? state.item.GROSS.toString()
+                      : items.GROSS ?? "";
+                  _cb11_Controller.text = items.CB11 == ''
+                      ? state.item.CB11.toString()
+                      : items.CB11 ?? "";
+                  _cb12_Controller.text = items.CB12 == ''
+                      ? state.item.CB12.toString()
+                      : items.CB12 ?? "";
+                  _cb13_Controller.text = items.CB13 == ''
+                      ? state.item.CB13.toString()
+                      : items.CB13 ?? "";
+                  _cb21_Controller.text = items.CB21 == ''
+                      ? state.item.CB21.toString()
+                      : items.CB21 ?? "";
+                  _cb22_Controller.text = items.CB22 == ''
+                      ? state.item.CB22.toString()
+                      : items.CB22 ?? "";
+                  _cb23_Controller.text = items.CB23 == ''
+                      ? state.item.CB23.toString()
+                      : items.CB23 ?? "";
+                  _cb31_Controller.text = items.CB31 == ''
+                      ? state.item.CB31.toString()
+                      : items.CB31 ?? "";
+                  _cb32_Controller.text = items.CB32 == ''
+                      ? state.item.CB32.toString()
+                      : items.CB32 ?? "";
+                  _cb33_Controller.text = items.CB33 == ''
+                      ? state.item.CB33.toString()
+                      : items.CB33 ?? "";
+                  _of1_Controller.text = items.OF1 == ''
+                      ? state.item.OF1.toString()
+                      : items.OF1 ?? "";
+                  _of2_Controller.text = items.OF2 == ''
+                      ? state.item.OF2.toString()
+                      : items.OF2 ?? "";
+                  _of3_Controller.text = items.OF3 == ''
+                      ? state.item.OF3.toString()
+                      : items.OF3 ?? "";
+                  _burnOff_Controller.text = items.BURN_OFF == ''
+                      ? state.item.BURNOFF.toString()
+                      : items.BURN_OFF ?? "";
+                  _fs1_Controller.text = items.FS1 == ''
+                      ? state.item.FS1.toString()
+                      : items.FS1 ?? "";
+                  _fs2_Controller.text = items.FS2 == ''
+                      ? state.item.FS2.toString()
+                      : items.FS2 ?? "";
+                  _fs3_Controller.text = items.FS3 == ''
+                      ? state.item.FS3.toString()
+                      : items.FS3 ?? "";
+                  _fs4_Controller.text = items.FS4 == ''
+                      ? state.item.FS4.toString()
+                      : items.FS4 ?? "";
+                  _grade_Controller.text = items.GRADE == ''
+                      ? state.item.GRADE ?? ""
+                      : items.GRADE ?? "";
+                  _time_Press_Controller.text = items.TIME_PRESS == ''
+                      ? state.item.TIME_PRESS.toString()
+                      : items.TIME_PRESS ?? "";
                   _time_Released_Controller.text =
                       items.TIME_RELEASED.toString();
-                  _heat_temp_Controller.text = items.HEAT_TEMP.toString();
-                  _tension_Controller.text = items.TENSION.toString();
-                  _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS ?? "";
+                  _heat_temp_Controller.text = items.HEAT_TEMP == ''
+                      ? state.item.HEAT_TEMP.toString()
+                      : items.HEAT_TEMP ?? "";
+                  _tension_Controller.text = items.TENSION == ''
+                      ? state.item.TENSION.toString()
+                      : items.TENSION ?? "";
+                  _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS == ''
+                      ? state.item.NIP_ROLL_PRESS ?? ""
+                      : items.NIP_ROLL_PRESS ?? "";
                 }
               } else {
+                print("isEmtpy");
                 _getValuesFromServer(itemWindingRecord);
               }
 

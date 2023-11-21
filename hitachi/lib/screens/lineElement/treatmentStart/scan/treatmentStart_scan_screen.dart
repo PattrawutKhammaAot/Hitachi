@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hitachi/blocs/materialTrace/update_material_trace_bloc.dart';
 import 'package:hitachi/blocs/treatment/treatment_bloc.dart';
 import 'package:hitachi/helper/background/bg_white.dart';
 import 'package:hitachi/helper/button/Button.dart';
 import 'package:hitachi/helper/colors/colors.dart';
 import 'package:hitachi/helper/input/rowBoxInputField.dart';
 import 'package:hitachi/helper/text/label.dart';
+import 'package:hitachi/models/materialTraces/materialTraceUpdateModel.dart';
 import 'package:hitachi/models/treatmentModel/treatmentOutputModel.dart';
 import 'package:hitachi/services/databaseHelper.dart';
 import 'package:intl/intl.dart';
@@ -47,15 +49,62 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
   Color? bgChange;
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Map<String, dynamic>> itemMasterLotTreatment = [];
 
   void _btnSend() async {
     if (_machineNoController.text.isNotEmpty &&
         _operatorNameController.text.isNotEmpty &&
         _batch1Controller.text.isNotEmpty) {
-      _callApi();
+      if (_machineNoController.text.substring(0, 2).toUpperCase() == 'TM') {
+        if (_batch1Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch1Controller);
+        }
+        if (_batch2Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch2Controller);
+        }
+        if (_batch3Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch3Controller);
+        }
+        if (_batch4Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch4Controller);
+        }
+        if (_batch5Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch5Controller);
+        }
+        if (_batch6Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch6Controller);
+        }
+        if (_batch7Controller.text.isNotEmpty) {
+          _callApiUpdateMaterialTrace(_batch7Controller);
+        }
+        // _callApi();
+      } else {
+        _callApi();
+      }
+
       // _saveDataToSqlite();
     } else {
       EasyLoading.showError("Please Input Info");
+    }
+  }
+
+  Future _callApiUpdateMaterialTrace(TextEditingController batch) async {
+    for (var itemMasterLOT in itemMasterLotTreatment) {
+      BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
+          PostUpdateMaterialTraceEvent(
+              MaterialTraceUpdateModel(
+                  DATE: DateTime.now().toString(),
+                  MATERIAL: itemMasterLOT['Material'].toString(),
+                  IPE_NO: null,
+                  LOT: itemMasterLOT['Lot'].toString(),
+                  PROCESS: _machineNoController.text.trim(),
+                  I_PEAK: null,
+                  HIGH_VOLT: null,
+                  OPERATOR: _operatorNameController.text.trim(),
+                  BATCH_NO: batch.text.trim()),
+              "Process"));
+
+      setState(() {});
     }
   }
 
@@ -200,7 +249,15 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
                 children: [
                   RowBoxInputField(
                     focusNode: f1,
-                    onEditingComplete: () => f2.requestFocus(),
+                    onEditingComplete: () async {
+                      if (_machineNoController.text.length == 3) {
+                        itemMasterLotTreatment = await DatabaseHelper()
+                            .queryMasterlotTmProcess(
+                                _machineNoController.text.substring(0, 2));
+                        setState(() {});
+                        f2.requestFocus();
+                      }
+                    },
                     labelText: "Machine No. : ",
                     height: 35,
                     maxLength: 3,
