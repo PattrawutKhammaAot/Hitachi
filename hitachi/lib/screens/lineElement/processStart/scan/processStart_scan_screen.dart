@@ -633,9 +633,9 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
                           ],
                           labelText: "Peak Current WithStands",
-                          onChanged: (value) {
-                            _peakController.text = value;
-                          },
+                          // onChanged: (value) {
+                          //   _peakController.text = value;
+                          // },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a value';
@@ -662,9 +662,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
                           ],
                           labelText: "High-Voltage Test",
-                          onChanged: (value) {
-                            _highVoltageController.text = value;
-                          },
+                          onChanged: (value) {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a value';

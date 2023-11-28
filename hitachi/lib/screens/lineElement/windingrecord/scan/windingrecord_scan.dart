@@ -332,15 +332,24 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     try {
       startTime = DateFormat('HH:mm:ss').format(DateTime.parse(
           items.START_DATE ?? items.START_TIME ?? DateTime.now().toString()));
-      finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
-          items.END_DATE ?? items.FINISH_TIME ?? DateTime.now().toString()));
+      if (items.FINISH_TIME != null) {
+        finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+            items.END_DATE ?? items.FINISH_TIME ?? DateTime.now().toString()));
+      } else {
+        finishTime = '';
+      }
     } catch (e) {
       DateTime dateTime = DateFormat('M/d/yyyy h:mm:ss a').parse(
           items.START_TIME ?? items.START_DATE ?? DateTime.now().toString());
-      DateTime dateTime2 = DateFormat('M/d/yyyy h:mm:ss a').parse(
-          items.FINISH_TIME ?? items.END_DATE ?? DateTime.now().toString());
+      if (items.FINISH_TIME != null) {
+        DateTime dateTime2 = DateFormat('M/d/yyyy h:mm:ss a').parse(
+            items.FINISH_TIME ?? items.END_DATE ?? DateTime.now().toString());
+        finishTime = DateFormat('HH:mm:ss').format(dateTime2);
+      } else {
+        finishTime = '';
+      }
+
       startTime = DateFormat('HH:mm:ss').format(dateTime);
-      finishTime = DateFormat('HH:mm:ss').format(dateTime2);
     }
 
     _batch_Controller.text = items.BATCH_NO.toString();
@@ -623,21 +632,26 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           } else if (state is GetWindingRecordLoadedState) {
             EasyLoading.dismiss();
             if (state.item.MESSAGE != null || state.item.MESSAGE != '') {
-              EasyLoading.showInfo(state.item.MESSAGE!);
+              EasyLoading.showInfo(state.item.MESSAGE ?? "Success");
             }
 
             if (state.item.MESSAGE == 'No data in WindingRecord') {
-              // _getValuesFromServer(itemWindingRecord);
               _startTime_Controller.text = DateFormat('HH:mm:ss').format(
                   DateTime.parse(state.item.START_TIME ??
                       state.item.START_DATE ??
                       DateTime.now().toString()));
               _ipeNo_Controller.text = state.item.IPE_NO.toString();
               _tempIPE_Controller.text = state.item.IPE_NO.toString();
-              _finishTime_Controller.text = DateFormat('HH:mm:ss').format(
-                  DateTime.parse(state.item.FINISH_TIME ??
-                      state.item.END_DATE ??
-                      DateTime.now().toString()));
+              if (state.item.FINISH_TIME != null ||
+                  state.item.END_DATE != null) {
+                _finishTime_Controller.text = DateFormat('HH:mm:ss').format(
+                    DateTime.parse(state.item.FINISH_TIME ??
+                        state.item.END_DATE ??
+                        DateTime.now().toString()));
+              } else {
+                _finishTime_Controller.text = '';
+              }
+
               _ppmweight_Controller.text = state.item.PPM_WEIGHT.toString();
               _packno_Controller.text = state.item.PACK_NO.toString();
               _output_Controller.text = state.item.OUTPUT.toString();
@@ -698,32 +712,42 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               EasyLoading.showInfo("${state.item.MESSAGE}");
               await _getDataRecordFormPDA();
               _thickness_FocusNode.requestFocus();
-              // _getValuesFromServer(itemWindingRecord);
             } else if (state.item.RESULT == true &&
                 state.item.MESSAGE == null) {
               String? startTime;
               String? finishTime;
               String currentTime = DateTime.now().toString();
               try {
-                startTime = DateFormat('HH:mm:ss').format(DateTime.parse(
-                    state.item.START_TIME ??
-                        state.item.START_DATE ??
-                        currentTime));
-                finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
-                    state.item.FINISH_TIME ??
-                        state.item.END_DATE ??
-                        DateTime.now().toString()));
-              } catch (e) {
+                startTime = DateFormat('HH:mm:ss').format(
+                    DateTime.parse(state.item.START_DATE ?? currentTime));
+                if (state.item.END_DATE != null) {
+                  finishTime = DateFormat('HH:mm:ss').format(DateTime.parse(
+                      state.item.END_DATE ?? DateTime.now().toString()));
+                } else if (state.item.FINISH_TIME != null) {
+                  DateTime dateTime = DateFormat('M/d/yyyy h:mm:ss a').parse(
+                      state.item.FINISH_TIME ?? DateTime.now().toString());
+
+                  finishTime = DateFormat('HH:mm:ss').format(dateTime);
+                } else {
+                  _finishTime_Controller.text = '';
+                }
+              } catch (e, s) {
+                print(e);
+                print(s);
+
                 DateTime dateTime = DateFormat('M/d/yyyy h:mm:ss a').parse(
                     state.item.START_TIME ??
                         state.item.START_DATE ??
                         DateTime.now().toString());
-                DateTime dateTime2 = DateFormat('M/d/yyyy h:mm:ss a').parse(
-                    state.item.FINISH_TIME ??
-                        state.item.END_DATE ??
-                        DateTime.now().toString());
+
                 startTime = DateFormat('HH:mm:ss').format(dateTime);
-                finishTime = DateFormat('HH:mm:ss').format(dateTime2);
+                if (state.item.END_DATE != null) {
+                  DateTime dateTime2 = DateFormat('M/d/yyyy HH:mm:ss a')
+                      .parse(state.item.END_DATE ?? DateTime.now().toString());
+                  finishTime = DateFormat('HH:mm:ss').format(dateTime2);
+                } else {
+                  _finishTime_Controller.text = '';
+                }
               }
 
               EasyLoading.dismiss();
@@ -740,9 +764,8 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _startTime_Controller.text = items.START_TIME == ''
                       ? startTime
                       : items.START_TIME ?? "";
-                  _finishTime_Controller.text = items.FINISH_TIME == ''
-                      ? finishTime
-                      : items.FINISH_TIME ?? "";
+                  _finishTime_Controller.text =
+                      finishTime ?? items.FINISH_TIME ?? "";
                   _ipeNo_Controller.text = items.IPE_NO == ''
                       ? state.item.IPE_NO.toString()
                       : items.IPE_NO ?? "";
@@ -752,7 +775,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _packno_Controller.text = items.PACK_NO == ''
                       ? state.item.PACK_NO ?? ""
                       : items.PACK_NO ?? "";
-                  _output_Controller.text = items.OUTPUT == ''
+                  _output_Controller.text = items.OUTPUT == null ||
+                          items.OUTPUT == 'null' ||
+                          items.OUTPUT == ''
                       ? state.item.OUTPUT.toString()
                       : items.OUTPUT ?? "";
                   _thickness_Controller.text = items.THICKNESS == ''

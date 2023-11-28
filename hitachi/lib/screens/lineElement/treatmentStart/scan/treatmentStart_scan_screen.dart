@@ -55,7 +55,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
     if (_machineNoController.text.isNotEmpty &&
         _operatorNameController.text.isNotEmpty &&
         _batch1Controller.text.isNotEmpty) {
-      if (_machineNoController.text.substring(0, 2).toUpperCase() == 'TM') {
+      if (_machineNoController.text.substring(0, 2).toUpperCase() == 'TM' &&
+          itemMasterLotTreatment.isNotEmpty) {
         if (_batch1Controller.text.isNotEmpty) {
           _callApiUpdateMaterialTrace(_batch1Controller);
         }
@@ -77,10 +78,8 @@ class _TreatMentStartScanScreenState extends State<TreatMentStartScanScreen> {
         if (_batch7Controller.text.isNotEmpty) {
           _callApiUpdateMaterialTrace(_batch7Controller);
         }
-        // _callApi();
-      } else {
-        _callApi();
       }
+      _callApi();
 
       // _saveDataToSqlite();
     } else {

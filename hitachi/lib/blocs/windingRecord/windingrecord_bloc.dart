@@ -64,6 +64,7 @@ class WindingrecordBloc extends Bloc<WindingrecordEvent, WindingrecordState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
+      print(responese.data);
 
       ResponeseWindingRecordModel post =
           ResponeseWindingRecordModel.fromJson(responese.data);
