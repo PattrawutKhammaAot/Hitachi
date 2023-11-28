@@ -589,22 +589,18 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       _highVoltageController.clear();
       _peakController.clear();
       _ipe_noController.clear();
+
       BlocProvider.of<LineElementBloc>(context).add(
         GetIPEProdSpecByBatchEvent(
           batchNoController.text.trim(),
         ),
       );
+      var sql1 = await DatabaseHelper()
+          .queryMasterlotProcess(MachineController.text.trim().toUpperCase());
       if (MachineController.text.length >= 2) {
-        if (MachineController.text.substring(0, 2).toUpperCase() == 'HV') {
+        if (MachineController.text.substring(0, 2).toUpperCase() == 'HV' &&
+            sql1.isNotEmpty) {
           try {
-            bool peakValid = false;
-            bool highValid = false;
-            if (_peakController.text.isNotEmpty) {
-              peakValid = true;
-            }
-            if (_highVoltageController.text.isNotEmpty) {
-              highValid = true;
-            }
             showDialog(
                 barrierDismissible: false,
                 context: context,
@@ -642,17 +638,14 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              peakValid = false;
                               return 'Please enter a value';
                             }
                             num? intValue = num.tryParse(value);
                             if (intValue == null ||
                                 intValue < 100 ||
                                 intValue > 200) {
-                              peakValid = false;
                               return 'Value 100-200';
                             } else {
-                              peakValid = true;
                               return null;
                             }
                           },
@@ -674,17 +667,14 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              highValid = false;
                               return 'Please enter a value';
                             }
                             num? intValue = num.tryParse(value);
                             if (intValue == null ||
                                 intValue < 600 ||
                                 intValue > 1500) {
-                              highValid = false;
                               return 'Value 600-1500';
                             } else {
-                              highValid = true;
                               return null;
                             }
                           },
@@ -709,10 +699,6 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                                   MaterialStatePropertyAll(COLOR_SUCESS)),
                           onPressed: () async {
                             if (isLoading == true) {
-                              var sql1 = await DatabaseHelper()
-                                  .queryMasterlotProcess(MachineController.text
-                                      .trim()
-                                      .toUpperCase());
                               if (sql1.isNotEmpty) {
                                 for (var itemMasterLOT in sql1) {
                                   BlocProvider.of<UpdateMaterialTraceBloc>(context)
@@ -771,11 +757,8 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
         } else if (MachineController.text.substring(0, 2).toUpperCase() !=
                 'HV' &&
             MachineController.text.substring(0, 2).toUpperCase() != 'TM') {
-          var sql = await DatabaseHelper().queryMasterlotProcess(
-              MachineController.text.trim().toUpperCase());
-
-          if (sql.isNotEmpty) {
-            for (var itemMasterLOT in sql) {
+          if (sql1.isNotEmpty) {
+            for (var itemMasterLOT in sql1) {
               BlocProvider.of<UpdateMaterialTraceBloc>(context).add(
                   PostUpdateMaterialTraceEvent(
                       MaterialTraceUpdateModel(

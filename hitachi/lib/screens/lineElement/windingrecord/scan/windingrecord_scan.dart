@@ -621,9 +621,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           if (state is GetWindingRecordLoadingState) {
             EasyLoading.show(status: "Loading Data ...");
           } else if (state is GetWindingRecordLoadedState) {
+            EasyLoading.dismiss();
+            if (state.item.MESSAGE != null || state.item.MESSAGE != '') {
+              EasyLoading.showInfo(state.item.MESSAGE!);
+            }
+
             if (state.item.MESSAGE == 'No data in WindingRecord') {
               // _getValuesFromServer(itemWindingRecord);
-
               _startTime_Controller.text = DateFormat('HH:mm:ss').format(
                   DateTime.parse(state.item.START_TIME ??
                       state.item.START_DATE ??
@@ -680,7 +684,6 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _nip_roll_press_Controller.text = items.NIP_ROLL_PRESS ?? "";
                 }
 
-                setState(() {});
                 EasyLoading.showSuccess("Load Data Success");
               }
               // if(PDA HAS DATA KEYIN) SETVALUES
@@ -698,7 +701,6 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
               // _getValuesFromServer(itemWindingRecord);
             } else if (state.item.RESULT == true &&
                 state.item.MESSAGE == null) {
-              print(state.item.START_DATE);
               String? startTime;
               String? finishTime;
               String currentTime = DateTime.now().toString();
@@ -730,9 +732,6 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   .queryWindingRecodeFormPda('WINDING_RECORD_SEND_SERVER',
                       [_batch_Controller.text.trim()]);
               if (loadDataSend.isNotEmpty) {
-                print("inNotEmpty");
-                print(loadDataSend);
-
                 List<WindingRecordModelSqlite> temp = [];
                 temp = loadDataSend
                     .map((e) => WindingRecordModelSqlite.fromMap(e))
@@ -850,11 +849,8 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                       : items.NIP_ROLL_PRESS ?? "";
                 }
               } else {
-                print("isEmtpy");
                 _getValuesFromServer(itemWindingRecord);
               }
-
-              setState(() {});
 
               _thickness_FocusNode.requestFocus();
               _textselection(_thickness_Controller);
