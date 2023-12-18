@@ -430,17 +430,25 @@ class _MaterialTraceScanScreenState extends State<MaterialTraceScanScreen> {
                                       isCheckValue
                                           ? COLOR_SUCESS
                                           : COLOR_GREY)),
-                              onPressed: () async {
-                                if (_lotNoController.text.isNotEmpty &&
-                                    _processController.text.isNotEmpty &&
-                                    _materialController.text.isNotEmpty &&
-                                    _lotSubController.text.isNotEmpty &&
-                                    _materialController.text != '') {
-                                  await _setValueDataGrid();
-                                } else {
-                                  EasyLoading.showError("Please Input Lot No");
-                                }
-                              },
+                              onPressed: isCheckValue
+                                  ? () async {
+                                      if (_lotNoController.text.isNotEmpty &&
+                                          _processController.text.isNotEmpty &&
+                                          _materialController.text.isNotEmpty &&
+                                          _lotSubController.text.isNotEmpty &&
+                                          _materialController.text != '') {
+                                        await _setValueDataGrid();
+                                        isCheckValue = false;
+                                        setState(() {});
+                                      } else {
+                                        EasyLoading.showError(
+                                            "Please Input Lot No");
+                                      }
+                                    }
+                                  : () {
+                                      EasyLoading.showError(
+                                          "Please Enter Lot No");
+                                    },
                               child: Label(
                                 "Save Lot",
                                 color: COLOR_WHITE,
