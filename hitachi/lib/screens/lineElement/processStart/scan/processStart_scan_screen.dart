@@ -297,8 +297,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       },
                       // onEditingComplete: () => f2.requestFocus(),
                       onChanged: (value) {
-                        if (value == 'SD' && value.length == 2 ||
-                            value == 'sd' && value.length == 2) {
+                        if (value.toUpperCase() == 'SD') {
                           setState(() {
                             _enabledOperator = true;
                             isShowHv = false;

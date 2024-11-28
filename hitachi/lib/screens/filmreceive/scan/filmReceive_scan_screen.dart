@@ -700,9 +700,9 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
                           labelText: "Roll No.",
                           height: 30,
                           focusNode: f7,
-                          maxLength: 14,
+                          maxLength: 19,
                           onEditingComplete: () {
-                            if (_rollNoController.text.length == 14) {
+                            if (_rollNoController.text.length == 19) {
                               f8.requestFocus();
                             }
                           },
