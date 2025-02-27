@@ -234,7 +234,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                           },
                           child: Text("Yes"),
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade800),
+                              backgroundColor: Colors.red.shade800),
                         ),
                       ),
                       SizedBox(width: 15),
@@ -247,7 +247,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                         child:
                             Text("No", style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                          backgroundColor: Colors.white,
                         ),
                       ))
                     ],
