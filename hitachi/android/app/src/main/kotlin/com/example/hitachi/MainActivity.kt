@@ -1,4 +1,4 @@
-package com.example.hitachi
+package com.ogaapplication.hitachi
 
 import io.flutter.embedding.android.FlutterActivity
 
