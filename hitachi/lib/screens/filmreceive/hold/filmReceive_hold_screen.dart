@@ -97,7 +97,6 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
         setState(() {
           dstList = result;
           filmDataSource = FilmReceiveDataSource(process: dstList);
-          print(dstList);
         });
       });
     });
@@ -190,7 +189,7 @@ class _FilmReceiveHoldScreenState extends State<FilmReceiveHoldScreen> {
                                         (e) => DataSheetTableModel(),
                                       )
                                       .toList();
-                                  print(_index);
+
                                   _colorSend = COLOR_BLUE_DARK;
                                   _colorDelete = COLOR_RED;
                                 });

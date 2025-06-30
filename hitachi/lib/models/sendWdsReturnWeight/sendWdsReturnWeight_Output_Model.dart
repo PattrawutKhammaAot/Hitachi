@@ -10,6 +10,7 @@ class sendWdsReturnWeightOutputModel {
     this.FOIL_LOT,
     this.WEIGHT,
     this.START_DATE,
+    this.FILM_SERIAL_NO,
   });
 
   final String? MACHINE_NO;
@@ -20,6 +21,7 @@ class sendWdsReturnWeightOutputModel {
   final String? PAPER_CODE_LOT;
   final String? PP_FILM_LOT;
   final String? FOIL_LOT;
+  final String? FILM_SERIAL_NO;
   final num? WEIGHT;
   final String? START_DATE;
 
@@ -34,6 +36,7 @@ class sendWdsReturnWeightOutputModel {
     String? FOIL_LOT,
     num? WEIGHT,
     String? START_DATE,
+    String? FILM_SERIAL_NO,
   }) {
     return sendWdsReturnWeightOutputModel(
       MACHINE_NO: MACHINE_NO ?? this.MACHINE_NO,
@@ -46,6 +49,7 @@ class sendWdsReturnWeightOutputModel {
       FOIL_LOT: FOIL_LOT ?? this.FOIL_LOT,
       WEIGHT: WEIGHT ?? this.WEIGHT,
       START_DATE: START_DATE ?? this.START_DATE,
+      FILM_SERIAL_NO: FILM_SERIAL_NO ?? this.FILM_SERIAL_NO,
     );
   }
 
@@ -61,5 +65,6 @@ class sendWdsReturnWeightOutputModel {
         "FoilLot": FOIL_LOT,
         "Weight": WEIGHT,
         "StartDate": START_DATE,
+        "FilmSerialNo": FILM_SERIAL_NO,
       };
 }

@@ -51,7 +51,7 @@ class MachineBreakDownBloc
               sendTimeout: Duration(seconds: 60),
               receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(item));
-      print(responese.data);
+
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
       return post;
     } catch (e, s) {

@@ -30,6 +30,11 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
     'IPENO': double.nan,
     'THICKNESS': double.nan,
     'TURN': double.nan,
+    'TURN2': double.nan,
+    'TURN3': double.nan,
+    'TURN4': double.nan,
+    'TURN5': double.nan,
+    'TURN6': double.nan,
     'DIAMETER': double.nan,
     'CUSTOMER': double.nan,
     'UF': double.nan,
@@ -56,6 +61,14 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
     'FS2': double.nan,
     'FS3': double.nan,
     'FS4': double.nan,
+    'FS5': double.nan,
+    'FS6': double.nan,
+    'FS7': double.nan,
+    'FS8': double.nan,
+    'FS9': double.nan,
+    'FS10': double.nan,
+    'FS11': double.nan,
+    'FS12': double.nan,
     'GRADE': double.nan,
     'TIME_PRESS': double.nan,
     'TIME_RELEASED': double.nan,
@@ -338,6 +351,56 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['TURN2']!,
+                              columnName: 'TURN2',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('TURN2', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['TURN3']!,
+                              columnName: 'TURN3',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('TURN3', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['TURN4']!,
+                              columnName: 'TURN4',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('TURN4', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['TURN5']!,
+                              columnName: 'TURN5',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('TURN5', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['TURN6']!,
+                              columnName: 'TURN6',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('TURN6', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
                               width: columnWidths['DIAMETER']!,
                               columnName: 'DIAMETER',
                               label: Container(
@@ -599,6 +662,86 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                               ),
                             ),
                             GridColumn(
+                              width: columnWidths['FS5']!,
+                              columnName: 'FS5',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS5', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS6']!,
+                              columnName: 'FS6',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS6', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS7']!,
+                              columnName: 'FS7',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS7', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS8']!,
+                              columnName: 'FS8',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS8', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS9']!,
+                              columnName: 'FS9',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS9', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS10']!,
+                              columnName: 'FS10',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS10', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS11']!,
+                              columnName: 'FS11',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS11', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
+                              width: columnWidths['FS12']!,
+                              columnName: 'FS12',
+                              label: Container(
+                                color: COLOR_BLUE_DARK,
+                                child: Center(
+                                  child: Label('FS12', color: COLOR_WHITE),
+                                ),
+                              ),
+                            ),
+                            GridColumn(
                               width: columnWidths['GRADE']!,
                               columnName: 'GRADE',
                               label: Container(
@@ -721,7 +864,22 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                               DataRow(cells: [
                                 DataCell(Center(child: Label("Turn"))),
                                 DataCell(Label(
-                                    "${wdrList.where((element) => element.ID == _index.first).first.TURN}"))
+                                    "${wdrList.where((element) => element.ID == _index.first).first.TURN1}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Turn2"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.TURN2}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Turn3"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.TURN3}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Turn4"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.TURN4}"))
                               ]),
                               DataRow(cells: [
                                 DataCell(Center(child: Label("Diameter"))),
@@ -834,24 +992,66 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
                                     "${wdrList.where((element) => element.ID == _index.first).first.BURN_OFF}"))
                               ]),
                               DataRow(cells: [
-                                DataCell(Center(child: Label("FS1"))),
+                                DataCell(Center(child: Label("ลูกเล็ก"))),
                                 DataCell(Label(
                                     "${wdrList.where((element) => element.ID == _index.first).first.FS1}"))
                               ]),
                               DataRow(cells: [
-                                DataCell(Center(child: Label("FS2"))),
+                                DataCell(Center(child: Label("ติดแกน"))),
                                 DataCell(Label(
                                     "${wdrList.where((element) => element.ID == _index.first).first.FS2}"))
                               ]),
                               DataRow(cells: [
-                                DataCell(Center(child: Label("FS3"))),
+                                DataCell(Center(child: Label("ฟิล์มยับ"))),
                                 DataCell(Label(
                                     "${wdrList.where((element) => element.ID == _index.first).first.FS3}"))
                               ]),
                               DataRow(cells: [
-                                DataCell(Center(child: Label("FS4"))),
+                                DataCell(Center(child: Label("แกนโผล่"))),
                                 DataCell(Label(
                                     "${wdrList.where((element) => element.ID == _index.first).first.FS4}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Foil หลุด"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS5}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(
+                                    Center(child: Label("หน้าฟิล์มไม่เรียบ"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS6}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("ขาดรอยต่อ"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS7}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("ระยะไม่ได้"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS8}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(
+                                    Center(child: Label("เครื่องดีดทิ้ง"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS9}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("ปรับเครื่อง"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS10}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Foil พับ"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS11}"))
+                              ]),
+                              DataRow(cells: [
+                                DataCell(Center(child: Label("Other"))),
+                                DataCell(Label(
+                                    "${wdrList.where((element) => element.ID == _index.first).first.FS12}"))
                               ]),
                               DataRow(cells: [
                                 DataCell(Center(child: Label("GRADE"))),
@@ -957,7 +1157,12 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
           THICKNESS: row.THICKNESS,
           PACK_NO: row.PACK_NO,
           PPM_WEIGHT: num.tryParse(row.PPM_WEIGHT!),
-          TURN: int.tryParse(row.TURN!),
+          TURN: row.TURN1 != null ? int.tryParse(row.TURN1!) : 0,
+          TURN2: row.TURN2 != null ? int.tryParse(row.TURN2!) : 0,
+          TURN3: row.TURN3 != null ? int.tryParse(row.TURN3!) : 0,
+          TURN4: row.TURN4 != null ? int.tryParse(row.TURN4!) : 0,
+          TURN5: row.TURN5 != null ? int.tryParse(row.TURN5!) : 0,
+          TURN6: row.TURN6 != null ? int.tryParse(row.TURN6!) : 0,
           DIAMETER: num.tryParse(row.DIAMETER!),
           CUSTOMER: row.CUSTOMER,
           UF: num.tryParse(row.UF!),
@@ -977,10 +1182,42 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
           OF2: num.tryParse(row.OF2!),
           OF3: num.tryParse(row.OF3!),
           BURNOFF: num.tryParse(row.BURN_OFF!),
-          FS1: num.tryParse(row.FS1!),
-          FS2: num.tryParse(row.FS2!),
-          FS3: num.tryParse(row.FS3!),
-          FS4: num.tryParse(row.FS4!),
+          FS1: row.FS1 != null && row.FS1!.isNotEmpty
+              ? num.tryParse(row.FS1!)
+              : null,
+          FS2: row.FS2 != null && row.FS2!.isNotEmpty
+              ? num.tryParse(row.FS2!)
+              : null,
+          FS3: row.FS3 != null && row.FS3!.isNotEmpty
+              ? num.tryParse(row.FS3!)
+              : null,
+          FS4: row.FS4 != null && row.FS4!.isNotEmpty
+              ? num.tryParse(row.FS4!)
+              : null,
+          FS5: row.FS5 != null && row.FS5!.isNotEmpty
+              ? num.tryParse(row.FS5!)
+              : null,
+          FS6: row.FS6 != null && row.FS6!.isNotEmpty
+              ? num.tryParse(row.FS6!)
+              : null,
+          FS7: row.FS7 != null && row.FS7!.isNotEmpty
+              ? num.tryParse(row.FS7!)
+              : null,
+          FS8: row.FS8 != null && row.FS8!.isNotEmpty
+              ? num.tryParse(row.FS8!)
+              : null,
+          FS9: row.FS9 != null && row.FS9!.isNotEmpty
+              ? num.tryParse(row.FS9!)
+              : null,
+          FS10: row.FS10 != null && row.FS10!.isNotEmpty
+              ? num.tryParse(row.FS10!)
+              : null,
+          FS11: row.FS11 != null && row.FS11!.isNotEmpty
+              ? num.tryParse(row.FS11!)
+              : null,
+          FS12: row.FS12 != null && row.FS12!.isNotEmpty
+              ? num.tryParse(row.FS12!)
+              : null,
           GRADE: row.GRADE,
           TIME_PRESS: num.tryParse(row.TIME_PRESS!),
           TIME_RELEASED: num.tryParse(row.TIME_RELEASED!),
@@ -1044,7 +1281,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.FINISH_TIME != null &&
             row.IPE_NO != null &&
             row.THICKNESS != null &&
-            row.TURN != null &&
+            row.TURN1 != null &&
             row.DIAMETER != null &&
             row.CUSTOMER != null &&
             row.UF != null &&
@@ -1082,7 +1319,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.FINISH_TIME != null &&
             row.IPE_NO != null &&
             row.THICKNESS != null &&
-            row.TURN != null &&
+            row.TURN1 != null &&
             row.DIAMETER != null &&
             row.CUSTOMER != null &&
             row.UF != null &&
@@ -1120,7 +1357,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.FINISH_TIME != '' &&
             row.IPE_NO != '' &&
             row.THICKNESS != '' &&
-            row.TURN != '' &&
+            row.TURN1 != '' &&
             row.DIAMETER != '' &&
             row.CUSTOMER != '' &&
             row.UF != '' &&
@@ -1143,10 +1380,10 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.OF2 != '' &&
             row.OF3 != '' &&
             row.BURN_OFF != '' &&
-            row.FS1 != '' &&
-            row.FS2 != '' &&
-            row.FS3 != '' &&
-            row.FS4 != '' &&
+            // row.FS1 != '' &&
+            // row.FS2 != '' &&
+            // row.FS3 != '' &&
+            // row.FS4 != '' &&
             row.GRADE != '' &&
             row.TIME_PRESS != '' &&
             row.TIME_RELEASED != '' &&
@@ -1158,7 +1395,7 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.FINISH_TIME != '' &&
             row.IPE_NO != '' &&
             row.THICKNESS != '' &&
-            row.TURN != '' &&
+            row.TURN1 != '' &&
             row.DIAMETER != '' &&
             row.CUSTOMER != '' &&
             row.UF != '' &&
@@ -1181,10 +1418,10 @@ class _WindingRecordHoldScreenState extends State<WindingRecordHoldScreen> {
             row.OF2 != '' &&
             row.OF3 != '' &&
             row.BURN_OFF != '' &&
-            row.FS1 != '' &&
-            row.FS2 != '' &&
-            row.FS3 != '' &&
-            row.FS4 != '' &&
+            // row.FS1 != '' &&
+            // row.FS2 != '' &&
+            // row.FS3 != '' &&
+            // row.FS4 != '' &&
             row.GRADE != '' &&
             row.TIME_PRESS != '' &&
             row.TIME_RELEASED != '' &&
@@ -1238,7 +1475,17 @@ class WindingRecordDataSource extends DataGridSource {
                 DataGridCell<String>(
                     columnName: 'THICKNESS', value: _item.THICKNESS.toString()),
                 DataGridCell<String>(
-                    columnName: 'TURN', value: _item.TURN.toString()),
+                    columnName: 'TURN', value: _item.TURN1.toString()),
+                DataGridCell<String>(
+                    columnName: 'TURN2', value: _item.TURN2.toString()),
+                DataGridCell<String>(
+                    columnName: 'TURN3', value: _item.TURN3.toString()),
+                DataGridCell<String>(
+                    columnName: 'TURN4', value: _item.TURN4.toString()),
+                DataGridCell<String>(
+                    columnName: 'TURN5', value: _item.TURN5.toString()),
+                DataGridCell<String>(
+                    columnName: 'TURN6', value: _item.TURN6.toString()),
                 DataGridCell<String>(
                     columnName: 'DIAMETER', value: _item.DIAMETER.toString()),
                 DataGridCell<String>(
@@ -1292,6 +1539,22 @@ class WindingRecordDataSource extends DataGridSource {
                     columnName: 'FS3', value: _item.FS3.toString()),
                 DataGridCell<String>(
                     columnName: 'FS4', value: _item.FS4.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS5', value: _item.FS5.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS6', value: _item.FS6.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS7', value: _item.FS7.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS8', value: _item.FS8.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS9', value: _item.FS9.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS10', value: _item.FS10.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS11', value: _item.FS11.toString()),
+                DataGridCell<String>(
+                    columnName: 'FS12', value: _item.FS12.toString()),
                 DataGridCell<String>(
                     columnName: 'GRADE', value: _item.GRADE.toString()),
                 DataGridCell<String>(

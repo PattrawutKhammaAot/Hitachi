@@ -13,6 +13,11 @@ class ResponeseWindingRecordModel {
     this.PACK_NO,
     this.PPM_WEIGHT,
     this.TURN,
+    this.TURN2,
+    this.TURN3,
+    this.TURN4,
+    this.TURN5,
+    this.TURN6,
     this.DIAMETER,
     this.CUSTOMER,
     this.UF,
@@ -36,6 +41,14 @@ class ResponeseWindingRecordModel {
     this.FS2,
     this.FS3,
     this.FS4,
+    this.FS5,
+    this.FS6,
+    this.FS7,
+    this.FS8,
+    this.FS9,
+    this.FS10,
+    this.FS11,
+    this.FS12,
     this.GRADE,
     this.TIME_PRESS,
     this.TIME_RELEASED,
@@ -60,6 +73,11 @@ class ResponeseWindingRecordModel {
         PACK_NO!,
         PPM_WEIGHT!,
         TURN!,
+        TURN2!,
+        TURN3!,
+        TURN4!,
+        TURN5!,
+        TURN6!,
         DIAMETER!,
         CUSTOMER!,
         UF!,
@@ -83,6 +101,14 @@ class ResponeseWindingRecordModel {
         FS2!,
         FS3!,
         FS4!,
+        FS5!,
+        FS6!,
+        FS7!,
+        FS8!,
+        FS9!,
+        FS10!,
+        FS11!,
+        FS12!,
         GRADE!,
         TIME_PRESS!,
         TIME_RELEASED!,
@@ -105,6 +131,11 @@ class ResponeseWindingRecordModel {
   final String? PACK_NO;
   final num? PPM_WEIGHT;
   final int? TURN;
+  final int? TURN2;
+  final int? TURN3;
+  final int? TURN4;
+  final int? TURN5;
+  final int? TURN6;
   final num? DIAMETER;
   final String? CUSTOMER;
   final num? UF;
@@ -128,6 +159,14 @@ class ResponeseWindingRecordModel {
   final num? FS2;
   final num? FS3;
   final num? FS4;
+  final num? FS5;
+  final num? FS6;
+  final num? FS7;
+  final num? FS8;
+  final num? FS9;
+  final num? FS10;
+  final num? FS11;
+  final num? FS12;
   final String? GRADE;
   final num? TIME_PRESS;
   final num? TIME_RELEASED;
@@ -152,6 +191,11 @@ class ResponeseWindingRecordModel {
       PACK_NO: json['pack_no'],
       PPM_WEIGHT: json['ppm_weight'],
       TURN: json['Turn'],
+      TURN2: json['Turn2'],
+      TURN3: json['Turn3'],
+      TURN4: json['Turn4'],
+      TURN5: json['Turn5'],
+      TURN6: json['Turn6'],
       DIAMETER: json['Diameter'],
       CUSTOMER: json['Customer'],
       UF: json['UF'],
@@ -175,6 +219,14 @@ class ResponeseWindingRecordModel {
       FS2: json['FS2'],
       FS3: json['FS3'],
       FS4: json['FS4'],
+      FS5: json['FS5'],
+      FS6: json['FS6'],
+      FS7: json['FS7'],
+      FS8: json['FS8'],
+      FS9: json['FS9'],
+      FS10: json['FS10'],
+      FS11: json['FS11'],
+      FS12: json['FS12'],
       GRADE: json['Grade'],
       TIME_PRESS: json['Time_Press'],
       TIME_RELEASED: json['Time_Released'],
@@ -200,6 +252,11 @@ class ResponeseWindingRecordModel {
         'pack_no': PACK_NO,
         'ppm_weight': PPM_WEIGHT,
         'Turn': TURN,
+        'Turn2': TURN2,
+        'Turn3': TURN3,
+        'Turn4': TURN4,
+        'Turn5': TURN5,
+        'Turn6': TURN6,
         'Diameter': DIAMETER,
         'Customer': CUSTOMER,
         'UF': UF,
@@ -223,6 +280,14 @@ class ResponeseWindingRecordModel {
         'FS2': FS2,
         'FS3': FS3,
         'FS4': FS4,
+        'FS5': FS5,
+        'FS6': FS6,
+        'FS7': FS7,
+        'FS8': FS8,
+        'FS9': FS9,
+        'FS10': FS10,
+        'FS11': FS11,
+        'FS12': FS12,
         'Grade': GRADE,
         'Time_Press': TIME_PRESS,
         'Time_Released': TIME_RELEASED,

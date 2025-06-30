@@ -54,6 +54,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
     'papercodelot': double.nan,
     'PPfilmlot': double.nan,
     'foillot': double.nan,
+    'FilmSerialNo': double.nan,
     'batchstart': double.nan,
     'status': double.nan,
   };
@@ -338,6 +339,18 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                   )),
                                 )),
                             GridColumn(
+                                width: columnWidths['FilmSerialNo']!,
+                                columnName: 'FilmSerialNo',
+                                label: Container(
+                                  color: COLOR_BLUE_DARK,
+                                  child: Center(
+                                      child: Label(
+                                    'Film Serial No',
+                                    fontSize: 14,
+                                    color: COLOR_WHITE,
+                                  )),
+                                )),
+                            GridColumn(
                                 width: columnWidths['papercodelot']!,
                                 columnName: 'papercodelot',
                                 label: Container(
@@ -454,6 +467,12 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
                                       Center(child: Label("Film Pack No"))),
                                   DataCell(Label(
                                       "${wdsList.where((element) => element.ID == _index.first).first.PACK_NO}"))
+                                ]),
+                                DataRow(cells: [
+                                  DataCell(
+                                      Center(child: Label("Film Serial No"))),
+                                  DataCell(Label(
+                                      "${wdsList.where((element) => element.ID == _index.first).first.FILM_SERIAL_NO}"))
                                 ]),
                                 DataRow(cells: [
                                   DataCell(
@@ -595,6 +614,7 @@ class _WindingJobStartHoldScreenState extends State<WindingJobStartHoldScreen> {
             BATCH_NO: row.BATCH_NO,
             PRODUCT: int.tryParse(row.PRODUCT.toString()),
             FILM_PACK_NO: int.tryParse(row.PACK_NO.toString()),
+            FILM_SERIAL_NO: row.FILM_SERIAL_NO,
             PAPER_CODE_LOT: row.PAPER_CORE,
             PP_FILM_LOT: row.PP_CORE,
             FOIL_LOT: row.FOIL_CORE,
@@ -627,6 +647,8 @@ class WindingsDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'product', value: _item.PRODUCT),
               DataGridCell<String>(
                   columnName: 'filmpackno', value: _item.PACK_NO),
+              DataGridCell<String>(
+                  columnName: 'FilmSerialNo', value: _item.FILM_SERIAL_NO),
               DataGridCell<String>(
                   columnName: 'papercodelot', value: _item.PAPER_CORE),
               DataGridCell<String>(

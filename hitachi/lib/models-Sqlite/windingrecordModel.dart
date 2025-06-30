@@ -5,7 +5,12 @@ class WindingRecordModelSqlite {
       this.FINISH_TIME,
       this.IPE_NO,
       this.THICKNESS,
-      this.TURN,
+      this.TURN1,
+      this.TURN2,
+      this.TURN3,
+      this.TURN4,
+      this.TURN5,
+      this.TURN6,
       this.DIAMETER,
       this.CUSTOMER,
       this.UF,
@@ -32,6 +37,14 @@ class WindingRecordModelSqlite {
       this.FS2,
       this.FS3,
       this.FS4,
+      this.FS5,
+      this.FS6,
+      this.FS7,
+      this.FS8,
+      this.FS9,
+      this.FS10,
+      this.FS11,
+      this.FS12,
       this.GRADE,
       this.TIME_PRESS,
       this.TIME_RELEASED,
@@ -46,7 +59,12 @@ class WindingRecordModelSqlite {
   final String? FINISH_TIME;
   final String? IPE_NO;
   final String? THICKNESS;
-  final String? TURN;
+  final String? TURN1;
+  final String? TURN2;
+  final String? TURN3;
+  final String? TURN4;
+  final String? TURN5;
+  final String? TURN6;
   final String? DIAMETER;
   final String? CUSTOMER;
   final String? UF;
@@ -73,6 +91,14 @@ class WindingRecordModelSqlite {
   final String? FS2;
   final String? FS3;
   final String? FS4;
+  final String? FS5;
+  final String? FS6;
+  final String? FS7;
+  final String? FS8;
+  final String? FS9;
+  final String? FS10;
+  final String? FS11;
+  final String? FS12;
   final String? GRADE;
   final String? TIME_PRESS;
   final String? TIME_RELEASED;
@@ -87,7 +113,12 @@ class WindingRecordModelSqlite {
         FINISH_TIME!,
         IPE_NO!,
         THICKNESS!,
-        TURN!,
+        TURN1!,
+        TURN2!,
+        TURN3!,
+        TURN4!,
+        TURN5!,
+        TURN6!,
         DIAMETER!,
         CUSTOMER!,
         UF!,
@@ -114,6 +145,14 @@ class WindingRecordModelSqlite {
         FS2!,
         FS3!,
         FS4!,
+        FS5!,
+        FS6!,
+        FS7!,
+        FS8!,
+        FS9!,
+        FS10!,
+        FS11!,
+        FS12!,
         GRADE!,
         TIME_PRESS!,
         TIME_RELEASED!,
@@ -129,7 +168,12 @@ class WindingRecordModelSqlite {
         FINISH_TIME = map['FINISH_TIME'],
         IPE_NO = map['IPENO'],
         THICKNESS = map['THICKNESS'],
-        TURN = map['TURN'],
+        TURN1 = map['TURN'],
+        TURN2 = map['TURN2'],
+        TURN3 = map['TURN3'],
+        TURN4 = map['TURN4'],
+        TURN5 = map['TURN5'],
+        TURN6 = map['TURN6'],
         DIAMETER = map['DIAMETER'],
         CUSTOMER = map['CUSTOMER'],
         UF = map['UF'],
@@ -156,6 +200,14 @@ class WindingRecordModelSqlite {
         FS2 = map['FS2'],
         FS3 = map['FS3'],
         FS4 = map['FS4'],
+        FS5 = map['FS5'],
+        FS6 = map['FS6'],
+        FS7 = map['FS7'],
+        FS8 = map['FS8'],
+        FS9 = map['FS9'],
+        FS10 = map['FS10'],
+        FS11 = map['FS11'],
+        FS12 = map['FS12'],
         GRADE = map['GRADE'],
         TIME_PRESS = map['TIME_RESS'],
         TIME_RELEASED = map['TIME_RELEASED'],

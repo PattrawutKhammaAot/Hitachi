@@ -49,7 +49,7 @@ class ZincThicknessBloc extends Bloc<ZincThicknessEvent, ZincThicknessState> {
               sendTimeout: Duration(minutes: 60),
               receiveTimeout: Duration(minutes: 60)),
           data: jsonEncode(item));
-      print(responese.data);
+ 
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
       return post;
     } on Exception {

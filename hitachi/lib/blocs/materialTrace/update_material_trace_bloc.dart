@@ -59,7 +59,7 @@ class UpdateMaterialTraceBloc
   }
   Future<ResponeDefault> fetchMaterialTrace(
       MaterialTraceUpdateModel item, String type) async {
-    print(jsonEncode(item.toJson()));
+   
     try {
       Response responese = await dio.post(
           BASE_API_URL + "LineElement/UpdateMaterialTrace",
@@ -69,11 +69,11 @@ class UpdateMaterialTraceBloc
               receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(item.toJson()));
 
-      print(responese.data);
+      
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
       return post;
     } catch (e, s) {
-      print("testFalse");
+   
       print(e);
       print(s);
       throw Exception();

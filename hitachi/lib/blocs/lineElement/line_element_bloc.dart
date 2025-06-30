@@ -258,7 +258,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //Hold
   Future<SendWdsFinishInputModel> fetchSendWindingFinish(
       SendWdsFinishOutputModel itemOutput) async {
-    print(itemOutput.toJson());
+ 
     try {
       Response responese = await dio.post(
         ApiConfig.LE_SEND_WINDING_FINISH,
@@ -311,7 +311,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
       //     ]);
       //   }
       // }
-      print(responese.data);
+     
       return post;
     } on Exception {
       throw Exception();
@@ -327,7 +327,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
               headers: ApiConfig.HEADER(),
               sendTimeout: Duration(seconds: 5),
               receiveTimeout: Duration(seconds: 5)));
-      print(ApiConfig.LE_CHECKPACK_NO + "$number");
+ 
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
 
       return post;
@@ -347,7 +347,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(ApiConfig.LE_REPORT_ROUTE_SHEET + "$number");
+   
 
       ReportRouteSheetModel tmp = ReportRouteSheetModel.fromJson(response.data);
 
@@ -386,7 +386,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(response.data);
+ 
 
       ResponeDefault tmp = ResponeDefault.fromJson(response.data);
 
@@ -406,7 +406,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(response.data);
+  
 
       MaterialInputLoadModel tmp =
           MaterialInputLoadModel.fromJson(response.data);
@@ -430,7 +430,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
           data: jsonEncode(items));
 
       ProcessInputModel tmp = ProcessInputModel.fromJson(response.data);
-      print(tmp);
+   
       return tmp;
     } on Exception {
       throw (Exception);
@@ -441,7 +441,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
   //ProcessFinish
   Future<ProcessFinishInputModel> fetchProcessFinish(
       ProcessFinishOutputModel items) async {
-    print(items.toJson());
+
     try {
       Response response = await dio.post(ApiConfig.LE_PROCESSFINISHINPUT,
           options: Options(
@@ -462,7 +462,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
   //ProcessCheck
   Future<ResponeDefault> fetchProcessCheck(ProcessCheckModel items) async {
-    print(jsonEncode(items));
+ 
     try {
       Response response = await dio.post(ApiConfig.UPDATE_CHECK_PROCESS,
           options: Options(
@@ -471,7 +471,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
               receiveTimeout: Duration(seconds: 5)),
           data: jsonEncode(items));
 
-      print(response.data);
+
       ResponeDefault tmp = ResponeDefault.fromJson(response.data);
 
       return tmp;
@@ -495,7 +495,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
 
       GetIPEProdSpecByBatchModel post =
           GetIPEProdSpecByBatchModel.fromJson(responese.data);
-      print(responese.data);
+     
       return post;
     } on Exception {
       throw Exception();
@@ -511,7 +511,7 @@ class LineElementBloc extends Bloc<LineElementEvent, LineElementState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(responese.data);
+
       return responese.data;
     } catch (e, s) {
       print(e);

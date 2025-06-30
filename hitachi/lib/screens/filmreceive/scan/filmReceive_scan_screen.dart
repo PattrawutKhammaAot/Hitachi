@@ -347,7 +347,7 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
           dataFromBarcode1!.substring(8, 10);
 
       DateTime selectedDate = DateFormat('dd-MM-yyyy').parse(dateStr);
-      print(selectedDate);
+
       if (selectedDate != null) {
         setState(() {
           _mfgDateController.text =
@@ -361,8 +361,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
 
           Duration difference = incomingDate.difference(mfgDate).abs();
           int differenceInDays = difference.inDays;
-
-          print(differenceInDays);
 
           if (differenceInDays > 120) {
             showDialog<String>(
@@ -437,7 +435,6 @@ class _FilmReceiveScanScreenState extends State<FilmReceiveScanScreen> {
             Navigator.pop(context);
           });
     } else {
-      print("No Duplicate");
       f7.requestFocus();
     }
   }

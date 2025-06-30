@@ -38,7 +38,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final TextEditingController _finishTime_Controller = TextEditingController();
   final TextEditingController _ipeNo_Controller = TextEditingController();
   final TextEditingController _thickness_Controller = TextEditingController();
-  final TextEditingController _turn_Controller = TextEditingController();
+  final TextEditingController _turn1_Controller = TextEditingController();
+  final TextEditingController _turn2_Controller = TextEditingController();
+  final TextEditingController _turn3_Controller = TextEditingController();
+  final TextEditingController _turn4_Controller = TextEditingController();
+  final TextEditingController _turn5_Controller = TextEditingController();
+  final TextEditingController _turn6_Controller = TextEditingController();
   final TextEditingController _diameter_Controller = TextEditingController();
   final TextEditingController _custommer_Controller = TextEditingController();
   final TextEditingController _uf_Controller = TextEditingController();
@@ -65,6 +70,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final TextEditingController _fs2_Controller = TextEditingController();
   final TextEditingController _fs3_Controller = TextEditingController();
   final TextEditingController _fs4_Controller = TextEditingController();
+  final TextEditingController _fs5_Controller = TextEditingController();
+  final TextEditingController _fs6_Controller = TextEditingController();
+  final TextEditingController _fs7_Controller = TextEditingController();
+  final TextEditingController _fs8_Controller = TextEditingController();
+  final TextEditingController _fs9_Controller = TextEditingController();
+  final TextEditingController _fs10_Controller = TextEditingController();
+  final TextEditingController _fs11_Controller = TextEditingController();
+  final TextEditingController _fs12_Controller = TextEditingController();
   final TextEditingController _grade_Controller = TextEditingController();
   final TextEditingController _time_Press_Controller = TextEditingController();
   final TextEditingController _tempIPE_Controller = TextEditingController();
@@ -79,7 +92,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final FocusNode _finishTime_FocusNode = FocusNode();
   final FocusNode _ipeNo_FocusNode = FocusNode();
   final FocusNode _thickness_FocusNode = FocusNode();
-  final FocusNode _turn_FocusNode = FocusNode();
+  final FocusNode _turn1_FocusNode = FocusNode();
+  final FocusNode _turn2_FocusNode = FocusNode();
+  final FocusNode _turn3_FocusNode = FocusNode();
+  final FocusNode _turn4_FocusNode = FocusNode();
+  final FocusNode _turn5_FocusNode = FocusNode();
+  final FocusNode _turn6_FocusNode = FocusNode();
+
   final FocusNode _diameter_FocusNode = FocusNode();
   final FocusNode _custommer_FocusNode = FocusNode();
   final FocusNode _uf_FocusNode = FocusNode();
@@ -106,6 +125,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
   final FocusNode _fs2_FocusNode = FocusNode();
   final FocusNode _fs3_FocusNode = FocusNode();
   final FocusNode _fs4_FocusNode = FocusNode();
+  final FocusNode _fs5_FocusNode = FocusNode();
+  final FocusNode _fs6_FocusNode = FocusNode();
+  final FocusNode _fs7_FocusNode = FocusNode();
+  final FocusNode _fs8_FocusNode = FocusNode();
+  final FocusNode _fs9_FocusNode = FocusNode();
+  final FocusNode _fs10_FocusNode = FocusNode();
+  final FocusNode _fs11_FocusNode = FocusNode();
+  final FocusNode _fs12_FocusNode = FocusNode();
   final FocusNode _grade_FocusNode = FocusNode();
   final FocusNode _time_Press_FocusNode = FocusNode();
   final FocusNode _time_Released_FocusNode = FocusNode();
@@ -184,7 +211,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       }
 
       _thickness_Controller.text = items.THICKNESS ?? "";
-      _turn_Controller.text = items.TURN.toString() ?? "";
+      _turn1_Controller.text = items.TURN1.toString() ?? "";
+      _turn2_Controller.text = items.TURN2.toString() ?? "";
+      _turn3_Controller.text = items.TURN3.toString() ?? "";
+      _turn4_Controller.text = items.TURN4.toString() ?? "";
+      _turn5_Controller.text = items.TURN5.toString() ?? "";
+      _turn6_Controller.text = items.TURN6.toString() ?? "";
+
       _diameter_Controller.text = items.DIAMETER.toString() ?? "";
       _custommer_Controller.text = items.CUSTOMER ?? "";
       _uf_Controller.text = items.UF.toString();
@@ -211,6 +244,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       _fs2_Controller.text = items.FS2.toString() ?? "";
       _fs3_Controller.text = items.FS3.toString() ?? "";
       _fs4_Controller.text = items.FS4.toString() ?? "";
+      _fs5_Controller.text = items.FS5.toString() ?? "";
+      _fs6_Controller.text = items.FS6.toString() ?? "";
+      _fs7_Controller.text = items.FS7.toString() ?? "";
+      _fs8_Controller.text = items.FS8.toString() ?? "";
+      _fs9_Controller.text = items.FS9.toString() ?? "";
+      _fs10_Controller.text = items.FS10.toString() ?? "";
+      _fs11_Controller.text = items.FS11.toString() ?? "";
+      _fs12_Controller.text = items.FS12.toString() ?? "";
       _grade_Controller.text = items.GRADE ?? "";
       _time_Press_Controller.text = items.TIME_PRESS.toString() ?? "";
       _time_Released_Controller.text = items.TIME_RELEASED.toString() ?? "";
@@ -237,7 +278,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         'FINISH_TIME': _finishTime_Controller.text.trim(),
         'IPENO': _ipeNo_Controller.text.trim(),
         'THICKNESS': _thickness_Controller.text.trim(),
-        'TURN': _turn_Controller.text.trim(),
+        'TURN': _turn1_Controller.text.trim(),
+        'TURN2': _turn2_Controller.text.trim(),
+        'TURN3': _turn3_Controller.text.trim(),
+        'TURN4': _turn4_Controller.text.trim(),
+        'TURN5': _turn5_Controller.text.trim(),
+        'TURN6': _turn6_Controller.text.trim(),
         'DIAMETER': _diameter_Controller.text.trim(),
         'CUSTOMER': _custommer_Controller.text.trim(),
         'UF': _uf_Controller.text.trim(),
@@ -264,6 +310,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         'FS2': _fs2_Controller.text.trim(),
         'FS3': _fs3_Controller.text.trim(),
         'FS4': _fs4_Controller.text.trim(),
+        'FS5': _fs5_Controller.text.trim(),
+        'FS6': _fs6_Controller.text.trim(),
+        'FS7': _fs7_Controller.text.trim(),
+        'FS8': _fs8_Controller.text.trim(),
+        'FS9': _fs9_Controller.text.trim(),
+        'FS10': _fs10_Controller.text.trim(),
+        'FS11': _fs11_Controller.text.trim(),
+        'FS12': _fs12_Controller.text.trim(),
         'GRADE': _grade_Controller.text.trim(),
         'TIME_RESS': _time_Press_Controller.text.trim(),
         'TIME_RELEASED': _time_Released_Controller.text.trim(),
@@ -282,7 +336,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         'FINISH_TIME': _finishTime_Controller.text.trim(),
         'IPENO': _ipeNo_Controller.text.trim(),
         'THICKNESS': _thickness_Controller.text.trim(),
-        'TURN': _turn_Controller.text.trim(),
+        'TURN': _turn1_Controller.text.trim(),
+        'TURN2': _turn2_Controller.text.trim(),
+        'TURN3': _turn3_Controller.text.trim(),
+        'TURN4': _turn4_Controller.text.trim(),
+        'TURN5': _turn5_Controller.text.trim(),
+        'TURN6': _turn6_Controller.text.trim(),
         'DIAMETER': _diameter_Controller.text.trim(),
         'CUSTOMER': _custommer_Controller.text.trim(),
         'UF': _uf_Controller.text.trim(),
@@ -309,6 +368,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         'FS2': _fs2_Controller.text.trim(),
         'FS3': _fs3_Controller.text.trim(),
         'FS4': _fs4_Controller.text.trim(),
+        'FS5': _fs5_Controller.text.trim(),
+        'FS6': _fs6_Controller.text.trim(),
+        'FS7': _fs7_Controller.text.trim(),
+        'FS8': _fs8_Controller.text.trim(),
+        'FS9': _fs9_Controller.text.trim(),
+        'FS10': _fs10_Controller.text.trim(),
+        'FS11': _fs11_Controller.text.trim(),
+        'FS12': _fs12_Controller.text.trim(),
         'GRADE': _grade_Controller.text.trim(),
         'TIME_RESS': _time_Press_Controller.text.trim(),
         'TIME_RELEASED': _time_Released_Controller.text.trim(),
@@ -357,7 +424,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     _finishTime_Controller.text = finishTime;
     _ipeNo_Controller.text = items.IPE_NO.toString();
     _thickness_Controller.text = items.THICKNESS.toString();
-    _turn_Controller.text = items.TURN.toString();
+    _turn1_Controller.text = items.TURN.toString();
+    _turn2_Controller.text = items.TURN2.toString();
+    _turn3_Controller.text = items.TURN3.toString();
+    _turn4_Controller.text = items.TURN4.toString();
+    _turn5_Controller.text = items.TURN5.toString();
+    _turn6_Controller.text = items.TURN6.toString();
+
     _diameter_Controller.text = items.DIAMETER.toString();
     _custommer_Controller.text = items.CUSTOMER ?? "";
     _uf_Controller.text = items.UF.toString();
@@ -384,6 +457,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     _fs2_Controller.text = items.FS2.toString();
     _fs3_Controller.text = items.FS3.toString();
     _fs4_Controller.text = items.FS4.toString();
+    _fs5_Controller.text = items.FS5.toString();
+    _fs6_Controller.text = items.FS6.toString();
+    _fs7_Controller.text = items.FS7.toString();
+    _fs8_Controller.text = items.FS8.toString();
+    _fs9_Controller.text = items.FS9.toString();
+    _fs10_Controller.text = items.FS10.toString();
+    _fs11_Controller.text = items.FS11.toString();
+    _fs12_Controller.text = items.FS12.toString();
     _grade_Controller.text = items.GRADE.toString();
     _time_Press_Controller.text = items.TIME_PRESS.toString();
     _time_Released_Controller.text = items.TIME_RELEASED.toString();
@@ -406,7 +487,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           _finishTime_Controller.text = items.FINISH_TIME.toString();
           _ipeNo_Controller.text = items.IPE_NO.toString();
           _thickness_Controller.text = items.THICKNESS.toString();
-          _turn_Controller.text = items.TURN.toString();
+          _turn1_Controller.text = items.TURN1.toString();
+          _turn2_Controller.text = items.TURN2.toString();
+          _turn3_Controller.text = items.TURN3.toString();
+          _turn4_Controller.text = items.TURN4.toString();
+          _turn5_Controller.text = items.TURN5.toString();
+          _turn6_Controller.text = items.TURN6.toString();
           _diameter_Controller.text = items.DIAMETER.toString();
           _custommer_Controller.text = items.CUSTOMER ?? "";
           _uf_Controller.text = items.UF.toString();
@@ -433,6 +519,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           _fs2_Controller.text = items.FS2.toString();
           _fs3_Controller.text = items.FS3.toString();
           _fs4_Controller.text = items.FS4.toString();
+          _fs5_Controller.text = items.FS5.toString();
+          _fs6_Controller.text = items.FS6.toString();
+          _fs7_Controller.text = items.FS7.toString();
+          _fs8_Controller.text = items.FS8.toString();
+          _fs9_Controller.text = items.FS9.toString();
+          _fs10_Controller.text = items.FS10.toString();
+          _fs11_Controller.text = items.FS11.toString();
+          _fs12_Controller.text = items.FS12.toString();
           _grade_Controller.text = items.GRADE.toString();
           _time_Press_Controller.text = items.TIME_PRESS.toString();
           _time_Released_Controller.text = items.TIME_RELEASED.toString();
@@ -460,7 +554,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     _finishTime_Controller.clear();
     _ipeNo_Controller.clear();
     _thickness_Controller.clear();
-    _turn_Controller.clear();
+    _turn1_Controller.clear();
+    _turn2_Controller.clear();
+    _turn3_Controller.clear();
+    _turn4_Controller.clear();
+    _turn5_Controller.clear();
+    _turn6_Controller.clear();
     _diameter_Controller.clear();
     _custommer_Controller.clear();
     _uf_Controller.clear();
@@ -487,6 +586,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     _fs2_Controller.clear();
     _fs3_Controller.clear();
     _fs4_Controller.clear();
+    _fs5_Controller.clear();
+    _fs6_Controller.clear();
+    _fs7_Controller.clear();
+    _fs8_Controller.clear();
+    _fs9_Controller.clear();
+    _fs10_Controller.clear();
+    _fs11_Controller.clear();
+    _fs12_Controller.clear();
     _grade_Controller.clear();
     _time_Press_Controller.clear();
     _time_Released_Controller.clear();
@@ -515,8 +622,23 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
       PPM_WEIGHT: _ppmweight_Controller.text.isNotEmpty
           ? num.tryParse(_ppmweight_Controller.text)
           : null,
-      TURN: _turn_Controller.text.isNotEmpty
-          ? int.tryParse(_turn_Controller.text)
+      TURN: _turn1_Controller.text.isNotEmpty
+          ? int.tryParse(_turn1_Controller.text)
+          : null,
+      TURN2: _turn2_Controller.text.isNotEmpty
+          ? int.tryParse(_turn2_Controller.text)
+          : null,
+      TURN3: _turn3_Controller.text.isNotEmpty
+          ? int.tryParse(_turn3_Controller.text)
+          : null,
+      TURN4: _turn4_Controller.text.isNotEmpty
+          ? int.tryParse(_turn4_Controller.text)
+          : null,
+      TURN5: _turn5_Controller.text.isNotEmpty
+          ? int.tryParse(_turn5_Controller.text)
+          : null,
+      TURN6: _turn6_Controller.text.isNotEmpty
+          ? int.tryParse(_turn6_Controller.text)
           : null,
       DIAMETER: _diameter_Controller.text.isNotEmpty
           ? num.tryParse(_diameter_Controller.text)
@@ -584,6 +706,30 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
           : null,
       FS4: _fs4_Controller.text.isNotEmpty
           ? num.tryParse(_fs4_Controller.text)
+          : null,
+      FS5: _fs5_Controller.text.isNotEmpty
+          ? num.tryParse(_fs5_Controller.text)
+          : null,
+      FS6: _fs6_Controller.text.isNotEmpty
+          ? num.tryParse(_fs6_Controller.text)
+          : null,
+      FS7: _fs7_Controller.text.isNotEmpty
+          ? num.tryParse(_fs7_Controller.text)
+          : null,
+      FS8: _fs8_Controller.text.isNotEmpty
+          ? num.tryParse(_fs8_Controller.text)
+          : null,
+      FS9: _fs9_Controller.text.isNotEmpty
+          ? num.tryParse(_fs9_Controller.text)
+          : null,
+      FS10: _fs10_Controller.text.isNotEmpty
+          ? num.tryParse(_fs10_Controller.text)
+          : null,
+      FS11: _fs11_Controller.text.isNotEmpty
+          ? num.tryParse(_fs11_Controller.text)
+          : null,
+      FS12: _fs12_Controller.text.isNotEmpty
+          ? num.tryParse(_fs12_Controller.text)
           : null,
       GRADE: _grade_Controller.text.trim(),
       TIME_PRESS: _time_Press_Controller.text.isNotEmpty
@@ -665,7 +811,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                     .toList();
                 for (var items in temp) {
                   _thickness_Controller.text = items.THICKNESS.toString();
-                  _turn_Controller.text = items.TURN.toString();
+                  _turn1_Controller.text = items.TURN1.toString();
+                  _turn2_Controller.text = items.TURN2.toString();
+                  _turn3_Controller.text = items.TURN3.toString();
+                  _turn4_Controller.text = items.TURN4.toString();
+                  _turn5_Controller.text = items.TURN5.toString();
+                  _turn6_Controller.text = items.TURN6.toString();
                   _diameter_Controller.text = items.DIAMETER.toString();
                   _custommer_Controller.text = items.CUSTOMER.toString();
                   _uf_Controller.text = items.UF.toString();
@@ -689,6 +840,14 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _fs2_Controller.text = items.FS2.toString();
                   _fs3_Controller.text = items.FS3.toString();
                   _fs4_Controller.text = items.FS4.toString();
+                  _fs5_Controller.text = items.FS5.toString();
+                  _fs6_Controller.text = items.FS6.toString();
+                  _fs7_Controller.text = items.FS7.toString();
+                  _fs8_Controller.text = items.FS8.toString();
+                  _fs9_Controller.text = items.FS9.toString();
+                  _fs10_Controller.text = items.FS10.toString();
+                  _fs11_Controller.text = items.FS11.toString();
+                  _fs12_Controller.text = items.FS12.toString();
                   _grade_Controller.text = items.GRADE.toString();
                   _time_Press_Controller.text = items.TIME_PRESS.toString();
                   _time_Released_Controller.text =
@@ -783,9 +942,24 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _thickness_Controller.text = items.THICKNESS == ''
                       ? state.item.THICKNESS ?? ""
                       : items.THICKNESS ?? "";
-                  _turn_Controller.text = items.TURN == ''
+                  _turn1_Controller.text = items.TURN1 == ''
                       ? state.item.TURN.toString()
-                      : items.TURN ?? "";
+                      : items.TURN1 ?? "";
+                  _turn2_Controller.text = items.TURN2 == ''
+                      ? state.item.TURN2.toString()
+                      : items.TURN2 ?? "";
+                  _turn3_Controller.text = items.TURN3 == ''
+                      ? state.item.TURN3.toString()
+                      : items.TURN3 ?? "";
+                  _turn4_Controller.text = items.TURN4 == ''
+                      ? state.item.TURN4.toString()
+                      : items.TURN4 ?? "";
+                  _turn5_Controller.text = items.TURN5 == ''
+                      ? state.item.TURN5.toString()
+                      : items.TURN5 ?? "";
+                  _turn6_Controller.text = items.TURN6 == ''
+                      ? state.item.TURN6.toString()
+                      : items.TURN6 ?? "";
                   _diameter_Controller.text = items.DIAMETER == ''
                       ? state.item.DIAMETER.toString()
                       : items.DIAMETER ?? "";
@@ -855,6 +1029,30 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                   _fs4_Controller.text = items.FS4 == ''
                       ? state.item.FS4.toString()
                       : items.FS4 ?? "";
+                  _fs5_Controller.text = items.FS5 == ''
+                      ? state.item.FS5.toString()
+                      : items.FS5 ?? "";
+                  _fs6_Controller.text = items.FS6 == ''
+                      ? state.item.FS6.toString()
+                      : items.FS6 ?? "";
+                  _fs7_Controller.text = items.FS7 == ''
+                      ? state.item.FS7.toString()
+                      : items.FS7 ?? "";
+                  _fs8_Controller.text = items.FS8 == ''
+                      ? state.item.FS8.toString()
+                      : items.FS8 ?? "";
+                  _fs9_Controller.text = items.FS9 == ''
+                      ? state.item.FS9.toString()
+                      : items.FS9 ?? "";
+                  _fs10_Controller.text = items.FS10 == ''
+                      ? state.item.FS10.toString()
+                      : items.FS10 ?? "";
+                  _fs11_Controller.text = items.FS11 == ''
+                      ? state.item.FS11.toString()
+                      : items.FS11 ?? "";
+                  _fs12_Controller.text = items.FS12 == ''
+                      ? state.item.FS12.toString()
+                      : items.FS12 ?? "";
                   _grade_Controller.text = items.GRADE == ''
                       ? state.item.GRADE ?? ""
                       : items.GRADE ?? "";
@@ -1061,8 +1259,8 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             labelText: "Thickness".toUpperCase(),
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
-                                _turn_FocusNode.requestFocus();
-                                _textselection(_turn_Controller);
+                                _turn1_FocusNode.requestFocus();
+                                _textselection(_turn1_Controller);
                               }
                             },
                           ),
@@ -1072,15 +1270,15 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                         ),
                         Expanded(
                           child: CustomTextInputField(
-                            focusNode: _turn_FocusNode,
-                            controller: _turn_Controller,
+                            focusNode: _turn1_FocusNode,
+                            controller: _turn1_Controller,
                             keyboardType: TextInputType.number,
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 _diameter_FocusNode.requestFocus();
                                 _textselection(_diameter_Controller);
                               } else {
-                                _turn_FocusNode.requestFocus();
+                                _turn1_FocusNode.requestFocus();
                               }
                             },
                             textInputFormatter: [
@@ -1088,7 +1286,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                   RegExp(r'[0-9]'))
                             ],
                             isHideLable: true,
-                            labelText: "Turn".toUpperCase(),
+                            labelText: "Turn 1".toUpperCase(),
                           ),
                         ),
                       ],
@@ -1100,8 +1298,60 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                       children: [
                         Expanded(
                           child: CustomTextInputField(
-                            controller: _diameter_Controller,
-                            focusNode: _diameter_FocusNode,
+                            focusNode: _turn2_FocusNode,
+                            controller: _turn2_Controller,
+                            keyboardType: TextInputType.number,
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _turn3_FocusNode.requestFocus();
+                                _textselection(_turn4_Controller);
+                              } else {
+                                _turn2_FocusNode.requestFocus();
+                              }
+                            },
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]'))
+                            ],
+                            isHideLable: true,
+                            labelText: "Turn 2".toUpperCase(),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _turn3_FocusNode,
+                            controller: _turn3_Controller,
+                            keyboardType: TextInputType.number,
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _turn4_FocusNode.requestFocus();
+                                _textselection(_turn4_Controller);
+                              } else {
+                                _turn3_FocusNode.requestFocus();
+                              }
+                            },
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]'))
+                            ],
+                            isHideLable: true,
+                            labelText: "Turn 3".toUpperCase(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _turn4_FocusNode,
+                            controller: _turn4_Controller,
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
@@ -1109,9 +1359,10 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             ],
                             onFieldSubmitted: (value) {
                               if (value.isNotEmpty) {
-                                _custommer_FocusNode.requestFocus();
+                                _turn5_FocusNode.requestFocus();
+                                _textselection(_turn5_Controller);
                               } else {
-                                _diameter_FocusNode.requestFocus();
+                                _turn4_FocusNode.requestFocus();
                               }
                             },
                             validator: (value) {
@@ -1132,66 +1383,48 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                               }
                             },
                             isHideLable: true,
-                            labelText: "Diameter".toUpperCase(),
+                            labelText: "Turn 4".toUpperCase(),
                           ),
                         ),
                         SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          child: DropdownButtonFormField2(
-                            focusNode: _custommer_FocusNode,
-                            value: _custommer_Controller.text.isNotEmpty
-                                ? _custommer_Controller.text
-                                : null,
-                            alignment: Alignment.center,
-                            decoration: InputDecoration(
-                              alignLabelWithHint: true,
-                              labelText: "Customer",
-                              labelStyle: TextStyle(color: COLOR_BLUE_DARK),
-                              contentPadding: EdgeInsets.only(left: 15),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: COLOR_BLUE_DARK),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            isExpanded: true,
-                            items: ['Export', 'Local']
-                                .toList()
-                                .map((item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        "${item}",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            color: COLOR_BLUE_DARK),
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              _custommer_Controller.text = value!;
-                              _uf_FocusNode.requestFocus();
-                              _textselection(_uf_Controller);
+                          child: CustomTextInputField(
+                            focusNode: _turn5_FocusNode,
+                            controller: _turn5_Controller,
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,1}')),
+                            ],
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _turn6_FocusNode.requestFocus();
+                                _textselection(_turn6_Controller);
+                              } else {
+                                _turn5_FocusNode.requestFocus();
+                              }
                             },
-                            onSaved: (value) {
-                              _custommer_Controller.text = value!;
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
                             },
-                            buttonStyleData: const ButtonStyleData(
-                              height: 50,
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 30,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
+                            isHideLable: true,
+                            labelText: "Turn 5".toUpperCase(),
                           ),
                         ),
                       ],
@@ -1201,6 +1434,47 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                     ),
                     Row(
                       children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            focusNode: _turn6_FocusNode,
+                            controller: _turn6_Controller,
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,1}')),
+                            ],
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _uf_FocusNode.requestFocus();
+                                _textselection(_uf_Controller);
+                              } else {
+                                _turn6_FocusNode.requestFocus();
+                              }
+                            },
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 1) {
+                                  return "decimal value with only 1 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            isHideLable: true,
+                            labelText: "Turn 6".toUpperCase(),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _uf_Controller,
@@ -1239,9 +1513,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                               controller: _ppmweight_Controller,
@@ -1256,13 +1534,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                 }
                               }),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                               controller: _packno_Controller,
@@ -1274,9 +1548,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                   ? _output_FocusNode.requestFocus()
                                   : _packno_FocusNode.requestFocus()),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                               controller: _output_Controller,
@@ -1288,13 +1566,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                   ? _width_R__FocusNode.requestFocus()
                                   : _output_FocusNode.requestFocus()),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _width_R__Controller,
@@ -1331,9 +1605,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _width_L__Controller,
@@ -1370,13 +1648,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                               focusNode: _gross_FocusNode,
@@ -1390,9 +1664,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                                 }
                               }),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb11_Controller,
@@ -1429,13 +1707,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb12_Controller,
@@ -1472,9 +1746,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb13_Controller,
@@ -1511,13 +1789,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb21_Controller,
@@ -1554,9 +1828,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb22_Controller,
@@ -1593,13 +1871,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb23_Controller,
@@ -1636,9 +1910,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb31_Controller,
@@ -1675,13 +1953,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb32_Controller,
@@ -1718,9 +1992,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _cb33_Controller,
@@ -1757,13 +2035,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _of1_Controller,
@@ -1795,9 +2069,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _of2_Controller,
@@ -1829,13 +2107,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _of3_Controller,
@@ -1867,9 +2141,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _burnOff_Controller,
@@ -1902,19 +2180,15 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _fs1_Controller,
                             focusNode: _fs1_FocusNode,
                             isHideLable: true,
-                            labelText: "FS1",
+                            labelText: "ลูกเล็ก",
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
@@ -1947,15 +2221,19 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _fs2_Controller,
                             focusNode: _fs2_FocusNode,
                             isHideLable: true,
-                            labelText: "FS2",
+                            labelText: "ติดแกน",
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
@@ -1988,19 +2266,15 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _fs3_Controller,
                             focusNode: _fs3_FocusNode,
                             isHideLable: true,
-                            labelText: "FS3",
+                            labelText: "ฟิล์มยับ",
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
@@ -2033,15 +2307,19 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _fs4_Controller,
                             focusNode: _fs4_FocusNode,
                             isHideLable: true,
-                            labelText: "FS4",
+                            labelText: "แกนโผล่",
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
@@ -2074,6 +2352,47 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs5_Controller,
+                            focusNode: _fs5_FocusNode,
+                            isHideLable: true,
+                            labelText: "Foil หลุด",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs5_FocusNode.requestFocus();
+                                _textselection(_fs5_Controller);
+                              } else {
+                                _fs5_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -2081,6 +2400,305 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                     ),
                     Row(
                       children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs6_Controller,
+                            focusNode: _fs6_FocusNode,
+                            isHideLable: true,
+                            labelText: "หน้าฟิล์มไม่เรียบ",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs7_FocusNode.requestFocus();
+                                _textselection(_fs7_Controller);
+                              } else {
+                                _fs6_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs7_Controller,
+                            focusNode: _fs7_FocusNode,
+                            isHideLable: true,
+                            labelText: "ขาดรอยต่อ",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs8_FocusNode.requestFocus();
+                                _textselection(_fs8_Controller);
+                              } else {
+                                _fs7_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs8_Controller,
+                            focusNode: _fs8_FocusNode,
+                            isHideLable: true,
+                            labelText: "ระยไม่ได้",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs9_FocusNode.requestFocus();
+                                _textselection(_fs9_Controller);
+                              } else {
+                                _fs8_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs9_Controller,
+                            focusNode: _fs9_FocusNode,
+                            isHideLable: true,
+                            labelText: "เครื่องดีดทิ้ง",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs10_FocusNode.requestFocus();
+                                _textselection(_fs10_Controller);
+                              } else {
+                                _fs9_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs10_Controller,
+                            focusNode: _fs10_FocusNode,
+                            isHideLable: true,
+                            labelText: "ปรับเครื่อง",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs11_FocusNode.requestFocus();
+                                _textselection(_fs11_Controller);
+                              } else {
+                                _fs10_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs11_Controller,
+                            focusNode: _fs11_FocusNode,
+                            isHideLable: true,
+                            labelText: "Foil พับ",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _fs12_FocusNode.requestFocus();
+                                _textselection(_fs12_Controller);
+                              } else {
+                                _fs11_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextInputField(
+                            controller: _fs12_Controller,
+                            focusNode: _fs12_FocusNode,
+                            isHideLable: true,
+                            labelText: "Other",
+                            keyboardType: TextInputType.number,
+                            textInputFormatter: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            validator: (value) {
+                              try {
+                                double parsedValue = double.parse(value!);
+
+                                // แยกส่วนทศนิยม
+                                String fractionalPart =
+                                    parsedValue.toString().split(".")[1];
+                                if (fractionalPart.length > 2) {
+                                  return "decimal value with only 2 digit";
+                                } else {
+                                  return null;
+                                }
+                              } catch (e) {
+                                // หากไม่สามารถแปลงเป็นทศนิยมได้
+                                return null;
+                              }
+                            },
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _grade_FocusNode.requestFocus();
+                                _textselection(_grade_Controller);
+                              } else {
+                                _fs12_FocusNode.requestFocus();
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _grade_Controller,
@@ -2110,9 +2728,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _time_Press_Controller,
@@ -2146,13 +2768,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _time_Released_Controller,
@@ -2191,9 +2809,13 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
                         Expanded(
                           child: CustomTextInputField(
                             controller: _heat_temp_Controller,
@@ -2215,13 +2837,9 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: CustomTextInputField(
                             controller: _tension_Controller,
@@ -2243,19 +2861,17 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: CustomTextInputField(
-                            controller: _nip_roll_press_Controller,
-                            focusNode: _nip_roll_press_FocusNode,
-                            isHideLable: true,
-                            labelText: "NIP ROLL PRESS",
-                            maxLength: 10,
-                          ),
-                        ),
                       ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomTextInputField(
+                      controller: _nip_roll_press_Controller,
+                      focusNode: _nip_roll_press_FocusNode,
+                      isHideLable: true,
+                      labelText: "NIP ROLL PRESS",
+                      maxLength: 10,
                     ),
                     Row(
                       children: [
@@ -2354,9 +2970,12 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
     if (_batch_Controller.text.isNotEmpty) {
       if (_thickness_Controller.text.isEmpty) {
         await _funcSave();
-      } else if (_turn_Controller.text.isEmpty) {
-        await _funcSave();
-      } else if (_diameter_Controller.text.isEmpty) {
+      }
+      // else if (_turn1_Controller.text.isEmpty) {
+      //   await _funcSave();
+      // }
+
+      else if (_diameter_Controller.text.isEmpty) {
         await _funcSave();
       } else if (_custommer_Controller.text.isEmpty) {
         await _funcSave();
@@ -2394,15 +3013,17 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
         await _funcSave();
       } else if (_burnOff_Controller.text.isEmpty) {
         await _funcSave();
-      } else if (_fs1_Controller.text.isEmpty) {
-        await _funcSave();
-      } else if (_fs2_Controller.text.isEmpty) {
-        await _funcSave();
-      } else if (_fs3_Controller.text.isEmpty) {
-        await _funcSave();
-      } else if (_fs4_Controller.text.isEmpty) {
-        await _funcSave();
-      } else if (_grade_Controller.text.isEmpty) {
+      }
+      // else if (_fs1_Controller.text.isEmpty) {
+      //   await _funcSave();
+      // } else if (_fs2_Controller.text.isEmpty) {
+      //   await _funcSave();
+      // } else if (_fs3_Controller.text.isEmpty) {
+      //   await _funcSave();
+      // } else if (_fs4_Controller.text.isEmpty) {
+      //   await _funcSave();
+      // }
+      else if (_grade_Controller.text.isEmpty) {
         await _funcSave();
       } else if (_time_Press_Controller.text.isEmpty) {
         await _funcSave();

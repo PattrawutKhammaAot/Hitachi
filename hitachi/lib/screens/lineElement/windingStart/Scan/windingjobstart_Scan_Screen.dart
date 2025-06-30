@@ -23,8 +23,10 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sqflite/sqflite.dart';
 
 class WindingJobStartScanScreen extends StatefulWidget {
-  WindingJobStartScanScreen({super.key, this.onChange});
+  WindingJobStartScanScreen(
+      {super.key, this.onChange, required this.isCheckBarcode});
   ValueChanged<List<Map<String, dynamic>>>? onChange;
+  bool isCheckBarcode;
 
   @override
   State<WindingJobStartScanScreen> createState() =>
@@ -37,12 +39,14 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final TextEditingController batchNoController = TextEditingController();
   final TextEditingController productController = TextEditingController();
   final TextEditingController filmPackNoController = TextEditingController();
+  final TextEditingController filmSerialNoNoController =
+      TextEditingController();
   final TextEditingController paperCodeLotController = TextEditingController();
   final TextEditingController ppFilmLotController = TextEditingController();
   final TextEditingController foilLotController = TextEditingController();
   final TextEditingController weight1Controller = TextEditingController();
   final TextEditingController weight2Controller = TextEditingController();
-//FOCUS
+//FOCUS เขียนเหี้ยไรเนี้ยยย
   final f1 = FocusNode();
   final f2 = FocusNode();
   final f3 = FocusNode();
@@ -54,6 +58,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
   final f9 = FocusNode();
   final f10 = FocusNode();
 //
+  final filmSerialNoFocus = FocusNode();
 
   sendWdsReturnWeightInputModel? items;
   CheckPackNoModel? packNoModel;
@@ -82,7 +87,8 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
         filmPackNoController.text.isNotEmpty &&
         paperCodeLotController.text.isNotEmpty &&
         ppFilmLotController.text.isNotEmpty &&
-        foilLotController.text.isNotEmpty) {
+        foilLotController.text.isNotEmpty &&
+        filmSerialNoNoController.text.isNotEmpty) {
       callWindingStartReturnWeight();
     } else {
       EasyLoading.showError("Please Input Info",
@@ -111,6 +117,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
               PAPER_CODE_LOT: paperCodeLotController.text.trim(),
               PP_FILM_LOT: ppFilmLotController.text.trim(),
               FOIL_LOT: foilLotController.text.trim(),
+              FILM_SERIAL_NO: filmSerialNoNoController.text.trim(),
               WEIGHT: _weight,
               START_DATE:
                   DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
@@ -265,6 +272,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           PAPER_CORE: paperCodeLotController.text.trim(),
           PP_CORE: ppFilmLotController.text.trim(),
           FOIL_CORE: foilLotController.text.trim(),
+          FILM_SERIAL_NO: filmSerialNoNoController.text.trim(),
           BATCH_START_DATE: DateTime.now().toString(),
           weight: _weight);
 
@@ -290,6 +298,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
     String? PACK_NO,
     String? PAPER_CORE,
     String? PP_CORE,
+    String? FILM_SERIAL_NO,
     String? FOIL_CORE,
     String? BATCH_START_DATE,
     num? weight,
@@ -318,6 +327,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
           'PackNo': PACK_NO,
           'PaperCore': PAPER_CORE,
           'PPCore': PP_CORE,
+          'FilmSerialNo': FILM_SERIAL_NO,
           'FoilCore': FOIL_CORE,
           'BatchStartDate':
               DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
@@ -493,7 +503,6 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                   BlocListener<LineElementBloc, LineElementState>(
                       listener: (context, state) async {
                     if (state is PostSendWindingStartReturnWeightLoadingState) {
-                      print(_weight);
                       EasyLoading.show(status: "Loading...");
                     } else if (state
                         is PostSendWindingStartReturnWeightLoadedState) {
@@ -531,6 +540,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         paperCodeLotController.clear();
                         ppFilmLotController.clear();
                         foilLotController.clear();
+                        filmSerialNoNoController.clear();
                         f1.requestFocus();
                         setState(() {
                           bgColor = Colors.grey;
@@ -589,6 +599,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                               labelText: "Machine No :",
                               controller: machineNoController,
                               maxLength: 3,
+                              // onChanged: (value) {
+                              //   print(widget.isCheckBarcode);
+                              // },
                               onEditingComplete: () {
                                 if (machineNoController.text.length == 3) {
                                   f2.requestFocus();
@@ -714,7 +727,38 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             flex: 5,
                             child: BoxInputField(
                               focusNode: f6,
-                              onEditingComplete: () => f7.requestFocus(),
+                              onEditingComplete: () {
+                                if (widget.isCheckBarcode) {
+                                  var result = extractValueBetweenPI_DR(
+                                      paperCodeLotController.text.trim());
+                                  if (result != null) {
+                                    if (result == "2GSB080025A0012") {
+                                      // paperCodeLotController.text = result;
+                                      filmSerialNoFocus.requestFocus();
+                                    } else {
+                                      _errorDialog(
+                                          isHideCancle: false,
+                                          text: Label(
+                                              "Paper Core Lot Invalid format"),
+                                          onpressOk: () {
+                                            paperCodeLotController.clear();
+                                            Navigator.pop(context);
+                                          });
+                                    }
+                                  } else {
+                                    _errorDialog(
+                                        isHideCancle: false,
+                                        text: Label(
+                                            "Paper Core Lot Invalid format"),
+                                        onpressOk: () {
+                                          paperCodeLotController.clear();
+                                          Navigator.pop(context);
+                                        });
+                                  }
+                                } else {
+                                  filmSerialNoFocus.requestFocus();
+                                }
+                              },
                               labelText: "Paper Core Lot :",
                               controller: paperCodeLotController,
                             ),
@@ -725,8 +769,80 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         height: 5,
                       ),
                       BoxInputField(
+                        focusNode: filmSerialNoFocus,
+                        onEditingComplete: () {
+                          if (widget.isCheckBarcode) {
+                            var result = extractValueBetweenPI_DR(
+                                filmSerialNoNoController.text.trim());
+                            if (result != null) {
+                              if (result == "2GCA280337A0010" ||
+                                  result == "2GCA280335A0010" ||
+                                  result == "2GCA280341A0010" ||
+                                  result == "2GCA280339A0010" ||
+                                  result == "2GCA280333A0010") {
+                                // filmSerialNoNoController.text = result;
+                                f7.requestFocus();
+                              } else {
+                                _errorDialog(
+                                    isHideCancle: false,
+                                    text:
+                                        Label("Film Serial No Invalid format"),
+                                    onpressOk: () {
+                                      filmSerialNoNoController.clear();
+                                      Navigator.pop(context);
+                                    });
+                              }
+                            } else {
+                              _errorDialog(
+                                  isHideCancle: false,
+                                  text: Label("Film Serial No Invalid format"),
+                                  onpressOk: () {
+                                    filmSerialNoNoController.clear();
+                                    Navigator.pop(context);
+                                  });
+                            }
+                          } else {
+                            f7.requestFocus();
+                          }
+                        },
+                        labelText: "Film Serial No :",
+                        controller: filmSerialNoNoController,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      BoxInputField(
                         focusNode: f7,
-                        onEditingComplete: () => f8.requestFocus(),
+                        onEditingComplete: () {
+                          if (widget.isCheckBarcode) {
+                            var result = extractValueBetweenPI_DR(
+                                ppFilmLotController.text.trim());
+                            if (result != null) {
+                              if (result == "2GCA100016A0110") {
+                                // ppFilmLotController.text = result;
+                                f8.requestFocus();
+                              } else {
+                                _errorDialog(
+                                    isHideCancle: false,
+                                    text: Label("PP Film Lot Invalid format"),
+                                    onpressOk: () {
+                                      ppFilmLotController.clear();
+                                      Navigator.pop(context);
+                                    });
+                              }
+                            } else {
+                              _errorDialog(
+                                  isHideCancle: false,
+                                  text: Label("PP Film Lot Invalid format"),
+                                  onpressOk: () {
+                                    ppFilmLotController.clear();
+                                    Navigator.pop(context);
+                                  });
+                            }
+                          } else {
+                            f8.requestFocus();
+                          }
+                        },
                         labelText: "PP Film Lot :",
                         controller: ppFilmLotController,
                       ),
@@ -736,7 +852,33 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                       BoxInputField(
                         focusNode: f8,
                         onEditingComplete: () {
-                          _btnSendClick();
+                          if (widget.isCheckBarcode) {
+                            var result = extractValueBetweenPI_DR(
+                                foilLotController.text.trim());
+                            if (result != null) {
+                              if (result == "2GCA106819A0120") {
+                                _btnSendClick();
+                              } else {
+                                _errorDialog(
+                                    isHideCancle: false,
+                                    text: Label("Foil Lot Invalid format"),
+                                    onpressOk: () {
+                                      foilLotController.clear();
+                                      Navigator.pop(context);
+                                    });
+                              }
+                            } else {
+                              _errorDialog(
+                                  isHideCancle: false,
+                                  text: Label("Foil Lot Invalid format"),
+                                  onpressOk: () {
+                                    foilLotController.clear();
+                                    Navigator.pop(context);
+                                  });
+                            }
+                          } else {
+                            _btnSendClick();
+                          }
                         },
                         labelText: "Foil Lot:",
                         controller: foilLotController,
@@ -921,6 +1063,7 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                             paperCodeLotController.clear();
                             ppFilmLotController.clear();
                             foilLotController.clear();
+                            filmSerialNoNoController.clear();
                             f1.requestFocus();
                             setState(() {
                               bgColor = Colors.grey;
@@ -935,6 +1078,21 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
             ],
           );
         });
+  }
+
+  String? extractValueBetweenPI_DR(String input) {
+    try {
+      int piIndex = input.indexOf('<PI>');
+      int drIndex = input.indexOf('<DR>');
+
+      if (piIndex != -1 && drIndex != -1 && drIndex > piIndex) {
+        return input.toUpperCase().substring(piIndex + 4, drIndex);
+      }
+      return null;
+    } catch (e) {
+      print("Error extracting value: $e");
+      return null;
+    }
   }
 
   void _errorDialog(

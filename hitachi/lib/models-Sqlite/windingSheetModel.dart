@@ -14,6 +14,7 @@ class WindingSheetModel {
       this.STATUS,
       this.START_END,
       this.CHECK_COMPLETE,
+      this.FILM_SERIAL_NO,
       this.ID});
   final int? ID;
   final String? MACHINE_NO;
@@ -26,6 +27,7 @@ class WindingSheetModel {
   final String? FOIL_CORE;
   final String? BATCH_START_DATE;
   final String? BATCH_END_DATE;
+  final String? FILM_SERIAL_NO;
   final String? ELEMENT;
   final String? STATUS;
   final String? START_END;
@@ -45,6 +47,7 @@ class WindingSheetModel {
         ELEMENT!,
         STATUS!,
         START_END!,
+        FILM_SERIAL_NO!,
         CHECK_COMPLETE!,
       ];
   WindingSheetModel.fromMap(Map<String, dynamic> map)
@@ -54,6 +57,7 @@ class WindingSheetModel {
         BATCH_NO = map['BatchNo'],
         PRODUCT = map['Product'],
         PACK_NO = map['PackNo'],
+        FILM_SERIAL_NO = map['FilmSerialNo'],
         PAPER_CORE = map['PaperCore'],
         PP_CORE = map['PPCore'],
         FOIL_CORE = map['FoilCore'],

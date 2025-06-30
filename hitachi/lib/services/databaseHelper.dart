@@ -620,6 +620,7 @@ class DatabaseHelper {
       'FoilCore': items.FOIL_CORE,
       'BatchStartDate': items.BATCH_START_DATE,
       'BatchEndDate': items.BATCH_END_DATE,
+      'FilmSerialNo': items.FILM_SERIAL_NO,
       'Element': items.ELEMENT,
       'Status': items.STATUS,
       'start_end': items.START_END,
@@ -853,6 +854,11 @@ class DatabaseHelper {
         'IPENO TEXT,'
         'THICKNESS TEXT,'
         'TURN TEXT,'
+        'TURN2 TEXT,'
+        'TURN3 TEXT,'
+        'TURN4 TEXT,'
+        'TURN5 TEXT,'
+        'TURN6 TEXT,'
         'DIAMETER TEXT, '
         'CUSTOMER TEXT,'
         'UF TEXT,'
@@ -879,6 +885,14 @@ class DatabaseHelper {
         'FS2 TEXT,'
         'FS3 TEXT,'
         'FS4 TEXT,'
+        'FS5 TEXT,'
+        'FS6 TEXT,'
+        'FS7 TEXT,'
+        'FS8 TEXT,'
+        'FS9 TEXT,'
+        'FS10 TEXT,'
+        'FS11 TEXT,'
+        'FS12 TEXT,'
         'GRADE TEXT,'
         'TIME_RESS TEXT,'
         'TIME_RELEASED TEXT,'

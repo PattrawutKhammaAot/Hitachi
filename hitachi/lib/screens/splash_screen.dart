@@ -29,7 +29,6 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences pre = await SharedPreferences.getInstance();
     setState(() {
       if (pre.getString("API") == null) {
-        print("Empty");
       } else {
         BASE_API_URL = pre.getString("API").toString();
       }

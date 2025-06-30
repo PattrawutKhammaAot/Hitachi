@@ -62,7 +62,7 @@ class PlanWindingBloc extends Bloc<PlanWindingEvent, PlanWindingState> {
 
       return tmp;
     } catch (e) {
-      print("Exception");
+   
       print(e);
       return PlanWindingOutputModel();
     }

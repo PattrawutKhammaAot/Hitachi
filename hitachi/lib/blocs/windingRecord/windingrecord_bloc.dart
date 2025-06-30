@@ -64,7 +64,7 @@ class WindingrecordBloc extends Bloc<WindingrecordEvent, WindingrecordState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(responese.data);
+    
 
       ResponeseWindingRecordModel post =
           ResponeseWindingRecordModel.fromJson(responese.data);
@@ -78,7 +78,7 @@ class WindingrecordBloc extends Bloc<WindingrecordEvent, WindingrecordState> {
 
   Future<ResponeDefault> fetchSendWindingRecord(
       OutputWindingRecordModel itemOutput) async {
-    print(itemOutput.toJson());
+ 
     try {
       Response responese = await dio.post(
         ApiConfig.SEND_WINDING_RECORD,

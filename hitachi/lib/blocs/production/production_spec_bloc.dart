@@ -41,7 +41,7 @@ class ProductionSpecBloc
     );
   }
   Future<List<ProductionModel>> fetchIPEPRODPSEC() async {
-    print(ApiConfig.GET_IPE_PRODUCTIONS);
+ 
     try {
       Response responese = await dio.get(
         BASE_API_URL + "LineElement/GetIPEProdSpec",

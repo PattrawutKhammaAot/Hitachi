@@ -204,7 +204,6 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                               setState(() {
                                 columnWidths[details.column.columnName] =
                                     details.width;
-                                print(details.width);
                               });
                               return true;
                             },
@@ -237,7 +236,7 @@ class _MaterialInputHoldScreenState extends State<MaterialInputHoldScreen> {
                                           (e) => MaterialTraceModel(),
                                         )
                                         .toList();
-                                    print(_index);
+
                                     _colorSend = COLOR_BLUE_DARK;
                                     _colorDelete = COLOR_RED;
                                   });

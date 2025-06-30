@@ -19,6 +19,7 @@ class _WindingJobStartControlPageState
     extends State<WindingJobStartControlPage> {
   List<Map<String, dynamic>> listHoldWindingStart = [];
   int _selectedIndex = 0;
+  bool isCheckBarcode = true;
   DatabaseHelper databaseHelper = DatabaseHelper();
   void _onItemTapped(int index) {
     setState(() {
@@ -35,6 +36,7 @@ class _WindingJobStartControlPageState
   Widget build(BuildContext context) {
     List<Widget> widgetOptions = [
       WindingJobStartScanScreen(
+        isCheckBarcode: isCheckBarcode,
         onChange: (value) {
           setState(() {
             listHoldWindingStart = value;
@@ -57,13 +59,26 @@ class _WindingJobStartControlPageState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Label("Winding Start"),
-            SizedBox(
-              width: 10,
-            ),
             Label(
               "-${listHoldWindingStart.length ?? 0}-",
               color: COLOR_RED,
-            )
+            ),
+            Checkbox(
+              value: isCheckBarcode,
+              onChanged: (value) {
+                setState(() {
+                  isCheckBarcode = value!;
+                });
+              },
+              side: BorderSide(
+                color: COLOR_BLUE_DARK,
+                width: 3,
+              ),
+            ),
+            Label(
+              "Check Barcode",
+              color: COLOR_BLUE_DARK,
+            ),
           ],
         ),
       ),

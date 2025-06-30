@@ -62,7 +62,7 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
               sendTimeout: Duration(seconds: 60),
               receiveTimeout: Duration(seconds: 60)),
           data: jsonEncode(item));
-      print(responese.data);
+ 
       ResponeDefault post = ResponeDefault.fromJson(responese.data);
       return post;
     } catch (e, s) {
@@ -80,7 +80,7 @@ class FilmReceiveBloc extends Bloc<FilmReceiveEvent, FilmReceiveState> {
             sendTimeout: Duration(seconds: 60),
             receiveTimeout: Duration(seconds: 60)),
       );
-      print(responese.data);
+ 
       CheckPackNoModel post = CheckPackNoModel.fromJson(responese.data);
       return post;
     } on Exception {

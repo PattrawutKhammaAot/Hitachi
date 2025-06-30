@@ -175,7 +175,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 EasyLoading.show(status: "Loading ...");
               } else if (state is MaterialInputLoadedState) {
                 EasyLoading.dismiss();
-                print("object");
+
                 setState(() {
                   _inputMtModel = state.item;
                 });
@@ -270,7 +270,7 @@ class _MaterialInputScreenState extends State<MaterialInputScreen> {
                 }
               } else if (state is CheckMaterialInputErrorState) {
                 EasyLoading.dismiss();
-                print("Offline");
+
                 _checkMaterialOffline();
               }
               if (state is MaterialLoadDataLoadingState) {

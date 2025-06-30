@@ -13,6 +13,11 @@ class OutputWindingRecordModel {
     this.PACK_NO,
     this.PPM_WEIGHT,
     this.TURN,
+    this.TURN2,
+    this.TURN3,
+    this.TURN4,
+    this.TURN5,
+    this.TURN6,
     this.DIAMETER,
     this.CUSTOMER,
     this.UF,
@@ -36,6 +41,14 @@ class OutputWindingRecordModel {
     this.FS2,
     this.FS3,
     this.FS4,
+    this.FS5,
+    this.FS6,
+    this.FS7,
+    this.FS8,
+    this.FS9,
+    this.FS10,
+    this.FS11,
+    this.FS12,
     this.GRADE,
     this.TIME_PRESS,
     this.TIME_RELEASED,
@@ -58,6 +71,11 @@ class OutputWindingRecordModel {
         PACK_NO!,
         PPM_WEIGHT!,
         TURN!,
+        TURN2!,
+        TURN3!,
+        TURN4!,
+        TURN5!,
+        TURN6!,
         DIAMETER!,
         CUSTOMER!,
         UF!,
@@ -81,6 +99,14 @@ class OutputWindingRecordModel {
         FS2!,
         FS3!,
         FS4!,
+        FS5!,
+        FS6!,
+        FS7!,
+        FS8!,
+        FS9!,
+        FS10!,
+        FS11!,
+        FS12!,
         GRADE!,
         TIME_PRESS!,
         TIME_RELEASED!,
@@ -101,6 +127,11 @@ class OutputWindingRecordModel {
   final String? PACK_NO;
   final num? PPM_WEIGHT;
   final int? TURN;
+  final int? TURN2;
+  final int? TURN3;
+  final int? TURN4;
+  final int? TURN5;
+  final int? TURN6;
   final num? DIAMETER;
   final String? CUSTOMER;
   final num? UF;
@@ -124,6 +155,14 @@ class OutputWindingRecordModel {
   final num? FS2;
   final num? FS3;
   final num? FS4;
+  final num? FS5;
+  final num? FS6;
+  final num? FS7;
+  final num? FS8;
+  final num? FS9;
+  final num? FS10;
+  final num? FS11;
+  final num? FS12;
   final String? GRADE;
   final num? TIME_PRESS;
   final num? TIME_RELEASED;
@@ -145,6 +184,11 @@ class OutputWindingRecordModel {
     String? PACK_NO,
     num? PPM_WEIGHT,
     int? TURN,
+    int? TURN2,
+    int? TURN3,
+    int? TURN4,
+    int? TURN5,
+    int? TURN6,
     num? DIAMETER,
     String? CUSTOMER,
     num? UF,
@@ -168,6 +212,14 @@ class OutputWindingRecordModel {
     num? FS2,
     num? FS3,
     num? FS4,
+    num? FS5,
+    num? FS6,
+    num? FS7,
+    num? FS8,
+    num? FS9,
+    num? FS10,
+    num? FS11,
+    num? FS12,
     String? GRADE,
     num? TIME_PRESS,
     num? TIME_RELEASED,
@@ -189,6 +241,11 @@ class OutputWindingRecordModel {
       PACK_NO: PACK_NO ?? this.PACK_NO,
       PPM_WEIGHT: PPM_WEIGHT ?? this.PPM_WEIGHT,
       TURN: TURN ?? this.TURN,
+      TURN2: TURN2 ?? this.TURN2,
+      TURN3: TURN3 ?? this.TURN3,
+      TURN4: TURN4 ?? this.TURN4,
+      TURN5: TURN5 ?? this.TURN5,
+      TURN6: TURN6 ?? this.TURN6,
       DIAMETER: DIAMETER ?? this.DIAMETER,
       CUSTOMER: CUSTOMER ?? this.CUSTOMER,
       UF: UF ?? this.UF,
@@ -212,6 +269,14 @@ class OutputWindingRecordModel {
       FS2: FS2 ?? this.FS2,
       FS3: FS3 ?? this.FS3,
       FS4: FS4 ?? this.FS4,
+      FS5: FS5 ?? this.FS5,
+      FS6: FS6 ?? this.FS6,
+      FS7: FS7 ?? this.FS7,
+      FS8: FS8 ?? this.FS8,
+      FS9: FS9 ?? this.FS9,
+      FS10: FS10 ?? this.FS10,
+      FS11: FS11 ?? this.FS11,
+      FS12: FS12 ?? this.FS12,
       GRADE: GRADE ?? this.GRADE,
       TIME_PRESS: TIME_PRESS ?? this.TIME_PRESS,
       TIME_RELEASED: TIME_RELEASED ?? this.TIME_RELEASED,
@@ -235,6 +300,11 @@ class OutputWindingRecordModel {
         'pack_no': PACK_NO,
         'ppm_weight': PPM_WEIGHT,
         'Turn': TURN,
+        'Turn2': TURN2,
+        'Turn3': TURN3,
+        'Turn4': TURN4,
+        'Turn5': TURN5,
+        'Turn6': TURN6,
         'Diameter': DIAMETER,
         'Customer': CUSTOMER,
         'UF': UF,
@@ -258,6 +328,14 @@ class OutputWindingRecordModel {
         'FS2': FS2,
         'FS3': FS3,
         'FS4': FS4,
+        'FS5': FS5,
+        'FS6': FS6,
+        'FS7': FS7,
+        'FS8': FS8,
+        'FS9': FS9,
+        'FS10': FS10,
+        'FS11': FS11,
+        'FS12': FS12,
         'Grade': GRADE,
         'Time_Press': TIME_PRESS,
         'Time_Released': TIME_RELEASED,

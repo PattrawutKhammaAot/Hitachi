@@ -279,15 +279,81 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       height: 35,
                       focusNode: f1,
                       // enabled: _enabledMachineNo,
-                      onEditingComplete: () {
+                      onEditingComplete: () async {
                         if (MachineController.text.length > 2) {
+                          var checkMaster = await DatabaseHelper()
+                              .queryMasterlotProcess(
+                                  MachineController.text.trim().toUpperCase());
+                          if (MachineController.text
+                                  .substring(0, 2)
+                                  .toUpperCase() ==
+                              'ZN') {
+                            if (checkMaster.isNotEmpty &&
+                                checkMaster.length >= 1) {
+                              f2.requestFocus();
+                            } else {
+                              _errorDialog(
+                                  text: Label("ZN ต้องมีอย่างน้อย 1 Material"),
+                                  isHideCancle: false,
+                                  onpressOk: () {
+                                    Navigator.pop(context);
+                                    f1.requestFocus();
+                                  });
+                            }
+                          } else if (MachineController.text
+                                  .substring(0, 2)
+                                  .toUpperCase() ==
+                              'SD') {
+                            if (checkMaster.isNotEmpty &&
+                                checkMaster.length >= 3) {
+                              f2.requestFocus();
+                            } else {
+                              _errorDialog(
+                                  text: Label("SD ต้องมีอย่างน้อย 3 Material"),
+                                  isHideCancle: false,
+                                  onpressOk: () {
+                                    Navigator.pop(context);
+                                    f1.requestFocus();
+                                  });
+                            }
+                          } else if (MachineController.text
+                                  .substring(0, 2)
+                                  .toUpperCase() ==
+                              'PU') {
+                            if (checkMaster.isNotEmpty &&
+                                checkMaster.length >= 2) {
+                              f2.requestFocus();
+                            } else {
+                              _errorDialog(
+                                  text: Label("PU ต้องมีอย่างน้อย 2 Material"),
+                                  isHideCancle: false,
+                                  onpressOk: () {
+                                    Navigator.pop(context);
+                                    f1.requestFocus();
+                                  });
+                            }
+                          } else if (MachineController.text
+                                  .substring(0, 2)
+                                  .toUpperCase() ==
+                              'PR') {
+                            if (checkMaster.isNotEmpty &&
+                                checkMaster.length >= 1) {
+                              f2.requestFocus();
+                            } else {
+                              _errorDialog(
+                                  text: Label("PR ต้องมีอย่างน้อย 1 Material"),
+                                  isHideCancle: false,
+                                  onpressOk: () {
+                                    Navigator.pop(context);
+                                    f1.requestFocus();
+                                  });
+                            }
+                          }
                           setState(() {
-                            print(MachineController.text);
-                            _enabledMachineNo = false;
+                            // _enabledMachineNo = false;
                             // valuetxtinput = MachineController.text.trim();
                             valuetxtinput = "";
                           });
-                          f2.requestFocus();
                         } else {
                           setState(() {
                             _enabledCheckMachine = false;
@@ -588,7 +654,61 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
       _highVoltageController.clear();
       _peakController.clear();
       _ipe_noController.clear();
-
+      var checkMaster = await DatabaseHelper()
+          .queryMasterlotProcess(MachineController.text.trim().toUpperCase());
+      if (MachineController.text.substring(0, 2).toUpperCase() == 'ZN') {
+        if (checkMaster.isNotEmpty && checkMaster.length >= 1) {
+          f2.requestFocus();
+        } else {
+          _errorDialog(
+              text: Label("ZN ต้องมีอย่างน้อย 1 Material"),
+              isHideCancle: false,
+              onpressOk: () {
+                Navigator.pop(context);
+                f1.requestFocus();
+              });
+          return;
+        }
+      } else if (MachineController.text.substring(0, 2).toUpperCase() == 'SD') {
+        if (checkMaster.isNotEmpty && checkMaster.length >= 3) {
+          f2.requestFocus();
+        } else {
+          _errorDialog(
+              text: Label("SD ต้องมีอย่างน้อย 3 Material"),
+              isHideCancle: false,
+              onpressOk: () {
+                Navigator.pop(context);
+                f1.requestFocus();
+              });
+          return;
+        }
+      } else if (MachineController.text.substring(0, 2).toUpperCase() == 'PU') {
+        if (checkMaster.isNotEmpty && checkMaster.length >= 2) {
+          f2.requestFocus();
+        } else {
+          _errorDialog(
+              text: Label("PU ต้องมีอย่างน้อย 2 Material"),
+              isHideCancle: false,
+              onpressOk: () {
+                Navigator.pop(context);
+                f1.requestFocus();
+              });
+          return;
+        }
+      } else if (MachineController.text.substring(0, 2).toUpperCase() == 'PR') {
+        if (checkMaster.isNotEmpty && checkMaster.length >= 1) {
+          f2.requestFocus();
+        } else {
+          _errorDialog(
+              text: Label("PR ต้องมีอย่างน้อย 1 Material"),
+              isHideCancle: false,
+              onpressOk: () {
+                Navigator.pop(context);
+                f1.requestFocus();
+              });
+          return;
+        }
+      }
       BlocProvider.of<LineElementBloc>(context).add(
         GetIPEProdSpecByBatchEvent(
           batchNoController.text.trim(),
@@ -919,7 +1039,10 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                       backgroundColor:
                           MaterialStatePropertyAll(COLOR_BLUE_DARK)),
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               Visibility(
@@ -932,7 +1055,7 @@ class _ProcessStartScanScreenState extends State<ProcessStartScanScreen> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(COLOR_BLUE_DARK)),
                 onPressed: () => onpressOk?.call(),
-                child: const Text('OK'),
+                child: const Text('OK', style: TextStyle(color: Colors.white)),
               ),
             ],
           )

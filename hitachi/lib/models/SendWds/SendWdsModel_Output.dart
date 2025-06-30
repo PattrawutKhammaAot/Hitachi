@@ -7,6 +7,7 @@ class SendWindingStartModelOutput {
       this.OPERATOR_NAME,
       this.PAPER_CODE_LOT,
       this.PP_FILM_LOT,
+      this.FILM_SERIAL_NO,
       this.PRODUCT,
       this.START_DATE});
   final String? MACHINE_NO;
@@ -14,6 +15,7 @@ class SendWindingStartModelOutput {
   final String? BATCH_NO;
   final int? PRODUCT;
   final int? FILM_PACK_NO;
+  final String? FILM_SERIAL_NO;
   final String? PAPER_CODE_LOT;
   final String? PP_FILM_LOT;
   final String? FOIL_LOT;
@@ -27,6 +29,7 @@ class SendWindingStartModelOutput {
     int? FILM_PACK_NO,
     String? PAPER_CODE_LOT,
     String? PP_FILM_LOT,
+    String? FILM_SERIAL_NO,
     String? FOIL_LOT,
     String? START_DATE,
   }) {
@@ -40,6 +43,7 @@ class SendWindingStartModelOutput {
       PP_FILM_LOT: PP_FILM_LOT ?? this.PP_FILM_LOT,
       FOIL_LOT: FOIL_LOT ?? this.FOIL_LOT,
       START_DATE: START_DATE ?? this.START_DATE,
+      FILM_SERIAL_NO: FILM_SERIAL_NO ?? this.FILM_SERIAL_NO,
     );
   }
 
@@ -54,6 +58,7 @@ class SendWindingStartModelOutput {
         "PPFilmLot": PP_FILM_LOT,
         "FoilLot": FOIL_LOT,
         "StartDate": START_DATE,
+        "FilmSerialNo": FILM_SERIAL_NO,
       };
 }
 
