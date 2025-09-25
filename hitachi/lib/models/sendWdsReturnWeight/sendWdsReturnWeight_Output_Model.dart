@@ -63,6 +63,7 @@ class sendWdsReturnWeightOutputModel {
         "PaperCodeLot": PAPER_CODE_LOT,
         "PPFilmLot": PP_FILM_LOT,
         "FoilLot": FOIL_LOT,
+        "filmSerialNo": FILM_SERIAL_NO,
         "Weight": WEIGHT,
         "StartDate": START_DATE,
         "FilmSerialNo": FILM_SERIAL_NO,

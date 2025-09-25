@@ -299,7 +299,7 @@ class OutputWindingRecordModel {
         'thickness': THICKNESS,
         'pack_no': PACK_NO,
         'ppm_weight': PPM_WEIGHT,
-        'Turn': TURN,
+        'Turn1': TURN,
         'Turn2': TURN2,
         'Turn3': TURN3,
         'Turn4': TURN4,

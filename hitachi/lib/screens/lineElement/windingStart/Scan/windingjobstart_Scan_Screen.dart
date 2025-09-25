@@ -547,8 +547,9 @@ class _WindingJobStartScanScreenState extends State<WindingJobStartScanScreen> {
                         });
                       } else {
                         _errorDialog(
-                            text: Label(
-                                "${state.item.MESSAGE ?? "Check Connection\n Do you want to save data "}"),
+                            text: Label(state.item.MESSAGE != null
+                                ? " API : ${state.item.MESSAGE}"
+                                : "Check Connection\n Do you want to save data "),
                             onpressOk: () {
                               Navigator.pop(context);
                               _showpopUpWeight();

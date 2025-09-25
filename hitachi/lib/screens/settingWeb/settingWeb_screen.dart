@@ -22,6 +22,7 @@ class _SettingWebScreenState extends State<SettingWebScreen> {
   // String tempUrl = "https://dev.lvcap.th.hitachienergy.com/";
   String tempUrl = "https://lvcap.th.hitachienergy.com/";
   // String tempUrl = "http://10.10.60.115/API_Hitachi/";
+  // String tempUrl = "http://10.0.2.2:50927/";
 
   Color _isColorSuccess = Colors.grey;
 

@@ -54,6 +54,7 @@ class TestconnectionBloc
 
   Future<ResponeDefault> fetchTestConnection() async {
     try {
+      print('TEMP_API_URL: $TEMP_API_URL Connection/TestConnection');
       Response responese = await dio.get(
         TEMP_API_URL + 'Connection/TestConnection',
         options: Options(

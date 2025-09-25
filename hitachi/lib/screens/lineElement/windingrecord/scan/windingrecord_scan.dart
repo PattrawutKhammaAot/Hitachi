@@ -2491,7 +2491,7 @@ class _WindingRecordScanScreenState extends State<WindingRecordScanScreen> {
                             controller: _fs8_Controller,
                             focusNode: _fs8_FocusNode,
                             isHideLable: true,
-                            labelText: "ระยไม่ได้",
+                            labelText: "ระยะไม่ได้",
                             keyboardType: TextInputType.number,
                             textInputFormatter: [
                               FilteringTextInputFormatter.allow(
